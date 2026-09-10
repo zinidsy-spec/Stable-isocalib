@@ -5,22 +5,23 @@
   <title>IsoCalib | Isotope Geochemistry Data Reduction</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Google Fonts: Editorial Serif + Clean Sans + Technical Mono -->
+  <!-- Google Fonts: Editorial Serif + Modern Clean Sans + High-Legibility Technical Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
   <style>
     :root {
-      --bg-warm: #fcfbf9;
+      --bg-warm: #fbfaf8;
       --surface: #ffffff;
-      --border-subtle: #e7e5e0;
-      --text-main: #1c1917;
-      --text-muted: #78716c;
-      --accent: #292524;
+      --border-main: #d1cfc7;
+      --border-subtle: #e5e3dc;
+      --text-main: #111827;
+      --text-sub: #374151;
+      --text-muted: #4b5563;
     }
 
     body {
@@ -39,17 +40,21 @@
       letter-spacing: 0.08em;
     }
 
+    /* 숫자 판독력을 극대화한 모노스페이스 */
     .font-data {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'IBM Plex Mono', monospace;
+      font-variant-numeric: tabular-nums;
     }
 
     .grid-cell {
       outline: none;
-      transition: background-color 0.15s ease;
+      transition: background-color 0.12s ease;
+      color: #111827;
+      font-weight: 500;
     }
     .grid-cell:focus {
-      background-color: #f5f5f3;
-      box-shadow: inset 0 0 0 1.5px #1c1917;
+      background-color: #f3f4f6;
+      box-shadow: inset 0 0 0 1.5px #111827;
     }
 
     .plot-container {
@@ -59,16 +64,16 @@
       background: #ffffff;
     }
 
-    /* Custom subtle scrollbar */
+    /* Subtle custom scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #fcfbf9;
+      background: #fbfaf8;
     }
     ::-webkit-scrollbar-thumb {
-      background: #d6d3cd;
+      background: #c7c5bc;
       border-radius: 3px;
     }
   </style>
@@ -76,39 +81,39 @@
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
   <!-- Editorial Top Navigation -->
-  <header class="border-b border-[#e7e5e0] bg-[#fcfbf9]/90 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+  <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 h-18 py-4 flex items-center justify-between">
       <div class="flex items-baseline space-x-3">
         <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</a>
-        <span class="text-xs uppercase tracking-widest text-stone-400 font-medium">/ Geochemistry Lab Tool</span>
+        <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono">/ Geochemistry Lab</span>
       </div>
-      <div class="flex items-center space-x-6 text-xs text-stone-500 font-serif-title italic">
+      <div class="hidden sm:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
         <span>Protocol: Weighted Least Squares Regression (1/σ²)</span>
       </div>
     </div>
   </header>
 
   <!-- Main Work Area -->
-  <main class="max-w-6xl mx-auto px-6 py-12 space-y-16 flex-grow w-full">
+  <main class="max-w-6xl mx-auto px-6 py-10 space-y-12 flex-grow w-full">
 
-    <!-- Hero Section / Context -->
-    <div class="border-b border-[#e7e5e0] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
-      <div class="max-w-2xl space-y-3">
-        <p class="text-xs font-semibold uppercase tracking-widest text-stone-400 font-mono">Precision Data Reduction</p>
-        <h1 class="font-serif-title text-4xl sm:text-5xl font-normal text-stone-900 leading-tight">
+    <!-- Hero / Context Section -->
+    <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div class="max-w-2xl space-y-2">
+        <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono">Precision Data Reduction</p>
+        <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight">
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light">
-          원소 분석 및 연속 흐름 질량 분석계(IRMS)의 측정 원시 데이터를 국제 공인 표준물질 기준으로 보정하고 불확도를 전파합니다.
+          원시 측정값(Raw Data)을 국제 공인 표준물질 기준으로 보정하고 측정 표준편차(1σ SD)에 따른 가중치 및 오차를 전파합니다.
         </p>
       </div>
 
       <!-- Isotope Preset Selector -->
-      <div class="space-y-1.5 self-start md:self-end min-w-[240px]">
-        <label for="isotope-preset" class="text-[11px] uppercase tracking-wider text-stone-400 font-mono font-medium block">
-          Isotope System (원소 체계)
+      <div class="space-y-1.5 self-start md:self-end min-w-[260px]">
+        <label for="isotope-preset" class="text-xs uppercase tracking-wider text-stone-700 font-mono font-bold block">
+          Isotope System (분석 체계)
         </label>
-        <select id="isotope-preset" class="w-full bg-white border border-[#d6d3cd] rounded-none px-3.5 py-2.5 text-xs text-stone-800 font-medium focus:border-stone-900 focus:outline-none transition">
+        <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm">
           <option value="CO">Carbon & Oxygen (δ¹³C, δ¹⁸O)</option>
           <option value="NO">Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O)</option>
           <option value="HO">Hydrogen & Oxygen (δD, δ¹⁸O)</option>
@@ -118,43 +123,43 @@
     </div>
 
     <!-- Section 1: Reference Material Calibration Standards -->
-    <section class="space-y-4">
+    <section class="space-y-3">
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
         <div class="flex items-center space-x-2">
-          <span class="font-mono text-xs text-stone-400">01</span>
-          <h2 class="text-xs uppercase tracking-widest font-semibold text-stone-900">Reference Standards</h2>
+          <span class="font-mono text-xs font-bold text-stone-400">01</span>
+          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Reference Standards (표준물질 참값 설정)</h2>
         </div>
-        <span class="text-xs text-stone-400 font-serif-title italic">Anchor values for scale calibration</span>
+        <span class="text-xs text-stone-500 font-serif-title italic">Standard anchor points & uncertainties</span>
       </div>
 
-      <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#e7e5e0] border border-[#e7e5e0]">
+      <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#d1cfc7] border border-[#d1cfc7]">
         <!-- Dynamic Standards Injection via JS -->
       </div>
     </section>
 
     <!-- Section 2: SpreadSheet & Controls -->
-    <section class="space-y-6">
+    <section class="space-y-5">
       <div class="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-3">
         <div class="space-y-1">
           <div class="flex items-center space-x-2">
-            <span class="font-mono text-xs text-stone-400">02</span>
-            <h2 class="text-xs uppercase tracking-widest font-semibold text-stone-900">Measurement Data & Fitting</h2>
+            <span class="font-mono text-xs font-bold text-stone-400">02</span>
+            <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Measurement Data & Fitting (원시 데이터 입력)</h2>
           </div>
-          <p class="text-xs text-stone-500 font-light">엑셀 시트에서 범위를 복사하여 그리드에 붙여넣기(Ctrl+V) 하세요.</p>
+          <p class="text-xs text-stone-600">엑셀 시트에서 범위를 복사하여 그리드에 붙여넣기(Ctrl+V) 하세요.</p>
         </div>
 
-        <!-- Minimalist Actions -->
+        <!-- Action Buttons -->
         <div class="flex items-center space-x-2">
-          <button id="btn-clear" class="px-3 py-2 text-xs font-medium text-stone-500 hover:text-stone-900 border border-transparent hover:border-stone-300 transition">
+          <button id="btn-clear" class="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 border border-transparent hover:border-stone-300 transition">
             Clear Grid
           </button>
-          <button id="btn-demo" class="px-3 py-2 text-xs font-medium text-stone-700 bg-white border border-[#d6d3cd] hover:border-stone-900 transition">
+          <button id="btn-demo" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm">
             Load Demo
           </button>
-          <button id="btn-add-row" class="px-3 py-2 text-xs font-medium text-stone-700 bg-white border border-[#d6d3cd] hover:border-stone-900 transition">
+          <button id="btn-add-row" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm">
             + 5 Rows
           </button>
-          <button id="btn-calc" class="px-5 py-2 text-xs font-medium text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase">
+          <button id="btn-calc" class="px-5 py-2 text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow">
             Run Calibration
           </button>
         </div>
@@ -162,33 +167,33 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left: Spreadsheet Grid (Monochrome / Technical) -->
+        <!-- Left: Spreadsheet Grid (High Contrast) -->
         <div class="lg:col-span-6 space-y-2">
-          <div class="border border-[#e7e5e0] bg-white overflow-hidden">
+          <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm">
             <div class="max-h-[580px] overflow-auto">
               <table class="w-full border-collapse text-left font-data text-xs">
-                <thead id="grid-head" class="bg-[#f7f6f2] sticky top-0 border-b border-[#e7e5e0] font-sans text-stone-600 uppercase text-[10px] tracking-wider select-none"></thead>
-                <tbody id="grid-body" class="divide-y divide-[#eceae4]"></tbody>
+                <thead id="grid-head" class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-stone-800 uppercase text-[11px] font-bold tracking-wider select-none"></thead>
+                <tbody id="grid-body" class="divide-y divide-[#e5e3dc]"></tbody>
               </table>
             </div>
           </div>
-          <div class="flex justify-between text-[11px] text-stone-400 font-mono">
-            <span>* Active cells editable</span>
-            <span id="row-count">0 rows loaded</span>
+          <div class="flex justify-between text-xs text-stone-500 font-mono font-medium">
+            <span>* Active cells editable (Tab / Enter)</span>
+            <span id="row-count">0 samples loaded</span>
           </div>
         </div>
 
         <!-- Right: Regression Cards & Publication-Quality Charts -->
-        <div class="lg:col-span-6 space-y-6">
+        <div class="lg:col-span-6 space-y-5">
           <div id="param-cards-container" class="grid grid-cols-2 gap-4"></div>
 
           <div class="space-y-4">
-            <div class="border border-[#e7e5e0] bg-white p-2">
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm">
               <div id="plot-1" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
                 Awaiting data computation...
               </div>
             </div>
-            <div class="border border-[#e7e5e0] bg-white p-2" id="plot-2-box">
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm" id="plot-2-box">
               <div id="plot-2" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
                 Awaiting data computation...
               </div>
@@ -199,22 +204,22 @@
       </div>
     </section>
 
-    <!-- Section 3: Final Results -->
-    <section class="space-y-4 pt-6">
+    <!-- Section 3: Final Results (Clear Emphasis) -->
+    <section class="space-y-3 pt-4">
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-3">
         <div class="flex items-center space-x-2">
-          <span class="font-mono text-xs text-stone-400">03</span>
-          <h2 class="text-xs uppercase tracking-widest font-semibold text-stone-900">Calibrated Results & Uncertainty</h2>
+          <span class="font-mono text-xs font-bold text-stone-400">03</span>
+          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Calibrated Results & Uncertainty (최종 보정 결과)</h2>
         </div>
-        <button id="btn-export" class="text-xs font-mono uppercase tracking-wider text-stone-900 border-b border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-400 transition">
+        <button id="btn-export" class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b-2 border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition">
           Export as .CSV
         </button>
       </div>
 
-      <div class="border border-[#e7e5e0] bg-white overflow-x-auto">
-        <table class="w-full text-left text-xs font-data text-stone-700">
-          <thead id="result-head" class="bg-[#f7f6f2] text-stone-600 uppercase font-sans text-[10px] tracking-wider border-b border-[#e7e5e0]"></thead>
-          <tbody id="result-body" class="divide-y divide-[#eceae4]">
+      <div class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
+        <table class="w-full text-left text-xs font-data text-stone-900">
+          <thead id="result-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
+          <tbody id="result-body" class="divide-y divide-[#e5e3dc]">
             <tr>
               <td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">
                 Execute calibration above to view reduced isotopic ratios and propagated uncertainties.
@@ -228,7 +233,7 @@
   </main>
 
   <!-- Editorial Minimal Footer -->
-  <footer class="border-t border-[#e7e5e0] py-8 text-xs text-stone-400 font-serif-title">
+  <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
       <p>IsoCalib Project — Environmental & Isotope Geochemistry Research Group</p>
       <p class="font-mono text-[11px] text-stone-400">Engineered for Academic Open Science</p>
@@ -269,11 +274,11 @@
           { name: "USGS34", v1: -1.800, v2: -27.900 }
         ],
         demo: [
-          ["IAEA-NO-3_1", 5.120, 0.08, 26.110, 0.15],
-          ["USGS34_1", -1.450, 0.09, -27.320, 0.18],
-          ["IAEA-NO-3_2", 5.090, 0.07, 26.050, 0.14],
-          ["USGS34_2", -1.490, 0.08, -27.410, 0.16],
-          ["Nitrate-01", 3.250, 0.09, 15.400, 0.17]
+          ["IAEA-NO-3_1", 5.120, 0.080, 26.110, 0.150],
+          ["USGS34_1", -1.450, 0.090, -27.320, 0.180],
+          ["IAEA-NO-3_2", 5.090, 0.070, 26.050, 0.140],
+          ["USGS34_2", -1.490, 0.080, -27.410, 0.160],
+          ["Nitrate-01", 3.250, 0.090, 15.400, 0.170]
         ]
       },
       HO: {
@@ -287,11 +292,11 @@
           { name: "SLAP2", v1: -427.500, v2: -55.500 }
         ],
         demo: [
-          ["VSMOW2_1", 1.200, 0.50, 0.120, 0.05],
-          ["SLAP2_1", -424.300, 0.80, -54.900, 0.08],
-          ["VSMOW2_2", 0.900, 0.45, 0.080, 0.04],
-          ["SLAP2_2", -425.100, 0.75, -55.020, 0.07],
-          ["Water-Sample-1", -65.400, 0.55, -9.210, 0.06]
+          ["VSMOW2_1", 1.200, 0.500, 0.120, 0.050],
+          ["SLAP2_1", -424.300, 0.800, -54.900, 0.080],
+          ["VSMOW2_2", 0.900, 0.450, 0.080, 0.040],
+          ["SLAP2_2", -425.100, 0.750, -55.020, 0.070],
+          ["Water-Sample-1", -65.400, 0.550, -9.210, 0.060]
         ]
       },
       S: {
@@ -304,11 +309,11 @@
           { name: "IAEA-S-2", v1: 22.700 }
         ],
         demo: [
-          ["IAEA-S-1_1", -0.150, 0.12],
-          ["IAEA-S-2_1", 23.150, 0.15],
-          ["IAEA-S-1_2", -0.180, 0.10],
-          ["IAEA-S-2_2", 23.080, 0.14],
-          ["Pyrite-01", 12.450, 0.13]
+          ["IAEA-S-1_1", -0.150, 0.120],
+          ["IAEA-S-2_1", 23.150, 0.150],
+          ["IAEA-S-1_2", -0.180, 0.100],
+          ["IAEA-S-2_2", 23.080, 0.140],
+          ["Pyrite-01", 12.450, 0.130]
         ]
       }
     };
@@ -320,32 +325,32 @@
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
-      // 1) Standards Form (Gallery Grid Layout)
+      // 1) Standards Form (선명하고 또렷한 입력창)
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
       p.stds.forEach((std, idx) => {
         const div = document.createElement('div');
         div.className = 'bg-white p-5 flex flex-col space-y-4';
         div.innerHTML = `
-          <div class="flex items-center justify-between border-b border-stone-100 pb-2">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-stone-400">Anchor Standard 0${idx+1}</span>
-            <input type="text" id="ref-std${idx}-name" value="${std.name}" class="w-32 text-xs font-semibold text-stone-900 border-b border-stone-300 focus:border-stone-900 outline-none pb-0.5 text-right font-mono">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-2">
+            <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-stone-500">Anchor Standard 0${idx+1}</span>
+            <input type="text" id="ref-std${idx}-name" value="${std.name}" class="w-36 text-xs font-bold text-stone-900 border-b-2 border-stone-400 focus:border-stone-900 outline-none pb-0.5 text-right font-mono bg-transparent">
           </div>
           <div class="flex items-center gap-6 pt-1">
-            <div class="flex-1 space-y-1">
-              <div class="flex justify-between text-[11px] text-stone-500 font-sans">
+            <div class="flex-1 space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-700 font-medium">
                 <span>${p.elements[0].label} Reference</span>
-                <span class="text-stone-400">${p.elements[0].unit}</span>
+                <span class="text-stone-500 font-mono text-[11px]">${p.elements[0].unit}</span>
               </div>
-              <input type="number" step="0.001" id="ref-std${idx}-v1" value="${std.v1}" class="w-full bg-[#fcfbf9] border border-stone-200 px-3 py-1.5 text-xs font-mono font-medium text-stone-800 focus:border-stone-900 outline-none">
+              <input type="number" step="0.001" id="ref-std${idx}-v1" value="${std.v1}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-3 py-1.5 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
             </div>
             ${isDual ? `
-            <div class="flex-1 space-y-1">
-              <div class="flex justify-between text-[11px] text-stone-500 font-sans">
+            <div class="flex-1 space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-700 font-medium">
                 <span>${p.elements[1].label} Reference</span>
-                <span class="text-stone-400">${p.elements[1].unit}</span>
+                <span class="text-stone-500 font-mono text-[11px]">${p.elements[1].unit}</span>
               </div>
-              <input type="number" step="0.001" id="ref-std${idx}-v2" value="${std.v2}" class="w-full bg-[#fcfbf9] border border-stone-200 px-3 py-1.5 text-xs font-mono font-medium text-stone-800 focus:border-stone-900 outline-none">
+              <input type="number" step="0.001" id="ref-std${idx}-v2" value="${std.v2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-3 py-1.5 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
             </div>
             ` : ''}
           </div>
@@ -353,51 +358,51 @@
         stdContainer.appendChild(div);
       });
 
-      // 2) Grid Header
+      // 2) Grid Header (선명한 대비)
       const gHead = document.getElementById('grid-head');
       if (isDual) {
         gHead.innerHTML = `
           <tr>
-            <th class="w-10 px-3 py-2 text-center text-stone-400 border-r border-[#e7e5e0] font-mono">#</th>
-            <th class="px-3 py-2 border-r border-[#e7e5e0]">Sample Identifier</th>
-            <th class="px-3 py-2 border-r border-[#e7e5e0]">Raw ${p.elements[0].label}</th>
-            <th class="px-3 py-2 border-r border-[#e7e5e0] text-stone-900">1σ SD</th>
-            <th class="px-3 py-2 border-r border-[#e7e5e0]">Raw ${p.elements[1].label}</th>
+            <th class="w-10 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
+            <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Sample ID</th>
+            <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
+            <th class="px-3 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
+            <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
             <th class="px-3 py-2 text-stone-900">1σ SD</th>
           </tr>
         `;
       } else {
         gHead.innerHTML = `
           <tr>
-            <th class="w-10 px-3 py-2 text-center text-stone-400 border-r border-[#e7e5e0] font-mono">#</th>
-            <th class="px-3 py-2 border-r border-[#e7e5e0]">Sample Identifier</th>
-            <th class="px-3 py-2 border-r border-[#e7e5e0]">Raw ${p.elements[0].label}</th>
+            <th class="w-10 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
+            <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Sample ID</th>
+            <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-3 py-2 text-stone-900">1σ SD</th>
           </tr>
         `;
       }
 
-      // 3) Param Cards (Editorial Clean Style)
+      // 3) Param Cards (가독성 높은 폰트 및 대비)
       const pContainer = document.getElementById('param-cards-container');
       if (isDual) {
         pContainer.className = "grid grid-cols-2 gap-4";
         pContainer.innerHTML = `
-          <div class="border border-[#e7e5e0] bg-white p-4 space-y-3">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">${p.elements[0].label} Linear Model</span>
-            <div class="space-y-1.5 text-xs font-mono">
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Slope (a)</span> <strong id="p1-slope" class="text-stone-800">-</strong></div>
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Intercept (b)</span> <strong id="p1-intercept" class="text-stone-800">-</strong></div>
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Slope SE (1σ)</span> <span id="p1-se" class="text-stone-600">-</span></div>
-              <div class="flex justify-between pt-0.5"><span class="text-stone-400 font-sans">Weighted R²</span> <strong id="p1-r2" class="text-stone-900">-</strong></div>
+          <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[0].label} Linear Model</span>
+            <div class="space-y-1.5 text-xs font-data">
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope (a)</span> <strong id="p1-slope" class="text-stone-900 font-semibold">-</strong></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Intercept (b)</span> <strong id="p1-intercept" class="text-stone-900 font-semibold">-</strong></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope SE (1σ)</span> <span id="p1-se" class="text-stone-700 font-medium">-</span></div>
+              <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">Weighted R²</span> <strong id="p1-r2" class="text-emerald-800 font-bold">-</strong></div>
             </div>
           </div>
-          <div class="border border-[#e7e5e0] bg-white p-4 space-y-3">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">${p.elements[1].label} Linear Model</span>
-            <div class="space-y-1.5 text-xs font-mono">
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Slope (a)</span> <strong id="p2-slope" class="text-stone-800">-</strong></div>
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Intercept (b)</span> <strong id="p2-intercept" class="text-stone-800">-</strong></div>
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Slope SE (1σ)</span> <span id="p2-se" class="text-stone-600">-</span></div>
-              <div class="flex justify-between pt-0.5"><span class="text-stone-400 font-sans">Weighted R²</span> <strong id="p2-r2" class="text-stone-900">-</strong></div>
+          <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[1].label} Linear Model</span>
+            <div class="space-y-1.5 text-xs font-data">
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope (a)</span> <strong id="p2-slope" class="text-stone-900 font-semibold">-</strong></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Intercept (b)</span> <strong id="p2-intercept" class="text-stone-900 font-semibold">-</strong></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope SE (1σ)</span> <span id="p2-se" class="text-stone-700 font-medium">-</span></div>
+              <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">Weighted R²</span> <strong id="p2-r2" class="text-emerald-800 font-bold">-</strong></div>
             </div>
           </div>
         `;
@@ -405,40 +410,40 @@
       } else {
         pContainer.className = "grid grid-cols-1 gap-4";
         pContainer.innerHTML = `
-          <div class="border border-[#e7e5e0] bg-white p-4 space-y-3">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">${p.elements[0].label} Linear Model</span>
-            <div class="space-y-1.5 text-xs font-mono">
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Slope (a)</span> <strong id="p1-slope" class="text-stone-800">-</strong></div>
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Intercept (b)</span> <strong id="p1-intercept" class="text-stone-800">-</strong></div>
-              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-400 font-sans">Slope SE (1σ)</span> <span id="p1-se" class="text-stone-600">-</span></div>
-              <div class="flex justify-between pt-0.5"><span class="text-stone-400 font-sans">Weighted R²</span> <strong id="p1-r2" class="text-stone-900">-</strong></div>
+          <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[0].label} Linear Model</span>
+            <div class="space-y-1.5 text-xs font-data">
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope (a)</span> <strong id="p1-slope" class="text-stone-900 font-semibold">-</strong></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Intercept (b)</span> <strong id="p1-intercept" class="text-stone-900 font-semibold">-</strong></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope SE (1σ)</span> <span id="p1-se" class="text-stone-700 font-medium">-</span></div>
+              <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">Weighted R²</span> <strong id="p1-r2" class="text-emerald-800 font-bold">-</strong></div>
             </div>
           </div>
         `;
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // 4) Results Header
+      // 4) Results Header (또렷한 라벨링)
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
           <tr>
-            <th class="px-4 py-2.5 border-r border-[#e7e5e0]">Identifier</th>
-            <th class="px-3 py-2.5 border-r border-[#e7e5e0]">Raw ${p.elements[0].label}</th>
-            <th class="px-3 py-2.5 border-r border-[#e7e5e0]">Raw ${p.elements[1].label}</th>
-            <th class="px-3 py-2.5 border-r border-[#e7e5e0] font-bold text-stone-900">Calibrated ${p.elements[0].label}</th>
-            <th class="px-3 py-2.5 border-r border-[#e7e5e0] text-stone-500">± 1σ</th>
-            <th class="px-3 py-2.5 border-r border-[#e7e5e0] font-bold text-stone-900">Calibrated ${p.elements[1].label}</th>
-            <th class="px-3 py-2.5 text-stone-500">± 1σ</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Sample ID</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Calibrated ${p.elements[0].label}</th>
+            <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Calibrated ${p.elements[1].label}</th>
+            <th class="px-3 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
       } else {
         rHead.innerHTML = `
           <tr>
-            <th class="px-4 py-2.5 border-r border-[#e7e5e0]">Identifier</th>
-            <th class="px-4 py-2.5 border-r border-[#e7e5e0]">Raw ${p.elements[0].label}</th>
-            <th class="px-4 py-2.5 border-r border-[#e7e5e0] font-bold text-stone-900">Calibrated ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-4 py-2.5 text-stone-500">± 1σ</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Sample ID</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Calibrated ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-4 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
       }
@@ -462,17 +467,17 @@
 
       gridData.forEach((row, rIdx) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-stone-50 transition-colors';
+        tr.className = 'hover:bg-stone-50/80 transition-colors';
 
         const tdIdx = document.createElement('td');
-        tdIdx.className = 'px-3 py-1.5 text-center text-stone-400 border-r border-[#e7e5e0] select-none bg-[#fcfbf9] text-[11px]';
+        tdIdx.className = 'px-3 py-1.5 text-center text-stone-400 border-r border-[#e5e3dc] select-none bg-[#fbfaf8] text-xs font-mono font-medium';
         tdIdx.innerText = String(rIdx + 1).padStart(2, '0');
         tr.appendChild(tdIdx);
 
         for (let cIdx = 0; cIdx < numCols; cIdx++) {
           const val = row[cIdx];
           const td = document.createElement('td');
-          td.className = 'px-3 py-1.5 border-r border-[#e7e5e0] grid-cell text-xs';
+          td.className = 'px-3.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data';
           td.contentEditable = 'true';
           td.innerText = val !== null && val !== undefined ? val : '';
           
@@ -622,7 +627,7 @@
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
       }
 
-      // Results Rendering
+      // Results Rendering (High Legibility Numbers)
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
 
@@ -641,7 +646,7 @@
         }
 
         const tr = document.createElement('tr');
-        if (isStd) tr.className = 'bg-[#fcfbf9] text-stone-400';
+        if (isStd) tr.className = 'bg-[#fbfaf8] text-stone-500';
 
         if (isDual) {
           const raw2 = parseFloat(row[3]);
@@ -653,27 +658,27 @@
           }
 
           tr.innerHTML = `
-            <td class="px-4 py-2 border-r border-[#e7e5e0] font-medium ${isStd ? 'text-stone-400' : 'text-stone-900'}">${id}</td>
-            <td class="px-3 py-2 border-r border-[#e7e5e0]">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
-            <td class="px-3 py-2 border-r border-[#e7e5e0]">${!isNaN(raw2) ? raw2.toFixed(3) : '-'}</td>
-            <td class="px-3 py-2 border-r border-[#e7e5e0] font-bold text-stone-900">${cal1}</td>
-            <td class="px-3 py-2 border-r border-[#e7e5e0] text-stone-400">±${propSd1}</td>
-            <td class="px-3 py-2 border-r border-[#e7e5e0] font-bold text-stone-900">${cal2}</td>
-            <td class="px-3 py-2 text-stone-400">±${propSd2}</td>
+            <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold ${isStd ? 'text-stone-500' : 'text-stone-900'}">${id}</td>
+            <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
+            <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw2) ? raw2.toFixed(3) : '-'}</td>
+            <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1}</td>
+            <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">±${propSd1}</td>
+            <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal2}</td>
+            <td class="px-3 py-2 text-stone-600 font-medium">±${propSd2}</td>
           `;
         } else {
           tr.innerHTML = `
-            <td class="px-4 py-2 border-r border-[#e7e5e0] font-medium ${isStd ? 'text-stone-400' : 'text-stone-900'}">${id}</td>
-            <td class="px-4 py-2 border-r border-[#e7e5e0]">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
-            <td class="px-4 py-2 border-r border-[#e7e5e0] font-bold text-stone-900">${cal1}</td>
-            <td class="px-4 py-2 text-stone-400">±${propSd1}</td>
+            <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold ${isStd ? 'text-stone-500' : 'text-stone-900'}">${id}</td>
+            <td class="px-4 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
+            <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1}</td>
+            <td class="px-4 py-2 text-stone-600 font-medium">±${propSd1}</td>
           `;
         }
         resBody.appendChild(tr);
       });
     }
 
-    // Publication-Grade Plotly Aesthetic (Academic Minimalist)
+    // High-Legibility Academic Plotly Aesthetic
     function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
       const container = document.getElementById(elemId);
       container.innerHTML = '';
@@ -684,7 +689,6 @@
       const lx = [minX - pad, maxX + pad];
       const ly = [lx[0] * reg.slope + reg.intercept, lx[1] * reg.slope + reg.intercept];
 
-      // Nature-style markers & hairline regression line
       const scatterTrace = {
         x: pts.x,
         y: pts.y,
@@ -693,17 +697,17 @@
         type: 'scatter',
         name: 'Anchor Points',
         marker: {
-          size: 6,
-          color: '#1c1917',
-          symbol: 'circle'
+          size: 7,
+          color: '#111827',
+          line: { color: '#000000', width: 1 }
         },
         error_x: {
           type: 'data',
           array: pts.sd,
           visible: true,
-          color: '#78716c',
-          thickness: 1,
-          width: 3
+          color: '#4b5563',
+          thickness: 1.2,
+          width: 4
         }
       };
 
@@ -715,34 +719,34 @@
         name: `WLS: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`,
         line: {
           dash: 'solid',
-          width: 1,
-          color: '#a8a29e'
+          width: 1.5,
+          color: '#6b7280'
         }
       };
 
       const layout = {
         title: {
           text: title,
-          font: { family: 'Newsreader, Georgia, serif', size: 14, color: '#1c1917' },
+          font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' },
           x: 0.05
         },
         paper_bgcolor: '#ffffff',
         plot_bgcolor: '#ffffff',
-        margin: { l: 50, r: 20, t: 40, b: 45 },
+        margin: { l: 55, r: 25, t: 40, b: 45 },
         xaxis: {
-          title: { text: xTitle, font: { family: 'Inter, sans-serif', size: 10, color: '#78716c' } },
+          title: { text: xTitle, font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } },
           showgrid: true,
-          gridcolor: '#f5f5f4',
-          linecolor: '#e7e5e0',
-          tickfont: { family: 'JetBrains Mono, monospace', size: 9, color: '#a8a29e' },
+          gridcolor: '#f0ede6',
+          linecolor: '#c7c5bc',
+          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' },
           automargin: true
         },
         yaxis: {
-          title: { text: yTitle, font: { family: 'Inter, sans-serif', size: 10, color: '#78716c' } },
+          title: { text: yTitle, font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } },
           showgrid: true,
-          gridcolor: '#f5f5f4',
-          linecolor: '#e7e5e0',
-          tickfont: { family: 'JetBrains Mono, monospace', size: 9, color: '#a8a29e' },
+          gridcolor: '#f0ede6',
+          linecolor: '#c7c5bc',
+          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' },
           automargin: true
         },
         showlegend: true,
@@ -750,7 +754,7 @@
           orientation: 'h',
           y: -0.28,
           x: 0.05,
-          font: { family: 'Inter, sans-serif', size: 10, color: '#78716c' }
+          font: { family: 'Inter, sans-serif', size: 10, color: '#374151' }
         }
       };
 
