@@ -35,22 +35,26 @@
     .font-brand { font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
     .font-data { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
 
-    /* Excel-like selection styling */
+    /* Excel-style Selection & Editing Mechanics */
     .grid-cell {
       outline: none;
       user-select: none;
       position: relative;
-    }
-    .grid-cell.cell-editing {
-      user-select: text;
-      background-color: #ffffff !important;
-      box-shadow: inset 0 0 0 2px #111827 !important;
+      cursor: cell;
+      height: 28px;
     }
     .grid-cell.cell-selected {
       background-color: #e0f2fe !important; /* Sky 100 */
     }
-    .grid-cell.cell-focus {
-      box-shadow: inset 0 0 0 1.5px #0284c7;
+    .grid-cell.cell-primary {
+      box-shadow: inset 0 0 0 2px #0284c7 !important; /* Excel Green/Blue active border */
+      background-color: #ffffff !important;
+    }
+    .grid-cell.cell-editing {
+      user-select: text !important;
+      cursor: text !important;
+      background-color: #ffffff !important;
+      box-shadow: inset 0 0 0 2px #111827 !important;
     }
     .row-header.row-selected {
       background-color: #bae6fd !important;
@@ -65,13 +69,25 @@
       background: #ffffff;
     }
 
-    /* Subtle custom scrollbar */
+    /* Invisible Clipboard Catcher for One-Click Pasting */
+    #paste-target {
+      position: fixed;
+      left: -9999px;
+      top: -9999px;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+    }
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #fbfaf8; }
     ::-webkit-scrollbar-thumb { background: #c7c5bc; border-radius: 3px; }
   </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
+
+  <!-- 숨은 클립보드 캐처: 커서 활성화 없이도 Ctrl+V가 즉시 먹히게 함 -->
+  <textarea id="paste-target" tabindex="-1"></textarea>
 
   <!-- Editorial Top Navigation -->
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
@@ -89,7 +105,7 @@
   <!-- Main Work Area -->
   <main class="max-w-6xl mx-auto px-6 py-10 space-y-12 flex-grow w-full">
 
-    <!-- Hero / Context Section -->
+    <!-- Hero Section -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
         <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono">Precision Data Reduction</p>
@@ -125,9 +141,7 @@
         <span class="text-xs text-stone-500 font-serif-title italic">Standard anchor points & uncertainties</span>
       </div>
 
-      <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#d1cfc7] border border-[#d1cfc7]">
-        <!-- Dynamic Standards Injection via JS -->
-      </div>
+      <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#d1cfc7] border border-[#d1cfc7]"></div>
     </section>
 
     <!-- Section 2: SpreadSheet & Controls -->
@@ -139,7 +153,7 @@
             <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Measurement Data & Fitting (원시 데이터 입력)</h2>
           </div>
           <p class="text-xs text-stone-600">
-            마우스 드래그로 영역/행을 선택한 후 <kbd class="px-1 py-0.5 bg-stone-200 rounded font-mono text-[10px]">Delete</kbd> 키를 누르거나, 우클릭하여 행을 삭제할 수 있습니다.
+            시작할 셀을 <strong>한 번만 클릭</strong>하고 바로 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 엑셀 표가 그대로 채워집니다.
           </p>
         </div>
 
@@ -176,12 +190,12 @@
             </div>
           </div>
           <div class="flex justify-between text-xs text-stone-500 font-mono font-medium">
-            <span>* 행 번호(#) 드래그 시 줄 전체 선택 / 우클릭 시 메뉴</span>
+            <span>* 클릭 후 바로 붙여넣기(Ctrl+V) / Delete 키로 삭제</span>
             <span id="row-count">0 samples loaded</span>
           </div>
         </div>
 
-        <!-- Right: Regression Cards & Publication-Quality Charts -->
+        <!-- Right: Regression Cards & Plots -->
         <div class="lg:col-span-6 space-y-5">
           <div id="param-cards-container" class="grid grid-cols-2 gap-4"></div>
 
@@ -230,7 +244,7 @@
 
   </main>
 
-  <!-- Right Click Context Menu for Grid -->
+  <!-- Right Click Context Menu -->
   <div id="grid-context-menu" class="hidden fixed bg-white border border-[#c7c5bc] shadow-lg py-1.5 z-50 text-xs font-sans text-stone-800 rounded min-w-[180px]">
     <button id="ctx-del-rows" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-rose-700 font-medium">
       <span>선택 행 완전 삭제</span>
@@ -246,7 +260,6 @@
     </button>
   </div>
 
-  <!-- Editorial Minimal Footer -->
   <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
       <p>IsoCalib Project — Environmental & Isotope Geochemistry Research Group</p>
@@ -335,18 +348,19 @@
     let currentMode = "CO";
     let gridData = [];
 
-    // Drag Selection State
+    // State Variables
     let isMouseDown = false;
     let isSelectingRows = false;
-    let dragStart = { r: null, c: null };
-    let dragEnd = { r: null, c: null };
-    let selectedCellRange = null; // { minR, maxR, minC, maxC }
+    let dragStart = { r: 0, c: 0 };
+    let dragEnd = { r: 0, c: 0 };
+    let selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
+    let activeEditingCell = null;
 
     function updateLayoutForMode() {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
-      // 1) Standards Form
+      // 1) Standards
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
       p.stds.forEach((std, idx) => {
@@ -379,7 +393,7 @@
         stdContainer.appendChild(div);
       });
 
-      // 2) Grid Header
+      // 2) Grid Head
       const gHead = document.getElementById('grid-head');
       if (isDual) {
         gHead.innerHTML = `
@@ -444,7 +458,7 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // 4) Results Header
+      // 4) Result Head
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -471,7 +485,9 @@
 
       const numCols = isDual ? 5 : 3;
       gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
-      selectedCellRange = null;
+      selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
+      dragStart = { r: 0, c: 0 };
+      dragEnd = { r: 0, c: 0 };
       renderGrid();
       resetOutputs();
     }
@@ -483,7 +499,7 @@
     }
 
     // -------------------------------------------------------------
-    // Excel-style Drag Selection & Rendering Engine
+    // Spreadsheet Grid Rendering (One-Click Selection)
     // -------------------------------------------------------------
     function renderGrid() {
       const gridBody = document.getElementById('grid-body');
@@ -495,20 +511,21 @@
         tr.className = 'hover:bg-stone-50/60 transition-colors';
         tr.dataset.r = rIdx;
 
-        // Row Header (#) - 드래그하여 행 전체 선택 가능
+        // Row Header (#)
         const tdIdx = document.createElement('td');
         tdIdx.className = 'row-header px-3 py-1.5 text-center text-stone-400 border-r border-[#e5e3dc] select-none bg-[#fbfaf8] text-xs font-mono font-medium cursor-pointer hover:bg-stone-200';
         tdIdx.innerText = String(rIdx + 1).padStart(2, '0');
         tdIdx.dataset.r = rIdx;
 
-        // 행 헤더 마우스 다운 이벤트 (줄 전체 드래그 선택 시작)
         tdIdx.addEventListener('mousedown', (e) => {
           if (e.button !== 0 && e.button !== 2) return;
+          closeEditingCell();
           isMouseDown = true;
           isSelectingRows = true;
           dragStart = { r: rIdx, c: 0 };
           dragEnd = { r: rIdx, c: numCols - 1 };
           updateSelectionRange();
+          syncPasteTarget();
           e.preventDefault();
         });
 
@@ -518,40 +535,28 @@
         for (let cIdx = 0; cIdx < numCols; cIdx++) {
           const val = row[cIdx];
           const td = document.createElement('td');
-          td.className = 'px-3.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data cursor-cell';
+          td.className = 'px-3.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data';
           td.dataset.r = rIdx;
           td.dataset.c = cIdx;
-          td.contentEditable = 'false'; // 더블클릭 또는 포커스 시에만 편집 활성화
           td.innerText = val !== null && val !== undefined ? val : '';
 
-          // 셀 마우스 드래그 이벤트
+          // 엑셀 스타일: 단 1번 클릭 시 셀 선택 + 붙여넣기 대기 상태
           td.addEventListener('mousedown', (e) => {
             if (e.button !== 0 && e.button !== 2) return;
-            // 더블클릭 편집 모드가 아닐 때 드래그 시작
-            if (td.classList.contains('cell-editing')) return;
+            if (td === activeEditingCell) return;
 
+            closeEditingCell();
             isMouseDown = true;
             isSelectingRows = false;
             dragStart = { r: rIdx, c: cIdx };
             dragEnd = { r: rIdx, c: cIdx };
             updateSelectionRange();
+            syncPasteTarget();
           });
 
-          // 더블클릭 시 편집 모드 활성화 (엑셀 스타일)
+          // 더블클릭할 때만 직접 텍스트 타이핑 커서 열림
           td.addEventListener('dblclick', () => {
-            enableCellEdit(td);
-          });
-
-          // 내용 직접 입력 시 데이터 배열 동기화
-          td.addEventListener('input', (e) => {
-            gridData[rIdx][cIdx] = cIdx === 0 ? e.target.innerText.trim() : (parseFloat(e.target.innerText) || e.target.innerText);
-          });
-
-          // 복사/붙여넣기
-          td.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData('text');
-            handlePaste(text, rIdx, cIdx);
+            openEditingCell(td);
           });
 
           tr.appendChild(td);
@@ -564,12 +569,19 @@
       applySelectionVisuals();
     }
 
-    function enableCellEdit(td) {
+    // 숨겨진 텍스트에리어로 포커스를 옮겨 브라우저가 Ctrl+V를 바로 수신하게 만듦
+    function syncPasteTarget() {
+      const pt = document.getElementById('paste-target');
+      pt.value = '';
+      pt.focus();
+    }
+
+    function openEditingCell(td) {
+      activeEditingCell = td;
       td.contentEditable = 'true';
       td.classList.add('cell-editing');
       td.focus();
 
-      // 텍스트 맨 끝으로 커서 이동
       const range = document.createRange();
       range.selectNodeContents(td);
       range.collapse(false);
@@ -578,17 +590,24 @@
       sel.addRange(range);
 
       const blurHandler = () => {
-        td.contentEditable = 'false';
-        td.classList.remove('cell-editing');
-        const r = parseInt(td.dataset.r);
-        const c = parseInt(td.dataset.c);
-        gridData[r][c] = c === 0 ? td.innerText.trim() : (parseFloat(td.innerText) || td.innerText);
+        closeEditingCell();
         td.removeEventListener('blur', blurHandler);
       };
       td.addEventListener('blur', blurHandler);
     }
 
-    // 마우스 이동 시 범위 확장
+    function closeEditingCell() {
+      if (!activeEditingCell) return;
+      activeEditingCell.contentEditable = 'false';
+      activeEditingCell.classList.remove('cell-editing');
+      const r = parseInt(activeEditingCell.dataset.r);
+      const c = parseInt(activeEditingCell.dataset.c);
+      gridData[r][c] = c === 0 ? activeEditingCell.innerText.trim() : (parseFloat(activeEditingCell.innerText) || activeEditingCell.innerText);
+      activeEditingCell = null;
+      syncPasteTarget();
+    }
+
+    // 마우스 드래그 이벤트
     window.addEventListener('mousemove', (e) => {
       if (!isMouseDown) return;
 
@@ -613,11 +632,10 @@
 
     window.addEventListener('mouseup', () => {
       isMouseDown = false;
+      if (!activeEditingCell) syncPasteTarget();
     });
 
     function updateSelectionRange() {
-      if (dragStart.r === null || dragEnd.r === null) return;
-
       const minR = Math.min(dragStart.r, dragEnd.r);
       const maxR = Math.max(dragStart.r, dragEnd.r);
       const minC = Math.min(dragStart.c, dragEnd.c);
@@ -631,14 +649,13 @@
       const allCells = document.querySelectorAll('.grid-cell');
       const allRowHeaders = document.querySelectorAll('.row-header');
 
-      allCells.forEach(cell => cell.classList.remove('cell-selected', 'cell-focus'));
+      allCells.forEach(cell => cell.classList.remove('cell-selected', 'cell-primary'));
       allRowHeaders.forEach(rh => rh.classList.remove('row-selected'));
 
       if (!selectedCellRange) return;
-
       const { minR, maxR, minC, maxC } = selectedCellRange;
 
-      // 행 헤더 하이라이트
+      // 행 헤더
       allRowHeaders.forEach(rh => {
         const r = parseInt(rh.dataset.r);
         if (r >= minR && r <= maxR) rh.classList.add('row-selected');
@@ -651,65 +668,149 @@
 
         if (r >= minR && r <= maxR && c >= minC && c <= maxC) {
           cell.classList.add('cell-selected');
-          if (r === dragStart.r && c === dragStart.c) {
-            cell.classList.add('cell-focus');
-          }
+        }
+        if (r === dragStart.r && c === dragStart.c) {
+          cell.classList.add('cell-primary');
         }
       });
     }
 
     // -------------------------------------------------------------
-    // Delete & Backspace 키보드 핸들러 (선택 영역 데이터 지우기)
+    // 전역 Paste 핸들러: 커서 없이 클릭만 된 상태에서 무조건 작동
+    // -------------------------------------------------------------
+    window.addEventListener('paste', (e) => {
+      // 만약 특정 셀에서 타이핑 커서가 켜져 있는 상태라면 기본 브라우저 입력 방식을 따름
+      if (activeEditingCell) return;
+
+      e.preventDefault();
+      const clipboardText = (e.clipboardData || window.clipboardData).getData('text');
+      if (!clipboardText) return;
+
+      const startR = selectedCellRange ? selectedCellRange.minR : 0;
+      const startC = selectedCellRange ? selectedCellRange.minC : 0;
+
+      handlePaste(clipboardText, startR, startC);
+    });
+
+    function handlePaste(text, startR, startC) {
+      const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
+      const rows = text.trim().split(/\r\n|\n|\r/);
+
+      rows.forEach((rText, i) => {
+        const trIdx = startR + i;
+        if (!gridData[trIdx]) gridData[trIdx] = Array(numCols).fill('');
+        const cols = rText.split('\t');
+        cols.forEach((cText, j) => {
+          const tcIdx = startC + j;
+          if (tcIdx < numCols) {
+            const v = cText.trim();
+            gridData[trIdx][tcIdx] = tcIdx === 0 ? v : (parseFloat(v) || v);
+          }
+        });
+      });
+
+      // 붙여넣은 영역을 자동으로 선택 상태로 지정
+      const pasteRows = rows.length;
+      const pasteCols = rows[0].split('\t').length;
+      dragStart = { r: startR, c: startC };
+      dragEnd = {
+        r: Math.min(startR + pasteRows - 1, gridData.length - 1),
+        c: Math.min(startC + pasteCols - 1, numCols - 1)
+      };
+      updateSelectionRange();
+
+      renderGrid();
+      syncPasteTarget();
+    }
+
+    // -------------------------------------------------------------
+    // 키보드 내비게이션 & Delete 삭제 & 빠른 타이핑
     // -------------------------------------------------------------
     window.addEventListener('keydown', (e) => {
-      const activeEl = document.activeElement;
-      if (activeEl && activeEl.classList.contains('cell-editing')) return; // 편집 중일 땐 타이핑 허용
+      if (activeEditingCell) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const nextR = Math.min(parseInt(activeEditingCell.dataset.r) + 1, gridData.length - 1);
+          const c = parseInt(activeEditingCell.dataset.c);
+          closeEditingCell();
+          dragStart = { r: nextR, c: c };
+          dragEnd = { r: nextR, c: c };
+          updateSelectionRange();
+          syncPasteTarget();
+        }
+        return;
+      }
 
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCellRange) {
+      if (!selectedCellRange) return;
+
+      const { minR, maxR, minC, maxC } = selectedCellRange;
+      const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
+
+      // 1) Delete / Backspace 키로 데이터 삭제
+      if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
-        const { minR, maxR, minC, maxC } = selectedCellRange;
-
-        // 선택 영역의 값 지우기
         for (let r = minR; r <= maxR; r++) {
           for (let c = minC; c <= maxC; c++) {
             gridData[r][c] = '';
           }
         }
         renderGrid();
+        syncPasteTarget();
+        return;
+      }
+
+      // 2) 방향키 내비게이션
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+        e.preventDefault();
+        let curR = dragStart.r;
+        let curC = dragStart.c;
+
+        if (e.key === 'ArrowUp') curR = Math.max(0, curR - 1);
+        else if (e.key === 'ArrowDown') curR = Math.min(gridData.length - 1, curR + 1);
+        else if (e.key === 'ArrowLeft') curC = Math.max(0, curC - 1);
+        else if (e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)) curC = Math.min(numCols - 1, curC + 1);
+        else if (e.key === 'Tab' && e.shiftKey) curC = Math.max(0, curC - 1);
+
+        dragStart = { r: curR, c: curC };
+        dragEnd = { r: curR, c: curC };
+        updateSelectionRange();
+        syncPasteTarget();
+        return;
+      }
+
+      // 3) 셀이 선택된 상태에서 숫자/문자를 타이핑하면 바로 입력 모드로 진입 (엑셀 방식)
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const targetTd = document.querySelector(`.grid-cell[data-r="${dragStart.r}"][data-c="${dragStart.c}"]`);
+        if (targetTd) {
+          targetTd.innerText = '';
+          openEditingCell(targetTd);
+        }
       }
     });
 
     // -------------------------------------------------------------
-    // 선택된 행 완전 삭제 (줄 자체를 삭제하여 행 번호 재정렬)
+    // 선택된 행 완전 삭제 & 컨텍스트 메뉴
     // -------------------------------------------------------------
     function deleteSelectedRows() {
       if (!selectedCellRange) return;
       const { minR, maxR } = selectedCellRange;
-      const deleteCount = (maxR - minR + 1);
+      const count = maxR - minR + 1;
+      gridData.splice(minR, count);
 
-      gridData.splice(minR, deleteCount);
+      const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
+      while (gridData.length < 5) gridData.push(Array(numCols).fill(''));
 
-      // 데이터가 5개 미만이면 기본 빈 줄 유지
-      if (gridData.length < 5) {
-        const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
-        while (gridData.length < 5) {
-          gridData.push(Array(numCols).fill(''));
-        }
-      }
-
-      selectedCellRange = null;
+      dragStart = { r: Math.min(minR, gridData.length - 1), c: 0 };
+      dragEnd = { r: dragStart.r, c: numCols - 1 };
+      updateSelectionRange();
       renderGrid();
+      syncPasteTarget();
     }
 
-    // -------------------------------------------------------------
-    // 우클릭 컨텍스트 메뉴 (Context Menu) 핸들러
-    // -------------------------------------------------------------
     const contextMenu = document.getElementById('grid-context-menu');
 
     document.getElementById('interactive-grid').addEventListener('contextmenu', (e) => {
       e.preventDefault();
-      if (!selectedCellRange) return;
-
       contextMenu.style.left = `${e.clientX}px`;
       contextMenu.style.top = `${e.clientY}px`;
       contextMenu.classList.remove('hidden');
@@ -728,11 +829,10 @@
       if (!selectedCellRange) return;
       const { minR, maxR, minC, maxC } = selectedCellRange;
       for (let r = minR; r <= maxR; r++) {
-        for (let c = minC; c <= maxC; c++) {
-          gridData[r][c] = '';
-        }
+        for (let c = minC; c <= maxC; c++) gridData[r][c] = '';
       }
       renderGrid();
+      syncPasteTarget();
       contextMenu.classList.add('hidden');
     });
 
@@ -742,32 +842,15 @@
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       gridData.splice(insertAt, 0, Array(numCols).fill(''));
       renderGrid();
+      syncPasteTarget();
       contextMenu.classList.add('hidden');
     });
 
     document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
 
     // -------------------------------------------------------------
-    // 클립보드 붙여넣기 & WLS 계산 엔진
+    // WLS 연산 & 화면 갱신
     // -------------------------------------------------------------
-    function handlePaste(text, startR, startC) {
-      const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
-      const rows = text.trim().split(/\r\n|\n|\r/);
-      rows.forEach((rText, i) => {
-        const trIdx = startR + i;
-        if (!gridData[trIdx]) gridData[trIdx] = Array(numCols).fill('');
-        const cols = rText.split('\t');
-        cols.forEach((cText, j) => {
-          const tcIdx = startC + j;
-          if (tcIdx < numCols) {
-            const v = cText.trim();
-            gridData[trIdx][tcIdx] = tcIdx === 0 ? v : (parseFloat(v) || v);
-          }
-        });
-      });
-      renderGrid();
-    }
-
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
       if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0 };
@@ -812,6 +895,8 @@
     }
 
     function runCalibration() {
+      closeEditingCell();
+
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
@@ -990,23 +1075,26 @@
     document.getElementById('btn-demo').addEventListener('click', () => {
       const p = PRESETS[currentMode];
       gridData = JSON.parse(JSON.stringify(p.demo));
-      selectedCellRange = null;
+      selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
       renderGrid();
       runCalibration();
+      syncPasteTarget();
     });
 
     document.getElementById('btn-clear').addEventListener('click', () => {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
-      selectedCellRange = null;
+      selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
       renderGrid();
       resetOutputs();
+      syncPasteTarget();
     });
 
     document.getElementById('btn-add-row').addEventListener('click', () => {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       for (let i = 0; i < 5; i++) gridData.push(Array(numCols).fill(''));
       renderGrid();
+      syncPasteTarget();
     });
 
     document.getElementById('btn-export').addEventListener('click', () => {
