@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <title>IsoCalib-Web: Stable Isotope Calibration Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Plotly 과학 차트 CDN -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   <style>
     .grid-cell { outline: none; user-select: text; }
     .grid-cell:focus { background-color: #f0fdf4; box-shadow: inset 0 0 0 2px #0284c7; }
+    .plot-container { position: relative; width: 100%; min-height: 260px; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
@@ -91,7 +90,7 @@
         </div>
         <p class="text-xs text-slate-500 mb-3">엑셀에서 [Sample ID, 측정 δ¹³C, 측정 δ¹⁸O] 열을 복사하여 셀에 붙여넣기(Ctrl+V)하세요.<br>Copy [Sample ID, Raw δ¹³C, Raw δ¹⁸O] columns from Excel and paste here.</p>
 
-        <div class="flex-grow overflow-auto border border-slate-200 rounded max-h-[500px]">
+        <div class="flex-grow overflow-auto border border-slate-200 rounded max-h-[560px]">
           <table class="w-full border-collapse text-left font-mono text-xs">
             <thead class="bg-slate-100 sticky top-0 border-b border-slate-200 font-sans text-slate-700 select-none">
               <tr>
@@ -129,8 +128,9 @@
 
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-4">
           <h3 class="text-sm font-bold text-slate-800">Calibration Curves (검량선 차트)</h3>
-          <div id="plot-c" class="w-full h-60 border border-slate-100 rounded flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
-          <div id="plot-o" class="w-full h-60 border border-slate-100 rounded flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
+          <!-- 차트 영역: 고정 높이 지정 및 relative 배치 -->
+          <div id="plot-c" class="plot-container border border-slate-100 rounded bg-slate-50/50 flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
+          <div id="plot-o" class="plot-container border border-slate-100 rounded bg-slate-50/50 flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
         </div>
       </section>
     </div>
@@ -244,7 +244,8 @@
       for (let i = 0; i < n; i++) {
         sX += xArr[i]; sY += yArr[i];
         sXY += xArr[i] * yArr[i];
-        sX2 += xArr[i] * xArr[i]; sY2 += yArr[i] * yArr[i];
+        sX2 += xArr[i] * xArr[i];
+        sY2 += yArr[i] * yArr[i];
       }
       const slope = (n * sXY - sX * sY) / (n * sX2 - sX * sX);
       const intercept = (sY - slope * sX) / n;
@@ -273,11 +274,13 @@
         const d18o = parseFloat(row[2]);
         if (!id) return;
 
-        const clean = id.toUpperCase().replace(/[-_ ]/g, '');
-        if (clean.startsWith('NBS18')) {
+        // 특수문자, 공백 모두 제거하고 대문자로 변환하여 매칭
+        const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        if (clean.includes('NBS18')) {
           if (!isNaN(d13c)) { ptsC.x.push(d13c); ptsC.y.push(refNBS.c); ptsC.names.push(id); }
           if (!isNaN(d18o)) { ptsO.x.push(d18o); ptsO.y.push(refNBS.o); ptsO.names.push(id); }
-        } else if (clean.startsWith('IAEA603')) {
+        } else if (clean.includes('IAEA603')) {
           if (!isNaN(d13c)) { ptsC.x.push(d13c); ptsC.y.push(refIAEA.c); ptsC.names.push(id); }
           if (!isNaN(d18o)) { ptsO.x.push(d18o); ptsO.y.push(refIAEA.o); ptsO.names.push(id); }
         }
@@ -299,6 +302,7 @@
       document.getElementById('o-intercept').innerText = regO.intercept.toFixed(6);
       document.getElementById('o-r2').innerText = regO.r2.toFixed(5);
 
+      // 플롯 컨테이너 내부 텍스트 비우기 후 플롯 렌더링
       drawPlot('plot-c', 'δ¹³C Calibration Curve', ptsC, regC, 'Raw δ¹³C (‰)', 'Actual δ¹³C (‰ VPDB)', '#0284c7');
       drawPlot('plot-o', 'δ¹⁸O Calibration Curve', ptsO, regO, 'Raw δ¹⁸O (‰)', 'Actual δ¹⁸O (‰ VPDB)', '#0d9488');
 
@@ -311,8 +315,8 @@
         const d13c = parseFloat(row[1]);
         const d18o = parseFloat(row[2]);
 
-        const clean = id.toUpperCase().replace(/[-_ ]/g, '');
-        const isStd = clean.startsWith('NBS18') || clean.startsWith('IAEA603');
+        const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const isStd = clean.includes('NBS18') || clean.includes('IAEA603');
 
         const calC = !isNaN(d13c) && regC.slope !== 0 ? (d13c * regC.slope + regC.intercept).toFixed(3) : '-';
         const calO = !isNaN(d18o) && regO.slope !== 0 ? (d18o * regO.slope + regO.intercept).toFixed(3) : '-';
@@ -332,6 +336,9 @@
     }
 
     function drawPlot(elemId, title, pts, reg, xTitle, yTitle, color) {
+      const container = document.getElementById(elemId);
+      container.innerHTML = ''; // 기존 안내 문구 완전 초기화
+
       if (pts.x.length === 0) return;
       const minX = Math.min(...pts.x), maxX = Math.max(...pts.x);
       const pad = (maxX - minX) * 0.1 || 1;
@@ -344,8 +351,8 @@
       ], {
         title: { text: title, font: { size: 12 } },
         margin: { l: 45, r: 15, t: 30, b: 35 },
-        xaxis: { title: { text: xTitle, font: { size: 10 } } },
-        yaxis: { title: { text: yTitle, font: { size: 10 } } },
+        xaxis: { title: { text: xTitle, font: { size: 10 } }, automargin: true },
+        yaxis: { title: { text: yTitle, font: { size: 10 } }, automargin: true },
         legend: { orientation: 'h', y: -0.3, font: { size: 9 } }
       }, { responsive: true, displayModeBar: false });
     }
@@ -383,7 +390,7 @@
       });
       const a = document.createElement('a');
       a.href = encodeURI(csv);
-      a.download = 'Calibrated_Isotope_Data.csv';
+      a.download = 'Calibrated_Data.csv';
       a.click();
     });
 
