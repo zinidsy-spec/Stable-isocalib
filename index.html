@@ -2,36 +2,36 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>IsoCalib-Web: Stable Isotope Calibration Tool</title>
+  <title>IsoCalib-Web: WLS Isotope Calibration Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   <style>
     .grid-cell { outline: none; user-select: text; }
     .grid-cell:focus { background-color: #f0fdf4; box-shadow: inset 0 0 0 2px #0284c7; }
-    .plot-container { position: relative; width: 100%; min-height: 260px; }
+    .plot-container { position: relative; width: 100%; min-height: 270px; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
 
-  <!-- 헤더 / Header -->
+  <!-- Header -->
   <header class="bg-slate-900 text-white px-6 py-4 shadow-md flex justify-between items-center">
     <div class="flex items-center space-x-3">
       <span class="text-2xl font-black tracking-tight text-cyan-400">IsoCalib<span class="text-white text-base font-medium ml-1">Web</span></span>
-      <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Online IsoplotR Edition</span>
+      <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">WLS Uncertainty Edition</span>
     </div>
     <div class="text-xs text-slate-400">
-      <span>회귀식 기준 / Regression Protocol: <strong class="text-emerald-400">X = Measured, Y = Actual (OLS)</strong></span>
+      <span>회귀 모형: <strong class="text-emerald-400">Weighted Least Squares (Weight = 1/SD²)</strong></span>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto p-6 space-y-6">
 
-    <!-- 1. 표준물질 참값 설정 / Reference Standards Setting -->
+    <!-- 1. Reference Standards Setting -->
     <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-bold text-slate-800">1. Reference Standards Setting (표준물질 참값 설정)</h3>
-        <span class="text-xs text-slate-500">참값 수정 시 실시간 검량선에 반영 / Edits apply to calibration directly</span>
+        <span class="text-xs text-slate-500">참값 수정 시 실시간 검량선에 반영 / Edits apply directly</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
         <div class="p-3 bg-slate-50 rounded border border-slate-200 flex items-center space-x-3">
@@ -60,14 +60,14 @@
       </div>
     </div>
 
-    <!-- 컨트롤 버튼 바 / Action Buttons -->
+    <!-- Actions -->
     <div class="flex justify-between items-center">
       <div class="flex space-x-2">
         <button id="btn-clear" class="px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded transition">
           전체 비우기 / Clear All
         </button>
         <button id="btn-demo" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded transition">
-          예제 불러오기 / Load Demo
+          예제 데이터 불러오기 / Load Demo
         </button>
         <button id="btn-add-row" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded transition">
           + 5행 추가 / Add 5 Rows
@@ -75,29 +75,31 @@
       </div>
 
       <button id="btn-calc" class="px-6 py-2 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg shadow transition">
-        검량선 계산 & 시료 보정 / Run Calibration
+        WLS 검량선 계산 & 오차 전파 보정 / Run WLS Calibration
       </button>
     </div>
 
-    <!-- 2. 스프레드시트 & 플롯 / Grid & Calibration Plots -->
+    <!-- 2. Grid & Plots -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- 좌측: 입력 그리드 / Left: Raw Data Grid -->
+      <!-- Left: 5-Column Grid -->
       <section class="lg:col-span-6 bg-white rounded-lg shadow-sm border border-slate-200 p-4 flex flex-col">
         <div class="flex justify-between items-center mb-1">
-          <h2 class="text-base font-bold text-slate-800">2. Raw Data Input (측정 데이터 입력)</h2>
+          <h2 class="text-base font-bold text-slate-800">2. Raw Data Input (5-Column Grid)</h2>
           <span id="row-count" class="text-xs font-medium text-slate-400">0 rows / 행</span>
         </div>
-        <p class="text-xs text-slate-500 mb-3">엑셀에서 [Sample ID, 측정 δ¹³C, 측정 δ¹⁸O] 열을 복사하여 셀에 붙여넣기(Ctrl+V)하세요.<br>Copy [Sample ID, Raw δ¹³C, Raw δ¹⁸O] columns from Excel and paste here.</p>
+        <p class="text-xs text-slate-500 mb-3">엑셀에서 [Sample ID, Raw δ¹³C, 1σ SD, Raw δ¹⁸O, 1σ SD] 5열을 복사해 셀에 붙여넣기(Ctrl+V)하세요.<br>Paste 5 columns including 1σ SD uncertainties from Excel.</p>
 
-        <div class="flex-grow overflow-auto border border-slate-200 rounded max-h-[560px]">
+        <div class="flex-grow overflow-auto border border-slate-200 rounded max-h-[580px]">
           <table class="w-full border-collapse text-left font-mono text-xs">
             <thead class="bg-slate-100 sticky top-0 border-b border-slate-200 font-sans text-slate-700 select-none">
               <tr>
-                <th class="w-10 px-2 py-2 text-center text-slate-400 border-r">#</th>
-                <th class="px-3 py-2 border-r">Sample ID (시료명)</th>
-                <th class="px-3 py-2 border-r">Raw δ¹³C (‰)</th>
-                <th class="px-3 py-2">Raw δ¹⁸O (‰)</th>
+                <th class="w-8 px-2 py-2 text-center text-slate-400 border-r">#</th>
+                <th class="px-2 py-2 border-r">Sample ID</th>
+                <th class="px-2 py-2 border-r">Raw δ¹³C</th>
+                <th class="px-2 py-2 border-r text-cyan-700">1σ SD (C)</th>
+                <th class="px-2 py-2 border-r">Raw δ¹⁸O</th>
+                <th class="px-2 py-2 text-cyan-700">1σ SD (O)</th>
               </tr>
             </thead>
             <tbody id="grid-body" class="divide-y divide-slate-100"></tbody>
@@ -105,42 +107,43 @@
         </div>
       </section>
 
-      <!-- 우측: 결과 파라미터 & 차트 / Right: Parameters & Plots -->
+      <!-- Right: WLS Parameters & Interactive Plots -->
       <section class="lg:col-span-6 space-y-6">
         <div class="grid grid-cols-2 gap-4">
           <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹³C Parameters (회귀 결과)</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹³C WLS Parameters</h3>
             <div class="space-y-1 text-xs font-mono">
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope (기울기):</span> <strong id="c-slope">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept (절편):</span> <strong id="c-intercept">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">R² (결정계수):</span> <strong id="c-r2" class="text-emerald-600">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope (a):</span> <strong id="c-slope">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept (b):</span> <strong id="c-intercept">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope SE (1σ):</span> <span id="c-slope-se" class="text-slate-600">-</span></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Weighted R²:</span> <strong id="c-r2" class="text-emerald-600">-</strong></div>
             </div>
           </div>
           <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹⁸O Parameters (회귀 결과)</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹⁸O WLS Parameters</h3>
             <div class="space-y-1 text-xs font-mono">
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope (기울기):</span> <strong id="o-slope">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept (절편):</span> <strong id="o-intercept">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">R² (결정계수):</span> <strong id="o-r2" class="text-emerald-600">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope (a):</span> <strong id="o-slope">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept (b):</span> <strong id="o-intercept">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope SE (1σ):</span> <span id="o-slope-se" class="text-slate-600">-</span></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Weighted R²:</span> <strong id="o-r2" class="text-emerald-600">-</strong></div>
             </div>
           </div>
         </div>
 
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-4">
-          <h3 class="text-sm font-bold text-slate-800">Calibration Curves (검량선 차트)</h3>
-          <!-- 차트 영역: 고정 높이 지정 및 relative 배치 -->
+          <h3 class="text-sm font-bold text-slate-800">Calibration Curves with 1σ Error Bars</h3>
           <div id="plot-c" class="plot-container border border-slate-100 rounded bg-slate-50/50 flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
           <div id="plot-o" class="plot-container border border-slate-100 rounded bg-slate-50/50 flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
         </div>
       </section>
     </div>
 
-    <!-- 3. 최종 결과 테이블 / Calibrated Results Table -->
+    <!-- 3. Calibrated Results with Propagated Uncertainties -->
     <section class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
       <div class="flex justify-between items-center mb-2">
         <div>
-          <h2 class="text-base font-bold text-slate-800">3. Calibrated Results (최종 보정 결과)</h2>
-          <p class="text-xs text-slate-500">계산식 / Formula: Calibrated = (Raw × Slope) + Intercept</p>
+          <h2 class="text-base font-bold text-slate-800">3. Calibrated Results & Propagated Uncertainty (최종 보정값 및 불확도)</h2>
+          <p class="text-xs text-slate-500">불확도 전파 공식 / Uncertainty formula: σ_cal = √[(Slope × σ_raw)² + (Raw × σ_slope)² + σ_intercept²]</p>
         </div>
         <button id="btn-export" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded transition">
           CSV 파일 다운로드 / Export CSV
@@ -151,17 +154,19 @@
         <table class="w-full text-left text-xs font-mono text-slate-600">
           <thead class="bg-slate-100 text-slate-700 uppercase font-sans border-b border-slate-200">
             <tr>
-              <th class="px-4 py-2 border-r">Sample ID (시료명)</th>
-              <th class="px-4 py-2 border-r">Raw δ¹³C</th>
-              <th class="px-4 py-2 border-r">Raw δ¹⁸O</th>
-              <th class="px-4 py-2 border-r text-cyan-800 font-bold">Calibrated δ¹³C (‰ VPDB)</th>
-              <th class="px-4 py-2 text-cyan-800 font-bold">Calibrated δ¹⁸O (‰ VPDB)</th>
+              <th class="px-3 py-2 border-r">Sample ID</th>
+              <th class="px-3 py-2 border-r">Raw δ¹³C</th>
+              <th class="px-3 py-2 border-r">Raw δ¹⁸O</th>
+              <th class="px-3 py-2 border-r text-cyan-800 font-bold">Calibrated δ¹³C (‰ VPDB)</th>
+              <th class="px-3 py-2 border-r text-cyan-800 font-bold">± 1σ SD (C)</th>
+              <th class="px-3 py-2 border-r text-cyan-800 font-bold">Calibrated δ¹⁸O (‰ VPDB)</th>
+              <th class="px-3 py-2 text-cyan-800 font-bold">± 1σ SD (O)</th>
             </tr>
           </thead>
           <tbody id="result-body" class="divide-y divide-slate-100">
             <tr>
-              <td colspan="5" class="px-4 py-6 text-center text-xs font-sans text-slate-400">
-                상단 표에 데이터를 입력한 뒤 [검량선 계산 & 시료 보정 실행] 버튼을 눌러주세요.<br>Enter or paste data above and click [Run Calibration].
+              <td colspan="7" class="px-4 py-6 text-center text-xs font-sans text-slate-400">
+                상단 표에 데이터를 입력한 뒤 [WLS 검량선 계산 & 오차 전파 보정] 버튼을 눌러주세요.
               </td>
             </tr>
           </tbody>
@@ -172,17 +177,26 @@
   </main>
 
   <script>
+    // 예제 데이터: [Sample ID, Raw d13C, SD C, Raw d18O, SD O]
     const SAMPLE_DEMO = [
-      ["NBS-18_1", 21.744, -0.801], ["IAEA-603_1", 29.326, 20.043],
-      ["NBS-18_2", 21.703, -0.774], ["IAEA-603_2", 29.270, 19.974],
-      ["NBS-18_3", 21.663, -0.697], ["IAEA-603_3", 29.266, 19.894],
-      ["NBS-18_4", 21.708, -0.515], ["IAEA-603_4", 29.220, 19.819],
-      ["NBS-18_5", 21.673, -0.460], ["IAEA-603_5", 29.251, 19.211],
-      ["KDO-1", 26.815, 11.799], ["KDO-2", 26.413, 11.031],
-      ["KDO-3", 27.211, 13.268], ["KDO-4", 26.762, 11.447], ["JMC90", 1.655, 4.632]
+      ["NBS-18_1", 21.744, 0.035, -0.801, 0.062],
+      ["IAEA-603_1", 29.326, 0.028, 20.043, 0.055],
+      ["NBS-18_2", 21.703, 0.031, -0.774, 0.059],
+      ["IAEA-603_2", 29.270, 0.025, 19.974, 0.048],
+      ["NBS-18_3", 21.663, 0.040, -0.697, 0.071],
+      ["IAEA-603_3", 29.266, 0.029, 19.894, 0.053],
+      ["NBS-18_4", 21.708, 0.033, -0.515, 0.064],
+      ["IAEA-603_4", 29.220, 0.026, 19.819, 0.051],
+      ["NBS-18_5", 21.673, 0.038, -0.460, 0.068],
+      ["IAEA-603_5", 29.251, 0.030, 19.211, 0.057],
+      ["KDO-1", 26.815, 0.032, 11.799, 0.060],
+      ["KDO-2", 26.413, 0.029, 11.031, 0.054],
+      ["KDO-3", 27.211, 0.034, 13.268, 0.065],
+      ["KDO-4", 26.762, 0.030, 11.447, 0.058],
+      ["JMC90", 1.655, 0.045, 4.632, 0.075]
     ];
 
-    let gridData = Array.from({ length: 10 }, () => ['', '', '']);
+    let gridData = Array.from({ length: 10 }, () => ['', '', '', '', '']);
     const gridBody = document.getElementById('grid-body');
 
     function renderGrid() {
@@ -198,7 +212,7 @@
 
         row.forEach((val, cIdx) => {
           const td = document.createElement('td');
-          td.className = 'px-3 py-1 border-r grid-cell';
+          td.className = 'px-2 py-1 border-r grid-cell';
           td.contentEditable = 'true';
           td.innerText = val !== null && val !== undefined ? val : '';
           
@@ -224,11 +238,11 @@
       const rows = text.trim().split(/\r\n|\n|\r/);
       rows.forEach((rText, i) => {
         const trIdx = startR + i;
-        if (!gridData[trIdx]) gridData[trIdx] = ['', '', ''];
+        if (!gridData[trIdx]) gridData[trIdx] = ['', '', '', '', ''];
         const cols = rText.split('\t');
         cols.forEach((cText, j) => {
           const tcIdx = startC + j;
-          if (tcIdx < 3) {
+          if (tcIdx < 5) {
             const v = cText.trim();
             gridData[trIdx][tcIdx] = tcIdx === 0 ? v : (parseFloat(v) || v);
           }
@@ -237,22 +251,50 @@
       renderGrid();
     }
 
-    function linreg(xArr, yArr) {
+    // 가중 최소제곱법 (WLS) 계산 엔진
+    function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
-      if (n < 2) return { slope: 0, intercept: 0, r2: 0 };
-      let sX = 0, sY = 0, sXY = 0, sX2 = 0, sY2 = 0;
+      if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0 };
+
+      let sumW = 0, sumWX = 0, sumWY = 0, sumWXY = 0, sumWX2 = 0;
       for (let i = 0; i < n; i++) {
-        sX += xArr[i]; sY += yArr[i];
-        sXY += xArr[i] * yArr[i];
-        sX2 += xArr[i] * xArr[i];
-        sY2 += yArr[i] * yArr[i];
+        const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03; // SD 누락 시 기본값 0.03
+        const w = 1 / (sd * sd);
+        sumW += w;
+        sumWX += w * xArr[i];
+        sumWY += w * yArr[i];
+        sumWXY += w * xArr[i] * yArr[i];
+        sumWX2 += w * xArr[i] * xArr[i];
       }
-      const slope = (n * sXY - sX * sY) / (n * sX2 - sX * sX);
-      const intercept = (sY - slope * sX) / n;
-      const num = Math.pow(n * sXY - sX * sY, 2);
-      const den = (n * sX2 - sX * sX) * (n * sY2 - sY * sY);
-      const r2 = den !== 0 ? (num / den) : 0;
-      return { slope, intercept, r2 };
+
+      const delta = sumW * sumWX2 - sumWX * sumWX;
+      const slope = (sumW * sumWXY - sumWX * sumWY) / delta;
+      const intercept = (sumWX2 * sumWY - sumWX * sumWXY) / delta;
+
+      // 표준 오차 (SE)
+      let chi2 = 0;
+      for (let i = 0; i < n; i++) {
+        const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03;
+        const w = 1 / (sd * sd);
+        const diff = yArr[i] - (slope * xArr[i] + intercept);
+        chi2 += w * diff * diff;
+      }
+      const s2 = (n > 2) ? chi2 / (n - 2) : 1;
+      const seSlope = Math.sqrt(s2 * (sumW / delta));
+      const seIntercept = Math.sqrt(s2 * (sumWX2 / delta));
+
+      // 가중 R² (Weighted Pearson r²)
+      const meanY = sumWY / sumW;
+      let ssTot = 0, ssRes = 0;
+      for (let i = 0; i < n; i++) {
+        const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03;
+        const w = 1 / (sd * sd);
+        ssTot += w * Math.pow(yArr[i] - meanY, 2);
+        ssRes += w * Math.pow(yArr[i] - (slope * xArr[i] + intercept), 2);
+      }
+      const r2 = ssTot !== 0 ? Math.max(0, 1 - (ssRes / ssTot)) : 0;
+
+      return { slope, intercept, r2, seSlope, seIntercept };
     }
 
     function runCalibration() {
@@ -265,24 +307,25 @@
         o: parseFloat(document.getElementById('ref-iaea-o').value)
       };
 
-      const ptsC = { x: [], y: [], names: [] };
-      const ptsO = { x: [], y: [], names: [] };
+      const ptsC = { x: [], y: [], sd: [], names: [] };
+      const ptsO = { x: [], y: [], sd: [], names: [] };
 
       gridData.forEach(row => {
         const id = (row[0] || '').toString().trim();
         const d13c = parseFloat(row[1]);
-        const d18o = parseFloat(row[2]);
-        if (!id) return;
+        const sdC = parseFloat(row[2]) || 0.03;
+        const d18o = parseFloat(row[3]);
+        const sdO = parseFloat(row[4]) || 0.05;
 
-        // 특수문자, 공백 모두 제거하고 대문자로 변환하여 매칭
+        if (!id) return;
         const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
         if (clean.includes('NBS18')) {
-          if (!isNaN(d13c)) { ptsC.x.push(d13c); ptsC.y.push(refNBS.c); ptsC.names.push(id); }
-          if (!isNaN(d18o)) { ptsO.x.push(d18o); ptsO.y.push(refNBS.o); ptsO.names.push(id); }
+          if (!isNaN(d13c)) { ptsC.x.push(d13c); ptsC.y.push(refNBS.c); ptsC.sd.push(sdC); ptsC.names.push(id); }
+          if (!isNaN(d18o)) { ptsO.x.push(d18o); ptsO.y.push(refNBS.o); ptsO.sd.push(sdO); ptsO.names.push(id); }
         } else if (clean.includes('IAEA603')) {
-          if (!isNaN(d13c)) { ptsC.x.push(d13c); ptsC.y.push(refIAEA.c); ptsC.names.push(id); }
-          if (!isNaN(d18o)) { ptsO.x.push(d18o); ptsO.y.push(refIAEA.o); ptsO.names.push(id); }
+          if (!isNaN(d13c)) { ptsC.x.push(d13c); ptsC.y.push(refIAEA.c); ptsC.sd.push(sdC); ptsC.names.push(id); }
+          if (!isNaN(d18o)) { ptsO.x.push(d18o); ptsO.y.push(refIAEA.o); ptsO.sd.push(sdO); ptsO.names.push(id); }
         }
       });
 
@@ -291,53 +334,77 @@
         return;
       }
 
-      const regC = linreg(ptsC.x, ptsC.y);
-      const regO = linreg(ptsO.x, ptsO.y);
+      // WLS 회귀 연산
+      const regC = calcWLS(ptsC.x, ptsC.y, ptsC.sd);
+      const regO = calcWLS(ptsO.x, ptsO.y, ptsO.sd);
 
       document.getElementById('c-slope').innerText = regC.slope.toFixed(6);
       document.getElementById('c-intercept').innerText = regC.intercept.toFixed(6);
+      document.getElementById('c-slope-se').innerText = `± ${regC.seSlope.toFixed(6)}`;
       document.getElementById('c-r2').innerText = regC.r2.toFixed(5);
 
       document.getElementById('o-slope').innerText = regO.slope.toFixed(6);
       document.getElementById('o-intercept').innerText = regO.intercept.toFixed(6);
+      document.getElementById('o-slope-se').innerText = `± ${regO.seSlope.toFixed(6)}`;
       document.getElementById('o-r2').innerText = regO.r2.toFixed(5);
 
-      // 플롯 컨테이너 내부 텍스트 비우기 후 플롯 렌더링
-      drawPlot('plot-c', 'δ¹³C Calibration Curve', ptsC, regC, 'Raw δ¹³C (‰)', 'Actual δ¹³C (‰ VPDB)', '#0284c7');
-      drawPlot('plot-o', 'δ¹⁸O Calibration Curve', ptsO, regO, 'Raw δ¹⁸O (‰)', 'Actual δ¹⁸O (‰ VPDB)', '#0d9488');
+      // 플롯 렌더링 (Error Bar 포함)
+      drawPlot('plot-c', 'δ¹³C WLS Calibration Curve', ptsC, regC, 'Raw δ¹³C (‰)', 'Actual δ¹³C (‰ VPDB)', '#0284c7');
+      drawPlot('plot-o', 'δ¹⁸O WLS Calibration Curve', ptsO, regO, 'Raw δ¹⁸O (‰)', 'Actual δ¹⁸O (‰ VPDB)', '#0d9488');
 
+      // 보정 결과 테이블 생성 (오차 전파 적용)
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
 
       gridData.forEach(row => {
         const id = (row[0] || '').toString().trim();
         if (!id) return;
+
         const d13c = parseFloat(row[1]);
-        const d18o = parseFloat(row[2]);
+        const sdC = parseFloat(row[2]) || 0;
+        const d18o = parseFloat(row[3]);
+        const sdO = parseFloat(row[4]) || 0;
 
         const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
         const isStd = clean.includes('NBS18') || clean.includes('IAEA603');
 
+        // Calibrated Value
         const calC = !isNaN(d13c) && regC.slope !== 0 ? (d13c * regC.slope + regC.intercept).toFixed(3) : '-';
         const calO = !isNaN(d18o) && regO.slope !== 0 ? (d18o * regO.slope + regO.intercept).toFixed(3) : '-';
+
+        // 1-sigma Error Propagation: σ_cal = sqrt((a*σ_x)^2 + (x*σ_a)^2 + σ_b^2)
+        let propSdC = '-';
+        if (!isNaN(d13c) && regC.slope !== 0) {
+          const varC = Math.pow(regC.slope * sdC, 2) + Math.pow(d13c * regC.seSlope, 2) + Math.pow(regC.seIntercept, 2);
+          propSdC = Math.sqrt(varC).toFixed(3);
+        }
+
+        let propSdO = '-';
+        if (!isNaN(d18o) && regO.slope !== 0) {
+          const varO = Math.pow(regO.slope * sdO, 2) + Math.pow(d18o * regO.seSlope, 2) + Math.pow(regO.seIntercept, 2);
+          propSdO = Math.sqrt(varO).toFixed(3);
+        }
 
         const tr = document.createElement('tr');
         if (isStd) tr.className = 'bg-slate-50 text-slate-400';
 
         tr.innerHTML = `
-          <td class="px-4 py-2 border-r font-semibold ${isStd ? 'text-slate-500' : 'text-slate-900'}">${id}</td>
-          <td class="px-4 py-2 border-r">${!isNaN(d13c) ? d13c.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 border-r">${!isNaN(d18o) ? d18o.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 border-r font-bold text-cyan-700">${calC}</td>
-          <td class="px-4 py-2 font-bold text-cyan-700">${calO}</td>
+          <td class="px-3 py-2 border-r font-semibold ${isStd ? 'text-slate-500' : 'text-slate-900'}">${id}</td>
+          <td class="px-3 py-2 border-r">${!isNaN(d13c) ? d13c.toFixed(3) : '-'}</td>
+          <td class="px-3 py-2 border-r">${!isNaN(d18o) ? d18o.toFixed(3) : '-'}</td>
+          <td class="px-3 py-2 border-r font-bold text-cyan-700">${calC}</td>
+          <td class="px-3 py-2 border-r text-slate-500 font-semibold">± ${propSdC}</td>
+          <td class="px-3 py-2 border-r font-bold text-cyan-700">${calO}</td>
+          <td class="px-3 py-2 text-slate-500 font-semibold">± ${propSdO}</td>
         `;
         resBody.appendChild(tr);
       });
     }
 
+    // Plotly Error Bar 렌더러
     function drawPlot(elemId, title, pts, reg, xTitle, yTitle, color) {
       const container = document.getElementById(elemId);
-      container.innerHTML = ''; // 기존 안내 문구 완전 초기화
+      container.innerHTML = '';
 
       if (pts.x.length === 0) return;
       const minX = Math.min(...pts.x), maxX = Math.max(...pts.x);
@@ -345,10 +412,35 @@
       const lx = [minX - pad, maxX + pad];
       const ly = [lx[0] * reg.slope + reg.intercept, lx[1] * reg.slope + reg.intercept];
 
-      Plotly.newPlot(elemId, [
-        { x: pts.x, y: pts.y, text: pts.names, mode: 'markers', type: 'scatter', name: 'Standards / 표준물질', marker: { size: 7, color: color } },
-        { x: lx, y: ly, mode: 'lines', type: 'scatter', name: `Fit: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`, line: { dash: 'dash', width: 1.5, color: '#475569' } }
-      ], {
+      // 측정 포인트 + X축 1σ 오차 막대
+      const scatterTrace = {
+        x: pts.x,
+        y: pts.y,
+        text: pts.names,
+        mode: 'markers',
+        type: 'scatter',
+        name: 'Standards / 표준물질',
+        marker: { size: 7, color: color },
+        error_x: {
+          type: 'data',
+          array: pts.sd,
+          visible: true,
+          color: color,
+          thickness: 1.2,
+          width: 3
+        }
+      };
+
+      const lineTrace = {
+        x: lx,
+        y: ly,
+        mode: 'lines',
+        type: 'scatter',
+        name: `WLS Fit: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`,
+        line: { dash: 'dash', width: 1.5, color: '#475569' }
+      };
+
+      Plotly.newPlot(elemId, [scatterTrace, lineTrace], {
         title: { text: title, font: { size: 12 } },
         margin: { l: 45, r: 15, t: 30, b: 35 },
         xaxis: { title: { text: xTitle, font: { size: 10 } }, automargin: true },
@@ -365,32 +457,34 @@
       runCalibration();
     });
     document.getElementById('btn-clear').addEventListener('click', () => {
-      gridData = Array.from({ length: 10 }, () => ['', '', '']);
+      gridData = Array.from({ length: 10 }, () => ['', '', '', '', '']);
       renderGrid();
       document.getElementById('c-slope').innerText = '-';
       document.getElementById('c-intercept').innerText = '-';
+      document.getElementById('c-slope-se').innerText = '-';
       document.getElementById('c-r2').innerText = '-';
       document.getElementById('o-slope').innerText = '-';
       document.getElementById('o-intercept').innerText = '-';
+      document.getElementById('o-slope-se').innerText = '-';
       document.getElementById('o-r2').innerText = '-';
       document.getElementById('plot-c').innerHTML = '<div class="h-full flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>';
       document.getElementById('plot-o').innerHTML = '<div class="h-full flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>';
-      document.getElementById('result-body').innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-xs font-sans text-slate-400">상단 표에 데이터를 입력한 뒤 [검량선 계산 & 시료 보정 실행] 버튼을 눌러주세요.<br>Enter or paste data above and click [Run Calibration].</td></tr>';
+      document.getElementById('result-body').innerHTML = '<tr><td colspan="7" class="px-4 py-6 text-center text-xs font-sans text-slate-400">상단 표에 데이터를 입력한 뒤 [WLS 검량선 계산 & 오차 전파 보정] 버튼을 눌러주세요.</td></tr>';
     });
     document.getElementById('btn-add-row').addEventListener('click', () => {
-      for (let i = 0; i < 5; i++) gridData.push(['', '', '']);
+      for (let i = 0; i < 5; i++) gridData.push(['', '', '', '', '']);
       renderGrid();
     });
     document.getElementById('btn-export').addEventListener('click', () => {
       const rows = document.querySelectorAll('#result-body tr');
-      let csv = 'data:text/csv;charset=utf-8,SampleID,Raw_d13C,Raw_d18O,Calibrated_d13C,Calibrated_d18O\n';
+      let csv = 'data:text/csv;charset=utf-8,SampleID,Raw_d13C,Raw_d18O,Calibrated_d13C,Propagated_SD_C,Calibrated_d18O,Propagated_SD_O\n';
       rows.forEach(tr => {
-        const cols = Array.from(tr.querySelectorAll('td')).map(td => td.innerText);
-        if (cols.length === 5) csv += cols.join(',') + '\n';
+        const cols = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.replace('± ', ''));
+        if (cols.length === 7) csv += cols.join(',') + '\n';
       });
       const a = document.createElement('a');
       a.href = encodeURI(csv);
-      a.download = 'Calibrated_Data.csv';
+      a.download = 'Calibrated_WLS_Isotope_Data.csv';
       a.click();
     });
 
