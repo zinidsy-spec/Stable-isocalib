@@ -27,7 +27,7 @@
 
   <main class="max-w-7xl mx-auto p-6 space-y-6">
 
-    <!-- 1. Isotope Mode Selection & Reference Standards -->
+    <!-- 1. Isotope Mode Selection & Custom Reference Standards -->
     <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div class="flex items-center space-x-3">
@@ -39,10 +39,10 @@
             <option value="S">4. 황 동위원소 (Sulfur : δ³⁴S)</option>
           </select>
         </div>
-        <span class="text-xs text-slate-500">모드 변경 시 표준물질 및 테이블 헤더가 자동 갱신됩니다.</span>
+        <span class="text-xs text-slate-500">표준물질 이름 및 참값을 직접 입력할 수 있습니다. (시료명에 해당 이름이 포함되면 자동 매칭)</span>
       </div>
 
-      <!-- 동적 표준물질 입력 폼 -->
+      <!-- 표준물질 이름 및 참값 직접 입력 컨테이너 -->
       <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
         <!-- JS로 동적 렌더링 -->
       </div>
@@ -80,9 +80,7 @@
 
         <div class="flex-grow overflow-auto border border-slate-200 rounded max-h-[580px]">
           <table class="w-full border-collapse text-left font-mono text-xs">
-            <thead id="grid-head" class="bg-slate-100 sticky top-0 border-b border-slate-200 font-sans text-slate-700 select-none">
-              <!-- JS 동적 생성 -->
-            </thead>
+            <thead id="grid-head" class="bg-slate-100 sticky top-0 border-b border-slate-200 font-sans text-slate-700 select-none"></thead>
             <tbody id="grid-body" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
@@ -90,9 +88,7 @@
 
       <!-- Right: WLS Parameters & Plots -->
       <section class="lg:col-span-6 space-y-6">
-        <div id="param-cards-container" class="grid grid-cols-2 gap-4">
-          <!-- JS 동적 생성 -->
-        </div>
+        <div id="param-cards-container" class="grid grid-cols-2 gap-4"></div>
 
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-4">
           <h3 class="text-sm font-bold text-slate-800">Calibration Curves (WLS with 1σ Error Bars)</h3>
@@ -116,9 +112,7 @@
 
       <div class="overflow-x-auto border border-slate-200 rounded">
         <table class="w-full text-left text-xs font-mono text-slate-600">
-          <thead id="result-head" class="bg-slate-100 text-slate-700 uppercase font-sans border-b border-slate-200">
-            <!-- JS 동적 생성 -->
-          </thead>
+          <thead id="result-head" class="bg-slate-100 text-slate-700 uppercase font-sans border-b border-slate-200"></thead>
           <tbody id="result-body" class="divide-y divide-slate-100">
             <tr>
               <td colspan="7" class="px-4 py-6 text-center text-xs font-sans text-slate-400">
@@ -133,9 +127,6 @@
   </main>
 
   <script>
-    // -------------------------------------------------------------
-    // 1. 분석 모드별 프리셋 데이터 정의 (표준물질, 라벨, 단위)
-    // -------------------------------------------------------------
     const PRESETS = {
       CO: {
         name: "탄소 & 산소 (C-O)",
@@ -144,8 +135,8 @@
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VPDB" }
         ],
         stds: [
-          { id: "NBS-18", keyMatch: "NBS18", v1: -5.012, v2: -23.200 },
-          { id: "IAEA-603", keyMatch: "IAEA603", v1: 2.460, v2: -2.370 }
+          { name: "NBS-18", v1: -5.012, v2: -23.200 },
+          { name: "IAEA-603", v1: 2.460, v2: -2.370 }
         ],
         demo: [
           ["NBS-18_1", 21.744, 0.035, -0.801, 0.062],
@@ -165,8 +156,8 @@
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
         ],
         stds: [
-          { id: "IAEA-NO-3", keyMatch: "NO3", v1: 4.700, v2: 25.600 },
-          { id: "USGS34", keyMatch: "USGS34", v1: -1.800, v2: -27.900 }
+          { name: "IAEA-NO-3", v1: 4.700, v2: 25.600 },
+          { name: "USGS34", v1: -1.800, v2: -27.900 }
         ],
         demo: [
           ["IAEA-NO-3_1", 5.120, 0.08, 26.110, 0.15],
@@ -183,8 +174,8 @@
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
         ],
         stds: [
-          { id: "VSMOW2", keyMatch: "VSMOW2", v1: 0.000, v2: 0.000 },
-          { id: "SLAP2", keyMatch: "SLAP2", v1: -427.500, v2: -55.500 }
+          { name: "VSMOW2", v1: 0.000, v2: 0.000 },
+          { name: "SLAP2", v1: -427.500, v2: -55.500 }
         ],
         demo: [
           ["VSMOW2_1", 1.200, 0.50, 0.120, 0.05],
@@ -200,8 +191,8 @@
           { key: "iso1", label: "δ³⁴S", unit: "‰ VCDT" }
         ],
         stds: [
-          { id: "IAEA-S-1", keyMatch: "S1", v1: -0.300 },
-          { id: "IAEA-S-2", keyMatch: "S2", v1: 22.700 }
+          { name: "IAEA-S-1", v1: -0.300 },
+          { name: "IAEA-S-2", v1: 22.700 }
         ],
         demo: [
           ["IAEA-S-1_1", -0.150, 0.12],
@@ -216,30 +207,31 @@
     let currentMode = "CO";
     let gridData = [];
 
-    // -------------------------------------------------------------
-    // 2. UI 레이아웃 갱신 함수 (모드 전환 시 동적 반영)
-    // -------------------------------------------------------------
+    // 모드 전환 및 표준물질 입력 폼 갱신 (표준물질 이름 직접 입력 지원)
     function updateLayoutForMode() {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
-      // 1) 상단 표준물질 참값 입력창 동적 생성
+      // 1) 표준물질 이름과 참값 입력창 렌더링
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
       p.stds.forEach((std, idx) => {
         const div = document.createElement('div');
         div.className = 'p-3 bg-slate-50 rounded border border-slate-200 flex flex-wrap items-center gap-3';
         div.innerHTML = `
-          <span class="font-bold text-slate-700 font-sans w-24">${std.id}</span>
+          <div class="flex items-center space-x-1">
+            <span class="text-slate-500 font-sans font-semibold">표준물질명 ${idx + 1}:</span>
+            <input type="text" id="ref-std${idx}-name" value="${std.name}" placeholder="예: NBS-18" class="w-28 px-2 py-1 border rounded bg-white font-bold text-cyan-800 text-xs">
+          </div>
           <div class="flex items-center space-x-1">
             <span class="text-slate-500 font-sans">${p.elements[0].label}:</span>
-            <input type="number" step="0.001" id="ref-std${idx}-v1" value="${std.v1}" class="w-24 px-2 py-1 border rounded bg-white font-bold text-slate-700">
+            <input type="number" step="0.001" id="ref-std${idx}-v1" value="${std.v1}" class="w-20 px-2 py-1 border rounded bg-white font-bold text-slate-700">
             <span class="text-slate-400 font-sans text-[11px]">${p.elements[0].unit}</span>
           </div>
           ${isDual ? `
           <div class="flex items-center space-x-1">
             <span class="text-slate-500 font-sans">${p.elements[1].label}:</span>
-            <input type="number" step="0.001" id="ref-std${idx}-v2" value="${std.v2}" class="w-24 px-2 py-1 border rounded bg-white font-bold text-slate-700">
+            <input type="number" step="0.001" id="ref-std${idx}-v2" value="${std.v2}" class="w-20 px-2 py-1 border rounded bg-white font-bold text-slate-700">
             <span class="text-slate-400 font-sans text-[11px]">${p.elements[1].unit}</span>
           </div>
           ` : ''}
@@ -247,7 +239,7 @@
         stdContainer.appendChild(div);
       });
 
-      // 2) 그리드 테이블 헤더 생성
+      // 2) 그리드 테이블 헤더
       const gHead = document.getElementById('grid-head');
       if (isDual) {
         gHead.innerHTML = `
@@ -271,7 +263,7 @@
         `;
       }
 
-      // 3) 파라미터 요약 카드 생성
+      // 3) 파라미터 요약 카드
       const pContainer = document.getElementById('param-cards-container');
       if (isDual) {
         pContainer.className = "grid grid-cols-2 gap-4";
@@ -309,10 +301,10 @@
             </div>
           </div>
         `;
-        document.getElementById('plot-2').style.display = 'none'; // 황 단일 모드일 땐 두번째 플롯 숨김
+        document.getElementById('plot-2').style.display = 'none';
       }
 
-      // 4) 결과 테이블 헤더 생성
+      // 4) 결과 테이블 헤더
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -337,7 +329,6 @@
         `;
       }
 
-      // 빈 그리드 초기화
       const numCols = isDual ? 5 : 3;
       gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
       renderGrid();
@@ -350,9 +341,6 @@
       document.getElementById('result-body').innerHTML = '<tr><td colspan="7" class="px-4 py-6 text-center text-xs font-sans text-slate-400">상단 표에 데이터를 입력한 뒤 [WLS 검량선 계산 & 시료 보정] 버튼을 눌러주세요.</td></tr>';
     }
 
-    // -------------------------------------------------------------
-    // 3. 스프레드시트 렌더링 & 클립보드 붙여넣기
-    // -------------------------------------------------------------
     function renderGrid() {
       const gridBody = document.getElementById('grid-body');
       gridBody.innerHTML = '';
@@ -410,9 +398,6 @@
       renderGrid();
     }
 
-    // -------------------------------------------------------------
-    // 4. 가중 최소제곱법 (WLS) 알고리즘
-    // -------------------------------------------------------------
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
       if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0 };
@@ -456,19 +441,21 @@
       return { slope, intercept, r2, seSlope, seIntercept };
     }
 
-    // -------------------------------------------------------------
-    // 5. 검량선 계산 & 화면 갱신 실행부
-    // -------------------------------------------------------------
     function runCalibration() {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
-      // 표준물질 설정값 읽기
-      const refStds = p.stds.map((s, idx) => ({
-        keyMatch: s.keyMatch,
-        v1: parseFloat(document.getElementById(`ref-std${idx}-v1`).value),
-        v2: isDual ? parseFloat(document.getElementById(`ref-std${idx}-v2`).value) : null
-      }));
+      // 사용자가 직접 입력한 표준물질 이름 및 참값 로드
+      const refStds = p.stds.map((s, idx) => {
+        const nameInput = document.getElementById(`ref-std${idx}-name`).value.trim();
+        const cleanKey = nameInput.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        return {
+          name: nameInput,
+          keyMatch: cleanKey,
+          v1: parseFloat(document.getElementById(`ref-std${idx}-v1`).value),
+          v2: isDual ? parseFloat(document.getElementById(`ref-std${idx}-v2`).value) : null
+        };
+      });
 
       const pts1 = { x: [], y: [], sd: [], names: [] };
       const pts2 = { x: [], y: [], sd: [], names: [] };
@@ -479,7 +466,7 @@
         const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
         refStds.forEach(std => {
-          if (clean.includes(std.keyMatch)) {
+          if (std.keyMatch && clean.includes(std.keyMatch)) {
             const raw1 = parseFloat(row[1]);
             const sd1 = parseFloat(row[2]) || 0.03;
             if (!isNaN(raw1)) {
@@ -498,11 +485,11 @@
       });
 
       if (pts1.x.length < 2) {
-        alert("최소 2개 이상의 표준물질 포인트가 필요합니다.\nPlease provide at least 2 reference standard points.");
+        alert("최소 2개 이상의 표준물질 포인트가 필요합니다.\n입력하신 표준물질 이름과 시료명의 표기가 일치하는지 확인해 주세요.");
         return;
       }
 
-      // 회귀 실행
+      // 회귀 계산
       const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
       document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
       document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
@@ -530,7 +517,7 @@
         const id = (row[0] || '').toString().trim();
         if (!id) return;
         const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        const isStd = refStds.some(s => clean.includes(s.keyMatch));
+        const isStd = refStds.some(s => s.keyMatch && clean.includes(s.keyMatch));
 
         const raw1 = parseFloat(row[1]);
         const sd1 = parseFloat(row[2]) || 0;
@@ -602,9 +589,7 @@
       }, { responsive: true, displayModeBar: false });
     }
 
-    // -------------------------------------------------------------
-    // 6. 이벤트 바인딩
-    // -------------------------------------------------------------
+    // Event Listeners
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       currentMode = e.target.value;
       updateLayoutForMode();
@@ -649,7 +634,6 @@
       a.click();
     });
 
-    // 최초 실행
     window.addEventListener('DOMContentLoaded', () => {
       updateLayoutForMode();
     });
