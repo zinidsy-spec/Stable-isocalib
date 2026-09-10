@@ -13,6 +13,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
+  <!-- MathJax for Scientific Formula Rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   <style>
     :root {
       --bg-warm: #fbfaf8;
@@ -35,7 +47,7 @@
     .font-brand { font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
     .font-data { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
 
-    /* Excel-style Selection & Editing Mechanics */
+    /* Excel-style Selection & Editing */
     .grid-cell {
       outline: none;
       user-select: none;
@@ -85,7 +97,6 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
-  <!-- Clipboard Target -->
   <textarea id="paste-target" tabindex="-1"></textarea>
 
   <!-- Editorial Top Navigation -->
@@ -96,9 +107,9 @@
         <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono">/ Open Geochemistry Tool</span>
       </div>
       <div class="hidden sm:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
-        <a href="#methodology" class="hover:text-stone-900 transition">Methodology & Formulas</a>
+        <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4">Methodology & Formulas</a>
         <span>·</span>
-        <a href="#citation" class="hover:text-stone-900 transition">How to Cite</a>
+        <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4">How to Cite</a>
       </div>
     </div>
   </header>
@@ -243,7 +254,7 @@
       </div>
     </section>
 
-    <!-- Section 4: Academic Rigor, Methodology & Verification (신뢰성 및 투명성 검증 섹션) -->
+    <!-- Section 4: Academic Rigor & Methodology (MathJax Rendered) -->
     <section id="methodology" class="border-t-2 border-stone-900 pt-10 space-y-8">
       <div class="max-w-3xl space-y-2">
         <div class="flex items-center space-x-2">
@@ -252,13 +263,13 @@
         </div>
         <h3 class="font-serif-title text-2xl font-normal text-stone-900">통계적 회귀 원리 및 불확도 산출 프로토콜</h3>
         <p class="text-xs text-stone-600 leading-relaxed font-light">
-          IsoCalib은 피어 리뷰(Peer-reviewed) 학술 기준에 부합하도록 표준 최소제곱법 대신 측정 오차를 고려하는 가중 회귀 및 분석 오차 전파법을 엄격히 적용합니다.
+          IsoCalib은 피어 리뷰(Peer-reviewed) 학술 기준에 부합하도록 측정 오차를 고려하는 가중 최소제곱법(WLS) 및 가우스 오차 전파법을 적용합니다.
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs font-light text-stone-700 leading-relaxed">
         
-        <!-- Formula 1: WLS Regression -->
+        <!-- Formula 1: WLS -->
         <div class="bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
             <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">1. Weighted Least Squares (WLS)</h4>
@@ -267,38 +278,38 @@
           <p>
             각 표준물질 측정값 $x_i$의 $1\sigma$ 표준편차($\sigma_{x,i}$)의 역제곱을 개별 가중치($w_i$)로 부여합니다. 정밀도가 높은 측정일수록 검량선 결정에 높은 가중치를 갖습니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-2 text-[11px]">
-            <div>$w_i = \frac{1}{\sigma_{x,i}^2}$</div>
-            <div>$\Delta = \sum w_i \sum w_i x_i^2 - (\sum w_i x_i)^2$</div>
-            <div>$\text{Slope }(a) = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}$</div>
-            <div>$\text{Intercept }(b) = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$</div>
+          <div class="bg-[#fbfaf8] border border-stone-200 p-4 font-mono text-stone-900 space-y-2 text-xs overflow-x-auto">
+            <div>$$w_i = \frac{1}{\sigma_{x,i}^2}$$</div>
+            <div>$$\Delta = \sum w_i \sum w_i x_i^2 - \left(\sum w_i x_i\right)^2$$</div>
+            <div>$$\text{Slope } (a) = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}$$</div>
+            <div>$$\text{Intercept } (b) = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$</div>
           </div>
           <p class="text-[11px] text-stone-500">
-            * 여기서 $x_i$는 기기 측정 원시값(Raw), $y_i$는 해당 표준물질의 공인 인증 참값(Accepted True Value)입니다.
+            * $x_i$: 기기 측정 원시값(Raw), $y_i$: 표준물질 공인 인증 참값(True Value)
           </p>
         </div>
 
-        <!-- Formula 2: Error Propagation -->
+        <!-- Formula 2: Uncertainty Propagation -->
         <div class="bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
             <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">2. Uncertainty Propagation</h4>
             <span class="text-stone-400 font-mono text-[10px]">1σ Standard Error</span>
           </div>
           <p>
-            미지 시료의 보정값 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$ 산출 시, 시료 자체의 반복 측정 오차($\sigma_{\text{raw}}$)뿐 아니라 검량선 파라미터의 표준오차($\text{SE}_a$, $\text{SE}_b$)를 1차 편미분 가우스 오차 전파식에 따라 합성합니다.
+            미지 시료의 보정값 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$ 산출 시, 시료 자체의 분석 정밀도($\sigma_{\text{raw}}$)와 검량선 파라미터의 표준오차($\text{SE}_a, \text{SE}_b$)를 1차 편미분 가우스 전파식에 따라 합성합니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-2 text-[11px]">
-            <div>$\sigma_{\text{cal}} = \sqrt{ \left( \frac{\partial y}{\partial x} \sigma_x \right)^2 + \left( \frac{\partial y}{\partial a} \text{SE}_a \right)^2 + \left( \frac{\partial y}{\partial b} \text{SE}_b \right)^2 }$</div>
-            <div class="pt-1 text-cyan-900 font-bold">$\sigma_{\text{cal}} = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$</div>
+          <div class="bg-[#fbfaf8] border border-stone-200 p-4 font-mono text-stone-900 space-y-2 text-xs overflow-x-auto">
+            <div>$$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x}\sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a}\text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b}\text{SE}_b\right)^2 }$$</div>
+            <div class="pt-2 text-stone-900 font-bold">$$\sigma_{\text{cal}} = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$</div>
           </div>
           <p class="text-[11px] text-stone-500">
-            * 이 합성 불확도($\pm 1\sigma$)는 최종 분석 보고서 및 논문 테이블에 직접 인용할 수 있는 신뢰 구간입니다.
+            * 이 합성 불확도($\pm 1\sigma$)는 최종 분석 보고서 및 논문 표에 직접 기입하는 신뢰 구간입니다.
           </p>
         </div>
 
       </div>
 
-      <!-- Open Science & Privacy Statement -->
+      <!-- Zero-Server Privacy -->
       <div class="bg-stone-100/60 border border-stone-200 p-6 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
         <div class="space-y-1.5 max-w-2xl">
           <div class="flex items-center space-x-2">
@@ -315,7 +326,7 @@
         </div>
       </div>
 
-      <!-- Section 5: Citation Guidelines -->
+      <!-- Citation -->
       <div id="citation" class="space-y-3 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
           <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs">How to Cite this Platform in Publications</h4>
@@ -349,7 +360,6 @@
     </button>
   </div>
 
-  <!-- Editorial Minimal Footer -->
   <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
       <p>IsoCalib Project — Environmental & Isotope Geochemistry Research Group</p>
@@ -575,6 +585,10 @@
       dragEnd = { r: 0, c: 0 };
       renderGrid();
       resetOutputs();
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
     }
 
     function resetOutputs() {
@@ -922,9 +936,6 @@
 
     document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
 
-    // -------------------------------------------------------------
-    // WLS 연산 & 화면 갱신
-    // -------------------------------------------------------------
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
       if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0 };
@@ -1138,7 +1149,6 @@
       Plotly.newPlot(elemId, [scatterTrace, lineTrace], layout, { responsive: true, displayModeBar: false });
     }
 
-    // Top Handlers
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       currentMode = e.target.value;
       updateLayoutForMode();
