@@ -5,7 +5,7 @@
   <title>IsoCalib | Isotope Geochemistry Data Reduction</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Google Fonts: Editorial Serif + Modern Clean Sans + High-Legibility Technical Mono -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
@@ -31,30 +31,31 @@
       letter-spacing: -0.01em;
     }
 
-    .font-serif-title {
-      font-family: 'Newsreader', Georgia, serif;
-    }
+    .font-serif-title { font-family: 'Newsreader', Georgia, serif; }
+    .font-brand { font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
+    .font-data { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
 
-    .font-brand {
-      font-family: 'Cinzel', serif;
-      letter-spacing: 0.08em;
-    }
-
-    /* 숫자 판독력을 극대화한 모노스페이스 */
-    .font-data {
-      font-family: 'IBM Plex Mono', monospace;
-      font-variant-numeric: tabular-nums;
-    }
-
+    /* Excel-like selection styling */
     .grid-cell {
       outline: none;
-      transition: background-color 0.12s ease;
-      color: #111827;
-      font-weight: 500;
+      user-select: none;
+      position: relative;
     }
-    .grid-cell:focus {
-      background-color: #f3f4f6;
-      box-shadow: inset 0 0 0 1.5px #111827;
+    .grid-cell.cell-editing {
+      user-select: text;
+      background-color: #ffffff !important;
+      box-shadow: inset 0 0 0 2px #111827 !important;
+    }
+    .grid-cell.cell-selected {
+      background-color: #e0f2fe !important; /* Sky 100 */
+    }
+    .grid-cell.cell-focus {
+      box-shadow: inset 0 0 0 1.5px #0284c7;
+    }
+    .row-header.row-selected {
+      background-color: #bae6fd !important;
+      color: #0369a1 !important;
+      font-weight: 700;
     }
 
     .plot-container {
@@ -65,17 +66,9 @@
     }
 
     /* Subtle custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #fbfaf8;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #c7c5bc;
-      border-radius: 3px;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #fbfaf8; }
+    ::-webkit-scrollbar-thumb { background: #c7c5bc; border-radius: 3px; }
   </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
@@ -127,7 +120,7 @@
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
         <div class="flex items-center space-x-2">
           <span class="font-mono text-xs font-bold text-stone-400">01</span>
-          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Reference Standards (표준물질 참값 설정)</h2>
+          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Reference Standards (표준물질 설정)</h2>
         </div>
         <span class="text-xs text-stone-500 font-serif-title italic">Standard anchor points & uncertainties</span>
       </div>
@@ -145,13 +138,18 @@
             <span class="font-mono text-xs font-bold text-stone-400">02</span>
             <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Measurement Data & Fitting (원시 데이터 입력)</h2>
           </div>
-          <p class="text-xs text-stone-600">엑셀 시트에서 범위를 복사하여 그리드에 붙여넣기(Ctrl+V) 하세요.</p>
+          <p class="text-xs text-stone-600">
+            마우스 드래그로 영역/행을 선택한 후 <kbd class="px-1 py-0.5 bg-stone-200 rounded font-mono text-[10px]">Delete</kbd> 키를 누르거나, 우클릭하여 행을 삭제할 수 있습니다.
+          </p>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex items-center space-x-2">
+          <button id="btn-delete-selected" class="px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 border border-rose-200 hover:border-rose-400 bg-rose-50/50 transition">
+            선택 행 완전 삭제
+          </button>
           <button id="btn-clear" class="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 border border-transparent hover:border-stone-300 transition">
-            Clear Grid
+            Clear All
           </button>
           <button id="btn-demo" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm">
             Load Demo
@@ -167,18 +165,18 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left: Spreadsheet Grid (High Contrast) -->
+        <!-- Left: Spreadsheet Grid (Interactive Drag Selection) -->
         <div class="lg:col-span-6 space-y-2">
-          <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm">
-            <div class="max-h-[580px] overflow-auto">
-              <table class="w-full border-collapse text-left font-data text-xs">
-                <thead id="grid-head" class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-stone-800 uppercase text-[11px] font-bold tracking-wider select-none"></thead>
+          <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm relative">
+            <div class="max-h-[580px] overflow-auto select-none" id="grid-scroll-container">
+              <table class="w-full border-collapse text-left font-data text-xs" id="interactive-grid">
+                <thead id="grid-head" class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-stone-800 uppercase text-[11px] font-bold tracking-wider select-none z-10"></thead>
                 <tbody id="grid-body" class="divide-y divide-[#e5e3dc]"></tbody>
               </table>
             </div>
           </div>
           <div class="flex justify-between text-xs text-stone-500 font-mono font-medium">
-            <span>* Active cells editable (Tab / Enter)</span>
+            <span>* 행 번호(#) 드래그 시 줄 전체 선택 / 우클릭 시 메뉴</span>
             <span id="row-count">0 samples loaded</span>
           </div>
         </div>
@@ -204,7 +202,7 @@
       </div>
     </section>
 
-    <!-- Section 3: Final Results (Clear Emphasis) -->
+    <!-- Section 3: Final Results -->
     <section class="space-y-3 pt-4">
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-3">
         <div class="flex items-center space-x-2">
@@ -231,6 +229,22 @@
     </section>
 
   </main>
+
+  <!-- Right Click Context Menu for Grid -->
+  <div id="grid-context-menu" class="hidden fixed bg-white border border-[#c7c5bc] shadow-lg py-1.5 z-50 text-xs font-sans text-stone-800 rounded min-w-[180px]">
+    <button id="ctx-del-rows" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-rose-700 font-medium">
+      <span>선택 행 완전 삭제</span>
+      <span class="font-mono text-[10px] text-stone-400">Del row</span>
+    </button>
+    <button id="ctx-clear-values" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-stone-700">
+      <span>선택 셀 내용 지우기</span>
+      <span class="font-mono text-[10px] text-stone-400">Delete</span>
+    </button>
+    <div class="h-px bg-stone-200 my-1"></div>
+    <button id="ctx-insert-below" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 text-stone-700">
+      아래에 빈 행 1줄 삽입
+    </button>
+  </div>
 
   <!-- Editorial Minimal Footer -->
   <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title">
@@ -321,11 +335,18 @@
     let currentMode = "CO";
     let gridData = [];
 
+    // Drag Selection State
+    let isMouseDown = false;
+    let isSelectingRows = false;
+    let dragStart = { r: null, c: null };
+    let dragEnd = { r: null, c: null };
+    let selectedCellRange = null; // { minR, maxR, minC, maxC }
+
     function updateLayoutForMode() {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
-      // 1) Standards Form (선명하고 또렷한 입력창)
+      // 1) Standards Form
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
       p.stds.forEach((std, idx) => {
@@ -358,12 +379,12 @@
         stdContainer.appendChild(div);
       });
 
-      // 2) Grid Header (선명한 대비)
+      // 2) Grid Header
       const gHead = document.getElementById('grid-head');
       if (isDual) {
         gHead.innerHTML = `
           <tr>
-            <th class="w-10 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
+            <th class="w-12 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
             <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Sample ID</th>
             <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-3 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
@@ -374,7 +395,7 @@
       } else {
         gHead.innerHTML = `
           <tr>
-            <th class="w-10 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
+            <th class="w-12 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
             <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Sample ID</th>
             <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-3 py-2 text-stone-900">1σ SD</th>
@@ -382,7 +403,7 @@
         `;
       }
 
-      // 3) Param Cards (가독성 높은 폰트 및 대비)
+      // 3) Param Cards
       const pContainer = document.getElementById('param-cards-container');
       if (isDual) {
         pContainer.className = "grid grid-cols-2 gap-4";
@@ -423,7 +444,7 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // 4) Results Header (또렷한 라벨링)
+      // 4) Results Header
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -434,7 +455,7 @@
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Calibrated ${p.elements[0].label}</th>
             <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Calibrated ${p.elements[1].label}</th>
-            <th class="px-3 py-2.5 text-stone-600">± 1σ</th>
+            <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
       } else {
@@ -450,6 +471,7 @@
 
       const numCols = isDual ? 5 : 3;
       gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
+      selectedCellRange = null;
       renderGrid();
       resetOutputs();
     }
@@ -460,6 +482,9 @@
       document.getElementById('result-body').innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">Execute calibration above to view reduced isotopic ratios and propagated uncertainties.</td></tr>';
     }
 
+    // -------------------------------------------------------------
+    // Excel-style Drag Selection & Rendering Engine
+    // -------------------------------------------------------------
     function renderGrid() {
       const gridBody = document.getElementById('grid-body');
       gridBody.innerHTML = '';
@@ -467,24 +492,62 @@
 
       gridData.forEach((row, rIdx) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-stone-50/80 transition-colors';
+        tr.className = 'hover:bg-stone-50/60 transition-colors';
+        tr.dataset.r = rIdx;
 
+        // Row Header (#) - 드래그하여 행 전체 선택 가능
         const tdIdx = document.createElement('td');
-        tdIdx.className = 'px-3 py-1.5 text-center text-stone-400 border-r border-[#e5e3dc] select-none bg-[#fbfaf8] text-xs font-mono font-medium';
+        tdIdx.className = 'row-header px-3 py-1.5 text-center text-stone-400 border-r border-[#e5e3dc] select-none bg-[#fbfaf8] text-xs font-mono font-medium cursor-pointer hover:bg-stone-200';
         tdIdx.innerText = String(rIdx + 1).padStart(2, '0');
+        tdIdx.dataset.r = rIdx;
+
+        // 행 헤더 마우스 다운 이벤트 (줄 전체 드래그 선택 시작)
+        tdIdx.addEventListener('mousedown', (e) => {
+          if (e.button !== 0 && e.button !== 2) return;
+          isMouseDown = true;
+          isSelectingRows = true;
+          dragStart = { r: rIdx, c: 0 };
+          dragEnd = { r: rIdx, c: numCols - 1 };
+          updateSelectionRange();
+          e.preventDefault();
+        });
+
         tr.appendChild(tdIdx);
 
+        // Cells
         for (let cIdx = 0; cIdx < numCols; cIdx++) {
           const val = row[cIdx];
           const td = document.createElement('td');
-          td.className = 'px-3.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data';
-          td.contentEditable = 'true';
+          td.className = 'px-3.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data cursor-cell';
+          td.dataset.r = rIdx;
+          td.dataset.c = cIdx;
+          td.contentEditable = 'false'; // 더블클릭 또는 포커스 시에만 편집 활성화
           td.innerText = val !== null && val !== undefined ? val : '';
-          
+
+          // 셀 마우스 드래그 이벤트
+          td.addEventListener('mousedown', (e) => {
+            if (e.button !== 0 && e.button !== 2) return;
+            // 더블클릭 편집 모드가 아닐 때 드래그 시작
+            if (td.classList.contains('cell-editing')) return;
+
+            isMouseDown = true;
+            isSelectingRows = false;
+            dragStart = { r: rIdx, c: cIdx };
+            dragEnd = { r: rIdx, c: cIdx };
+            updateSelectionRange();
+          });
+
+          // 더블클릭 시 편집 모드 활성화 (엑셀 스타일)
+          td.addEventListener('dblclick', () => {
+            enableCellEdit(td);
+          });
+
+          // 내용 직접 입력 시 데이터 배열 동기화
           td.addEventListener('input', (e) => {
             gridData[rIdx][cIdx] = cIdx === 0 ? e.target.innerText.trim() : (parseFloat(e.target.innerText) || e.target.innerText);
           });
 
+          // 복사/붙여넣기
           td.addEventListener('paste', (e) => {
             e.preventDefault();
             const text = (e.clipboardData || window.clipboardData).getData('text');
@@ -496,9 +559,197 @@
 
         gridBody.appendChild(tr);
       });
+
       document.getElementById('row-count').innerText = `${gridData.length} samples loaded`;
+      applySelectionVisuals();
     }
 
+    function enableCellEdit(td) {
+      td.contentEditable = 'true';
+      td.classList.add('cell-editing');
+      td.focus();
+
+      // 텍스트 맨 끝으로 커서 이동
+      const range = document.createRange();
+      range.selectNodeContents(td);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      const blurHandler = () => {
+        td.contentEditable = 'false';
+        td.classList.remove('cell-editing');
+        const r = parseInt(td.dataset.r);
+        const c = parseInt(td.dataset.c);
+        gridData[r][c] = c === 0 ? td.innerText.trim() : (parseFloat(td.innerText) || td.innerText);
+        td.removeEventListener('blur', blurHandler);
+      };
+      td.addEventListener('blur', blurHandler);
+    }
+
+    // 마우스 이동 시 범위 확장
+    window.addEventListener('mousemove', (e) => {
+      if (!isMouseDown) return;
+
+      const target = document.elementFromPoint(e.clientX, e.clientY);
+      if (!target) return;
+
+      if (isSelectingRows) {
+        const rowEl = target.closest('tr');
+        if (rowEl && rowEl.dataset.r !== undefined) {
+          const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
+          dragEnd = { r: parseInt(rowEl.dataset.r), c: numCols - 1 };
+          updateSelectionRange();
+        }
+      } else {
+        const cellEl = target.closest('.grid-cell');
+        if (cellEl && cellEl.dataset.r !== undefined && cellEl.dataset.c !== undefined) {
+          dragEnd = { r: parseInt(cellEl.dataset.r), c: parseInt(cellEl.dataset.c) };
+          updateSelectionRange();
+        }
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isMouseDown = false;
+    });
+
+    function updateSelectionRange() {
+      if (dragStart.r === null || dragEnd.r === null) return;
+
+      const minR = Math.min(dragStart.r, dragEnd.r);
+      const maxR = Math.max(dragStart.r, dragEnd.r);
+      const minC = Math.min(dragStart.c, dragEnd.c);
+      const maxC = Math.max(dragStart.c, dragEnd.c);
+
+      selectedCellRange = { minR, maxR, minC, maxC };
+      applySelectionVisuals();
+    }
+
+    function applySelectionVisuals() {
+      const allCells = document.querySelectorAll('.grid-cell');
+      const allRowHeaders = document.querySelectorAll('.row-header');
+
+      allCells.forEach(cell => cell.classList.remove('cell-selected', 'cell-focus'));
+      allRowHeaders.forEach(rh => rh.classList.remove('row-selected'));
+
+      if (!selectedCellRange) return;
+
+      const { minR, maxR, minC, maxC } = selectedCellRange;
+
+      // 행 헤더 하이라이트
+      allRowHeaders.forEach(rh => {
+        const r = parseInt(rh.dataset.r);
+        if (r >= minR && r <= maxR) rh.classList.add('row-selected');
+      });
+
+      // 셀 하이라이트
+      allCells.forEach(cell => {
+        const r = parseInt(cell.dataset.r);
+        const c = parseInt(cell.dataset.c);
+
+        if (r >= minR && r <= maxR && c >= minC && c <= maxC) {
+          cell.classList.add('cell-selected');
+          if (r === dragStart.r && c === dragStart.c) {
+            cell.classList.add('cell-focus');
+          }
+        }
+      });
+    }
+
+    // -------------------------------------------------------------
+    // Delete & Backspace 키보드 핸들러 (선택 영역 데이터 지우기)
+    // -------------------------------------------------------------
+    window.addEventListener('keydown', (e) => {
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.classList.contains('cell-editing')) return; // 편집 중일 땐 타이핑 허용
+
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCellRange) {
+        e.preventDefault();
+        const { minR, maxR, minC, maxC } = selectedCellRange;
+
+        // 선택 영역의 값 지우기
+        for (let r = minR; r <= maxR; r++) {
+          for (let c = minC; c <= maxC; c++) {
+            gridData[r][c] = '';
+          }
+        }
+        renderGrid();
+      }
+    });
+
+    // -------------------------------------------------------------
+    // 선택된 행 완전 삭제 (줄 자체를 삭제하여 행 번호 재정렬)
+    // -------------------------------------------------------------
+    function deleteSelectedRows() {
+      if (!selectedCellRange) return;
+      const { minR, maxR } = selectedCellRange;
+      const deleteCount = (maxR - minR + 1);
+
+      gridData.splice(minR, deleteCount);
+
+      // 데이터가 5개 미만이면 기본 빈 줄 유지
+      if (gridData.length < 5) {
+        const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
+        while (gridData.length < 5) {
+          gridData.push(Array(numCols).fill(''));
+        }
+      }
+
+      selectedCellRange = null;
+      renderGrid();
+    }
+
+    // -------------------------------------------------------------
+    // 우클릭 컨텍스트 메뉴 (Context Menu) 핸들러
+    // -------------------------------------------------------------
+    const contextMenu = document.getElementById('grid-context-menu');
+
+    document.getElementById('interactive-grid').addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (!selectedCellRange) return;
+
+      contextMenu.style.left = `${e.clientX}px`;
+      contextMenu.style.top = `${e.clientY}px`;
+      contextMenu.classList.remove('hidden');
+    });
+
+    window.addEventListener('click', () => {
+      contextMenu.classList.add('hidden');
+    });
+
+    document.getElementById('ctx-del-rows').addEventListener('click', () => {
+      deleteSelectedRows();
+      contextMenu.classList.add('hidden');
+    });
+
+    document.getElementById('ctx-clear-values').addEventListener('click', () => {
+      if (!selectedCellRange) return;
+      const { minR, maxR, minC, maxC } = selectedCellRange;
+      for (let r = minR; r <= maxR; r++) {
+        for (let c = minC; c <= maxC; c++) {
+          gridData[r][c] = '';
+        }
+      }
+      renderGrid();
+      contextMenu.classList.add('hidden');
+    });
+
+    document.getElementById('ctx-insert-below').addEventListener('click', () => {
+      if (!selectedCellRange) return;
+      const insertAt = selectedCellRange.maxR + 1;
+      const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
+      gridData.splice(insertAt, 0, Array(numCols).fill(''));
+      renderGrid();
+      contextMenu.classList.add('hidden');
+    });
+
+    document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
+
+    // -------------------------------------------------------------
+    // 클립보드 붙여넣기 & WLS 계산 엔진
+    // -------------------------------------------------------------
     function handlePaste(text, startR, startC) {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       const rows = text.trim().split(/\r\n|\n|\r/);
@@ -607,7 +858,6 @@
         return;
       }
 
-      // Calculations
       const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
       document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
       document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
@@ -627,7 +877,6 @@
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
       }
 
-      // Results Rendering (High Legibility Numbers)
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
 
@@ -664,7 +913,7 @@
             <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1}</td>
             <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">±${propSd1}</td>
             <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal2}</td>
-            <td class="px-3 py-2 text-stone-600 font-medium">±${propSd2}</td>
+            <td class="px-3.5 py-2 text-stone-600 font-medium">±${propSd2}</td>
           `;
         } else {
           tr.innerHTML = `
@@ -678,7 +927,6 @@
       });
     }
 
-    // High-Legibility Academic Plotly Aesthetic
     function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
       const container = document.getElementById(elemId);
       container.innerHTML = '';
@@ -696,19 +944,8 @@
         mode: 'markers',
         type: 'scatter',
         name: 'Anchor Points',
-        marker: {
-          size: 7,
-          color: '#111827',
-          line: { color: '#000000', width: 1 }
-        },
-        error_x: {
-          type: 'data',
-          array: pts.sd,
-          visible: true,
-          color: '#4b5563',
-          thickness: 1.2,
-          width: 4
-        }
+        marker: { size: 7, color: '#111827', line: { color: '#000000', width: 1 } },
+        error_x: { type: 'data', array: pts.sd, visible: true, color: '#4b5563', thickness: 1.2, width: 4 }
       };
 
       const lineTrace = {
@@ -717,51 +954,32 @@
         mode: 'lines',
         type: 'scatter',
         name: `WLS: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`,
-        line: {
-          dash: 'solid',
-          width: 1.5,
-          color: '#6b7280'
-        }
+        line: { dash: 'solid', width: 1.5, color: '#6b7280' }
       };
 
       const layout = {
-        title: {
-          text: title,
-          font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' },
-          x: 0.05
-        },
+        title: { text: title, font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, x: 0.05 },
         paper_bgcolor: '#ffffff',
         plot_bgcolor: '#ffffff',
         margin: { l: 55, r: 25, t: 40, b: 45 },
         xaxis: {
           title: { text: xTitle, font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } },
-          showgrid: true,
-          gridcolor: '#f0ede6',
-          linecolor: '#c7c5bc',
-          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' },
-          automargin: true
+          showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc',
+          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' }, automargin: true
         },
         yaxis: {
           title: { text: yTitle, font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } },
-          showgrid: true,
-          gridcolor: '#f0ede6',
-          linecolor: '#c7c5bc',
-          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' },
-          automargin: true
+          showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc',
+          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' }, automargin: true
         },
         showlegend: true,
-        legend: {
-          orientation: 'h',
-          y: -0.28,
-          x: 0.05,
-          font: { family: 'Inter, sans-serif', size: 10, color: '#374151' }
-        }
+        legend: { orientation: 'h', y: -0.28, x: 0.05, font: { family: 'Inter, sans-serif', size: 10, color: '#374151' } }
       };
 
       Plotly.newPlot(elemId, [scatterTrace, lineTrace], layout, { responsive: true, displayModeBar: false });
     }
 
-    // Handlers
+    // Top Handlers
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       currentMode = e.target.value;
       updateLayoutForMode();
@@ -772,6 +990,7 @@
     document.getElementById('btn-demo').addEventListener('click', () => {
       const p = PRESETS[currentMode];
       gridData = JSON.parse(JSON.stringify(p.demo));
+      selectedCellRange = null;
       renderGrid();
       runCalibration();
     });
@@ -779,6 +998,7 @@
     document.getElementById('btn-clear').addEventListener('click', () => {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
+      selectedCellRange = null;
       renderGrid();
       resetOutputs();
     });
