@@ -107,7 +107,7 @@
         <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono">/ Open Geochemistry Tool</span>
       </div>
       <div class="hidden sm:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
-        <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4">Methodology & Formulas</a>
+        <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4">Methodology & Protocols</a>
         <span>·</span>
         <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4">How to Cite</a>
       </div>
@@ -125,7 +125,7 @@
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light">
-          원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질(Quality Control) 검증 및 최종 불확도 전파를 일괄 수행합니다.
+          원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준(GUM) 기반 최종 불확도 전파를 수행합니다.
         </p>
       </div>
 
@@ -143,7 +143,7 @@
       </div>
     </div>
 
-    <!-- Section 1: Standards (Anchors + QC Check Standard) & Protocols -->
+    <!-- Section 1: Standards & Protocols -->
     <section class="space-y-4">
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
         <div class="flex items-center space-x-2">
@@ -151,17 +151,13 @@
           <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Reference & QC Standards (검량 및 품질관리 표준)</h2>
         </div>
         
-        <!-- 실무 프로토콜 옵션: 선형 드리프트 보정 토글 -->
         <label class="flex items-center space-x-2 cursor-pointer select-none bg-stone-100 px-3 py-1 border border-stone-300 rounded text-xs font-mono">
           <input type="checkbox" id="chk-drift" class="rounded border-stone-300 text-stone-900 focus:ring-0">
           <span class="font-medium text-stone-800">Sequence Drift Correction (시간/순서 기반 드리프트 1차 보정)</span>
         </label>
       </div>
 
-      <!-- Anchor Standards + QC Standard Grid -->
-      <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <!-- JS 동적 주입 (Anchor 1, Anchor 2, QC Check Standard) -->
-      </div>
+      <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
     </section>
 
     <!-- Section 2: SpreadSheet & Controls -->
@@ -259,17 +255,15 @@
         </button>
       </div>
 
-      <!-- QC Validation Summary Banner (독립 QC 검증 리포트 배너) -->
-      <div id="qc-summary-banner" class="hidden bg-stone-50 border border-stone-300 p-4 rounded-none space-y-2">
-        <!-- JS 동적 렌더링 -->
-      </div>
+      <!-- QC Validation Summary Banner -->
+      <div id="qc-summary-banner" class="hidden bg-stone-50 border border-stone-300 p-4 rounded-none space-y-2"></div>
 
       <div class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
         <table class="w-full text-left text-xs font-data text-stone-900">
           <thead id="result-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
           <tbody id="result-body" class="divide-y divide-[#e5e3dc]">
             <tr>
-              <td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">
+              <td colspan="8" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">
                 Execute calibration above to view reduced isotopic ratios and propagated uncertainties.
               </td>
             </tr>
@@ -278,71 +272,119 @@
       </div>
     </section>
 
-    <!-- Section 4: Academic Rigor & Methodology -->
-    <section id="methodology" class="border-t-2 border-stone-900 pt-10 space-y-8">
+    <!-- Section 4: Academic Rigor & Methodology (재정비된 설명 및 아코디언) -->
+    <section id="methodology" class="border-t-2 border-stone-900 pt-10 space-y-6">
       <div class="max-w-3xl space-y-2">
         <div class="flex items-center space-x-2">
           <span class="font-mono text-xs font-bold text-stone-400">04</span>
-          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Methodology & Mathematical Verification</h2>
+          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Protocol Rationales & Standard Verification</h2>
         </div>
-        <h3 class="font-serif-title text-2xl font-normal text-stone-900">통계적 회귀 원리 및 불확도 산출 프로토콜</h3>
+        <h3 class="font-serif-title text-2xl font-normal text-stone-900">데이터 처리 원리 및 국제 표준 지침</h3>
         <p class="text-xs text-stone-600 leading-relaxed font-light">
-          IsoCalib은 피어 리뷰(Peer-reviewed) 학술 기준에 부합하도록 기기 드리프트 보정, 가중 최소제곱법(WLS), MSWD(Reduced $\chi^2$) 적합도 평가, 가우스 오차 전파법을 엄격히 적용합니다.
+          IsoCalib은 복잡한 임의 수식을 사용하는 대신, 국제계량측정위원회(BIPM/JCGM) 및 동위원소 지화학 학계에서 공인된 정석 통계 프로토콜을 그대로 웹 상에 구현했습니다.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-light text-stone-700 leading-relaxed">
+      <!-- 직관적인 3단 개념 카드 (쉬운 해설) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs leading-relaxed">
         
-        <!-- Formula 1: WLS -->
-        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm">
+        <!-- Concept 1 -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-2.5 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
-            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">1. Weighted Regression</h4>
-            <span class="text-stone-400 font-mono text-[10px]">Model Fitting</span>
+            <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">1. 가중 회귀 검량 (WLS)</span>
+            <span class="text-stone-400 font-mono text-[10px]">Weighting</span>
           </div>
-          <p>
-            각 앵커 표준물질 측정값의 $1\sigma$ 분산의 역수를 가중치($w_i$)로 부여하여 검량선을 최적화합니다.
+          <p class="text-stone-700 font-light">
+            <strong>"불안정한 측정값은 비중을 낮춥니다."</strong><br>
+            시료마다 측정 표준편차(SD)가 다릅니다. 기기가 안정되어 흔들림 없이 정밀하게 찍힌 표준물질에 더 높은 가중치($1/\sigma^2$)를 주어 검량선을 합리적으로 피팅합니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
-            <div>$$w_i = \frac{1}{\sigma_{x,i}^2}$$</div>
-            <div>$$a = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}$$</div>
-            <div>$$b = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$</div>
+          <div class="text-[10px] font-mono text-stone-500 pt-1 border-t border-stone-100">
+            기준: Ludwig (2003) / York (1968)
           </div>
         </div>
 
-        <!-- Formula 2: MSWD & Drift -->
-        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm">
+        <!-- Concept 2 -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-2.5 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
-            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">2. Drift & MSWD Fit</h4>
-            <span class="text-stone-400 font-mono text-[10px]">QC Protocol</span>
+            <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">2. 모델 적합도 (MSWD)</span>
+            <span class="text-stone-400 font-mono text-[10px]">Goodness-of-fit</span>
           </div>
-          <p>
-            시간순 드리프트($m_{\text{drift}}$)를 1차 차감하고, 지화학 표준 지표인 MSWD를 통해 모델 적합성을 검증합니다.
+          <p class="text-stone-700 font-light">
+            <strong>"측정 오차와 검량선의 부합도를 검증합니다."</strong><br>
+            지화학 논문 표준 지표인 MSWD가 1에 가까우면 기기 오차가 이상적으로 반영된 것이며, 1보다 지나치게 크면 검량선 외에 기기 표류나 외란이 섞여 있음을 의미합니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
-            <div>$$x_{\text{corr}} = x_{\text{raw}} - m_{\text{drift}} \cdot (i - 1)$$</div>
-            <div class="pt-1 text-stone-900 font-bold">$$\text{MSWD} = \frac{\sum w_i (y_i - (ax_i + b))^2}{N - 2}$$</div>
+          <div class="text-[10px] font-mono text-stone-500 pt-1 border-t border-stone-100">
+            기준: Reduced $\chi^2$ / Isoplot Standard
           </div>
         </div>
 
-        <!-- Formula 3: Uncertainty Propagation -->
-        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm">
+        <!-- Concept 3 -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-2.5 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
-            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">3. Error Propagation</h4>
-            <span class="text-stone-400 font-mono text-[10px]">1σ Standard Error</span>
+            <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">3. 합성 불확도 (Propagation)</span>
+            <span class="text-stone-400 font-mono text-[10px]">Uncertainty</span>
           </div>
-          <p>
-            미지 시료 자체의 분석 정밀도($\sigma_{\text{raw}}$)와 검량선 매개변수 표준오차($\text{SE}_a, \text{SE}_b$)를 1차 편미분 전파식으로 합성합니다.
+          <p class="text-stone-700 font-light">
+            <strong>"검량선 자체의 흔들림까지 오차에 반영합니다."</strong><br>
+            시료 자체의 분석 정밀도뿐 아니라 표준물질 검량선의 기울기·절편 오차까지 1차 편미분 전파식으로 합성하여 논문에 안심하고 쓸 수 있는 보수적인 $\pm 1\sigma$를 도출합니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
-            <div class="text-stone-900 font-bold">$$\sigma_{\text{cal}} = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$</div>
+          <div class="text-[10px] font-mono text-stone-500 pt-1 border-t border-stone-100">
+            기준: JCGM 100:2008 (GUM Guide)
           </div>
         </div>
 
       </div>
 
+      <!-- 접기/펼치기 아코디언: 상세 수식 및 유도 과정 -->
+      <details class="group bg-white border border-[#d1cfc7] shadow-sm overflow-hidden" id="math-details">
+        <summary class="cursor-pointer p-4 select-none flex items-center justify-between hover:bg-stone-50 transition">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono text-xs font-bold text-stone-900 uppercase tracking-wider">
+              [+] 수식 유도 및 상세 계산식 확인하기 (Click to view full mathematical derivations)
+            </span>
+          </div>
+          <span class="text-xs font-mono text-stone-500 group-open:rotate-180 transition-transform">▼</span>
+        </summary>
+        <div class="p-6 border-t border-stone-200 bg-[#fcfbf9] space-y-6 text-xs font-light text-stone-700 leading-relaxed">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Math 1: WLS & MSWD -->
+            <div class="space-y-3">
+              <h4 class="font-mono font-bold text-stone-900 text-[11px] uppercase tracking-wider">A. 가중 최소제곱법(WLS) 및 MSWD 공식</h4>
+              <p>각 앵커 표준물질 $i$에 대해 측정 표준편차의 역제곱을 가중치로 둡니다 ($w_i = 1/\sigma_{x,i}^2$).</p>
+              <div class="bg-white border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
+                <div>$$\Delta = \sum w_i \sum w_i x_i^2 - \left(\sum w_i x_i\right)^2$$</div>
+                <div>$$a = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}, \quad b = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$</div>
+                <div>$$\text{MSWD} = \frac{1}{N - 2} \sum_{i=1}^N w_i \left(y_i - (a x_i + b)\right)^2$$</div>
+              </div>
+            </div>
+
+            <!-- Math 2: GUM Propagation -->
+            <div class="space-y-3">
+              <h4 class="font-mono font-bold text-stone-900 text-[11px] uppercase tracking-wider">B. 가우스 오차 전파법 (GUM 1차 테일러 전개)</h4>
+              <p>보정값 함수 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$에 대해 독립 변수들의 편미분 합성을 적용합니다.</p>
+              <div class="bg-white border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
+                <div>$$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x_{\text{raw}}}\sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a}\text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b}\text{SE}_b\right)^2 }$$</div>
+                <div class="pt-1 text-stone-900 font-bold">$$\sigma_{\text{cal}} = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$</div>
+              </div>
+              <p class="text-[11px] text-stone-500">* 매개변수 분산: $\text{SE}_a^2 = s^2 \frac{\sum w_i}{\Delta}$, $\text{SE}_b^2 = s^2 \frac{\sum w_i x_i^2}{\Delta}$ (단, $s^2 = \text{MSWD}$)</p>
+            </div>
+          </div>
+
+          <!-- Formal References -->
+          <div class="pt-4 border-t border-stone-200 space-y-1.5 text-[11px] text-stone-500">
+            <div class="font-mono font-bold text-stone-700 uppercase tracking-wider text-[10px]">Academic & Metrological References:</div>
+            <div>1. <strong>JCGM 100:2008 (GUM)</strong>: Evaluation of measurement data — Guide to the expression of uncertainty in measurement. Joint Committee for Guides in Metrology.</div>
+            <div>2. <strong>Ludwig, K. R. (2003)</strong>: User's Manual for Isoplot 3.00: A Geochronological Toolkit for Microsoft Excel. Berkeley Geochronology Center Special Publication 4.</div>
+            <div>3. <strong>York, D. (1968)</strong>: Least squares fitting of a straight line with points having correlated errors. <em>Earth and Planetary Science Letters</em>, 5, 320-324.</div>
+          </div>
+
+        </div>
+      </details>
+
       <!-- Zero-Server Privacy -->
-      <div class="bg-stone-100/60 border border-stone-200 p-6 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
-        <div class="space-y-1.5 max-w-2xl">
+      <div class="bg-stone-100/60 border border-stone-200 p-5 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
+        <div class="space-y-1 max-w-2xl">
           <div class="flex items-center space-x-2">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
             <span class="text-xs font-mono font-bold text-stone-900 uppercase tracking-wider">Zero-Server Client Computation (완전 무서버 보안)</span>
@@ -358,7 +400,7 @@
       </div>
 
       <!-- Citation -->
-      <div id="citation" class="space-y-3 pt-2">
+      <div id="citation" class="space-y-2.5 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
           <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs">How to Cite this Platform in Publications</h4>
           <span class="text-xs text-stone-500 font-serif-title italic">Academic citation format</span>
@@ -366,7 +408,7 @@
         <p class="text-xs text-stone-600 font-light">
           본 도구를 활용하여 축약 및 보정한 동위원소 데이터를 논문이나 학위 청구 논문에 게재하실 경우, Analytical Methods 섹션에 다음과 같이 인용하실 수 있습니다:
         </p>
-        <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed">
+        <div class="bg-white border border-[#d1cfc7] p-3.5 font-mono text-[11px] text-stone-800 select-all leading-relaxed">
           IsoCalib: An Open-Source Web Tool for Stable Isotope Calibration, Sequence Drift Correction, and WLS Uncertainty Propagation. Available online: https://zinidsy-spec.github.io/Stable-isocalib/ (accessed 2026).
         </div>
       </div>
@@ -410,7 +452,7 @@
           { name: "NBS-18", v1: -5.012, v2: -23.200 },
           { name: "IAEA-603", v1: 2.460, v2: -2.370 }
         ],
-        qcStd: { name: "KDO", v1: -1.250, v2: -14.800 }, // 대표 내부 QC 표준
+        qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
         demo: [
           ["NBS-18_1", 21.744, 0.035, -0.801, 0.062],
           ["IAEA-603_1", 29.326, 0.028, 20.043, 0.055],
@@ -499,11 +541,9 @@
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
 
-      // 1) 3단 표준물질 카드 구성 (Anchor 1, Anchor 2, QC Check Standard)
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
 
-      // Anchor 1 & 2
       p.stds.forEach((std, idx) => {
         const div = document.createElement('div');
         div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-sm';
@@ -534,7 +574,6 @@
         stdContainer.appendChild(div);
       });
 
-      // QC Standard Card (초록색 틴트 배지)
       const qcDiv = document.createElement('div');
       qcDiv.className = 'bg-[#fcfdfc] p-4 border border-emerald-300 flex flex-col space-y-3 shadow-sm';
       qcDiv.innerHTML = `
@@ -565,7 +604,6 @@
       `;
       stdContainer.appendChild(qcDiv);
 
-      // 2) Grid Header
       const gHead = document.getElementById('grid-head');
       if (isDual) {
         gHead.innerHTML = `
@@ -589,7 +627,6 @@
         `;
       }
 
-      // 3) Param Cards
       const pContainer = document.getElementById('param-cards-container');
       if (isDual) {
         pContainer.className = "grid grid-cols-2 gap-4";
@@ -633,7 +670,6 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // 4) Result Header
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -672,6 +708,13 @@
         window.MathJax.typesetPromise();
       }
     }
+
+    // 아코디언이 펼쳐질 때 내부 수식 렌더링 보정
+    document.getElementById('math-details').addEventListener('toggle', () => {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    });
 
     function resetOutputs() {
       document.getElementById('plot-1').innerHTML = '<span class="text-xs text-stone-400 font-serif-title italic">Awaiting data computation...</span>';
@@ -1019,9 +1062,6 @@
 
     document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
 
-    // -------------------------------------------------------------
-    // WLS & MSWD 통계 연산 엔진
-    // -------------------------------------------------------------
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
       if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0, mswd: 0, chi2: 0 };
@@ -1068,7 +1108,6 @@
       return { slope, intercept, r2, seSlope, seIntercept, mswd, chi2 };
     }
 
-    // 선형 드리프트(Linear Drift) 기울기 계산용 단순 OLS 회귀
     function calcOLS(xArr, yArr) {
       const n = xArr.length;
       if (n < 2) return { slope: 0, intercept: yArr[0] || 0 };
@@ -1084,9 +1123,6 @@
       return { slope, intercept };
     }
 
-    // -------------------------------------------------------------
-    // 검량선 & QC 및 시퀀스 드리프트 보정 메인 루틴
-    // -------------------------------------------------------------
     function runCalibration() {
       closeEditingCell();
 
@@ -1094,7 +1130,6 @@
       const isDual = p.elements.length === 2;
       const applyDrift = document.getElementById('chk-drift').checked;
 
-      // 앵커 표준물질 로드
       const refStds = p.stds.map((s, idx) => {
         const nameInput = document.getElementById(`ref-std${idx}-name`).value.trim();
         const cleanKey = nameInput.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -1106,7 +1141,6 @@
         };
       });
 
-      // QC 표준물질 로드
       const qcNameInput = document.getElementById('qc-std-name').value.trim();
       const qcKeyMatch = qcNameInput.toUpperCase().replace(/[^A-Z0-9]/g, '');
       const qcStd = {
@@ -1116,12 +1150,10 @@
         v2: isDual ? parseFloat(document.getElementById('qc-std-v2').value) : null
       };
 
-      // 1) 런 순서 및 기기 드리프트 분석
       let driftSlope1 = 0;
       let driftSlope2 = 0;
 
       if (applyDrift) {
-        // 첫 번째 앵커 표준물질의 반복 런을 기준으로 시간/순서 드리프트 계산
         const anchor0 = refStds[0];
         const driftRuns = { seq: [], v1: [], v2: [] };
 
@@ -1143,7 +1175,6 @@
         }
       }
 
-      // 2) 앵커 포인트 수집 (검량선용)
       const pts1 = { x: [], y: [], sd: [], names: [] };
       const pts2 = { x: [], y: [], sd: [], names: [] };
 
@@ -1157,7 +1188,7 @@
             let raw1 = parseFloat(row[1]);
             const sd1 = parseFloat(row[2]) || 0.03;
             if (!isNaN(raw1)) {
-              if (applyDrift) raw1 -= driftSlope1 * rIdx; // 드리프트 보정
+              if (applyDrift) raw1 -= driftSlope1 * rIdx;
               pts1.x.push(raw1); pts1.y.push(std.v1); pts1.sd.push(sd1); pts1.names.push(id);
             }
 
@@ -1165,7 +1196,7 @@
               let raw2 = parseFloat(row[3]);
               const sd2 = parseFloat(row[4]) || 0.05;
               if (!isNaN(raw2)) {
-                if (applyDrift) raw2 -= driftSlope2 * rIdx; // 드리프트 보정
+                if (applyDrift) raw2 -= driftSlope2 * rIdx;
                 pts2.x.push(raw2); pts2.y.push(std.v2); pts2.sd.push(sd2); pts2.names.push(id);
               }
             }
@@ -1178,7 +1209,6 @@
         return;
       }
 
-      // 검량선 회귀 산출
       const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
       document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
       document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
@@ -1200,7 +1230,6 @@
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
       }
 
-      // 3) 결과 테이블 생성 및 QC 시료 집계
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
 
@@ -1240,7 +1269,6 @@
           if (isQC) qcResults.cals2.push(cVal2);
         }
 
-        // 라벨 태그 배지
         let typeBadge = '<span class="text-stone-400 font-mono text-[10px]">SAMPLE</span>';
         let trClass = 'hover:bg-stone-50';
         if (isAnchor) {
@@ -1277,7 +1305,6 @@
         resBody.appendChild(tr);
       });
 
-      // 4) QC Summary Report 배너 생성
       const qcBanner = document.getElementById('qc-summary-banner');
       if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
         const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
@@ -1387,7 +1414,6 @@
       Plotly.newPlot(elemId, [scatterTrace, lineTrace], layout, { responsive: true, displayModeBar: false });
     }
 
-    // SVG Export
     document.getElementById('btn-export-svg-1').addEventListener('click', () => {
       const p = PRESETS[currentMode];
       Plotly.downloadImage('plot-1', {
@@ -1410,7 +1436,6 @@
       }
     });
 
-    // Event Handlers
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       currentMode = e.target.value;
       updateLayoutForMode();
