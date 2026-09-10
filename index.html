@@ -47,7 +47,6 @@
     .font-brand { font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
     .font-data { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
 
-    /* Excel-style Selection & Editing */
     .grid-cell {
       outline: none;
       user-select: none;
@@ -120,12 +119,12 @@
     <!-- Hero Section -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
-        <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono">Precision Data Reduction & Calibration</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono">Precision Data Reduction & Rigorous Geostatistics</p>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight">
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light">
-          원시 측정값(Raw Data)을 공인 표준물질 기준으로 가중 최소제곱법(WLS) 보정하고, 기기 정밀도(1σ SD)와 회귀 매개변수 오차를 전파하여 최종 불확도를 산출합니다.
+          원시 측정값(Raw Data)을 공인 표준물질 기준으로 가중 최소제곱법(WLS) 보정하고, 기기 정밀도(1σ SD)와 회귀 매개변수 오차를 전파하여 최종 불확도 및 MSWD를 산출합니다.
         </p>
       </div>
 
@@ -150,7 +149,7 @@
           <span class="font-mono text-xs font-bold text-stone-400">01</span>
           <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900">Reference Standards (표준물질 참값 설정)</h2>
         </div>
-        <span class="text-xs text-stone-500 font-serif-title italic">Standard anchor points & recommended values</span>
+        <span class="text-xs text-stone-500 font-serif-title italic">Anchor standards & recommended values</span>
       </div>
 
       <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#d1cfc7] border border-[#d1cfc7]"></div>
@@ -207,17 +206,28 @@
           </div>
         </div>
 
-        <!-- Right: Regression Cards & Plots -->
+        <!-- Right: Regression Cards with MSWD & Publication Plots -->
         <div class="lg:col-span-6 space-y-5">
           <div id="param-cards-container" class="grid grid-cols-2 gap-4"></div>
 
           <div class="space-y-4">
-            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm">
+            <!-- Plot 1 Container -->
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2">
+              <div class="flex justify-between items-center px-1">
+                <span id="plot-1-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 1</span>
+                <button id="btn-export-svg-1" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2">Export Publication SVG</button>
+              </div>
               <div id="plot-1" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
                 Awaiting data computation...
               </div>
             </div>
-            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm" id="plot-2-box">
+
+            <!-- Plot 2 Container -->
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-2-box">
+              <div class="flex justify-between items-center px-1">
+                <span id="plot-2-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 2</span>
+                <button id="btn-export-svg-2" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2">Export Publication SVG</button>
+              </div>
               <div id="plot-2" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
                 Awaiting data computation...
               </div>
@@ -254,7 +264,7 @@
       </div>
     </section>
 
-    <!-- Section 4: Academic Rigor & Methodology (MathJax Rendered) -->
+    <!-- Section 4: Academic Rigor & Methodology -->
     <section id="methodology" class="border-t-2 border-stone-900 pt-10 space-y-8">
       <div class="max-w-3xl space-y-2">
         <div class="flex items-center space-x-2">
@@ -263,47 +273,62 @@
         </div>
         <h3 class="font-serif-title text-2xl font-normal text-stone-900">통계적 회귀 원리 및 불확도 산출 프로토콜</h3>
         <p class="text-xs text-stone-600 leading-relaxed font-light">
-          IsoCalib은 피어 리뷰(Peer-reviewed) 학술 기준에 부합하도록 측정 오차를 고려하는 가중 최소제곱법(WLS) 및 가우스 오차 전파법을 적용합니다.
+          IsoCalib은 피어 리뷰(Peer-reviewed) 학술 기준에 부합하도록 측정 오차를 고려하는 가중 최소제곱법(WLS), MSWD(Reduced $\chi^2$) 적합도 평가, 가우스 오차 전파법을 엄격히 적용합니다.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs font-light text-stone-700 leading-relaxed">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-light text-stone-700 leading-relaxed">
         
         <!-- Formula 1: WLS -->
-        <div class="bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-sm">
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
-            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">1. Weighted Least Squares (WLS)</h4>
+            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">1. Weighted Regression</h4>
             <span class="text-stone-400 font-mono text-[10px]">Model Fitting</span>
           </div>
           <p>
-            각 표준물질 측정값 $x_i$의 $1\sigma$ 표준편차($\sigma_{x,i}$)의 역제곱을 개별 가중치($w_i$)로 부여합니다. 정밀도가 높은 측정일수록 검량선 결정에 높은 가중치를 갖습니다.
+            각 표준물질 측정값 $x_i$의 $1\sigma$ 분산의 역수를 개별 가중치($w_i$)로 부여하여 검량선을 최적화합니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-4 font-mono text-stone-900 space-y-2 text-xs overflow-x-auto">
+          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
             <div>$$w_i = \frac{1}{\sigma_{x,i}^2}$$</div>
             <div>$$\Delta = \sum w_i \sum w_i x_i^2 - \left(\sum w_i x_i\right)^2$$</div>
-            <div>$$\text{Slope } (a) = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}$$</div>
-            <div>$$\text{Intercept } (b) = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$</div>
+            <div>$$a = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}$$</div>
+            <div>$$b = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$</div>
           </div>
-          <p class="text-[11px] text-stone-500">
-            * $x_i$: 기기 측정 원시값(Raw), $y_i$: 표준물질 공인 인증 참값(True Value)
+        </div>
+
+        <!-- Formula 2: MSWD -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm">
+          <div class="flex items-center justify-between border-b border-stone-100 pb-2">
+            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">2. Goodness-of-Fit (MSWD)</h4>
+            <span class="text-stone-400 font-mono text-[10px]">Geochron/Geochem Std</span>
+          </div>
+          <p>
+            지화학 논문 표준 지표인 MSWD(축약 카이제곱)를 통해 측정 오차가 회귀 분산에 적합한지 정량 검증합니다.
+          </p>
+          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
+            <div>$$\chi^2 = \sum_{i=1}^N w_i \left(y_i - (a x_i + b)\right)^2$$</div>
+            <div class="pt-1 text-stone-900 font-bold">$$\text{MSWD} = \frac{\chi^2}{N - 2}$$</div>
+          </div>
+          <p class="text-[11px] text-stone-500 leading-snug">
+            * $\text{MSWD} \approx 1$: 오차 적합<br>
+            * $\text{MSWD} \gg 1$: 미보고 외란/표류 존재
           </p>
         </div>
 
-        <!-- Formula 2: Uncertainty Propagation -->
-        <div class="bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-sm">
+        <!-- Formula 3: Uncertainty Propagation -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm">
           <div class="flex items-center justify-between border-b border-stone-100 pb-2">
-            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">2. Uncertainty Propagation</h4>
+            <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]">3. Error Propagation</h4>
             <span class="text-stone-400 font-mono text-[10px]">1σ Standard Error</span>
           </div>
           <p>
-            미지 시료의 보정값 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$ 산출 시, 시료 자체의 분석 정밀도($\sigma_{\text{raw}}$)와 검량선 파라미터의 표준오차($\text{SE}_a, \text{SE}_b$)를 1차 편미분 가우스 전파식에 따라 합성합니다.
+            미지 시료 자체의 분석 정밀도($\sigma_{\text{raw}}$)와 검량선 매개변수 표준오차($\text{SE}_a, \text{SE}_b$)를 1차 편미분 전파식으로 합성합니다.
           </p>
-          <div class="bg-[#fbfaf8] border border-stone-200 p-4 font-mono text-stone-900 space-y-2 text-xs overflow-x-auto">
-            <div>$$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x}\sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a}\text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b}\text{SE}_b\right)^2 }$$</div>
-            <div class="pt-2 text-stone-900 font-bold">$$\sigma_{\text{cal}} = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$</div>
+          <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 space-y-1.5 text-xs overflow-x-auto">
+            <div class="text-stone-900 font-bold">$$\sigma_{\text{cal}} = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$</div>
           </div>
           <p class="text-[11px] text-stone-500">
-            * 이 합성 불확도($\pm 1\sigma$)는 최종 분석 보고서 및 논문 표에 직접 기입하는 신뢰 구간입니다.
+            * 결과 표에 직접 기입되는 최종 합성 불확도($\pm 1\sigma$) 구간입니다.
           </p>
         </div>
 
@@ -519,20 +544,22 @@
         pContainer.className = "grid grid-cols-2 gap-4";
         pContainer.innerHTML = `
           <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[0].label} Linear Model</span>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[0].label} Geostat Model</span>
             <div class="space-y-1.5 text-xs font-data">
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope (a)</span> <strong id="p1-slope" class="text-stone-900 font-semibold">-</strong></div>
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Intercept (b)</span> <strong id="p1-intercept" class="text-stone-900 font-semibold">-</strong></div>
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope SE (1σ)</span> <span id="p1-se" class="text-stone-700 font-medium">-</span></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p1-mswd" class="text-cyan-900 font-bold">-</strong></div>
               <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">Weighted R²</span> <strong id="p1-r2" class="text-emerald-800 font-bold">-</strong></div>
             </div>
           </div>
           <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[1].label} Linear Model</span>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[1].label} Geostat Model</span>
             <div class="space-y-1.5 text-xs font-data">
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope (a)</span> <strong id="p2-slope" class="text-stone-900 font-semibold">-</strong></div>
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Intercept (b)</span> <strong id="p2-intercept" class="text-stone-900 font-semibold">-</strong></div>
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope SE (1σ)</span> <span id="p2-se" class="text-stone-700 font-medium">-</span></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p2-mswd" class="text-cyan-900 font-bold">-</strong></div>
               <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">Weighted R²</span> <strong id="p2-r2" class="text-emerald-800 font-bold">-</strong></div>
             </div>
           </div>
@@ -542,11 +569,12 @@
         pContainer.className = "grid grid-cols-1 gap-4";
         pContainer.innerHTML = `
           <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[0].label} Linear Model</span>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${p.elements[0].label} Geostat Model</span>
             <div class="space-y-1.5 text-xs font-data">
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope (a)</span> <strong id="p1-slope" class="text-stone-900 font-semibold">-</strong></div>
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Intercept (b)</span> <strong id="p1-intercept" class="text-stone-900 font-semibold">-</strong></div>
               <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">Slope SE (1σ)</span> <span id="p1-se" class="text-stone-700 font-medium">-</span></div>
+              <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p1-mswd" class="text-cyan-900 font-bold">-</strong></div>
               <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">Weighted R²</span> <strong id="p1-r2" class="text-emerald-800 font-bold">-</strong></div>
             </div>
           </div>
@@ -936,9 +964,12 @@
 
     document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
 
+    // -------------------------------------------------------------
+    // WLS & MSWD 통계 연산 엔진
+    // -------------------------------------------------------------
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
-      if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0 };
+      if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0, mswd: 0, chi2: 0 };
 
       let sumW = 0, sumWX = 0, sumWY = 0, sumWXY = 0, sumWX2 = 0;
       for (let i = 0; i < n; i++) {
@@ -955,6 +986,7 @@
       const slope = (sumW * sumWXY - sumWX * sumWY) / delta;
       const intercept = (sumWX2 * sumWY - sumWX * sumWXY) / delta;
 
+      // Chi-squared & MSWD (Reduced Chi-squared)
       let chi2 = 0;
       for (let i = 0; i < n; i++) {
         const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03;
@@ -962,7 +994,10 @@
         const diff = yArr[i] - (slope * xArr[i] + intercept);
         chi2 += w * diff * diff;
       }
-      const s2 = (n > 2) ? chi2 / (n - 2) : 1;
+      const df = n - 2;
+      const mswd = (df > 0) ? (chi2 / df) : 1;
+      const s2 = (df > 0) ? (chi2 / df) : 1;
+
       const seSlope = Math.sqrt(s2 * (sumW / delta));
       const seIntercept = Math.sqrt(s2 * (sumWX2 / delta));
 
@@ -976,7 +1011,7 @@
       }
       const r2 = ssTot !== 0 ? Math.max(0, 1 - (ssRes / ssTot)) : 0;
 
-      return { slope, intercept, r2, seSlope, seIntercept };
+      return { slope, intercept, r2, seSlope, seIntercept, mswd, chi2 };
     }
 
     function runCalibration() {
@@ -1028,25 +1063,30 @@
         return;
       }
 
+      // 1번 원소 회귀
       const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
       document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
       document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
       document.getElementById('p1-se').innerText = `± ${reg1.seSlope.toFixed(6)}`;
+      document.getElementById('p1-mswd').innerText = reg1.mswd.toFixed(3);
       document.getElementById('p1-r2').innerText = reg1.r2.toFixed(5);
 
       drawPlot('plot-1', `${p.elements[0].label} Calibration Fit`, pts1, reg1, `Measured ${p.elements[0].label} (‰)`, `True ${p.elements[0].label} (${p.elements[0].unit})`);
 
+      // 2번 원소 회귀
       let reg2 = null;
       if (isDual) {
         reg2 = calcWLS(pts2.x, pts2.y, pts2.sd);
         document.getElementById('p2-slope').innerText = reg2.slope.toFixed(6);
         document.getElementById('p2-intercept').innerText = reg2.intercept.toFixed(6);
         document.getElementById('p2-se').innerText = `± ${reg2.seSlope.toFixed(6)}`;
+        document.getElementById('p2-mswd').innerText = reg2.mswd.toFixed(3);
         document.getElementById('p2-r2').innerText = reg2.r2.toFixed(5);
 
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
       }
 
+      // 결과 테이블 렌더링
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
 
@@ -1097,6 +1137,7 @@
       });
     }
 
+    // Plotly Academic Plotter with MSWD in Legend
     function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
       const container = document.getElementById(elemId);
       container.innerHTML = '';
@@ -1123,7 +1164,7 @@
         y: ly,
         mode: 'lines',
         type: 'scatter',
-        name: `WLS: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`,
+        name: `WLS: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)} (MSWD = ${reg.mswd.toFixed(2)})`,
         line: { dash: 'solid', width: 1.5, color: '#6b7280' }
       };
 
@@ -1149,6 +1190,32 @@
       Plotly.newPlot(elemId, [scatterTrace, lineTrace], layout, { responsive: true, displayModeBar: false });
     }
 
+    // -------------------------------------------------------------
+    // 논문 투고용 벡터 SVG 다운로드 핸들러
+    // -------------------------------------------------------------
+    document.getElementById('btn-export-svg-1').addEventListener('click', () => {
+      const p = PRESETS[currentMode];
+      Plotly.downloadImage('plot-1', {
+        format: 'svg',
+        width: 800,
+        height: 600,
+        filename: `IsoCalib_${p.elements[0].label}_Fit`
+      });
+    });
+
+    document.getElementById('btn-export-svg-2').addEventListener('click', () => {
+      const p = PRESETS[currentMode];
+      if (p.elements.length > 1) {
+        Plotly.downloadImage('plot-2', {
+          format: 'svg',
+          width: 800,
+          height: 600,
+          filename: `IsoCalib_${p.elements[1].label}_Fit`
+        });
+      }
+    });
+
+    // Top Handlers
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       currentMode = e.target.value;
       updateLayoutForMode();
