@@ -2,9 +2,11 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>IsoCalib-Web: Online Isotope Calibration Tool</title>
+  <title>IsoCalib-Web: Stable Isotope Calibration Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Plotly 과학 차트 CDN -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   <style>
     .grid-cell { outline: none; user-select: text; }
@@ -13,27 +15,28 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
 
+  <!-- 헤더 / Header -->
   <header class="bg-slate-900 text-white px-6 py-4 shadow-md flex justify-between items-center">
     <div class="flex items-center space-x-3">
       <span class="text-2xl font-black tracking-tight text-cyan-400">IsoCalib<span class="text-white text-base font-medium ml-1">Web</span></span>
       <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Online IsoplotR Edition</span>
     </div>
     <div class="text-xs text-slate-400">
-      <span>회귀식: <strong class="text-emerald-400">X = Measured, Y = Actual (OLS)</strong></span>
+      <span>회귀식 기준 / Regression Protocol: <strong class="text-emerald-400">X = Measured, Y = Actual (OLS)</strong></span>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto p-6 space-y-6">
 
-    <!-- 1. 표준물질 참값 커스텀 설정 구역 (이용자가 직접 변경 가능) -->
+    <!-- 1. 표준물질 참값 설정 / Reference Standards Setting -->
     <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold text-slate-800">1. Reference Standards Setting (참값 직접 지정)</h3>
-        <span class="text-xs text-slate-500">표준물질 참값을 수정하면 실시간으로 검량선에 반영됩니다.</span>
+        <h3 class="text-sm font-bold text-slate-800">1. Reference Standards Setting (표준물질 참값 설정)</h3>
+        <span class="text-xs text-slate-500">참값 수정 시 실시간 검량선에 반영 / Edits apply to calibration directly</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
         <div class="p-3 bg-slate-50 rounded border border-slate-200 flex items-center space-x-3">
-          <span class="font-bold text-slate-700 font-sans w-20">NBS-18</span>
+          <span class="font-bold text-slate-700 font-sans w-24">NBS-18</span>
           <div class="flex items-center space-x-1">
             <span class="text-slate-500 font-sans">δ¹³C:</span>
             <input type="number" step="0.001" id="ref-nbs-c" value="-5.012" class="w-20 px-2 py-1 border rounded bg-white font-bold text-slate-700">
@@ -45,7 +48,7 @@
         </div>
 
         <div class="p-3 bg-slate-50 rounded border border-slate-200 flex items-center space-x-3">
-          <span class="font-bold text-slate-700 font-sans w-20">IAEA-603</span>
+          <span class="font-bold text-slate-700 font-sans w-24">IAEA-603</span>
           <div class="flex items-center space-x-1">
             <span class="text-slate-500 font-sans">δ¹³C:</span>
             <input type="number" step="0.001" id="ref-iaea-c" value="2.460" class="w-20 px-2 py-1 border rounded bg-white font-bold text-slate-700">
@@ -58,42 +61,42 @@
       </div>
     </div>
 
-    <!-- 컨트롤 버튼 바 -->
+    <!-- 컨트롤 버튼 바 / Action Buttons -->
     <div class="flex justify-between items-center">
       <div class="flex space-x-2">
         <button id="btn-clear" class="px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded transition">
-          전체 비우기 (새 데이터 입력)
+          전체 비우기 / Clear All
         </button>
         <button id="btn-demo" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded transition">
-          예제 데이터 불러오기
+          예제 불러오기 / Load Demo
         </button>
         <button id="btn-add-row" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded transition">
-          + 5행 추가
+          + 5행 추가 / Add 5 Rows
         </button>
       </div>
 
       <button id="btn-calc" class="px-6 py-2 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg shadow transition">
-        검량선 계산 & 시료 보정 실행
+        검량선 계산 & 시료 보정 / Run Calibration
       </button>
     </div>
 
-    <!-- 2. 스프레드시트 및 플롯 영역 -->
+    <!-- 2. 스프레드시트 & 플롯 / Grid & Calibration Plots -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- 좌측: 입력 그리드 -->
+      <!-- 좌측: 입력 그리드 / Left: Raw Data Grid -->
       <section class="lg:col-span-6 bg-white rounded-lg shadow-sm border border-slate-200 p-4 flex flex-col">
-        <div class="flex justify-between items-center mb-2">
-          <h2 class="text-base font-bold text-slate-800">2. Raw Data Input</h2>
-          <span id="row-count" class="text-xs font-medium text-slate-400">0 행</span>
+        <div class="flex justify-between items-center mb-1">
+          <h2 class="text-base font-bold text-slate-800">2. Raw Data Input (측정 데이터 입력)</h2>
+          <span id="row-count" class="text-xs font-medium text-slate-400">0 rows / 행</span>
         </div>
-        <p class="text-xs text-slate-500 mb-3">엑셀에서 [SampleID, 측정 δ¹³C, 측정 δ¹⁸O] 열을 복사하여 아래 셀에 붙여넣기(Ctrl+V)하세요.</p>
+        <p class="text-xs text-slate-500 mb-3">엑셀에서 [Sample ID, 측정 δ¹³C, 측정 δ¹⁸O] 열을 복사하여 셀에 붙여넣기(Ctrl+V)하세요.<br>Copy [Sample ID, Raw δ¹³C, Raw δ¹⁸O] columns from Excel and paste here.</p>
 
         <div class="flex-grow overflow-auto border border-slate-200 rounded max-h-[500px]">
           <table class="w-full border-collapse text-left font-mono text-xs">
             <thead class="bg-slate-100 sticky top-0 border-b border-slate-200 font-sans text-slate-700 select-none">
               <tr>
                 <th class="w-10 px-2 py-2 text-center text-slate-400 border-r">#</th>
-                <th class="px-3 py-2 border-r">Sample ID</th>
+                <th class="px-3 py-2 border-r">Sample ID (시료명)</th>
                 <th class="px-3 py-2 border-r">Raw δ¹³C (‰)</th>
                 <th class="px-3 py-2">Raw δ¹⁸O (‰)</th>
               </tr>
@@ -103,44 +106,44 @@
         </div>
       </section>
 
-      <!-- 우측: 결과 파라미터 & 차트 -->
+      <!-- 우측: 결과 파라미터 & 차트 / Right: Parameters & Plots -->
       <section class="lg:col-span-6 space-y-6">
         <div class="grid grid-cols-2 gap-4">
           <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹³C 회귀 결과</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹³C Parameters (회귀 결과)</h3>
             <div class="space-y-1 text-xs font-mono">
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope:</span> <strong id="c-slope">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept:</span> <strong id="c-intercept">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">R²:</span> <strong id="c-r2" class="text-emerald-600">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope (기울기):</span> <strong id="c-slope">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept (절편):</span> <strong id="c-intercept">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">R² (결정계수):</span> <strong id="c-r2" class="text-emerald-600">-</strong></div>
             </div>
           </div>
           <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹⁸O 회귀 결과</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">δ¹⁸O Parameters (회귀 결과)</h3>
             <div class="space-y-1 text-xs font-mono">
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope:</span> <strong id="o-slope">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept:</span> <strong id="o-intercept">-</strong></div>
-              <div class="flex justify-between"><span class="text-slate-500 font-sans">R²:</span> <strong id="o-r2" class="text-emerald-600">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Slope (기울기):</span> <strong id="o-slope">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">Intercept (절편):</span> <strong id="o-intercept">-</strong></div>
+              <div class="flex justify-between"><span class="text-slate-500 font-sans">R² (결정계수):</span> <strong id="o-r2" class="text-emerald-600">-</strong></div>
             </div>
           </div>
         </div>
 
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 space-y-4">
-          <h3 class="text-sm font-bold text-slate-800">Calibration Curves</h3>
-          <div id="plot-c" class="w-full h-60 border border-slate-100 rounded"></div>
-          <div id="plot-o" class="w-full h-60 border border-slate-100 rounded"></div>
+          <h3 class="text-sm font-bold text-slate-800">Calibration Curves (검량선 차트)</h3>
+          <div id="plot-c" class="w-full h-60 border border-slate-100 rounded flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
+          <div id="plot-o" class="w-full h-60 border border-slate-100 rounded flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>
         </div>
       </section>
     </div>
 
-    <!-- 3. 최종 결과 테이블 -->
+    <!-- 3. 최종 결과 테이블 / Calibrated Results Table -->
     <section class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
-      <div class="flex justify-between items-center mb-3">
+      <div class="flex justify-between items-center mb-2">
         <div>
-          <h2 class="text-base font-bold text-slate-800">3. Final Calibrated Data</h2>
-          <p class="text-xs text-slate-500">계산식: Calibrated = (Raw × Slope) + Intercept</p>
+          <h2 class="text-base font-bold text-slate-800">3. Calibrated Results (최종 보정 결과)</h2>
+          <p class="text-xs text-slate-500">계산식 / Formula: Calibrated = (Raw × Slope) + Intercept</p>
         </div>
         <button id="btn-export" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded transition">
-          CSV 파일 다운로드
+          CSV 파일 다운로드 / Export CSV
         </button>
       </div>
 
@@ -148,14 +151,20 @@
         <table class="w-full text-left text-xs font-mono text-slate-600">
           <thead class="bg-slate-100 text-slate-700 uppercase font-sans border-b border-slate-200">
             <tr>
-              <th class="px-4 py-2 border-r">Sample ID</th>
+              <th class="px-4 py-2 border-r">Sample ID (시료명)</th>
               <th class="px-4 py-2 border-r">Raw δ¹³C</th>
               <th class="px-4 py-2 border-r">Raw δ¹⁸O</th>
               <th class="px-4 py-2 border-r text-cyan-800 font-bold">Calibrated δ¹³C (‰ VPDB)</th>
               <th class="px-4 py-2 text-cyan-800 font-bold">Calibrated δ¹⁸O (‰ VPDB)</th>
             </tr>
           </thead>
-          <tbody id="result-body" class="divide-y divide-slate-100"></tbody>
+          <tbody id="result-body" class="divide-y divide-slate-100">
+            <tr>
+              <td colspan="5" class="px-4 py-6 text-center text-xs font-sans text-slate-400">
+                상단 표에 데이터를 입력한 뒤 [검량선 계산 & 시료 보정 실행] 버튼을 눌러주세요.<br>Enter or paste data above and click [Run Calibration].
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </section>
@@ -173,7 +182,7 @@
       ["KDO-3", 27.211, 13.268], ["KDO-4", 26.762, 11.447], ["JMC90", 1.655, 4.632]
     ];
 
-    let gridData = JSON.parse(JSON.stringify(SAMPLE_DEMO));
+    let gridData = Array.from({ length: 10 }, () => ['', '', '']);
     const gridBody = document.getElementById('grid-body');
 
     function renderGrid() {
@@ -208,7 +217,7 @@
 
         gridBody.appendChild(tr);
       });
-      document.getElementById('row-count').innerText = `${gridData.length} 행`;
+      document.getElementById('row-count').innerText = `${gridData.length} rows / 행`;
     }
 
     function handlePaste(text, startR, startC) {
@@ -226,7 +235,6 @@
         });
       });
       renderGrid();
-      runCalibration();
     }
 
     function linreg(xArr, yArr) {
@@ -275,6 +283,11 @@
         }
       });
 
+      if (ptsC.x.length < 2 && ptsO.x.length < 2) {
+        alert("최소 2개 이상의 표준물질(NBS-18 / IAEA-603) 데이터가 필요합니다.\nPlease provide at least 2 reference standard points (NBS-18 / IAEA-603).");
+        return;
+      }
+
       const regC = linreg(ptsC.x, ptsC.y);
       const regO = linreg(ptsO.x, ptsO.y);
 
@@ -286,8 +299,8 @@
       document.getElementById('o-intercept').innerText = regO.intercept.toFixed(6);
       document.getElementById('o-r2').innerText = regO.r2.toFixed(5);
 
-      drawPlot('plot-c', 'δ¹³C Calibration', ptsC, regC, 'Raw δ¹³C (‰)', 'Actual δ¹³C (‰ VPDB)', '#0284c7');
-      drawPlot('plot-o', 'δ¹⁸O Calibration', ptsO, regO, 'Raw δ¹⁸O (‰)', 'Actual δ¹⁸O (‰ VPDB)', '#0d9488');
+      drawPlot('plot-c', 'δ¹³C Calibration Curve', ptsC, regC, 'Raw δ¹³C (‰)', 'Actual δ¹³C (‰ VPDB)', '#0284c7');
+      drawPlot('plot-o', 'δ¹⁸O Calibration Curve', ptsO, regO, 'Raw δ¹⁸O (‰)', 'Actual δ¹⁸O (‰ VPDB)', '#0d9488');
 
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
@@ -301,8 +314,8 @@
         const clean = id.toUpperCase().replace(/[-_ ]/g, '');
         const isStd = clean.startsWith('NBS18') || clean.startsWith('IAEA603');
 
-        const calC = !isNaN(d13c) ? (d13c * regC.slope + regC.intercept).toFixed(3) : '-';
-        const calO = !isNaN(d18o) ? (d18o * regO.slope + regO.intercept).toFixed(3) : '-';
+        const calC = !isNaN(d13c) && regC.slope !== 0 ? (d13c * regC.slope + regC.intercept).toFixed(3) : '-';
+        const calO = !isNaN(d18o) && regO.slope !== 0 ? (d18o * regO.slope + regO.intercept).toFixed(3) : '-';
 
         const tr = document.createElement('tr');
         if (isStd) tr.className = 'bg-slate-50 text-slate-400';
@@ -326,8 +339,8 @@
       const ly = [lx[0] * reg.slope + reg.intercept, lx[1] * reg.slope + reg.intercept];
 
       Plotly.newPlot(elemId, [
-        { x: pts.x, y: pts.y, text: pts.names, mode: 'markers', type: 'scatter', name: 'Standards', marker: { size: 7, color: color } },
-        { x: lx, y: ly, mode: 'lines', type: 'scatter', name: `y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`, line: { dash: 'dash', width: 1.5, color: '#475569' } }
+        { x: pts.x, y: pts.y, text: pts.names, mode: 'markers', type: 'scatter', name: 'Standards / 표준물질', marker: { size: 7, color: color } },
+        { x: lx, y: ly, mode: 'lines', type: 'scatter', name: `Fit: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)}`, line: { dash: 'dash', width: 1.5, color: '#475569' } }
       ], {
         title: { text: title, font: { size: 12 } },
         margin: { l: 45, r: 15, t: 30, b: 35 },
@@ -337,7 +350,7 @@
       }, { responsive: true, displayModeBar: false });
     }
 
-    // 리스너
+    // 버튼 이벤트 리스너
     document.getElementById('btn-calc').addEventListener('click', runCalibration);
     document.getElementById('btn-demo').addEventListener('click', () => {
       gridData = JSON.parse(JSON.stringify(SAMPLE_DEMO));
@@ -347,7 +360,15 @@
     document.getElementById('btn-clear').addEventListener('click', () => {
       gridData = Array.from({ length: 10 }, () => ['', '', '']);
       renderGrid();
-      document.getElementById('result-body').innerHTML = '';
+      document.getElementById('c-slope').innerText = '-';
+      document.getElementById('c-intercept').innerText = '-';
+      document.getElementById('c-r2').innerText = '-';
+      document.getElementById('o-slope').innerText = '-';
+      document.getElementById('o-intercept').innerText = '-';
+      document.getElementById('o-r2').innerText = '-';
+      document.getElementById('plot-c').innerHTML = '<div class="h-full flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>';
+      document.getElementById('plot-o').innerHTML = '<div class="h-full flex items-center justify-center text-xs text-slate-400">데이터 입력 후 계산 버튼을 누르면 플롯이 표시됩니다 / Ready for data</div>';
+      document.getElementById('result-body').innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-xs font-sans text-slate-400">상단 표에 데이터를 입력한 뒤 [검량선 계산 & 시료 보정 실행] 버튼을 눌러주세요.<br>Enter or paste data above and click [Run Calibration].</td></tr>';
     });
     document.getElementById('btn-add-row').addEventListener('click', () => {
       for (let i = 0; i < 5; i++) gridData.push(['', '', '']);
@@ -362,13 +383,12 @@
       });
       const a = document.createElement('a');
       a.href = encodeURI(csv);
-      a.download = 'Calibrated_Data.csv';
+      a.download = 'Calibrated_Isotope_Data.csv';
       a.click();
     });
 
     window.addEventListener('DOMContentLoaded', () => {
       renderGrid();
-      runCalibration();
     });
   </script>
 </body>
