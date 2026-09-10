@@ -47,7 +47,7 @@
       background-color: #e0f2fe !important; /* Sky 100 */
     }
     .grid-cell.cell-primary {
-      box-shadow: inset 0 0 0 2px #0284c7 !important; /* Excel Green/Blue active border */
+      box-shadow: inset 0 0 0 2px #0284c7 !important;
       background-color: #ffffff !important;
     }
     .grid-cell.cell-editing {
@@ -69,7 +69,6 @@
       background: #ffffff;
     }
 
-    /* Invisible Clipboard Catcher for One-Click Pasting */
     #paste-target {
       position: fixed;
       left: -9999px;
@@ -86,7 +85,7 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
-  <!-- 숨은 클립보드 캐처: 커서 활성화 없이도 Ctrl+V가 즉시 먹히게 함 -->
+  <!-- Clipboard Target -->
   <textarea id="paste-target" tabindex="-1"></textarea>
 
   <!-- Editorial Top Navigation -->
@@ -118,15 +117,15 @@
       </div>
 
       <!-- Isotope Preset Selector -->
-      <div class="space-y-1.5 self-start md:self-end min-w-[260px]">
+      <div class="space-y-1.5 self-start md:self-end min-w-[280px]">
         <label for="isotope-preset" class="text-xs uppercase tracking-wider text-stone-700 font-mono font-bold block">
           Isotope System (분석 체계)
         </label>
-        <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm">
-          <option value="CO">Carbon & Oxygen (δ¹³C, δ¹⁸O)</option>
-          <option value="NO">Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O)</option>
-          <option value="HO">Hydrogen & Oxygen (δD, δ¹⁸O)</option>
-          <option value="S">Sulfur Isotope (δ³⁴S)</option>
+        <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm cursor-pointer">
+          <option value="CO">1. Carbon & Oxygen (δ¹³C, δ¹⁸O)</option>
+          <option value="NO">2. Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O)</option>
+          <option value="HO">3. Hydrogen & Oxygen (δD, δ¹⁸O)</option>
+          <option value="S">4. Sulfur Isotope (δ³⁴S)</option>
         </select>
       </div>
     </div>
@@ -179,7 +178,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left: Spreadsheet Grid (Interactive Drag Selection) -->
+        <!-- Left: Spreadsheet Grid -->
         <div class="lg:col-span-6 space-y-2">
           <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm relative">
             <div class="max-h-[580px] overflow-auto select-none" id="grid-scroll-container">
@@ -498,9 +497,7 @@
       document.getElementById('result-body').innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">Execute calibration above to view reduced isotopic ratios and propagated uncertainties.</td></tr>';
     }
 
-    // -------------------------------------------------------------
-    // Spreadsheet Grid Rendering (One-Click Selection)
-    // -------------------------------------------------------------
+    // Grid Rendering
     function renderGrid() {
       const gridBody = document.getElementById('grid-body');
       gridBody.innerHTML = '';
@@ -511,7 +508,6 @@
         tr.className = 'hover:bg-stone-50/60 transition-colors';
         tr.dataset.r = rIdx;
 
-        // Row Header (#)
         const tdIdx = document.createElement('td');
         tdIdx.className = 'row-header px-3 py-1.5 text-center text-stone-400 border-r border-[#e5e3dc] select-none bg-[#fbfaf8] text-xs font-mono font-medium cursor-pointer hover:bg-stone-200';
         tdIdx.innerText = String(rIdx + 1).padStart(2, '0');
@@ -531,7 +527,6 @@
 
         tr.appendChild(tdIdx);
 
-        // Cells
         for (let cIdx = 0; cIdx < numCols; cIdx++) {
           const val = row[cIdx];
           const td = document.createElement('td');
@@ -540,7 +535,6 @@
           td.dataset.c = cIdx;
           td.innerText = val !== null && val !== undefined ? val : '';
 
-          // 엑셀 스타일: 단 1번 클릭 시 셀 선택 + 붙여넣기 대기 상태
           td.addEventListener('mousedown', (e) => {
             if (e.button !== 0 && e.button !== 2) return;
             if (td === activeEditingCell) return;
@@ -554,7 +548,6 @@
             syncPasteTarget();
           });
 
-          // 더블클릭할 때만 직접 텍스트 타이핑 커서 열림
           td.addEventListener('dblclick', () => {
             openEditingCell(td);
           });
@@ -569,11 +562,15 @@
       applySelectionVisuals();
     }
 
-    // 숨겨진 텍스트에리어로 포커스를 옮겨 브라우저가 Ctrl+V를 바로 수신하게 만듦
+    // 안전한 포커스 싱크: 다른 인터랙티브 요소(select, input, button 등) 클릭 시에는 포커스를 빼앗지 않음
     function syncPasteTarget() {
+      const active = document.activeElement;
+      if (active && (active.tagName === 'SELECT' || active.tagName === 'INPUT' || active.tagName === 'BUTTON')) {
+        return;
+      }
       const pt = document.getElementById('paste-target');
       pt.value = '';
-      pt.focus();
+      pt.focus({ preventScroll: true });
     }
 
     function openEditingCell(td) {
@@ -604,10 +601,8 @@
       const c = parseInt(activeEditingCell.dataset.c);
       gridData[r][c] = c === 0 ? activeEditingCell.innerText.trim() : (parseFloat(activeEditingCell.innerText) || activeEditingCell.innerText);
       activeEditingCell = null;
-      syncPasteTarget();
     }
 
-    // 마우스 드래그 이벤트
     window.addEventListener('mousemove', (e) => {
       if (!isMouseDown) return;
 
@@ -630,8 +625,13 @@
       }
     });
 
-    window.addEventListener('mouseup', () => {
+    // mouseup 시 대상 요소가 input/select 등이면 포커스 뺏지 않도록 방어
+    window.addEventListener('mouseup', (e) => {
       isMouseDown = false;
+      const t = e.target;
+      if (t && (t.tagName === 'SELECT' || t.tagName === 'INPUT' || t.tagName === 'BUTTON' || t.closest('select') || t.closest('input'))) {
+        return;
+      }
       if (!activeEditingCell) syncPasteTarget();
     });
 
@@ -655,13 +655,11 @@
       if (!selectedCellRange) return;
       const { minR, maxR, minC, maxC } = selectedCellRange;
 
-      // 행 헤더
       allRowHeaders.forEach(rh => {
         const r = parseInt(rh.dataset.r);
         if (r >= minR && r <= maxR) rh.classList.add('row-selected');
       });
 
-      // 셀 하이라이트
       allCells.forEach(cell => {
         const r = parseInt(cell.dataset.r);
         const c = parseInt(cell.dataset.c);
@@ -675,11 +673,10 @@
       });
     }
 
-    // -------------------------------------------------------------
-    // 전역 Paste 핸들러: 커서 없이 클릭만 된 상태에서 무조건 작동
-    // -------------------------------------------------------------
+    // 전역 Paste 핸들러
     window.addEventListener('paste', (e) => {
-      // 만약 특정 셀에서 타이핑 커서가 켜져 있는 상태라면 기본 브라우저 입력 방식을 따름
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' && active.id !== 'paste-target')) return;
       if (activeEditingCell) return;
 
       e.preventDefault();
@@ -709,7 +706,6 @@
         });
       });
 
-      // 붙여넣은 영역을 자동으로 선택 상태로 지정
       const pasteRows = rows.length;
       const pasteCols = rows[0].split('\t').length;
       dragStart = { r: startR, c: startC };
@@ -723,10 +719,11 @@
       syncPasteTarget();
     }
 
-    // -------------------------------------------------------------
-    // 키보드 내비게이션 & Delete 삭제 & 빠른 타이핑
-    // -------------------------------------------------------------
+    // 키보드 이벤트
     window.addEventListener('keydown', (e) => {
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT')) return;
+
       if (activeEditingCell) {
         if (e.key === 'Enter') {
           e.preventDefault();
@@ -746,7 +743,6 @@
       const { minR, maxR, minC, maxC } = selectedCellRange;
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
 
-      // 1) Delete / Backspace 키로 데이터 삭제
       if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
         for (let r = minR; r <= maxR; r++) {
@@ -759,7 +755,6 @@
         return;
       }
 
-      // 2) 방향키 내비게이션
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
         e.preventDefault();
         let curR = dragStart.r;
@@ -778,7 +773,6 @@
         return;
       }
 
-      // 3) 셀이 선택된 상태에서 숫자/문자를 타이핑하면 바로 입력 모드로 진입 (엑셀 방식)
       if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
         const targetTd = document.querySelector(`.grid-cell[data-r="${dragStart.r}"][data-c="${dragStart.c}"]`);
         if (targetTd) {
@@ -788,9 +782,6 @@
       }
     });
 
-    // -------------------------------------------------------------
-    // 선택된 행 완전 삭제 & 컨텍스트 메뉴
-    // -------------------------------------------------------------
     function deleteSelectedRows() {
       if (!selectedCellRange) return;
       const { minR, maxR } = selectedCellRange;
@@ -811,6 +802,8 @@
 
     document.getElementById('interactive-grid').addEventListener('contextmenu', (e) => {
       e.preventDefault();
+      if (!selectedCellRange) return;
+
       contextMenu.style.left = `${e.clientX}px`;
       contextMenu.style.top = `${e.clientY}px`;
       contextMenu.classList.remove('hidden');
