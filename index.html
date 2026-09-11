@@ -158,13 +158,13 @@
 
     <!-- Section 1: Reference & QC Standards -->
     <section class="space-y-4">
-      <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
-        <div class="flex items-center space-x-2">
-          <span class="font-mono text-xs font-bold text-stone-400">01</span>
-          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
+      <div class="flex flex-wrap items-baseline justify-between border-b border-stone-200 pb-2.5 gap-2">
+        <div class="flex items-center space-x-3">
+          <span class="font-mono text-base sm:text-lg font-bold text-stone-400">01</span>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
         </div>
         
-        <label class="flex items-center space-x-2 cursor-pointer select-none bg-stone-100 px-3 py-1 border border-stone-300 rounded text-xs font-mono">
+        <label class="flex items-center space-x-2 cursor-pointer select-none bg-stone-100 px-3 py-1.5 border border-stone-300 rounded text-xs font-mono">
           <input type="checkbox" id="chk-drift" class="rounded border-stone-300 text-stone-900 focus:ring-0">
           <span class="font-medium text-stone-800" data-i18n="drift_toggle">Sequence Drift Correction (시간/순서 기반 드리프트 1차 보정)</span>
         </label>
@@ -177,9 +177,9 @@
     <section class="space-y-5">
       <div class="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-3">
         <div class="space-y-1">
-          <div class="flex items-center space-x-2">
-            <span class="font-mono text-xs font-bold text-stone-400">02</span>
-            <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-base sm:text-lg font-bold text-stone-400">02</span>
+            <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
           </div>
           <p class="text-xs text-stone-600" data-i18n="sec2_desc">
             시작할 셀을 <strong>한 번 클릭</strong>하고 바로 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 엑셀 런 시퀀스가 복사됩니다.
@@ -256,9 +256,9 @@
     <!-- Section 3: Final Results & QC Report -->
     <section class="space-y-4 pt-2">
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-3">
-        <div class="flex items-center space-x-2">
-          <span class="font-mono text-xs font-bold text-stone-400">03</span>
-          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
+        <div class="flex items-center space-x-3">
+          <span class="font-mono text-base sm:text-lg font-bold text-stone-400">03</span>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
         <button id="btn-export" class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b-2 border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition cursor-pointer" data-i18n="btn_export_csv">
           Export as .CSV
@@ -284,11 +284,11 @@
     <!-- Section 4: Academic Rigor & Methodology -->
     <section id="methodology" class="border-t-2 border-stone-900 pt-10 space-y-8">
       <div class="max-w-3xl space-y-2">
-        <div class="flex items-center space-x-2">
-          <span class="font-mono text-xs font-bold text-stone-400">04</span>
-          <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900" data-i18n="sec4_tag">Methodology & Standard Principles</h2>
+        <div class="flex items-center space-x-3">
+          <span class="font-mono text-base sm:text-lg font-bold text-stone-400">04</span>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec4_tag">Methodology & Standard Principles</h2>
         </div>
-        <h3 class="font-serif-title text-2xl font-normal text-stone-900" data-i18n="sec4_heading">통계적 회귀 원리 및 표준 분석 지침</h3>
+        <h3 class="font-serif-title text-2xl sm:text-3xl font-normal text-stone-900" data-i18n="sec4_heading">통계적 회귀 원리 및 표준 분석 지침</h3>
         <p class="text-xs text-stone-600 leading-relaxed font-light" data-i18n="sec4_subheading">
           IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.
         </p>
@@ -913,7 +913,7 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // Result Header: TYPE 열 제거
+      // Result Header
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -1692,7 +1692,7 @@
     });
 
     // -------------------------------------------------------------
-    // CSV 내보내기 핸들러 (TYPE 열 없이 첫 열부터 Sample ID로 출력)
+    // CSV 내보내기 핸들러 (Sample ID부터 시작)
     // -------------------------------------------------------------
     document.getElementById('btn-export').addEventListener('click', () => {
       const rows = document.querySelectorAll('#result-body tr');
