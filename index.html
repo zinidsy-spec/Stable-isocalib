@@ -111,9 +111,11 @@
       </div>
       <div class="flex items-center space-x-6">
         <nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
+          <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">About IsoCalib</button>
+          <span>·</span>
           <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">Methodology & Principles</a>
           <span>·</span>
-          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">How to Cite</a>
+          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">Citation</a>
         </nav>
         
         <!-- Language Switcher Toggle -->
@@ -423,23 +425,64 @@
         </div>
       </div>
 
-      <!-- Citation -->
+      <!-- Citation Section -->
       <div id="citation" class="space-y-3 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
-          <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">How to Cite this Platform in Publications</h4>
-          <span class="text-xs text-stone-500 font-serif-title italic" data-i18n="cite_format">Academic citation format</span>
+          <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Repository Link</h4>
+          <span class="text-xs text-stone-500 font-serif-title italic" data-i18n="cite_format">Reference placeholder</span>
         </div>
         <p class="text-xs text-stone-600 font-light" data-i18n="cite_desc">
-          본 도구를 활용하여 축약 및 보정한 동위원소 데이터를 논문이나 학위 청구 논문에 게재하실 경우, Analytical Methods 섹션에 다음과 같이 인용하실 수 있습니다:
+          정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:
         </p>
         <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed">
-          IsoCalib: An Open-Source Web Tool for Stable Isotope Calibration, Sequence Drift Correction, and WLS Uncertainty Propagation. Available online: https://zinidsy-spec.github.io/Stable-isocalib/ (accessed 2026).
+          IsoCalib: An Open-Source Web Tool for Stable Isotope Calibration, Sequence Drift Correction, and WLS Uncertainty Propagation. Available online: https://zinidsy-spec.github.io/Stable-isocalib/ (2026).
         </div>
       </div>
 
     </section>
 
   </main>
+
+  <!-- About IsoCalib Modal (IsoplotR Style) -->
+  <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
+      <div class="flex justify-between items-start border-b border-stone-200 pb-4">
+        <div>
+          <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.0 (Release 2026)</span>
+        </div>
+        <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs text-stone-700 font-light leading-relaxed">
+        <p id="about-p1">
+          <!-- JS 동적 주입 -->
+        </p>
+        <p id="about-p2">
+          <!-- JS 동적 주입 -->
+        </p>
+
+        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
+          <strong class="font-mono uppercase tracking-wider text-[11px] text-stone-900 block" id="about-protocols-title">Core Analytical Protocols:</strong>
+          <ul class="list-disc list-inside space-y-1 text-[11px] font-mono text-stone-600" id="about-protocols-list">
+            <!-- JS 동적 주입 -->
+          </ul>
+        </div>
+
+        <p id="about-p3">
+          <!-- JS 동적 주입 -->
+        </p>
+      </div>
+
+      <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
+        <div>
+          <span class="block">Inquiries & Bug Reports:</span>
+          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues" target="_blank" class="text-stone-900 underline">GitHub Issues Page</a>
+        </div>
+        <button id="btn-modal-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition">Close</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Context Menu -->
   <div id="grid-context-menu" class="hidden fixed bg-white border border-[#c7c5bc] shadow-lg py-1.5 z-50 text-xs font-sans text-stone-800 rounded min-w-[180px]">
@@ -471,8 +514,9 @@
     const TRANSLATIONS = {
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
+        nav_about: "IsoCalib 소개",
         nav_methodology: "통계 방법론 & 원리",
-        nav_citation: "논문 인용 가이드",
+        nav_citation: "인용 정보",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
         hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
         hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
@@ -516,17 +560,22 @@
         ref_title: "공신력 있는 학술 문헌 및 방법론 근거 (Authoritative References):",
         privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
         privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
-        cite_title: "논문 인용 가이드 (How to Cite in Publications)",
-        cite_format: "Academic citation format",
-        cite_desc: "본 도구를 활용하여 축약 및 보정한 동위원소 데이터를 논문이나 학위 청구 논문에 게재하실 경우, Analytical Methods 섹션에 다음과 같이 인용하실 수 있습니다:",
+        cite_title: "인용 정보 및 저장소 링크",
+        cite_format: "Reference placeholder",
+        cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
         ctx_del_row: "선택 행 완전 삭제",
         ctx_clear_cells: "선택 셀 내용 지우기",
-        ctx_insert_row: "아래에 빈 행 1줄 삽입"
+        ctx_insert_row: "아래에 빈 행 1줄 삽입",
+        about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다. 기존 실험실 엑셀 매크로 시트의 수식 오류 및 호환성 문제를 해결하기 위해 개발되었으며, 설치나 외부 서버 통신 없이 웹 브라우저 상에서 시퀀스 드리프트 보정, 가중 회귀 피팅, 오차 전파를 즉시 수행합니다.",
+        about_p2: "본 도구는 국제 표준 스케일(VPDB, VSMOW, Air, VCDT)을 기반으로 주요 동위원소 체계인 탄소·산소(δ¹³C, δ¹⁸O), 질소·산소(δ¹⁵N, δ¹⁸O), 수소·산소(δD, δ¹⁸O), 황(δ³⁴S) 분석을 완벽히 지원합니다.",
+        about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
+        about_p3: "연구자의 미발표 데이터 보호를 위해 모든 연산은 <strong>사용자 브라우저 내부(JavaScript Engine)에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다. 한국어 및 영어를 실시간 지원하며, 논문 투고용 벡터 피겨(SVG)와 최종 정산표(CSV) 다운로드를 지원합니다."
       },
       en: {
         tagline: "/ Open Geochemistry Tool",
+        nav_about: "About IsoCalib",
         nav_methodology: "Methodology & Principles",
-        nav_citation: "How to Cite",
+        nav_citation: "Citation",
         hero_badge: "Precision Data Reduction & QC Protocol",
         hero_title: "Stable Isotope Calibration",
         hero_desc: "Performs sequence drift correction, weighted least squares (WLS) regression, blind QC verification, and rigorous uncertainty propagation in a single client-side pipeline.",
@@ -570,12 +619,16 @@
         ref_title: "Authoritative References & Methodological Basis:",
         privacy_title: "Zero-Server Client Computation (Total Privacy)",
         privacy_desc: "To safeguard unpublished laboratory datasets, all regression routines and data manipulation are <strong>executed 100% locally within your browser's JavaScript engine</strong>. Zero data is transmitted or logged externally.",
-        cite_title: "How to Cite this Platform in Publications",
-        cite_format: "Academic citation format",
-        cite_desc: "When reporting data reduced using IsoCalib in publications or dissertations, you may cite it in the Analytical Methods section as follows:",
+        cite_title: "Citation & Repository Link",
+        cite_format: "Reference placeholder",
+        cite_desc: "Formal journal publication and DOI assignment are currently in preparation. To cite this software in your Analytical Methods section, please refer to the repository URL below:",
         ctx_del_row: "Delete Selected Rows",
         ctx_clear_cells: "Clear Selected Cells",
-        ctx_insert_row: "Insert 1 Blank Row Below"
+        ctx_insert_row: "Insert 1 Blank Row Below",
+        about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof. Developed to liberate researchers and laboratory technicians from brittle, error-prone spreadsheet templates, IsoCalib executes sequence drift correction, weighted regression fitting, and rigorous uncertainty propagation directly inside the web browser.",
+        about_p2: "It supports standard isotope systematics including Carbon & Oxygen (δ¹³C, δ¹⁸O), Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O), Hydrogen & Oxygen (δD, δ¹⁸O), and Sulfur (δ³⁴S) across common international reference scales (VPDB, VSMOW, Air, VCDT).",
+        about_protocols_title: "Core Analytical Protocols:",
+        about_p3: "All computations are executed 100% locally within the client-side JavaScript engine; <strong>no analytical data is ever transferred to or stored on external servers</strong>. IsoCalib is accessible in both Korean and English. Vector graphics (publication-quality SVG) and reduced datasets (.CSV) can be exported with a single click."
       }
     };
 
@@ -585,7 +638,6 @@
       currentLang = lang;
       localStorage.setItem('isocalib_lang', lang);
 
-      // 버튼 활성화 스타일
       const btnKo = document.getElementById('lang-ko');
       const btnEn = document.getElementById('lang-en');
       if (lang === 'ko') {
@@ -596,7 +648,6 @@
         btnKo.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition';
       }
 
-      // data-i18n 태그 일괄 교체
       const dict = TRANSLATIONS[lang];
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -605,7 +656,31 @@
         }
       });
 
-      // 동적 렌더링 영역 업데이트
+      // About Modal 내부 텍스트 갱신
+      document.getElementById('about-p1').innerHTML = dict.about_p1;
+      document.getElementById('about-p2').innerHTML = dict.about_p2;
+      document.getElementById('about-p3').innerHTML = dict.about_p3;
+      document.getElementById('about-protocols-title').innerText = dict.about_protocols_title;
+
+      const listEl = document.getElementById('about-protocols-list');
+      if (lang === 'ko') {
+        listEl.innerHTML = `
+          <li>시퀀스 런 순서 기반 선형 기기 표류(Drift) 1차 보정</li>
+          <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
+          <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
+          <li>검량선에 미참여하는 미지의 독립 QC 표준물질 편차(Bias) 및 정밀도 검증</li>
+          <li>국제측정학위원회(JCGM 100:2008 GUM) 표준 1차 편미분 합성 불확도 전파</li>
+        `;
+      } else {
+        listEl.innerHTML = `
+          <li>Time/Sequence-based Linear Instrumental Drift Correction</li>
+          <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
+          <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
+          <li>Independent Blind Quality Control (QC) accuracy bias and reproducibility tracking</li>
+          <li>Combined First-Order Uncertainty Propagation adhering to JCGM 100:2008 (GUM) guidelines</li>
+        `;
+      }
+
       updateLayoutForMode();
 
       if (window.MathJax && window.MathJax.typesetPromise) {
@@ -615,6 +690,23 @@
 
     document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
     document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+
+    // About Modal Controls
+    const aboutModal = document.getElementById('about-modal');
+    document.getElementById('btn-open-about').addEventListener('click', () => {
+      aboutModal.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-about').addEventListener('click', () => {
+      aboutModal.classList.add('hidden');
+    });
+    document.getElementById('btn-modal-close-bottom').addEventListener('click', () => {
+      aboutModal.classList.add('hidden');
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) {
+        aboutModal.classList.add('hidden');
+      }
+    });
 
     // -------------------------------------------------------------
     // Isotope Presets & System Core
