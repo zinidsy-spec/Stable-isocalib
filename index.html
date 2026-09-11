@@ -272,7 +272,7 @@
           <thead id="result-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
           <tbody id="result-body" class="divide-y divide-[#e5e3dc]">
             <tr>
-              <td colspan="8" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400" data-i18n="result_empty">
+              <td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400" data-i18n="result_empty">
                 Execute calibration above to view reduced isotopic ratios and propagated uncertainties.
               </td>
             </tr>
@@ -913,11 +913,11 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
+      // Result Header: TYPE 열 제거
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
           <tr>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Type' : '분류'}</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
@@ -930,7 +930,6 @@
       } else {
         rHead.innerHTML = `
           <tr>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Type' : '분류'}</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
@@ -951,7 +950,7 @@
       const isEn = currentLang === 'en';
       document.getElementById('plot-1').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
       document.getElementById('plot-2').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
-      document.getElementById('result-body').innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
+      document.getElementById('result-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
       document.getElementById('qc-summary-banner').classList.add('hidden');
     }
 
@@ -1505,22 +1504,11 @@
           if (isQC) qcResults.cals2.push(cVal2);
         }
 
-        let typeBadge = '<span class="text-stone-400 font-mono text-[10px]">SAMPLE</span>';
-        let trClass = 'hover:bg-stone-50';
-        if (isAnchor) {
-          typeBadge = '<span class="text-stone-700 bg-stone-100 px-1.5 py-0.5 font-mono text-[10px] font-bold border border-stone-200">ANCHOR</span>';
-          trClass = 'bg-[#fcfbf9] text-stone-500';
-        } else if (isQC) {
-          typeBadge = '<span class="text-emerald-800 bg-emerald-50 px-1.5 py-0.5 font-mono text-[10px] font-bold border border-emerald-300">QC STD</span>';
-          trClass = 'bg-[#f8fdf9]';
-        }
-
         const tr = document.createElement('tr');
-        tr.className = trClass;
+        tr.className = isAnchor ? 'bg-[#fcfbf9] text-stone-500' : 'hover:bg-stone-50';
 
         if (isDual) {
           tr.innerHTML = `
-            <td class="px-3 py-2 border-r border-[#e5e3dc]">${typeBadge}</td>
             <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold ${isAnchor ? 'text-stone-500' : 'text-stone-900'}">${id}</td>
             <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
             <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw2) ? raw2.toFixed(3) : '-'}</td>
@@ -1531,7 +1519,6 @@
           `;
         } else {
           tr.innerHTML = `
-            <td class="px-3 py-2 border-r border-[#e5e3dc]">${typeBadge}</td>
             <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold ${isAnchor ? 'text-stone-500' : 'text-stone-900'}">${id}</td>
             <td class="px-4 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
             <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1}</td>
@@ -1705,7 +1692,7 @@
     });
 
     // -------------------------------------------------------------
-    // CSV 내보내기 핸들러 (UTF-8 BOM 및 특수문자 완벽 대응)
+    // CSV 내보내기 핸들러 (TYPE 열 없이 첫 열부터 Sample ID로 출력)
     // -------------------------------------------------------------
     document.getElementById('btn-export').addEventListener('click', () => {
       const rows = document.querySelectorAll('#result-body tr');
@@ -1716,7 +1703,6 @@
       rows.forEach(tr => {
         const cols = Array.from(tr.querySelectorAll('td')).map(td => {
           let text = td.innerText.replace('±', '').trim();
-          // 쉼표(,)나 따옴표(")가 포함된 ID를 감싸서 CSV 열 밀림 방지
           if (text.includes(',') || text.includes('"') || text.includes('\n')) {
             text = `"${text.replace(/"/g, '""')}"`;
           }
@@ -1725,12 +1711,11 @@
         if (cols.length === ths.length) csvContent += cols.join(',') + '\n';
       });
 
-      // UTF-8 BOM(\uFEFF)을 포함한 Blob 객체 생성 -> 엑셀 한글 깨짐 방지
       const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `IsoCalib_${currentMode}_QC_Reduced.csv`;
+      a.download = `IsoCalib_${currentMode}_Reduced.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
