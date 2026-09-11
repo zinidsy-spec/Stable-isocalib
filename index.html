@@ -260,7 +260,7 @@
           <span class="font-mono text-xs font-bold text-stone-400">03</span>
           <h2 class="text-xs uppercase tracking-widest font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
-        <button id="btn-export" class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b-2 border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition" data-i18n="btn_export_csv">
+        <button id="btn-export" class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b-2 border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition cursor-pointer" data-i18n="btn_export_csv">
           Export as .CSV
         </button>
       </div>
@@ -307,8 +307,8 @@
             <p class="leading-relaxed" data-i18n="card1_desc">
               모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\sigma_i^2$)</strong>을 갖도록 계산합니다.
             </p>
-            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded" data-i18n="card1_quote">
-              💡 <em>측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</em>
+            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
+              💡 <span data-i18n="card1_quote">측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card1_basis">
@@ -326,8 +326,8 @@
             <p class="leading-relaxed" data-i18n="card2_desc">
               지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\chi^2$)</strong>을 통해, 데이터의 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.
             </p>
-            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded" data-i18n="card2_quote">
-              💡 <em>MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</em>
+            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
+              💡 <span data-i18n="card2_quote">MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card2_basis">
@@ -345,8 +345,8 @@
             <p class="leading-relaxed" data-i18n="card3_desc">
               시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.
             </p>
-            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded" data-i18n="card3_quote">
-              💡 <em>논문 리뷰어가 "검량선 불확도를 오차에 반영했는가?"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</em>
+            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
+              💡 <span data-i18n="card3_quote">논문 리뷰어가 "검량선 불확도를 오차에 반영했는가?"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">
@@ -455,23 +455,15 @@
       </div>
 
       <div class="space-y-4 text-xs text-stone-700 font-light leading-relaxed">
-        <p id="about-p1">
-          <!-- JS 동적 주입 -->
-        </p>
-        <p id="about-p2">
-          <!-- JS 동적 주입 -->
-        </p>
+        <p id="about-p1"></p>
+        <p id="about-p2"></p>
 
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <strong class="font-mono uppercase tracking-wider text-[11px] text-stone-900 block" id="about-protocols-title">Core Analytical Protocols:</strong>
-          <ul class="list-disc list-inside space-y-1 text-[11px] font-mono text-stone-600" id="about-protocols-list">
-            <!-- JS 동적 주입 -->
-          </ul>
+          <ul class="list-disc list-inside space-y-1 text-[11px] font-mono text-stone-600" id="about-protocols-list"></ul>
         </div>
 
-        <p id="about-p3">
-          <!-- JS 동적 주입 -->
-        </p>
+        <p id="about-p3"></p>
       </div>
 
       <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
@@ -540,15 +532,15 @@
         sec4_subheading: "IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
         card1_title: "1. 가중 선형 회귀 (WLS)",
         card1_desc: "모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\\sigma_i^2$)</strong>을 갖도록 계산합니다.",
-        card1_quote: "💡 <em>측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</em>",
+        card1_quote: "측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.",
         card1_basis: "기준: York (1968) / Ludwig (2003)",
         card2_title: "2. 적합도 검증 (MSWD)",
         card2_desc: "지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\\chi^2$)</strong>을 통해, 데이터의 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.",
-        card2_quote: "💡 <em>MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</em>",
+        card2_quote: "MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.",
         card2_basis: "기준: McIntyre et al. (1966) / IsoplotR",
         card3_title: "3. 합성 불확도 전파",
         card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.",
-        card3_quote: "💡 <em>논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</em>",
+        card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
         card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
         acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
@@ -599,15 +591,15 @@
         sec4_subheading: "All calibrations in IsoCalib are computed strictly adhering to international metrological frameworks (JCGM 100:2008 GUM) and established geochronological standards (Ludwig Isoplot).",
         card1_title: "1. Weighted Regression (WLS)",
         card1_desc: "Rather than treating all runs equally, <strong>measurements with higher precision (smaller 1σ SD) are assigned greater statistical weight ($w_i = 1/\\sigma_i^2$)</strong>.",
-        card1_quote: "💡 <em>A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.</em>",
+        card1_quote: "A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.",
         card1_basis: "Basis: York (1968) / Ludwig (2003)",
         card2_title: "2. Goodness-of-Fit (MSWD)",
         card2_desc: "Evaluates the <strong>reduced chi-squared ($\\chi^2/\\nu$)</strong> to objectively determine whether observed residuals are statistically consistent with analytical precision.",
-        card2_quote: "💡 <em>An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-analytical variance.</em>",
+        card2_quote: "An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-analytical variance.",
         card2_basis: "Basis: McIntyre et al. (1966) / IsoplotR",
         card3_title: "3. Combined Uncertainty",
         card3_desc: "Propagates not only the sample measurement repeatability, but also the <strong>covariance and standard errors of the regression parameters</strong>.",
-        card3_quote: "💡 <em>Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.</em>",
+        card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
         card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
         acc_a_title: "A. Weighted Least Squares Normal Equations",
@@ -656,7 +648,6 @@
         }
       });
 
-      // About Modal 내부 텍스트 갱신
       document.getElementById('about-p1').innerHTML = dict.about_p1;
       document.getElementById('about-p2').innerHTML = dict.about_p2;
       document.getElementById('about-p3').innerHTML = dict.about_p3;
@@ -1713,21 +1704,37 @@
       syncPasteTarget();
     });
 
+    // -------------------------------------------------------------
+    // CSV 내보내기 핸들러 (UTF-8 BOM 및 특수문자 완벽 대응)
+    // -------------------------------------------------------------
     document.getElementById('btn-export').addEventListener('click', () => {
       const rows = document.querySelectorAll('#result-body tr');
-      let csv = 'data:text/csv;charset=utf-8,';
       const ths = Array.from(document.querySelectorAll('#result-head th')).map(th => th.innerText.replace(/[\n\r]/g, ' '));
-      csv += ths.join(',') + '\n';
+      
+      let csvContent = ths.join(',') + '\n';
 
       rows.forEach(tr => {
-        const cols = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.replace('±', '').trim());
-        if (cols.length === ths.length) csv += cols.join(',') + '\n';
+        const cols = Array.from(tr.querySelectorAll('td')).map(td => {
+          let text = td.innerText.replace('±', '').trim();
+          // 쉼표(,)나 따옴표(")가 포함된 ID를 감싸서 CSV 열 밀림 방지
+          if (text.includes(',') || text.includes('"') || text.includes('\n')) {
+            text = `"${text.replace(/"/g, '""')}"`;
+          }
+          return text;
+        });
+        if (cols.length === ths.length) csvContent += cols.join(',') + '\n';
       });
 
+      // UTF-8 BOM(\uFEFF)을 포함한 Blob 객체 생성 -> 엑셀 한글 깨짐 방지
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = encodeURI(csv);
+      a.href = url;
       a.download = `IsoCalib_${currentMode}_QC_Reduced.csv`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     });
 
     window.addEventListener('DOMContentLoaded', () => {
