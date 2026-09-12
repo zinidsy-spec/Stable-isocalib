@@ -90,7 +90,6 @@
       height: 1px;
     }
 
-    /* Drag & Drop Highlight */
     .drag-over {
       border-color: #0284c7 !important;
       background-color: #f0f9ff !important;
@@ -120,6 +119,8 @@
         <nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">About IsoCalib</button>
           <span>·</span>
+          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer font-bold text-stone-800" data-i18n="nav_changelog">Changelog (v1.1)</button>
+          <span>·</span>
           <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">Methodology & Principles</a>
           <span>·</span>
           <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">Citation</a>
@@ -127,8 +128,8 @@
         
         <!-- Language Switcher Toggle -->
         <div class="inline-flex items-center border border-stone-300 rounded p-0.5 bg-stone-100 font-mono text-[11px] font-bold">
-          <button id="lang-ko" class="px-2 py-0.5 rounded transition">KO</button>
-          <button id="lang-en" class="px-2 py-0.5 rounded transition">EN</button>
+          <button id="lang-ko" class="px-2 py-0.5 rounded transition cursor-pointer">KO</button>
+          <button id="lang-en" class="px-2 py-0.5 rounded transition cursor-pointer">EN</button>
         </div>
       </div>
     </div>
@@ -140,7 +141,10 @@
     <!-- Hero Section -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
-        <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
+        <div class="flex items-center space-x-2">
+          <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.1.0</span>
+        </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
@@ -448,7 +452,7 @@
           <div class="space-y-2">
             <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_c_title">C. 1차 편미분 가우스 오차 전파 유도식 (GUM 5.1.2)</h5>
             <p data-i18n="acc_c_desc">
-              선형 변환식 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$에 대해 각 변수($x_{\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:
+              선형 변환식 $y_{\text{cal}} = a \\cdot x_{\text{raw}} + b$에 대해 각 변수($x_{\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x_{\text{raw}}} \sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a} \text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b} \text{SE}_b\right)^2 } = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$
@@ -501,15 +505,15 @@
 
   </main>
 
-  <!-- About IsoCalib Modal (IsoplotR Style) -->
+  <!-- About IsoCalib Modal -->
   <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.0 (Release 2026)</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.1.0 (Release 2026)</span>
         </div>
-        <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none">&times;</button>
+        <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
 
       <div class="space-y-4 text-xs text-stone-700 font-light leading-relaxed">
@@ -529,7 +533,31 @@
           <span class="block">Inquiries & Bug Reports:</span>
           <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues" target="_blank" class="text-stone-900 underline">GitHub Issues Page</a>
         </div>
-        <button id="btn-modal-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition">Close</button>
+        <button id="btn-modal-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Changelog & Release Notes Modal (NEW) -->
+  <div id="changelog-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
+      <div class="flex justify-between items-start border-b border-stone-200 pb-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
+            <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="changelog_title">/ Version Evolution & Changelog</span>
+          </div>
+          <p class="text-xs text-stone-500 pt-1" data-i18n="changelog_subtitle">안정동위원소 랩 실무진의 피드백을 반영한 지속적 알고리즘 및 UX 업데이트 내역입니다.</p>
+        </div>
+        <button id="btn-close-changelog" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Timeline Content Container -->
+      <div id="changelog-content" class="space-y-6 text-xs text-stone-700"></div>
+
+      <div class="border-t border-stone-200 pt-4 flex justify-between items-center text-[11px] font-mono text-stone-500">
+        <span>Repository: <a href="https://github.com/zinidsy-spec/Stable-isocalib" target="_blank" class="text-stone-900 underline">Stable-isocalib</a></span>
+        <button id="btn-changelog-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
       </div>
     </div>
   </div>
@@ -565,6 +593,7 @@
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_about: "IsoCalib 소개",
+        nav_changelog: "업데이트 로그 (v1.1)",
         nav_methodology: "통계 방법론 & 원리",
         nav_citation: "인용 정보",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
@@ -623,6 +652,8 @@
         cite_title: "인용 정보 및 저장소 링크",
         cite_format: "Reference placeholder",
         cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
+        changelog_title: "/ 버전별 업데이트 이력 (Release Notes)",
+        changelog_subtitle: "안정동위원소 랩 실무진의 피드백을 반영한 지속적 알고리즘 및 UX 업데이트 내역입니다.",
         ctx_del_row: "선택 행 완전 삭제",
         ctx_clear_cells: "선택 셀 내용 지우기",
         ctx_insert_row: "아래에 빈 행 1줄 삽입",
@@ -634,6 +665,7 @@
       en: {
         tagline: "/ Open Geochemistry Tool",
         nav_about: "About IsoCalib",
+        nav_changelog: "Changelog (v1.1)",
         nav_methodology: "Methodology & Principles",
         nav_citation: "Citation",
         hero_badge: "Precision Data Reduction & QC Protocol",
@@ -692,6 +724,8 @@
         cite_title: "Citation & Repository Link",
         cite_format: "Reference placeholder",
         cite_desc: "Formal journal publication and DOI assignment are currently in preparation. To cite this software in your Analytical Methods section, please refer to the repository URL below:",
+        changelog_title: "/ Version Evolution & Changelog",
+        changelog_subtitle: "Continuous methodological and UX advancements tailored to real isotope lab requirements.",
         ctx_del_row: "Delete Selected Rows",
         ctx_clear_cells: "Clear Selected Cells",
         ctx_insert_row: "Insert 1 Blank Row Below",
@@ -703,6 +737,89 @@
     };
 
     let currentLang = localStorage.getItem('isocalib_lang') || 'ko';
+
+    // -------------------------------------------------------------
+    // Changelog Data Structure
+    // -------------------------------------------------------------
+    const CHANGELOG_DATA = [
+      {
+        version: "v1.1.0",
+        date: "2026-09",
+        badge: "Major Enhancement",
+        title_ko: "시퀀스 드리프트 진단 플롯 및 지능형 입출력 고도화",
+        title_en: "Sequence Drift Diagnostics & Smart I/O Capabilities",
+        desc_ko: "70개 이상 런 시퀀스에서 발생하는 낮-밤 일주기 온·습도 변동을 정밀 제어하기 위한 진단 플롯 및 실무 편의 기능이 대폭 보강되었습니다.",
+        desc_en: "Comprehensive update addressing non-linear diurnal instrumental variations in 70+ run sequences alongside practical lab UX enhancements.",
+        changes_ko: [
+          "<strong>Figure 3 · Drift Diagnostics 플롯 추가</strong>: 런 순서(#1~#70)에 따른 앵커 표준물질의 실제 측정 궤적 및 보정 추세선(Linear / Bracketing)을 실시간 시각화.",
+          "<strong>Anchor-to-Anchor Bracketing 모델 도입</strong>: 시퀀스에 주기적으로 배치된 기준 표준물질 런 위치 사이를 1:1 선형 보간(Piecewise Interpolation)하여 일주기 파동형 드리프트 보정 지원.",
+          "<strong>스마트 CSV 드래그 앤 드롭</strong>: 질량분석기(Isodat 등) 출력 CSV를 드래그 앤 드롭 시 헤더 키워드(ID, 13C, 18O, SD 등)를 지능적으로 자동 매핑.",
+          "<strong>로컬 세션 자동 저장 (Autosave)</strong>: 브라우저 로컬 저장소를 활용해 새로고침이나 탭 닫힘 시에도 작업 데이터 및 설정이 100% 안전하게 자동 복원.",
+          "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거, 섹션 넘버링 가독성 향상."
+        ],
+        changes_en: [
+          "<strong>Figure 3 · Drift Diagnostics Plot</strong>: Real-time time-series visualization displaying actual anchor standard measurement trajectories and interpolated trend models across run sequences.",
+          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Piecewise linear interpolation between actual anchor run orders to safely suppress curved diurnal temperature fluctuations.",
+          "<strong>Smart CSV Drag & Drop</strong>: Automatic geochemical keyword mapping for spectrometer raw CSV imports (identifying sample names, isotope ratios, and standard deviations).",
+          "<strong>Local Session Autosave & Recovery</strong>: Seamless state caching in browser localStorage ensuring zero data loss upon page refresh or accidental tab closure.",
+          "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, removal of redundant TYPE column for direct 1:1 Excel alignment, and enhanced visual section hierarchy."
+        ]
+      },
+      {
+        version: "v1.0.0",
+        date: "2026-09",
+        badge: "Initial Release",
+        title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
+        title_en: "Initial Official Release of IsoCalib Platform",
+        desc_ko: "IsoplotR의 웹 인터페이스 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 데이터 리덕션 엔진입니다.",
+        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's open-science architecture, tailored for stable isotope systematics.",
+        changes_ko: [
+          "<strong>국제 표준 4대 동위원소 체계 지원</strong>: C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), S (δ³⁴S).",
+          "<strong>가중 선형 회귀 (WLS)</strong>: 기기 분석 1σ SD를 역제곱 가중치(1/σ²)로 반영하는 York-Ludwig 회귀 솔버 탑재.",
+          "<strong>MSWD(축약 카이제곱) 산출</strong>: 지화학 학술 저널 표준 회귀 적합도 지표 자동 계산.",
+          "<strong>독립 QC 블라인드 검증 리포트</strong>: 검량선에 미참여하는 미지의 품질관리 표준물질 편차(Accuracy Bias) 및 반복 정밀도(1σ) 자동 판정.",
+          "<strong>JCGM GUM 1차 편미분 오차 전파</strong>: 시료 측정 오차와 검량선 파라미터 불확도를 결합한 최종 합성 불확도 도출.",
+          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 클라이언트 연산 및 논문 투고용 SVG / CSV 원클릭 저장."
+        ],
+        changes_en: [
+          "<strong>Core Isotope Systematics</strong>: Full support for C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), and S (δ³⁴S).",
+          "<strong>Weighted Least Squares (WLS)</strong>: Exact analytical regression weighting each datum by analytical variance (1/σ²).",
+          "<strong>MSWD Goodness-of-Fit</strong>: Automated geostatistical reduced chi-squared diagnostic evaluation.",
+          "<strong>Blind QC Validation Report</strong>: Quantitative tracking of accuracy bias and reproducibility against independent reference materials.",
+          "<strong>JCGM GUM-compliant Uncertainty Propagation</strong>: Combined first-order partial differential error budgets.",
+          "<strong>Zero-Server Privacy & Publication Exports</strong>: 100% local JavaScript execution with instant vector SVG and CSV export."
+        ]
+      }
+    ];
+
+    function renderChangelog() {
+      const container = document.getElementById('changelog-content');
+      if (!container) return;
+      const isEn = currentLang === 'en';
+
+      container.innerHTML = CHANGELOG_DATA.map((rel, idx) => `
+        <div class="border-l-2 ${idx === 0 ? 'border-stone-900' : 'border-stone-300'} pl-4 space-y-2 relative">
+          <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full ${idx === 0 ? 'bg-stone-900 ring-4 ring-stone-100' : 'bg-stone-400'}"></div>
+          
+          <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-stone-100 pb-1">
+            <div class="flex items-center space-x-2">
+              <span class="font-mono font-bold text-stone-900 text-sm">${rel.version}</span>
+              <span class="px-1.5 py-0.5 bg-stone-100 border border-stone-300 text-[10px] font-mono font-bold text-stone-700">${rel.badge}</span>
+            </div>
+            <span class="text-[11px] font-mono text-stone-400">${rel.date}</span>
+          </div>
+
+          <div>
+            <h4 class="font-serif-title text-base font-semibold text-stone-900">${isEn ? rel.title_en : rel.title_ko}</h4>
+            <p class="text-stone-600 font-light text-[11px] leading-relaxed">${isEn ? rel.desc_en : rel.desc_ko}</p>
+          </div>
+
+          <ul class="list-disc list-inside space-y-1.5 text-[11px] text-stone-700 font-light leading-relaxed pt-1">
+            ${(isEn ? rel.changes_en : rel.changes_ko).map(c => `<li>${c}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
 
     function setLanguage(lang) {
       currentLang = lang;
@@ -750,6 +867,7 @@
         `;
       }
 
+      renderChangelog();
       updateLayoutForMode();
 
       if (window.MathJax && window.MathJax.typesetPromise) {
@@ -760,8 +878,10 @@
     document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
     document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
 
-    // About Modal Controls
+    // About & Changelog Modal Controls
     const aboutModal = document.getElementById('about-modal');
+    const changelogModal = document.getElementById('changelog-modal');
+
     document.getElementById('btn-open-about').addEventListener('click', () => {
       aboutModal.classList.remove('hidden');
     });
@@ -771,9 +891,22 @@
     document.getElementById('btn-modal-close-bottom').addEventListener('click', () => {
       aboutModal.classList.add('hidden');
     });
+
+    document.getElementById('btn-open-changelog').addEventListener('click', () => {
+      renderChangelog();
+      changelogModal.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-changelog').addEventListener('click', () => {
+      changelogModal.classList.add('hidden');
+    });
+    document.getElementById('btn-changelog-close-bottom').addEventListener('click', () => {
+      changelogModal.classList.add('hidden');
+    });
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) {
-        aboutModal.classList.add('hidden');
+      if (e.key === 'Escape') {
+        if (!aboutModal.classList.contains('hidden')) aboutModal.classList.add('hidden');
+        if (!changelogModal.classList.contains('hidden')) changelogModal.classList.add('hidden');
       }
     });
 
@@ -1303,7 +1436,6 @@
       const isDual = p.elements.length === 2;
       const numCols = isDual ? 5 : 3;
 
-      // 구분자 감지 (콤마 vs 탭)
       const delimiter = lines[0].includes('\t') ? '\t' : ',';
       const rawRows = lines.map(line => {
         let inQuotes = false;
@@ -1329,15 +1461,12 @@
       if (hasHeader) {
         const lower = firstRow.map(h => h.toLowerCase());
         
-        // 시료명 열 감지
         const fId = lower.findIndex(h => h.includes('id') || h.includes('name') || h.includes('sample') || h.includes('identifier'));
         if (fId !== -1) idCol = fId;
 
-        // 원시 측정값 열 감지
         const fVal1 = lower.findIndex((h, idx) => idx !== idCol && (h.includes('13c') || h.includes('15n') || h.includes('2h') || h.includes('d') || h.includes('34s') || h.includes('raw')));
         if (fVal1 !== -1) val1Col = fVal1;
 
-        // SD 열 감지
         const fSd1 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && (h.includes('sd') || h.includes('stdev') || h.includes('1s') || h.includes('sigma')));
         if (fSd1 !== -1) sd1Col = fSd1;
 
@@ -1599,7 +1728,6 @@
       return { slope, intercept };
     }
 
-    // Anchor-to-Anchor Piecewise Linear Bracketing Interpolation
     function getInterpolatedDriftOffset(rIdx, anchorRuns) {
       if (!anchorRuns || anchorRuns.length === 0) return 0;
       if (anchorRuns.length === 1) return anchorRuns[0].diff;
@@ -2069,6 +2197,8 @@
       renderGrid();
       resetOutputs();
       localStorage.removeItem('isocalib_session_data');
+      const statEl = document.getElementById('session-status');
+      if (statEl) statEl.innerText = "● Session Cleared";
       syncPasteTarget();
     });
 
