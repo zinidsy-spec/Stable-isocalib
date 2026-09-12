@@ -90,7 +90,6 @@
       height: 1px;
     }
 
-    /* Drag & Drop Visuals */
     .drag-over {
       border-color: #0284c7 !important;
       background-color: #f0f9ff !important;
@@ -114,17 +113,17 @@
     <div class="max-w-6xl mx-auto px-6 h-18 py-4 flex items-center justify-between">
       <div class="flex items-baseline space-x-3">
         <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</a>
-        <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono" data-i18n="tagline">/ Open Geochemistry Tool</span>
+        <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono" data-i18n="tagline">/ 오픈 지화학 분석 플랫폼</span>
       </div>
       <div class="flex items-center space-x-6">
         <nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
-          <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">About IsoCalib</button>
+          <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
           <span>·</span>
-          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">Changelog (v1.1)</button>
+          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.1)</button>
           <span>·</span>
-          <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">Methodology & Principles</a>
+          <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">통계 방법론 & 원리</a>
           <span>·</span>
-          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">Citation</a>
+          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">인용 정보</a>
         </nav>
         
         <!-- Language Switcher Toggle -->
@@ -178,7 +177,7 @@
         
         <!-- Drift Correction Mode Selector -->
         <div class="flex items-center space-x-2 bg-stone-100 px-3 py-1.5 border border-stone-300 rounded text-xs font-mono">
-          <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Drift Correction:</label>
+          <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">기기 드리프트 보정:</label>
           <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-2 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
             <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
             <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 표류)</option>
@@ -210,7 +209,7 @@
             <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
           </div>
           <p class="text-xs text-stone-600" data-i18n="sec2_desc">
-            시작할 셀 클릭 후 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르거나, CSV 파일을 직접 드래그 앤 드롭하세요.
+            시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르거나, CSV 파일을 직접 드래그 앤 드롭하세요.
           </p>
         </div>
 
@@ -593,9 +592,9 @@
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_about: "IsoCalib 소개",
-        nav_changelog: "Changelog (v1.1)",
-        nav_methodology: "Methodology & Principles",
-        nav_citation: "Citation",
+        nav_changelog: "업데이트 로그 (v1.1)",
+        nav_methodology: "통계 방법론 & 원리",
+        nav_citation: "인용 정보",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
         hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
         hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
@@ -648,7 +647,7 @@
         acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
         ref_title: "공신력 있는 학술 문헌 및 방법론 근거 (Authoritative References):",
         privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
-        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣거나 업로드한 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
+        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
         cite_title: "인용 정보 및 저장소 링크",
         cite_format: "Reference placeholder",
         cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
@@ -915,9 +914,6 @@
     let selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
     let activeEditingCell = null;
 
-    // -------------------------------------------------------------
-    // 표준물질 값 보존 스냅샷 함수
-    // -------------------------------------------------------------
     function getCurrentStandardsSnapshot() {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
@@ -1429,7 +1425,7 @@
     }
 
     // -------------------------------------------------------------
-    // 스마트 CSV 파서 및 드래그 앤 드롭
+    // 지능형 스마트 CSV 파서 및 드래그 앤 드롭
     // -------------------------------------------------------------
     function parseAndLoadCSV(csvText) {
       const lines = csvText.trim().split(/\r\n|\n|\r/);
@@ -1507,43 +1503,45 @@
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('csv-file-input');
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.add('drag-over');
-      }, false);
-    });
+    if (dropzone && fileInput) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.add('drag-over');
+        }, false);
+      });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('drag-over');
-      }, false);
-    });
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('drag-over');
+        }, false);
+      });
 
-    dropzone.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      if (files.length > 0) {
-        const file = files[0];
-        const reader = new FileReader();
-        reader.onload = (event) => parseAndLoadCSV(event.target.result);
-        reader.readAsText(file);
-      }
-    });
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          const file = files[0];
+          const reader = new FileReader();
+          reader.onload = (event) => parseAndLoadCSV(event.target.result);
+          reader.readAsText(file);
+        }
+      });
 
-    dropzone.addEventListener('click', () => fileInput.click());
-    document.getElementById('btn-upload-trigger').addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('click', () => fileInput.click());
+      document.getElementById('btn-upload-trigger').addEventListener('click', () => fileInput.click());
 
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (event) => parseAndLoadCSV(event.target.result);
-        reader.readAsText(file);
-        fileInput.value = '';
-      }
-    });
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onload = (event) => parseAndLoadCSV(event.target.result);
+          reader.readAsText(file);
+          fileInput.value = '';
+        }
+      });
+    }
 
     window.addEventListener('keydown', (e) => {
       const active = document.activeElement;
