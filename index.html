@@ -90,6 +90,12 @@
       height: 1px;
     }
 
+    /* Drag & Drop Visuals */
+    .drag-over {
+      border-color: #0284c7 !important;
+      background-color: #f0f9ff !important;
+    }
+
     details summary::-webkit-details-marker { display: none; }
     details summary { list-style: none; }
 
@@ -101,6 +107,7 @@
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
   <textarea id="paste-target" tabindex="-1"></textarea>
+  <input type="file" id="csv-file-input" accept=".csv,.txt" class="hidden">
 
   <!-- Editorial Top Navigation -->
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
@@ -135,7 +142,10 @@
     <!-- Hero Section -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
-        <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
+        <div class="flex items-center space-x-2">
+          <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.1.0</span>
+        </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
@@ -192,7 +202,7 @@
     </section>
 
     <!-- Section 2: SpreadSheet & Controls -->
-    <section class="space-y-5">
+    <section class="space-y-4">
       <div class="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-3">
         <div class="space-y-1">
           <div class="flex items-center space-x-3">
@@ -200,11 +210,14 @@
             <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
           </div>
           <p class="text-xs text-stone-600" data-i18n="sec2_desc">
-            시작할 셀을 <strong>한 번 클릭</strong>하고 바로 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 엑셀 런 시퀀스가 복사됩니다.
+            시작할 셀 클릭 후 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르거나, CSV 파일을 직접 드래그 앤 드롭하세요.
           </p>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center flex-wrap gap-2">
+          <button id="btn-upload-trigger" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm cursor-pointer flex items-center gap-1.5" data-i18n="btn_import_csv">
+            <span>📁</span> Import CSV
+          </button>
           <button id="btn-delete-selected" class="px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 border border-rose-200 hover:border-rose-400 bg-rose-50/50 transition cursor-pointer" data-i18n="btn_delete_rows">
             선택 행 삭제
           </button>
@@ -221,6 +234,13 @@
             Run Calibration & QC
           </button>
         </div>
+      </div>
+
+      <!-- Dropzone Indicator Area -->
+      <div id="dropzone" class="border border-dashed border-[#c7c5bc] bg-[#fbfaf8] hover:bg-stone-50 py-2.5 px-4 text-center rounded transition-all cursor-pointer">
+        <span class="text-xs text-stone-500 font-mono" data-i18n="dropzone_hint">
+          📥 이곳으로 질량분석기 Raw .csv 파일을 드래그 앤 드롭하면 키워드를 인식해 표에 자동 매핑됩니다.
+        </span>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -588,7 +608,9 @@
         drift_guide_title: "실험실 환경별 드리프트 옵션 가이드",
         drift_guide_desc: "낮-밤-새벽 일주기 온·습도 사이클이 큰 환경에서는 단일 선형 보정 시 과보정(Over-correction) 위험이 있습니다. 변동이 심할 때는 <strong>None(보정 안 함)</strong>을 기본으로 권장하며, 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하여 실제 앵커 런 위치 사이의 구간별 변화량을 1:1로 보간하세요.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
-        sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
+        sec2_desc: "시작할 셀 클릭 후 Ctrl + V를 누르거나, CSV 파일을 직접 드래그 앤 드롭하세요.",
+        dropzone_hint: "📥 이곳으로 질량분석기 Raw .csv 파일을 드래그 앤 드롭하면 키워드를 인식해 표에 자동 매핑됩니다.",
+        btn_import_csv: "Import CSV",
         btn_delete_rows: "선택 행 삭제",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
@@ -626,7 +648,7 @@
         acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
         ref_title: "공신력 있는 학술 문헌 및 방법론 근거 (Authoritative References):",
         privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
-        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
+        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣거나 업로드한 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
         cite_title: "인용 정보 및 저장소 링크",
         cite_format: "Reference placeholder",
         cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
@@ -659,6 +681,8 @@
         drift_guide_desc: "In sequences exposed to <strong>diurnal (day-night-dawn) temperature and humidity cycles</strong>, single linear fits risk over-correction. Under strong diurnal conditions, use <strong>None (Off)</strong> as the default baseline, or choose <strong>Anchor-to-Anchor Bracketing</strong> if anchor standards are periodically distributed across the sequence to interpolate run-by-run drift between actual anchor positions.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
+        dropzone_hint: "📥 Drag & drop your instrument Raw .csv file here to automatically map columns by geochemical keywords.",
+        btn_import_csv: "Import CSV",
         btn_delete_rows: "Delete Row(s)",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
@@ -719,18 +743,20 @@
         version: "v1.1.0",
         date: "2026-09",
         badge: "Major Enhancement",
-        title_ko: "시퀀스 드리프트 진단 플롯 및 브래케팅 보정 고도화",
-        title_en: "Sequence Drift Diagnostics & Bracketing Model",
+        title_ko: "시퀀스 드리프트 진단 플롯 및 스마트 CSV 임포트 지원",
+        title_en: "Sequence Drift Diagnostics & Smart CSV Import",
         desc_ko: "70개 이상 런 시퀀스에서 발생하는 낮-밤 일주기 온·습도 변동을 정밀 제어하기 위한 진단 플롯 및 실무 편의 기능이 대폭 보강되었습니다.",
         desc_en: "Comprehensive update addressing non-linear diurnal instrumental variations in 70+ run sequences alongside practical lab UX enhancements.",
         changes_ko: [
           "<strong>Figure 3 · Drift Diagnostics 플롯 추가</strong>: 런 순서(#1~#70)에 따른 앵커 표준물질의 실제 측정 궤적 및 보정 추세선(Linear / Bracketing)을 실시간 시각화.",
           "<strong>Anchor-to-Anchor Bracketing 모델 도입</strong>: 시퀀스에 주기적으로 배치된 기준 표준물질 런 위치 사이를 1:1 선형 보간(Piecewise Interpolation)하여 일주기 파동형 드리프트 보정 지원.",
+          "<strong>스마트 CSV 드래그 앤 드롭</strong>: 질량분석기(Isodat 등) 출력 CSV를 드래그 앤 드롭 시 헤더 키워드(ID, 13C, 18O, SD 등)를 지능적으로 자동 매핑.",
           "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거, 섹션 넘버링 가독성 향상."
         ],
         changes_en: [
           "<strong>Figure 3 · Drift Diagnostics Plot</strong>: Real-time time-series visualization displaying actual anchor standard measurement trajectories and interpolated trend models across run sequences.",
           "<strong>Anchor-to-Anchor Bracketing Model</strong>: Piecewise linear interpolation between actual anchor run orders to safely suppress curved diurnal temperature fluctuations.",
+          "<strong>Smart CSV Drag & Drop</strong>: Automatic geochemical keyword mapping for spectrometer raw CSV imports (identifying sample names, isotope ratios, and standard deviations).",
           "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, removal of redundant TYPE column for direct 1:1 Excel alignment, and enhanced visual section hierarchy."
         ]
       },
@@ -890,7 +916,7 @@
     let activeEditingCell = null;
 
     // -------------------------------------------------------------
-    // 현재 입력된 표준물질 값 추출 함수 (보존용)
+    // 표준물질 값 보존 스냅샷 함수
     // -------------------------------------------------------------
     function getCurrentStandardsSnapshot() {
       const p = PRESETS[currentMode];
@@ -913,14 +939,12 @@
 
       const qcStd = {
         name: elQcName ? elQcName.value : null,
-        v1: elQcV1 ? elV1Val(elQcV1) : null,
+        v1: elQcV1 ? elQcV1.value : null,
         v2: (isDual && elQcV2) ? elQcV2.value : null
       };
 
       return { stds, qcStd };
     }
-
-    function elV1Val(el) { return el ? el.value : null; }
 
     function updateLayoutForMode(preserveValues = true) {
       const p = PRESETS[currentMode];
@@ -1403,6 +1427,123 @@
       renderGrid();
       syncPasteTarget();
     }
+
+    // -------------------------------------------------------------
+    // 스마트 CSV 파서 및 드래그 앤 드롭
+    // -------------------------------------------------------------
+    function parseAndLoadCSV(csvText) {
+      const lines = csvText.trim().split(/\r\n|\n|\r/);
+      if (lines.length === 0) return;
+
+      const p = PRESETS[currentMode];
+      const isDual = p.elements.length === 2;
+      const numCols = isDual ? 5 : 3;
+
+      const delimiter = lines[0].includes('\t') ? '\t' : ',';
+      const rawRows = lines.map(line => {
+        let inQuotes = false;
+        let tokens = [];
+        let cur = '';
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') inQuotes = !inQuotes;
+          else if (char === delimiter && !inQuotes) {
+            tokens.push(cur.trim());
+            cur = '';
+          } else cur += char;
+        }
+        tokens.push(cur.trim());
+        return tokens.map(t => t.replace(/^"|"$/g, ''));
+      });
+
+      const firstRow = rawRows[0];
+      const hasHeader = firstRow.some(cell => isNaN(parseFloat(cell)) && cell.length > 0);
+
+      let idCol = 0, val1Col = 1, sd1Col = 2, val2Col = 3, sd2Col = 4;
+
+      if (hasHeader) {
+        const lower = firstRow.map(h => h.toLowerCase());
+        
+        const fId = lower.findIndex(h => h.includes('id') || h.includes('name') || h.includes('sample') || h.includes('identifier'));
+        if (fId !== -1) idCol = fId;
+
+        const fVal1 = lower.findIndex((h, idx) => idx !== idCol && (h.includes('13c') || h.includes('15n') || h.includes('2h') || h.includes('d') || h.includes('34s') || h.includes('raw')));
+        if (fVal1 !== -1) val1Col = fVal1;
+
+        const fSd1 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && (h.includes('sd') || h.includes('stdev') || h.includes('1s') || h.includes('sigma')));
+        if (fSd1 !== -1) sd1Col = fSd1;
+
+        if (isDual) {
+          const fVal2 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && idx !== sd1Col && (h.includes('18o') || h.includes('raw')));
+          if (fVal2 !== -1) val2Col = fVal2;
+
+          const fSd2 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && idx !== sd1Col && idx !== val2Col && (h.includes('sd') || h.includes('stdev') || h.includes('1s')));
+          if (fSd2 !== -1) sd2Col = fSd2;
+        }
+      }
+
+      const startIdx = hasHeader ? 1 : 0;
+      const dataRows = rawRows.slice(startIdx).filter(r => r.some(c => c !== ''));
+
+      gridData = dataRows.map(r => {
+        const row = Array(numCols).fill('');
+        row[0] = r[idCol] || '';
+        row[1] = r[val1Col] !== undefined ? (parseFloat(r[val1Col]) || '') : '';
+        row[2] = r[sd1Col] !== undefined ? (parseFloat(r[sd1Col]) || '') : '';
+        if (isDual) {
+          row[3] = r[val2Col] !== undefined ? (parseFloat(r[val2Col]) || '') : '';
+          row[4] = r[sd2Col] !== undefined ? (parseFloat(r[sd2Col]) || '') : '';
+        }
+        return row;
+      });
+
+      while (gridData.length < 30) gridData.push(Array(numCols).fill(''));
+
+      renderGrid();
+      runCalibration();
+      syncPasteTarget();
+    }
+
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('csv-file-input');
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+      }, false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        const file = files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => parseAndLoadCSV(event.target.result);
+        reader.readAsText(file);
+      }
+    });
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    document.getElementById('btn-upload-trigger').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => parseAndLoadCSV(event.target.result);
+        reader.readAsText(file);
+        fileInput.value = '';
+      }
+    });
 
     window.addEventListener('keydown', (e) => {
       const active = document.activeElement;
@@ -2091,7 +2232,6 @@
       URL.revokeObjectURL(url);
     });
 
-    // DOMContentLoaded 안정 실행
     window.addEventListener('DOMContentLoaded', () => {
       updateLayoutForMode(false);
       setLanguage(currentLang);
