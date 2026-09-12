@@ -90,11 +90,6 @@
       height: 1px;
     }
 
-    .drag-over {
-      border-color: #0284c7 !important;
-      background-color: #f0f9ff !important;
-    }
-
     details summary::-webkit-details-marker { display: none; }
     details summary { list-style: none; }
 
@@ -106,7 +101,6 @@
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
   <textarea id="paste-target" tabindex="-1"></textarea>
-  <input type="file" id="csv-file-input" accept=".csv,.txt" class="hidden">
 
   <!-- Editorial Top Navigation -->
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
@@ -116,7 +110,7 @@
         <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono" data-i18n="tagline">/ Open Geochemistry Tool</span>
       </div>
       <div class="flex items-center space-x-6">
-<nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
+        <nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">About IsoCalib</button>
           <span>·</span>
           <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">Changelog (v1.1)</button>
@@ -141,10 +135,7 @@
     <!-- Hero Section -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
-        <div class="flex items-center space-x-2">
-          <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.1.0</span>
-        </div>
+        <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
@@ -201,7 +192,7 @@
     </section>
 
     <!-- Section 2: SpreadSheet & Controls -->
-    <section class="space-y-4">
+    <section class="space-y-5">
       <div class="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-3">
         <div class="space-y-1">
           <div class="flex items-center space-x-3">
@@ -209,14 +200,11 @@
             <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
           </div>
           <p class="text-xs text-stone-600" data-i18n="sec2_desc">
-            시작할 셀 클릭 후 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르거나, CSV 파일을 직접 드래그 앤 드롭하세요.
+            시작할 셀을 <strong>한 번 클릭</strong>하고 바로 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 엑셀 런 시퀀스가 복사됩니다.
           </p>
         </div>
 
-        <div class="flex items-center flex-wrap gap-2">
-          <button id="btn-upload-trigger" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm cursor-pointer flex items-center gap-1.5" data-i18n="btn_import_csv">
-            <span>📁</span> Import CSV
-          </button>
+        <div class="flex items-center space-x-2">
           <button id="btn-delete-selected" class="px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 border border-rose-200 hover:border-rose-400 bg-rose-50/50 transition cursor-pointer" data-i18n="btn_delete_rows">
             선택 행 삭제
           </button>
@@ -235,13 +223,6 @@
         </div>
       </div>
 
-      <!-- Dropzone Indicator Area -->
-      <div id="dropzone" class="border border-dashed border-[#c7c5bc] bg-[#fbfaf8] hover:bg-stone-50 py-2 px-4 text-center rounded transition-all cursor-pointer">
-        <span class="text-xs text-stone-500 font-mono" data-i18n="dropzone_hint">
-          📥 이곳으로 질량분석기 Raw .csv 파일을 드래그 앤 드롭하면 키워드를 인식해 표에 자동 매핑됩니다.
-        </span>
-      </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Left: Spreadsheet Grid -->
@@ -255,7 +236,7 @@
             </div>
           </div>
           <div class="flex justify-between text-xs text-stone-500 font-mono font-medium">
-            <span id="session-status" class="text-emerald-700 font-medium">● Autosave active (Local)</span>
+            <span data-i18n="grid_hint">* 행 번호(#)는 시퀀스 런 순서로 반영됩니다</span>
             <span id="row-count">0 samples loaded</span>
           </div>
         </div>
@@ -395,10 +376,10 @@
               <span class="text-stone-400 font-mono text-[10px]">Total Uncertainty</span>
             </div>
             <p class="leading-relaxed" data-i18n="card3_desc">
-              시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.
+              시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              💡 <span data-i18n="card3_quote">논문 리뷰어가 "검량선 불확도를 오차에 반영했는가?"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
+              💡 <span data-i18n="card3_quote">논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">
@@ -452,7 +433,7 @@
           <div class="space-y-2">
             <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_c_title">C. 1차 편미분 가우스 오차 전파 유도식 (GUM 5.1.2)</h5>
             <p data-i18n="acc_c_desc">
-              선형 변환식 $y_{\text{cal}} = a \\cdot x_{\text{raw}} + b$에 대해 각 변수($x_{\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:
+              선형 변환식 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$에 대해 각 변수($x_{\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x_{\text{raw}}} \sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a} \text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b} \text{SE}_b\right)^2 } = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$
@@ -478,7 +459,7 @@
             <span class="text-xs font-mono font-bold text-stone-900 uppercase tracking-wider" data-i18n="privacy_title">Zero-Server Client Computation (완전 무서버 보안)</span>
           </div>
           <p class="text-xs text-stone-600 font-light" data-i18n="privacy_desc">
-            연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣거나 업로드한 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.
+            연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.
           </p>
         </div>
         <div class="text-right font-mono text-[11px] text-stone-500 shrink-0">
@@ -538,7 +519,7 @@
     </div>
   </div>
 
-  <!-- Changelog & Release Notes Modal (NEW) -->
+  <!-- Changelog & Release Notes Modal -->
   <div id="changelog-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
@@ -552,7 +533,6 @@
         <button id="btn-close-changelog" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
 
-      <!-- Timeline Content Container -->
       <div id="changelog-content" class="space-y-6 text-xs text-stone-700"></div>
 
       <div class="border-t border-stone-200 pt-4 flex justify-between items-center text-[11px] font-mono text-stone-500">
@@ -593,9 +573,9 @@
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_about: "IsoCalib 소개",
-        nav_changelog: "업데이트 로그 (v1.1)",
-        nav_methodology: "통계 방법론 & 원리",
-        nav_citation: "인용 정보",
+        nav_changelog: "Changelog (v1.1)",
+        nav_methodology: "Methodology & Principles",
+        nav_citation: "Citation",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
         hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
         hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
@@ -608,9 +588,7 @@
         drift_guide_title: "실험실 환경별 드리프트 옵션 가이드",
         drift_guide_desc: "낮-밤-새벽 일주기 온·습도 사이클이 큰 환경에서는 단일 선형 보정 시 과보정(Over-correction) 위험이 있습니다. 변동이 심할 때는 <strong>None(보정 안 함)</strong>을 기본으로 권장하며, 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하여 실제 앵커 런 위치 사이의 구간별 변화량을 1:1로 보간하세요.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
-        sec2_desc: "시작할 셀 클릭 후 Ctrl + V를 누르거나, CSV 파일을 직접 드래그 앤 드롭하세요.",
-        dropzone_hint: "📥 이곳으로 질량분석기 Raw .csv 파일을 드래그 앤 드롭하면 키워드를 인식해 표에 자동 매핑됩니다.",
-        btn_import_csv: "Import CSV",
+        sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
@@ -648,7 +626,7 @@
         acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
         ref_title: "공신력 있는 학술 문헌 및 방법론 근거 (Authoritative References):",
         privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
-        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣거나 업로드한 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
+        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
         cite_title: "인용 정보 및 저장소 링크",
         cite_format: "Reference placeholder",
         cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
@@ -680,9 +658,7 @@
         drift_guide_title: "Laboratory Environment & Drift Strategy Guide",
         drift_guide_desc: "In sequences exposed to <strong>diurnal (day-night-dawn) temperature and humidity cycles</strong>, single linear fits risk over-correction. Under strong diurnal conditions, use <strong>None (Off)</strong> as the default baseline, or choose <strong>Anchor-to-Anchor Bracketing</strong> if anchor standards are periodically distributed across the sequence to interpolate run-by-run drift between actual anchor positions.",
         sec2_title: "Measurement Sequence Data",
-        sec2_desc: "Click a cell to paste (Ctrl + V) or drag and drop a raw .csv file directly.",
-        dropzone_hint: "📥 Drag & drop your instrument Raw .csv file here to automatically map columns by geochemical keywords.",
-        btn_import_csv: "Import CSV",
+        sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
@@ -738,30 +714,23 @@
 
     let currentLang = localStorage.getItem('isocalib_lang') || 'ko';
 
-    // -------------------------------------------------------------
-    // Changelog Data Structure
-    // -------------------------------------------------------------
     const CHANGELOG_DATA = [
       {
         version: "v1.1.0",
         date: "2026-09",
         badge: "Major Enhancement",
-        title_ko: "시퀀스 드리프트 진단 플롯 및 지능형 입출력 고도화",
-        title_en: "Sequence Drift Diagnostics & Smart I/O Capabilities",
+        title_ko: "시퀀스 드리프트 진단 플롯 및 브래케팅 보정 고도화",
+        title_en: "Sequence Drift Diagnostics & Bracketing Model",
         desc_ko: "70개 이상 런 시퀀스에서 발생하는 낮-밤 일주기 온·습도 변동을 정밀 제어하기 위한 진단 플롯 및 실무 편의 기능이 대폭 보강되었습니다.",
         desc_en: "Comprehensive update addressing non-linear diurnal instrumental variations in 70+ run sequences alongside practical lab UX enhancements.",
         changes_ko: [
           "<strong>Figure 3 · Drift Diagnostics 플롯 추가</strong>: 런 순서(#1~#70)에 따른 앵커 표준물질의 실제 측정 궤적 및 보정 추세선(Linear / Bracketing)을 실시간 시각화.",
           "<strong>Anchor-to-Anchor Bracketing 모델 도입</strong>: 시퀀스에 주기적으로 배치된 기준 표준물질 런 위치 사이를 1:1 선형 보간(Piecewise Interpolation)하여 일주기 파동형 드리프트 보정 지원.",
-          "<strong>스마트 CSV 드래그 앤 드롭</strong>: 질량분석기(Isodat 등) 출력 CSV를 드래그 앤 드롭 시 헤더 키워드(ID, 13C, 18O, SD 등)를 지능적으로 자동 매핑.",
-          "<strong>로컬 세션 자동 저장 (Autosave)</strong>: 브라우저 로컬 저장소를 활용해 새로고침이나 탭 닫힘 시에도 작업 데이터 및 설정이 100% 안전하게 자동 복원.",
           "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거, 섹션 넘버링 가독성 향상."
         ],
         changes_en: [
           "<strong>Figure 3 · Drift Diagnostics Plot</strong>: Real-time time-series visualization displaying actual anchor standard measurement trajectories and interpolated trend models across run sequences.",
           "<strong>Anchor-to-Anchor Bracketing Model</strong>: Piecewise linear interpolation between actual anchor run orders to safely suppress curved diurnal temperature fluctuations.",
-          "<strong>Smart CSV Drag & Drop</strong>: Automatic geochemical keyword mapping for spectrometer raw CSV imports (identifying sample names, isotope ratios, and standard deviations).",
-          "<strong>Local Session Autosave & Recovery</strong>: Seamless state caching in browser localStorage ensuring zero data loss upon page refresh or accidental tab closure.",
           "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, removal of redundant TYPE column for direct 1:1 Excel alignment, and enhanced visual section hierarchy."
         ]
       },
@@ -820,95 +789,6 @@
         </div>
       `).join('');
     }
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem('isocalib_lang', lang);
-
-      const btnKo = document.getElementById('lang-ko');
-      const btnEn = document.getElementById('lang-en');
-      if (lang === 'ko') {
-        btnKo.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
-        btnEn.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
-      } else {
-        btnEn.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
-        btnKo.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
-      }
-
-      const dict = TRANSLATIONS[lang];
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[key]) {
-          el.innerHTML = dict[key];
-        }
-      });
-
-      document.getElementById('about-p1').innerHTML = dict.about_p1;
-      document.getElementById('about-p2').innerHTML = dict.about_p2;
-      document.getElementById('about-p3').innerHTML = dict.about_p3;
-      document.getElementById('about-protocols-title').innerText = dict.about_protocols_title;
-
-      const listEl = document.getElementById('about-protocols-list');
-      if (lang === 'ko') {
-        listEl.innerHTML = `
-          <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
-          <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
-          <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
-          <li>검량선에 미참여하는 미지의 독립 QC 표준물질 편차(Bias) 및 정밀도 검증</li>
-          <li>국제측정학위원회(JCGM 100:2008 GUM) 표준 1차 편미분 합성 불확도 전파</li>
-        `;
-      } else {
-        listEl.innerHTML = `
-          <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
-          <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
-          <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
-          <li>Independent Blind Quality Control (QC) accuracy bias and reproducibility tracking</li>
-          <li>Combined First-Order Uncertainty Propagation adhering to JCGM 100:2008 (GUM) guidelines</li>
-        `;
-      }
-
-      renderChangelog();
-      updateLayoutForMode();
-
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise();
-      }
-    }
-
-    document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
-    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
-
-    // About & Changelog Modal Controls
-    const aboutModal = document.getElementById('about-modal');
-    const changelogModal = document.getElementById('changelog-modal');
-
-    document.getElementById('btn-open-about').addEventListener('click', () => {
-      aboutModal.classList.remove('hidden');
-    });
-    document.getElementById('btn-close-about').addEventListener('click', () => {
-      aboutModal.classList.add('hidden');
-    });
-    document.getElementById('btn-modal-close-bottom').addEventListener('click', () => {
-      aboutModal.classList.add('hidden');
-    });
-
-    document.getElementById('btn-open-changelog').addEventListener('click', () => {
-      renderChangelog();
-      changelogModal.classList.remove('hidden');
-    });
-    document.getElementById('btn-close-changelog').addEventListener('click', () => {
-      changelogModal.classList.add('hidden');
-    });
-    document.getElementById('btn-changelog-close-bottom').addEventListener('click', () => {
-      changelogModal.classList.add('hidden');
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (!aboutModal.classList.contains('hidden')) aboutModal.classList.add('hidden');
-        if (!changelogModal.classList.contains('hidden')) changelogModal.classList.add('hidden');
-      }
-    });
 
     // -------------------------------------------------------------
     // Isotope Presets & System Core
@@ -1010,55 +890,63 @@
     let activeEditingCell = null;
 
     // -------------------------------------------------------------
-    // 세션 자동 저장 및 복원 (LocalStorage)
+    // 현재 입력된 표준물질 값 추출 함수 (보존용)
     // -------------------------------------------------------------
-    function saveSession() {
-      try {
-        const payload = {
-          mode: currentMode,
-          driftMode: document.getElementById('drift-mode').value,
-          gridData: gridData
+    function getCurrentStandardsSnapshot() {
+      const p = PRESETS[currentMode];
+      const isDual = p.elements.length === 2;
+
+      const stds = p.stds.map((_, idx) => {
+        const elName = document.getElementById(`ref-std${idx}-name`);
+        const elV1 = document.getElementById(`ref-std${idx}-v1`);
+        const elV2 = document.getElementById(`ref-std${idx}-v2`);
+        return {
+          name: elName ? elName.value : null,
+          v1: elV1 ? elV1.value : null,
+          v2: (isDual && elV2) ? elV2.value : null
         };
-        localStorage.setItem('isocalib_session_data', JSON.stringify(payload));
-      } catch (e) {}
+      });
+
+      const elQcName = document.getElementById('qc-std-name');
+      const elQcV1 = document.getElementById('qc-std-v1');
+      const elQcV2 = document.getElementById('qc-std-v2');
+
+      const qcStd = {
+        name: elQcName ? elQcName.value : null,
+        v1: elQcV1 ? elV1Val(elQcV1) : null,
+        v2: (isDual && elQcV2) ? elQcV2.value : null
+      };
+
+      return { stds, qcStd };
     }
 
-    function loadSession() {
-      try {
-        const saved = localStorage.getItem('isocalib_session_data');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed.mode && PRESETS[parsed.mode]) {
-            currentMode = parsed.mode;
-            document.getElementById('isotope-preset').value = currentMode;
-          }
-          if (parsed.driftMode) {
-            document.getElementById('drift-mode').value = parsed.driftMode;
-          }
-          if (Array.isArray(parsed.gridData) && parsed.gridData.length > 0) {
-            gridData = parsed.gridData;
-            return true;
-          }
-        }
-      } catch (e) {}
-      return false;
-    }
+    function elV1Val(el) { return el ? el.value : null; }
 
-    function updateLayoutForMode() {
+    function updateLayoutForMode(preserveValues = true) {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
       const isEn = currentLang === 'en';
+
+      let snapshot = null;
+      if (preserveValues) {
+        snapshot = getCurrentStandardsSnapshot();
+      }
 
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
 
       p.stds.forEach((std, idx) => {
+        const snap = snapshot && snapshot.stds && snapshot.stds[idx];
+        const valName = (snap && snap.name !== null) ? snap.name : std.name;
+        const valV1 = (snap && snap.v1 !== null) ? snap.v1 : std.v1;
+        const valV2 = (snap && snap.v2 !== null) ? snap.v2 : (std.v2 !== undefined ? std.v2 : 0);
+
         const div = document.createElement('div');
         div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-sm';
         div.innerHTML = `
           <div class="flex items-center justify-between border-b border-stone-200 pb-1.5">
             <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">${isEn ? 'Anchor Standard' : '앵커 표준물질'} 0${idx+1}</span>
-            <input type="text" id="ref-std${idx}-name" value="${std.name}" class="w-32 text-xs font-bold text-stone-900 border-b border-stone-400 focus:border-stone-900 outline-none text-right font-mono bg-transparent">
+            <input type="text" id="ref-std${idx}-name" value="${valName}" class="w-32 text-xs font-bold text-stone-900 border-b border-stone-400 focus:border-stone-900 outline-none text-right font-mono bg-transparent">
           </div>
           <div class="flex items-center gap-4">
             <div class="flex-1 space-y-1">
@@ -1066,7 +954,7 @@
                 <span>${p.elements[0].label} ${isEn ? 'True' : '참값'}</span>
                 <span class="text-stone-400 font-mono text-[10px]">${p.elements[0].unit}</span>
               </div>
-              <input type="number" step="0.001" id="ref-std${idx}-v1" value="${std.v1}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
+              <input type="number" step="0.001" id="ref-std${idx}-v1" value="${valV1}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
             </div>
             ${isDual ? `
             <div class="flex-1 space-y-1">
@@ -1074,13 +962,18 @@
                 <span>${p.elements[1].label} ${isEn ? 'True' : '참값'}</span>
                 <span class="text-stone-400 font-mono text-[10px]">${p.elements[1].unit}</span>
               </div>
-              <input type="number" step="0.001" id="ref-std${idx}-v2" value="${std.v2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
+              <input type="number" step="0.001" id="ref-std${idx}-v2" value="${valV2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
             </div>
             ` : ''}
           </div>
         `;
         stdContainer.appendChild(div);
       });
+
+      const snapQc = snapshot && snapshot.qcStd;
+      const qcName = (snapQc && snapQc.name !== null) ? snapQc.name : (p.qcStd ? p.qcStd.name : 'QC');
+      const qcV1 = (snapQc && snapQc.v1 !== null) ? snapQc.v1 : (p.qcStd ? p.qcStd.v1 : 0);
+      const qcV2 = (snapQc && snapQc.v2 !== null) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
 
       const qcDiv = document.createElement('div');
       qcDiv.className = 'bg-[#fcfdfc] p-4 border border-emerald-300 flex flex-col space-y-3 shadow-sm';
@@ -1089,7 +982,7 @@
           <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> ${isEn ? 'QC Check Standard' : '품질관리(QC) 검증 표준'}
           </span>
-          <input type="text" id="qc-std-name" value="${p.qcStd ? p.qcStd.name : 'QC'}" class="w-28 text-xs font-bold text-emerald-950 border-b border-emerald-400 focus:border-emerald-800 outline-none text-right font-mono bg-transparent">
+          <input type="text" id="qc-std-name" value="${qcName}" class="w-28 text-xs font-bold text-emerald-950 border-b border-emerald-400 focus:border-emerald-800 outline-none text-right font-mono bg-transparent">
         </div>
         <div class="flex items-center gap-4">
           <div class="flex-1 space-y-1">
@@ -1097,7 +990,7 @@
               <span>${p.elements[0].label} ${isEn ? 'Accepted' : '공인값'}</span>
               <span class="text-stone-400 font-mono text-[10px]">${p.elements[0].unit}</span>
             </div>
-            <input type="number" step="0.001" id="qc-std-v1" value="${p.qcStd ? p.qcStd.v1 : 0}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
+            <input type="number" step="0.001" id="qc-std-v1" value="${qcV1}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
           </div>
           ${isDual ? `
           <div class="flex-1 space-y-1">
@@ -1105,7 +998,7 @@
               <span>${p.elements[1].label} ${isEn ? 'Accepted' : '공인값'}</span>
               <span class="text-stone-400 font-mono text-[10px]">${p.elements[1].unit}</span>
             </div>
-            <input type="number" step="0.001" id="qc-std-v2" value="${p.qcStd ? p.qcStd.v2 : 0}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
+            <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
           </div>
           ` : ''}
         </div>
@@ -1159,7 +1052,6 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // Result Header
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -1191,6 +1083,95 @@
       renderGrid();
       resetOutputs();
     }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('isocalib_lang', lang);
+
+      const btnKo = document.getElementById('lang-ko');
+      const btnEn = document.getElementById('lang-en');
+      if (lang === 'ko') {
+        btnKo.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
+      } else {
+        btnEn.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
+        btnKo.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
+      }
+
+      const dict = TRANSLATIONS[lang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      document.getElementById('about-p1').innerHTML = dict.about_p1;
+      document.getElementById('about-p2').innerHTML = dict.about_p2;
+      document.getElementById('about-p3').innerHTML = dict.about_p3;
+      document.getElementById('about-protocols-title').innerText = dict.about_protocols_title;
+
+      const listEl = document.getElementById('about-protocols-list');
+      if (lang === 'ko') {
+        listEl.innerHTML = `
+          <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
+          <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
+          <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
+          <li>검량선에 미참여하는 미지의 독립 QC 표준물질 편차(Bias) 및 정밀도 검증</li>
+          <li>국제측정학위원회(JCGM 100:2008 GUM) 표준 1차 편미분 합성 불확도 전파</li>
+        `;
+      } else {
+        listEl.innerHTML = `
+          <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
+          <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
+          <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
+          <li>Independent Blind Quality Control (QC) accuracy bias and reproducibility tracking</li>
+          <li>Combined First-Order Uncertainty Propagation adhering to JCGM 100:2008 (GUM) guidelines</li>
+        `;
+      }
+
+      renderChangelog();
+      updateLayoutForMode(true);
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
+    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+
+    // About & Changelog Modals
+    const aboutModal = document.getElementById('about-modal');
+    const changelogModal = document.getElementById('changelog-modal');
+
+    document.getElementById('btn-open-about').addEventListener('click', () => {
+      aboutModal.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-about').addEventListener('click', () => {
+      aboutModal.classList.add('hidden');
+    });
+    document.getElementById('btn-modal-close-bottom').addEventListener('click', () => {
+      aboutModal.classList.add('hidden');
+    });
+
+    document.getElementById('btn-open-changelog').addEventListener('click', () => {
+      renderChangelog();
+      changelogModal.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-changelog').addEventListener('click', () => {
+      changelogModal.classList.add('hidden');
+    });
+    document.getElementById('btn-changelog-close-bottom').addEventListener('click', () => {
+      changelogModal.classList.add('hidden');
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!aboutModal.classList.contains('hidden')) aboutModal.classList.add('hidden');
+        if (!changelogModal.classList.contains('hidden')) changelogModal.classList.add('hidden');
+      }
+    });
 
     function resetOutputs() {
       const isEn = currentLang === 'en';
@@ -1263,7 +1244,6 @@
 
       document.getElementById('row-count').innerText = `${gridData.length} samples loaded`;
       applySelectionVisuals();
-      saveSession();
     }
 
     function syncPasteTarget() {
@@ -1304,7 +1284,6 @@
       const c = parseInt(activeEditingCell.dataset.c);
       gridData[r][c] = c === 0 ? activeEditingCell.innerText.trim() : (parseFloat(activeEditingCell.innerText) || activeEditingCell.innerText);
       activeEditingCell = null;
-      saveSession();
     }
 
     window.addEventListener('mousemove', (e) => {
@@ -1424,124 +1403,6 @@
       renderGrid();
       syncPasteTarget();
     }
-
-    // -------------------------------------------------------------
-    // 지능형 스마트 CSV 파서 및 드래그 앤 드롭
-    // -------------------------------------------------------------
-    function parseAndLoadCSV(csvText) {
-      const lines = csvText.trim().split(/\r\n|\n|\r/);
-      if (lines.length === 0) return;
-
-      const p = PRESETS[currentMode];
-      const isDual = p.elements.length === 2;
-      const numCols = isDual ? 5 : 3;
-
-      const delimiter = lines[0].includes('\t') ? '\t' : ',';
-      const rawRows = lines.map(line => {
-        let inQuotes = false;
-        let tokens = [];
-        let cur = '';
-        for (let i = 0; i < line.length; i++) {
-          const char = line[i];
-          if (char === '"') inQuotes = !inQuotes;
-          else if (char === delimiter && !inQuotes) {
-            tokens.push(cur.trim());
-            cur = '';
-          } else cur += char;
-        }
-        tokens.push(cur.trim());
-        return tokens.map(t => t.replace(/^"|"$/g, ''));
-      });
-
-      const firstRow = rawRows[0];
-      const hasHeader = firstRow.some(cell => isNaN(parseFloat(cell)) && cell.length > 0);
-
-      let idCol = 0, val1Col = 1, sd1Col = 2, val2Col = 3, sd2Col = 4;
-
-      if (hasHeader) {
-        const lower = firstRow.map(h => h.toLowerCase());
-        
-        const fId = lower.findIndex(h => h.includes('id') || h.includes('name') || h.includes('sample') || h.includes('identifier'));
-        if (fId !== -1) idCol = fId;
-
-        const fVal1 = lower.findIndex((h, idx) => idx !== idCol && (h.includes('13c') || h.includes('15n') || h.includes('2h') || h.includes('d') || h.includes('34s') || h.includes('raw')));
-        if (fVal1 !== -1) val1Col = fVal1;
-
-        const fSd1 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && (h.includes('sd') || h.includes('stdev') || h.includes('1s') || h.includes('sigma')));
-        if (fSd1 !== -1) sd1Col = fSd1;
-
-        if (isDual) {
-          const fVal2 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && idx !== sd1Col && (h.includes('18o') || h.includes('raw')));
-          if (fVal2 !== -1) val2Col = fVal2;
-
-          const fSd2 = lower.findIndex((h, idx) => idx !== idCol && idx !== val1Col && idx !== sd1Col && idx !== val2Col && (h.includes('sd') || h.includes('stdev') || h.includes('1s')));
-          if (fSd2 !== -1) sd2Col = fSd2;
-        }
-      }
-
-      const startIdx = hasHeader ? 1 : 0;
-      const dataRows = rawRows.slice(startIdx).filter(r => r.some(c => c !== ''));
-
-      gridData = dataRows.map(r => {
-        const row = Array(numCols).fill('');
-        row[0] = r[idCol] || '';
-        row[1] = r[val1Col] !== undefined ? (parseFloat(r[val1Col]) || '') : '';
-        row[2] = r[sd1Col] !== undefined ? (parseFloat(r[sd1Col]) || '') : '';
-        if (isDual) {
-          row[3] = r[val2Col] !== undefined ? (parseFloat(r[val2Col]) || '') : '';
-          row[4] = r[sd2Col] !== undefined ? (parseFloat(r[sd2Col]) || '') : '';
-        }
-        return row;
-      });
-
-      while (gridData.length < 30) gridData.push(Array(numCols).fill(''));
-
-      renderGrid();
-      runCalibration();
-      syncPasteTarget();
-    }
-
-    // Drag & Drop Listeners
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('csv-file-input');
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.add('drag-over');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('drag-over');
-      }, false);
-    });
-
-    dropzone.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      if (files.length > 0) {
-        const file = files[0];
-        const reader = new FileReader();
-        reader.onload = (event) => parseAndLoadCSV(event.target.result);
-        reader.readAsText(file);
-      }
-    });
-
-    dropzone.addEventListener('click', () => fileInput.click());
-    document.getElementById('btn-upload-trigger').addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (event) => parseAndLoadCSV(event.target.result);
-        reader.readAsText(file);
-        fileInput.value = '';
-      }
-    });
 
     window.addEventListener('keydown', (e) => {
       const active = document.activeElement;
@@ -2008,7 +1869,6 @@
       } else {
         qcBanner.classList.add('hidden');
       }
-      saveSession();
     }
 
     function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
@@ -2171,12 +2031,7 @@
 
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       currentMode = e.target.value;
-      updateLayoutForMode();
-      saveSession();
-    });
-
-    document.getElementById('drift-mode').addEventListener('change', () => {
-      saveSession();
+      updateLayoutForMode(false);
     });
 
     document.getElementById('btn-calc').addEventListener('click', runCalibration);
@@ -2185,6 +2040,7 @@
       const p = PRESETS[currentMode];
       gridData = JSON.parse(JSON.stringify(p.demo));
       selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
+      updateLayoutForMode(false);
       renderGrid();
       runCalibration();
       syncPasteTarget();
@@ -2196,9 +2052,6 @@
       selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
       renderGrid();
       resetOutputs();
-      localStorage.removeItem('isocalib_session_data');
-      const statEl = document.getElementById('session-status');
-      if (statEl) statEl.innerText = "● Session Cleared";
       syncPasteTarget();
     });
 
@@ -2238,14 +2091,10 @@
       URL.revokeObjectURL(url);
     });
 
+    // DOMContentLoaded 안정 실행
     window.addEventListener('DOMContentLoaded', () => {
-      const hasRestored = loadSession();
+      updateLayoutForMode(false);
       setLanguage(currentLang);
-      if (hasRestored) {
-        renderGrid();
-        const statEl = document.getElementById('session-status');
-        if (statEl) statEl.innerText = "● Session Restored from Cache";
-      }
     });
   </script>
 </body>
