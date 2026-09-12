@@ -197,7 +197,7 @@
             Load Demo
           </button>
           <button id="btn-add-row" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm" data-i18n="btn_add_rows">
-            + 5 Rows
+            + 30 Rows
           </button>
           <button id="btn-calc" class="px-5 py-2 text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow" data-i18n="btn_calc">
             Run Calibration & QC
@@ -520,7 +520,7 @@
         btn_delete_rows: "선택 행 삭제",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
-        btn_add_rows: "+ 5 Rows",
+        btn_add_rows: "+ 30 Rows",
         btn_calc: "Run Calibration & QC",
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
@@ -579,7 +579,7 @@
         btn_delete_rows: "Delete Row(s)",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
-        btn_add_rows: "+ 5 Rows",
+        btn_add_rows: "+ 30 Rows",
         btn_calc: "Run Calibration & QC",
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
@@ -940,7 +940,7 @@
 
       const numCols = isDual ? 5 : 3;
       if (gridData.length === 0) {
-        gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
+        gridData = Array.from({ length: 30 }, () => Array(numCols).fill(''));
       }
       renderGrid();
       resetOutputs();
@@ -1146,6 +1146,11 @@
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       const rows = text.trim().split(/\r\n|\n|\r/);
 
+      // 붙여넣으려는 데이터 크기에 맞춰 행 자동 확장
+      while (gridData.length < startR + rows.length) {
+        gridData.push(Array(numCols).fill(''));
+      }
+
       rows.forEach((rText, i) => {
         const trIdx = startR + i;
         if (!gridData[trIdx]) gridData[trIdx] = Array(numCols).fill('');
@@ -1241,7 +1246,7 @@
       gridData.splice(minR, count);
 
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
-      while (gridData.length < 5) gridData.push(Array(numCols).fill(''));
+      while (gridData.length < 10) gridData.push(Array(numCols).fill(''));
 
       dragStart = { r: Math.min(minR, gridData.length - 1), c: 0 };
       dragEnd = { r: dragStart.r, c: numCols - 1 };
@@ -1677,23 +1682,22 @@
 
     document.getElementById('btn-clear').addEventListener('click', () => {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
-      gridData = Array.from({ length: 10 }, () => Array(numCols).fill(''));
+      gridData = Array.from({ length: 30 }, () => Array(numCols).fill(''));
       selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
       renderGrid();
       resetOutputs();
       syncPasteTarget();
     });
 
+    // 30행씩 추가되도록 설정
     document.getElementById('btn-add-row').addEventListener('click', () => {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
-      for (let i = 0; i < 5; i++) gridData.push(Array(numCols).fill(''));
+      for (let i = 0; i < 30; i++) gridData.push(Array(numCols).fill(''));
       renderGrid();
       syncPasteTarget();
     });
 
-    // -------------------------------------------------------------
-    // CSV 내보내기 핸들러 (Sample ID부터 시작)
-    // -------------------------------------------------------------
+    // CSV 내보내기 핸들러
     document.getElementById('btn-export').addEventListener('click', () => {
       const rows = document.querySelectorAll('#result-body tr');
       const ths = Array.from(document.querySelectorAll('#result-head th')).map(th => th.innerText.replace(/[\n\r]/g, ' '));
