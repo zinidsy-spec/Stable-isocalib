@@ -169,8 +169,8 @@
           <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Drift Correction:</label>
           <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-2 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
             <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
-            <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 기기 표류)</option>
-            <option value="piecewise" data-i18n="drift_opt_piecewise">Piecewise Bracketing (구간 선형 보간)</option>
+            <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 표류)</option>
+            <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor-to-Anchor Bracketing (앵커 표준물질 간 선형 보간)</option>
           </select>
         </div>
       </div>
@@ -182,7 +182,7 @@
           <span data-i18n="drift_guide_title">실험실 환경별 드리프트 옵션 가이드</span>
         </div>
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          <strong>낮-밤-새벽 일주기 온·습도 변동</strong>이 큰 70개 런 환경에서는 단일 선형 보정 시 과보정(Over-correction)이 발생할 수 있습니다. 일주기 환경에서는 <strong>None</strong>(보정 끔)을 기본으로 사용하시거나, 표준물질이 8~10런마다 배치된 경우 <strong>Piecewise Bracketing</strong>을 적용하세요.
+          낮-밤-새벽 일주기 온·습도 사이클이 큰 환경에서는 단일 선형 보정 시 과보정(Over-correction) 위험이 있습니다. 변동이 심할 때는 <strong>None(보정 안 함)</strong>을 기본으로 권장하며, 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하여 실제 앵커 런 위치 사이의 구간별 변화량을 1:1로 보간하세요.
         </p>
       </div>
 
@@ -372,13 +372,13 @@
 
       </div>
 
-      <!-- 일주기 온·습도 변동 및 브래케팅 학술 주석 박스 -->
+      <!-- 일주기 변동 및 브래케팅 학술 주석 박스 (개선된 가이드 반영) -->
       <div class="bg-white border border-[#d1cfc7] p-5 space-y-2 text-xs text-stone-700 shadow-sm">
         <div class="flex items-center space-x-2 border-b border-stone-100 pb-2">
           <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="diurnal_note_title">Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)</span>
         </div>
         <p class="leading-relaxed font-light" data-i18n="diurnal_note_desc">
-          70개 이상의 긴 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시료 8~10개 단위의 표준물질 <strong>Piecewise Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.
+          장시간 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시퀀스 전반에 기준 표준물질을 주기적으로 배치한 후 <strong>Anchor-to-Anchor Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.
         </p>
       </div>
 
@@ -542,10 +542,10 @@
         sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
         drift_label: "기기 드리프트 보정:",
         drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
-        drift_opt_linear: "Linear (단일 선형 기기 표류)",
-        drift_opt_piecewise: "Piecewise Bracketing (구간 선형 보간)",
+        drift_opt_linear: "Linear (단일 선형 표류)",
+        drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 표준물질 간 선형 보간)",
         drift_guide_title: "실험실 환경별 드리프트 옵션 가이드",
-        drift_guide_desc: "<strong>낮-밤-새벽 일주기 온·습도 변동</strong>이 큰 70개 런 환경에서는 단일 선형 보정 시 과보정(Over-correction)이 발생할 수 있습니다. 일주기 환경에서는 <strong>None</strong>(보정 끔)을 기본으로 사용하시거나, 표준물질이 8~10런마다 배치된 경우 <strong>Piecewise Bracketing</strong>을 적용하세요.",
+        drift_guide_desc: "낮-밤-새벽 일주기 온·습도 사이클이 큰 환경에서는 단일 선형 보정 시 과보정(Over-correction) 위험이 있습니다. 변동이 심할 때는 <strong>None(보정 안 함)</strong>을 기본으로 권장하며, 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하여 실제 앵커 런 위치 사이의 구간별 변화량을 1:1로 보간하세요.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
         sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
@@ -574,7 +574,7 @@
         card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
         card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
         diurnal_note_title: "Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)",
-        diurnal_note_desc: "70개 이상의 긴 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시료 8~10개 단위의 표준물질 <strong>Piecewise Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.",
+        diurnal_note_desc: "장시간 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시퀀스 전반에 기준 표준물질을 주기적으로 배치한 후 <strong>Anchor-to-Anchor Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
         acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
         acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
@@ -609,9 +609,9 @@
         drift_label: "Drift Correction:",
         drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
         drift_opt_linear: "Linear (Single linear slope over sequence)",
-        drift_opt_piecewise: "Piecewise Bracketing (Local interpolation)",
+        drift_opt_piecewise: "Anchor-to-Anchor Bracketing (Piecewise linear interpolation)",
         drift_guide_title: "Laboratory Environment & Drift Strategy Guide",
-        drift_guide_desc: "In sequences of 70+ runs exposed to <strong>diurnal (day-night-dawn) temperature and humidity fluctuations</strong>, single linear fits risk over-correction. Under strong diurnal conditions, use <strong>None (Off)</strong> as the default baseline, or choose <strong>Piecewise Bracketing</strong> if anchor standards are placed every 8–10 runs.",
+        drift_guide_desc: "In sequences exposed to <strong>diurnal (day-night-dawn) temperature and humidity cycles</strong>, single linear fits risk over-correction. Under strong diurnal conditions, use <strong>None (Off)</strong> as the default baseline, or choose <strong>Anchor-to-Anchor Bracketing</strong> if anchor standards are periodically distributed across the sequence to interpolate run-by-run drift between actual anchor positions.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
@@ -640,7 +640,7 @@
         card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
         card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
         diurnal_note_title: "Non-linear Diurnal Fluctuations & Sequence Bracketing",
-        diurnal_note_desc: "Long analytical sequences (70+ runs) may encounter non-linear instrumental drift driven by day-night HVAC cycles. Enforcing a single linear slope risks over-correcting curved responses. Best practice recommends either maintaining <strong>None (Off)</strong> to preserve conservative WLS weighting, or implementing <strong>Piecewise Bracketing</strong> with anchor standards spaced every 8–10 samples.",
+        diurnal_note_desc: "Long analytical sequences may encounter non-linear instrumental drift driven by day-night HVAC cycles. Enforcing a single linear slope risks over-correcting curved responses. Best practice recommends either maintaining <strong>None (Off)</strong> to preserve conservative WLS weighting, or implementing <strong>Anchor-to-Anchor Bracketing</strong> with anchor standards placed periodically throughout the run sequence.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
         acc_a_title: "A. Weighted Least Squares Normal Equations",
         acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
@@ -696,7 +696,7 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
-          <li>시퀀스 런 순서 기반 선형 및 브래케팅 기기 표류(Drift) 1차 보정</li>
+          <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
           <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
           <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
           <li>검량선에 미참여하는 미지의 독립 QC 표준물질 편차(Bias) 및 정밀도 검증</li>
@@ -704,7 +704,7 @@
         `;
       } else {
         listEl.innerHTML = `
-          <li>Sequence-based Linear and Piecewise Bracketing Instrumental Drift Correction</li>
+          <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
           <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
           <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
           <li>Independent Blind Quality Control (QC) accuracy bias and reproducibility tracking</li>
@@ -953,7 +953,6 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
-      // Result Header
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -1401,17 +1400,14 @@
       return { slope, intercept };
     }
 
-    // Piecewise Linear Bracketing Interpolation
+    // Anchor-to-Anchor Piecewise Linear Bracketing Interpolation
     function getInterpolatedDriftOffset(rIdx, anchorRuns) {
       if (!anchorRuns || anchorRuns.length === 0) return 0;
       if (anchorRuns.length === 1) return anchorRuns[0].diff;
 
-      // 시퀀스 첫 앵커 이전
       if (rIdx <= anchorRuns[0].idx) return anchorRuns[0].diff;
-      // 시퀀스 마지막 앵커 이후
       if (rIdx >= anchorRuns[anchorRuns.length - 1].idx) return anchorRuns[anchorRuns.length - 1].diff;
 
-      // 앵커 구간 탐색 후 선형 보간
       for (let i = 0; i < anchorRuns.length - 1; i++) {
         const p1 = anchorRuns[i];
         const p2 = anchorRuns[i + 1];
@@ -1676,7 +1672,7 @@
         if (driftMode === 'linear' && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
           qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Linear drift model applied' : '선형 드리프트 모델 적용됨'}: ${p.elements[0].label} slope = ${(driftSlope1).toExponential(3)} ‰/run</div>`;
         } else if (driftMode === 'piecewise') {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Piecewise bracketing drift model applied across' : '구간 선형 브래케팅 보정 적용됨 (앵커 표준물질'} ${anchor0Runs1.length} ${isEn ? 'anchor points' : '회 기준)'}</div>`;
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Anchor-to-Anchor bracketing drift model applied across' : '앵커 간 선형 브래케팅 보정 적용됨 (앵커 표준물질'} ${anchor0Runs1.length} ${isEn ? 'anchor points' : '회 기준)'}</div>`;
         }
 
         qcBanner.innerHTML = qcHtml;
