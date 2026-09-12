@@ -77,7 +77,7 @@
     .plot-container {
       position: relative;
       width: 100%;
-      min-height: 290px;
+      min-height: 280px;
       background: #ffffff;
     }
 
@@ -215,7 +215,7 @@
           <button id="btn-add-row" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm" data-i18n="btn_add_rows">
             + 30 Rows
           </button>
-          <button id="btn-calc" class="px-5 py-2 text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow" data-i18n="btn_calc">
+          <button id="btn-calc" class="px-5 py-2 text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow cursor-pointer" data-i18n="btn_calc">
             Run Calibration & QC
           </button>
         </div>
@@ -226,7 +226,7 @@
         <!-- Left: Spreadsheet Grid -->
         <div class="lg:col-span-6 space-y-2">
           <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm relative">
-            <div class="max-h-[580px] overflow-auto select-none" id="grid-scroll-container">
+            <div class="max-h-[640px] overflow-auto select-none" id="grid-scroll-container">
               <table class="w-full border-collapse text-left font-data text-xs" id="interactive-grid">
                 <thead id="grid-head" class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-stone-800 uppercase text-[11px] font-bold tracking-wider select-none z-10"></thead>
                 <tbody id="grid-body" class="divide-y divide-[#e5e3dc]"></tbody>
@@ -244,25 +244,40 @@
           <div id="param-cards-container" class="grid grid-cols-2 gap-4"></div>
 
           <div class="space-y-4">
+            
+            <!-- Figure 1: 1st Isotope Fit -->
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-1-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 1</span>
-                <button id="btn-export-svg-1" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2" data-i18n="btn_export_svg">Export Publication SVG</button>
+                <button id="btn-export-svg-1" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
               </div>
               <div id="plot-1" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
                 Awaiting data computation...
               </div>
             </div>
 
+            <!-- Figure 2: 2nd Isotope Fit (Dual mode only) -->
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-2-box">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-2-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 2</span>
-                <button id="btn-export-svg-2" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2" data-i18n="btn_export_svg">Export Publication SVG</button>
+                <button id="btn-export-svg-2" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
               </div>
               <div id="plot-2" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
                 Awaiting data computation...
               </div>
             </div>
+
+            <!-- Figure 3: Sequence Drift Diagnostics Plot (NEW) -->
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-drift-box">
+              <div class="flex justify-between items-center px-1">
+                <span class="font-mono text-[10px] uppercase font-bold text-stone-400" data-i18n="plot_drift_tag">Figure 3 · Drift Diagnostics</span>
+                <button id="btn-export-svg-drift" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
+              </div>
+              <div id="plot-drift" class="plot-container flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
+                Awaiting data computation...
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -372,7 +387,7 @@
 
       </div>
 
-      <!-- 일주기 변동 및 브래케팅 학술 주석 박스 (개선된 가이드 반영) -->
+      <!-- 일주기 변동 및 브래케팅 학술 주석 박스 -->
       <div class="bg-white border border-[#d1cfc7] p-5 space-y-2 text-xs text-stone-700 shadow-sm">
         <div class="flex items-center space-x-2 border-b border-stone-100 pb-2">
           <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="diurnal_note_title">Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)</span>
@@ -555,6 +570,7 @@
         btn_calc: "Run Calibration & QC",
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
+        plot_drift_tag: "Figure 3 · Drift Diagnostics",
         sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
         btn_export_csv: "Export as .CSV",
         result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
@@ -621,6 +637,7 @@
         btn_calc: "Run Calibration & QC",
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
+        plot_drift_tag: "Figure 3 · Drift Diagnostics",
         sec3_title: "Calibrated Results & Quality Control Report",
         btn_export_csv: "Export as .CSV",
         result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
@@ -953,6 +970,7 @@
         document.getElementById('plot-2-box').style.display = 'none';
       }
 
+      // Result Header
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -989,6 +1007,7 @@
       const isEn = currentLang === 'en';
       document.getElementById('plot-1').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
       document.getElementById('plot-2').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
+      document.getElementById('plot-drift').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
       document.getElementById('result-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
       document.getElementById('qc-summary-banner').classList.add('hidden');
     }
@@ -1452,28 +1471,28 @@
       let anchor0Runs1 = [];
       let anchor0Runs2 = [];
 
-      if (driftMode === 'linear') {
-        const anchor0 = refStds[0];
-        const driftRuns = { seq: [], v1: [], v2: [] };
+      // 앵커 표준물질(첫번째 앵커)의 측정값 모니터링 데이터
+      const anchor0 = refStds[0];
+      const rawAnchor0Runs = { seq: [], v1: [], v2: [] };
 
-        gridData.forEach((row, rIdx) => {
-          const id = (row[0] || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-          if (anchor0.keyMatch && id.includes(anchor0.keyMatch)) {
-            const raw1 = parseFloat(row[1]);
-            if (!isNaN(raw1)) {
-              driftRuns.seq.push(rIdx + 1);
-              driftRuns.v1.push(raw1);
-              if (isDual) driftRuns.v2.push(parseFloat(row[3]) || 0);
-            }
+      gridData.forEach((row, rIdx) => {
+        const id = (row[0] || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (anchor0.keyMatch && id.includes(anchor0.keyMatch)) {
+          const raw1 = parseFloat(row[1]);
+          if (!isNaN(raw1)) {
+            rawAnchor0Runs.seq.push(rIdx + 1);
+            rawAnchor0Runs.v1.push(raw1);
+            if (isDual) rawAnchor0Runs.v2.push(parseFloat(row[3]) || 0);
           }
-        });
+        }
+      });
 
-        if (driftRuns.seq.length >= 2) {
-          driftSlope1 = calcOLS(driftRuns.seq, driftRuns.v1).slope;
-          if (isDual) driftSlope2 = calcOLS(driftRuns.seq, driftRuns.v2).slope;
+      if (driftMode === 'linear') {
+        if (rawAnchor0Runs.seq.length >= 2) {
+          driftSlope1 = calcOLS(rawAnchor0Runs.seq, rawAnchor0Runs.v1).slope;
+          if (isDual) driftSlope2 = calcOLS(rawAnchor0Runs.seq, rawAnchor0Runs.v2).slope;
         }
       } else if (driftMode === 'piecewise') {
-        const anchor0 = refStds[0];
         let baseline1 = null;
         let baseline2 = null;
 
@@ -1559,6 +1578,9 @@
 
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
       }
+
+      // Figure 3: 드리프트 진단 차트 렌더링
+      drawDriftPlot('plot-drift', rawAnchor0Runs, anchor0.name || 'Anchor-1', driftMode, driftSlope1, anchor0Runs1, gridData.length, p.elements[0].label);
 
       const resBody = document.getElementById('result-body');
       resBody.innerHTML = '';
@@ -1734,6 +1756,83 @@
       Plotly.newPlot(elemId, [scatterTrace, lineTrace], layout, { responsive: true, displayModeBar: false });
     }
 
+    // Figure 3: 시퀀스 드리프트 진단 차트 렌더링 함수 (NEW)
+    function drawDriftPlot(elemId, rawAnchor0Runs, anchorName, mode, slope1, anchorRuns1, maxRun, isoLabel) {
+      const container = document.getElementById(elemId);
+      container.innerHTML = '';
+      const isEn = currentLang === 'en';
+
+      if (!rawAnchor0Runs || rawAnchor0Runs.seq.length === 0) {
+        container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'No repeat anchor standard runs detected for drift diagnostics.' : '드리프트 진단을 위한 기준 표준물질의 반복 측정값이 없습니다.'}</span>`;
+        return;
+      }
+
+      const traces = [];
+
+      // 1. 실제 측정된 앵커 표준물질 점들
+      traces.push({
+        x: rawAnchor0Runs.seq,
+        y: rawAnchor0Runs.v1,
+        mode: 'markers+lines',
+        type: 'scatter',
+        name: `${anchorName} ${isEn ? 'Raw Runs' : '원시 측정값'}`,
+        marker: { size: 7, color: '#0369a1' },
+        line: { dash: 'dot', color: '#93c5fd', width: 1.2 }
+      });
+
+      // 2. 적용된 드리프트 보정 모델 곡선
+      if (mode === 'linear') {
+        const baseVal = rawAnchor0Runs.v1[0];
+        const lineX = [1, maxRun];
+        const lineY = [baseVal, baseVal + slope1 * (maxRun - 1)];
+        traces.push({
+          x: lineX,
+          y: lineY,
+          mode: 'lines',
+          type: 'scatter',
+          name: `${isEn ? 'Linear Drift Trend' : '선형 드리프트 모델'} (${(slope1).toExponential(2)} ‰/run)`,
+          line: { color: '#b91c1c', width: 2 }
+        });
+      } else if (mode === 'piecewise' && anchorRuns1 && anchorRuns1.length >= 2) {
+        const baseVal = rawAnchor0Runs.v1[0];
+        const segX = anchorRuns1.map(item => item.idx + 1);
+        const segY = anchorRuns1.map(item => baseVal + item.diff);
+        traces.push({
+          x: segX,
+          y: segY,
+          mode: 'lines',
+          type: 'scatter',
+          name: isEn ? 'Bracketing Spline' : '앵커 간 선형 보간선',
+          line: { color: '#047857', width: 2 }
+        });
+      }
+
+      const layout = {
+        title: {
+          text: `${isoLabel} Sequence Drift Diagnostics (${anchorName})`,
+          font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' },
+          x: 0.05
+        },
+        paper_bgcolor: '#ffffff',
+        plot_bgcolor: '#ffffff',
+        margin: { l: 55, r: 25, t: 40, b: 45 },
+        xaxis: {
+          title: { text: isEn ? 'Run Sequence Order (Run #)' : '시퀀스 런 순서 (Run #)', font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } },
+          showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc',
+          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' }, automargin: true
+        },
+        yaxis: {
+          title: { text: `Raw ${isoLabel} (‰)`, font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } },
+          showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc',
+          tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' }, automargin: true
+        },
+        showlegend: true,
+        legend: { orientation: 'h', y: -0.28, x: 0.05, font: { family: 'Inter, sans-serif', size: 10, color: '#374151' } }
+      };
+
+      Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
+    }
+
     document.getElementById('btn-export-svg-1').addEventListener('click', () => {
       const p = PRESETS[currentMode];
       Plotly.downloadImage('plot-1', {
@@ -1754,6 +1853,16 @@
           filename: `IsoCalib_${p.elements[1].label}_Fit`
         });
       }
+    });
+
+    document.getElementById('btn-export-svg-drift').addEventListener('click', () => {
+      const p = PRESETS[currentMode];
+      Plotly.downloadImage('plot-drift', {
+        format: 'svg',
+        width: 800,
+        height: 600,
+        filename: `IsoCalib_${p.elements[0].label}_Drift_Diagnostics`
+      });
     });
 
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
