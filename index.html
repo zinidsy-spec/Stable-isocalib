@@ -158,16 +158,32 @@
 
     <!-- Section 1: Reference & QC Standards -->
     <section class="space-y-4">
-      <div class="flex flex-wrap items-baseline justify-between border-b border-stone-200 pb-2.5 gap-2">
+      <div class="flex flex-wrap items-center justify-between border-b border-stone-200 pb-2.5 gap-3">
         <div class="flex items-center space-x-3">
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">01</span>
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
         </div>
         
-        <label class="flex items-center space-x-2 cursor-pointer select-none bg-stone-100 px-3 py-1.5 border border-stone-300 rounded text-xs font-mono">
-          <input type="checkbox" id="chk-drift" class="rounded border-stone-300 text-stone-900 focus:ring-0">
-          <span class="font-medium text-stone-800" data-i18n="drift_toggle">Sequence Drift Correction (시간/순서 기반 드리프트 1차 보정)</span>
-        </label>
+        <!-- Drift Correction Mode Selector -->
+        <div class="flex items-center space-x-2 bg-stone-100 px-3 py-1.5 border border-stone-300 rounded text-xs font-mono">
+          <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Drift Correction:</label>
+          <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-2 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
+            <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
+            <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 기기 표류)</option>
+            <option value="piecewise" data-i18n="drift_opt_piecewise">Piecewise Bracketing (구간 선형 보간)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Drift Hint Banner -->
+      <div class="bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600 space-y-1">
+        <div class="flex items-center space-x-1.5 font-bold text-stone-800">
+          <span>💡</span>
+          <span data-i18n="drift_guide_title">실험실 환경별 드리프트 옵션 가이드</span>
+        </div>
+        <p class="leading-relaxed" data-i18n="drift_guide_desc">
+          <strong>낮-밤-새벽 일주기 온·습도 변동</strong>이 큰 70개 런 환경에서는 단일 선형 보정 시 과보정(Over-correction)이 발생할 수 있습니다. 일주기 환경에서는 <strong>None</strong>(보정 끔)을 기본으로 사용하시거나, 표준물질이 8~10런마다 배치된 경우 <strong>Piecewise Bracketing</strong>을 적용하세요.
+        </p>
       </div>
 
       <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
@@ -356,6 +372,16 @@
 
       </div>
 
+      <!-- 일주기 온·습도 변동 및 브래케팅 학술 주석 박스 -->
+      <div class="bg-white border border-[#d1cfc7] p-5 space-y-2 text-xs text-stone-700 shadow-sm">
+        <div class="flex items-center space-x-2 border-b border-stone-100 pb-2">
+          <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="diurnal_note_title">Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)</span>
+        </div>
+        <p class="leading-relaxed font-light" data-i18n="diurnal_note_desc">
+          70개 이상의 긴 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시료 8~10개 단위의 표준물질 <strong>Piecewise Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.
+        </p>
+      </div>
+
       <!-- 세부 수학 유도식 (Accordion) -->
       <details class="group bg-white border border-[#d1cfc7] shadow-sm transition-all">
         <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100 transition">
@@ -514,7 +540,12 @@
         hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
         system_label: "분석 동위원소 체계 (Isotope System)",
         sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
-        drift_toggle: "Sequence Drift Correction (시간/순서 기반 드리프트 1차 보정)",
+        drift_label: "기기 드리프트 보정:",
+        drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
+        drift_opt_linear: "Linear (단일 선형 기기 표류)",
+        drift_opt_piecewise: "Piecewise Bracketing (구간 선형 보간)",
+        drift_guide_title: "실험실 환경별 드리프트 옵션 가이드",
+        drift_guide_desc: "<strong>낮-밤-새벽 일주기 온·습도 변동</strong>이 큰 70개 런 환경에서는 단일 선형 보정 시 과보정(Over-correction)이 발생할 수 있습니다. 일주기 환경에서는 <strong>None</strong>(보정 끔)을 기본으로 사용하시거나, 표준물질이 8~10런마다 배치된 경우 <strong>Piecewise Bracketing</strong>을 적용하세요.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
         sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
@@ -542,6 +573,8 @@
         card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.",
         card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
         card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
+        diurnal_note_title: "Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)",
+        diurnal_note_desc: "70개 이상의 긴 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시료 8~10개 단위의 표준물질 <strong>Piecewise Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
         acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
         acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
@@ -573,7 +606,12 @@
         hero_desc: "Performs sequence drift correction, weighted least squares (WLS) regression, blind QC verification, and rigorous uncertainty propagation in a single client-side pipeline.",
         system_label: "Isotope System",
         sec1_title: "Reference & QC Standards",
-        drift_toggle: "Sequence Drift Correction (Instrumental drift correction over run order)",
+        drift_label: "Drift Correction:",
+        drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
+        drift_opt_linear: "Linear (Single linear slope over sequence)",
+        drift_opt_piecewise: "Piecewise Bracketing (Local interpolation)",
+        drift_guide_title: "Laboratory Environment & Drift Strategy Guide",
+        drift_guide_desc: "In sequences of 70+ runs exposed to <strong>diurnal (day-night-dawn) temperature and humidity fluctuations</strong>, single linear fits risk over-correction. Under strong diurnal conditions, use <strong>None (Off)</strong> as the default baseline, or choose <strong>Piecewise Bracketing</strong> if anchor standards are placed every 8–10 runs.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
@@ -601,6 +639,8 @@
         card3_desc: "Propagates not only the sample measurement repeatability, but also the <strong>covariance and standard errors of the regression parameters</strong>.",
         card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
         card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
+        diurnal_note_title: "Non-linear Diurnal Fluctuations & Sequence Bracketing",
+        diurnal_note_desc: "Long analytical sequences (70+ runs) may encounter non-linear instrumental drift driven by day-night HVAC cycles. Enforcing a single linear slope risks over-correcting curved responses. Best practice recommends either maintaining <strong>None (Off)</strong> to preserve conservative WLS weighting, or implementing <strong>Piecewise Bracketing</strong> with anchor standards spaced every 8–10 samples.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
         acc_a_title: "A. Weighted Least Squares Normal Equations",
         acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
@@ -656,7 +696,7 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
-          <li>시퀀스 런 순서 기반 선형 기기 표류(Drift) 1차 보정</li>
+          <li>시퀀스 런 순서 기반 선형 및 브래케팅 기기 표류(Drift) 1차 보정</li>
           <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
           <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
           <li>검량선에 미참여하는 미지의 독립 QC 표준물질 편차(Bias) 및 정밀도 검증</li>
@@ -664,7 +704,7 @@
         `;
       } else {
         listEl.innerHTML = `
-          <li>Time/Sequence-based Linear Instrumental Drift Correction</li>
+          <li>Sequence-based Linear and Piecewise Bracketing Instrumental Drift Correction</li>
           <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
           <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
           <li>Independent Blind Quality Control (QC) accuracy bias and reproducibility tracking</li>
@@ -1146,7 +1186,6 @@
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       const rows = text.trim().split(/\r\n|\n|\r/);
 
-      // 붙여넣으려는 데이터 크기에 맞춰 행 자동 확장
       while (gridData.length < startR + rows.length) {
         gridData.push(Array(numCols).fill(''));
       }
@@ -1362,13 +1401,35 @@
       return { slope, intercept };
     }
 
+    // Piecewise Linear Bracketing Interpolation
+    function getInterpolatedDriftOffset(rIdx, anchorRuns) {
+      if (!anchorRuns || anchorRuns.length === 0) return 0;
+      if (anchorRuns.length === 1) return anchorRuns[0].diff;
+
+      // 시퀀스 첫 앵커 이전
+      if (rIdx <= anchorRuns[0].idx) return anchorRuns[0].diff;
+      // 시퀀스 마지막 앵커 이후
+      if (rIdx >= anchorRuns[anchorRuns.length - 1].idx) return anchorRuns[anchorRuns.length - 1].diff;
+
+      // 앵커 구간 탐색 후 선형 보간
+      for (let i = 0; i < anchorRuns.length - 1; i++) {
+        const p1 = anchorRuns[i];
+        const p2 = anchorRuns[i + 1];
+        if (rIdx >= p1.idx && rIdx <= p2.idx) {
+          const ratio = (rIdx - p1.idx) / (p2.idx - p1.idx);
+          return p1.diff + ratio * (p2.diff - p1.diff);
+        }
+      }
+      return 0;
+    }
+
     function runCalibration() {
       closeEditingCell();
 
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
       const isEn = currentLang === 'en';
-      const applyDrift = document.getElementById('chk-drift').checked;
+      const driftMode = document.getElementById('drift-mode').value;
 
       const refStds = p.stds.map((s, idx) => {
         const nameInput = document.getElementById(`ref-std${idx}-name`).value.trim();
@@ -1392,8 +1453,10 @@
 
       let driftSlope1 = 0;
       let driftSlope2 = 0;
+      let anchor0Runs1 = [];
+      let anchor0Runs2 = [];
 
-      if (applyDrift) {
+      if (driftMode === 'linear') {
         const anchor0 = refStds[0];
         const driftRuns = { seq: [], v1: [], v2: [] };
 
@@ -1413,6 +1476,37 @@
           driftSlope1 = calcOLS(driftRuns.seq, driftRuns.v1).slope;
           if (isDual) driftSlope2 = calcOLS(driftRuns.seq, driftRuns.v2).slope;
         }
+      } else if (driftMode === 'piecewise') {
+        const anchor0 = refStds[0];
+        let baseline1 = null;
+        let baseline2 = null;
+
+        gridData.forEach((row, rIdx) => {
+          const id = (row[0] || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+          if (anchor0.keyMatch && id.includes(anchor0.keyMatch)) {
+            const raw1 = parseFloat(row[1]);
+            if (!isNaN(raw1)) {
+              if (baseline1 === null) baseline1 = raw1;
+              anchor0Runs1.push({ idx: rIdx, diff: raw1 - baseline1 });
+
+              if (isDual) {
+                const raw2 = parseFloat(row[3]) || 0;
+                if (baseline2 === null) baseline2 = raw2;
+                anchor0Runs2.push({ idx: rIdx, diff: raw2 - baseline2 });
+              }
+            }
+          }
+        });
+      }
+
+      function getCorrectedRaw(rIdx, val, isoIdx) {
+        if (driftMode === 'linear') {
+          return isoIdx === 1 ? (val - driftSlope1 * rIdx) : (val - driftSlope2 * rIdx);
+        } else if (driftMode === 'piecewise') {
+          const offset = isoIdx === 1 ? getInterpolatedDriftOffset(rIdx, anchor0Runs1) : getInterpolatedDriftOffset(rIdx, anchor0Runs2);
+          return val - offset;
+        }
+        return val;
       }
 
       const pts1 = { x: [], y: [], sd: [], names: [] };
@@ -1428,16 +1522,16 @@
             let raw1 = parseFloat(row[1]);
             const sd1 = parseFloat(row[2]) || 0.03;
             if (!isNaN(raw1)) {
-              if (applyDrift) raw1 -= driftSlope1 * rIdx;
-              pts1.x.push(raw1); pts1.y.push(std.v1); pts1.sd.push(sd1); pts1.names.push(id);
+              const adjRaw1 = getCorrectedRaw(rIdx, raw1, 1);
+              pts1.x.push(adjRaw1); pts1.y.push(std.v1); pts1.sd.push(sd1); pts1.names.push(id);
             }
 
             if (isDual) {
               let raw2 = parseFloat(row[3]);
               const sd2 = parseFloat(row[4]) || 0.05;
               if (!isNaN(raw2)) {
-                if (applyDrift) raw2 -= driftSlope2 * rIdx;
-                pts2.x.push(raw2); pts2.y.push(std.v2); pts2.sd.push(sd2); pts2.names.push(id);
+                const adjRaw2 = getCorrectedRaw(rIdx, raw2, 2);
+                pts2.x.push(adjRaw2); pts2.y.push(std.v2); pts2.sd.push(sd2); pts2.names.push(id);
               }
             }
           }
@@ -1489,7 +1583,7 @@
         let propSd1 = '-';
 
         if (!isNaN(raw1) && reg1.slope !== 0) {
-          const adjRaw1 = applyDrift ? (raw1 - driftSlope1 * rIdx) : raw1;
+          const adjRaw1 = getCorrectedRaw(rIdx, raw1, 1);
           const cVal1 = adjRaw1 * reg1.slope + reg1.intercept;
           cal1 = cVal1.toFixed(3);
           propSd1 = Math.sqrt(Math.pow(reg1.slope * sd1, 2) + Math.pow(adjRaw1 * reg1.seSlope, 2) + Math.pow(reg1.seIntercept, 2)).toFixed(3);
@@ -1502,7 +1596,7 @@
         let propSd2 = '-';
 
         if (isDual && !isNaN(raw2) && reg2 && reg2.slope !== 0) {
-          const adjRaw2 = applyDrift ? (raw2 - driftSlope2 * rIdx) : raw2;
+          const adjRaw2 = getCorrectedRaw(rIdx, raw2, 2);
           const cVal2 = adjRaw2 * reg2.slope + reg2.intercept;
           cal2 = cVal2.toFixed(3);
           propSd2 = Math.sqrt(Math.pow(reg2.slope * sd2, 2) + Math.pow(adjRaw2 * reg2.seSlope, 2) + Math.pow(reg2.seIntercept, 2)).toFixed(3);
@@ -1579,8 +1673,10 @@
         }
 
         qcHtml += `</div>`;
-        if (applyDrift && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Linear sequence drift corrected' : '시퀀스 선형 드리프트 보정 완료'}: ${p.elements[0].label} slope = ${(driftSlope1).toExponential(3)} ‰/run</div>`;
+        if (driftMode === 'linear' && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Linear drift model applied' : '선형 드리프트 모델 적용됨'}: ${p.elements[0].label} slope = ${(driftSlope1).toExponential(3)} ‰/run</div>`;
+        } else if (driftMode === 'piecewise') {
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Piecewise bracketing drift model applied across' : '구간 선형 브래케팅 보정 적용됨 (앵커 표준물질'} ${anchor0Runs1.length} ${isEn ? 'anchor points' : '회 기준)'}</div>`;
         }
 
         qcBanner.innerHTML = qcHtml;
@@ -1689,7 +1785,6 @@
       syncPasteTarget();
     });
 
-    // 30행씩 추가되도록 설정
     document.getElementById('btn-add-row').addEventListener('click', () => {
       const numCols = PRESETS[currentMode].elements.length === 2 ? 5 : 3;
       for (let i = 0; i < 30; i++) gridData.push(Array(numCols).fill(''));
@@ -1697,7 +1792,7 @@
       syncPasteTarget();
     });
 
-    // CSV 내보내기 핸들러
+    // CSV Export Handler
     document.getElementById('btn-export').addEventListener('click', () => {
       const rows = document.querySelectorAll('#result-body tr');
       const ths = Array.from(document.querySelectorAll('#result-head th')).map(th => th.innerText.replace(/[\n\r]/g, ' '));
