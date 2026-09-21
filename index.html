@@ -169,14 +169,25 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
         </div>
         
-        <!-- Drift Correction Mode Selector -->
-        <div class="flex items-center space-x-2 bg-stone-100 px-3 py-1.5 border border-stone-300 rounded text-xs font-mono">
-          <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">기기 드리프트 보정:</label>
-          <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-2 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
-            <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
-            <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 표류)</option>
-            <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor-to-Anchor Bracketing (앵커 표준물질 간 선형 보간)</option>
-          </select>
+        <!-- Drift Correction Settings -->
+        <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
+          <!-- Drift Monitor Standard Selector -->
+          <div class="flex items-center space-x-1.5 bg-stone-100 px-2.5 py-1.5 border border-stone-300 rounded">
+            <label for="drift-anchor-select" class="font-bold text-stone-800" data-i18n="drift_anchor_label">Monitor:</label>
+            <select id="drift-anchor-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <!-- Drift Model Selector -->
+          <div class="flex items-center space-x-1.5 bg-stone-100 px-2.5 py-1.5 border border-stone-300 rounded">
+            <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Model:</label>
+            <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
+              <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
+              <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 표류)</option>
+              <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor-to-Anchor Bracketing (앵커 간 선형 보간)</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -184,10 +195,10 @@
       <div class="bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600 space-y-1">
         <div class="flex items-center space-x-1.5 font-bold text-stone-800">
           <span>💡</span>
-          <span data-i18n="drift_guide_title">실험실 환경별 드리프트 옵션 가이드</span>
+          <span data-i18n="drift_guide_title">실험실 환경별 드리프트 옵션 및 모니터 표준 선택 가이드</span>
         </div>
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          낮-밤-새벽 일주기 온·습도 사이클이 큰 환경에서는 단일 선형 보정 시 과보정(Over-correction) 위험이 있습니다. 변동이 심할 때는 <strong>None(보정 안 함)</strong>을 기본으로 권장하며, 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하여 실제 앵커 런 위치 사이의 구간별 변화량을 1:1로 보간하세요.
+          시퀀스 드리프트 보정의 기준 물질(Monitor)은 균질성과 입도가 우수한 앵커 표준물질(예: 분말 형태의 <strong>IAEA-603</strong>)을 권장합니다. 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하고, 낮-새벽 변동이 심하거나 브래케팅이 없다면 <strong>None(보정 안 함)</strong>으로 두어 WLS 검량선으로 일괄 정산하는 것이 안전합니다.
         </p>
       </div>
 
@@ -595,12 +606,13 @@
         hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
         system_label: "분석 동위원소 체계 (Isotope System)",
         sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
-        drift_label: "기기 드리프트 보정:",
+        drift_anchor_label: "드리프트 모니터:",
+        drift_label: "보정 모델:",
         drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
         drift_opt_linear: "Linear (단일 선형 표류)",
-        drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 표준물질 간 선형 보간)",
-        drift_guide_title: "실험실 환경별 드리프트 옵션 가이드",
-        drift_guide_desc: "낮-밤-새벽 일주기 온·습도 사이클이 큰 환경에서는 단일 선형 보정 시 과보정(Over-correction) 위험이 있습니다. 변동이 심할 때는 <strong>None(보정 안 함)</strong>을 기본으로 권장하며, 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하여 실제 앵커 런 위치 사이의 구간별 변화량을 1:1로 보간하세요.",
+        drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 간 선형 보간)",
+        drift_guide_title: "실험실 환경별 드리프트 옵션 및 모니터 표준 선택 가이드",
+        drift_guide_desc: "시퀀스 드리프트 보정의 기준 물질(Monitor)은 균질성과 입도가 우수한 앵커 표준물질(예: 분말 형태의 <strong>IAEA-603</strong>)을 권장합니다. 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하고, 낮-새벽 변동이 심하거나 브래케팅이 없다면 <strong>None(보정 안 함)</strong>으로 두어 WLS 검량선으로 일괄 정산하는 것이 안전합니다.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
         sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
@@ -664,12 +676,13 @@
         hero_desc: "Performs sequence drift correction, weighted least squares (WLS) regression, blind QC verification, and rigorous uncertainty propagation in a single client-side pipeline.",
         system_label: "Isotope System",
         sec1_title: "Reference & QC Standards",
-        drift_label: "Drift Correction:",
+        drift_anchor_label: "Drift Monitor:",
+        drift_label: "Model:",
         drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
         drift_opt_linear: "Linear (Single linear slope over sequence)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (Piecewise linear interpolation)",
         drift_guide_title: "Laboratory Environment & Drift Strategy Guide",
-        drift_guide_desc: "In sequences exposed to <strong>diurnal (day-night-dawn) temperature and humidity cycles</strong>, single linear fits risk over-correction. Under strong diurnal conditions, use <strong>None (Off)</strong> as the default baseline, or choose <strong>Anchor-to-Anchor Bracketing</strong> if anchor standards are periodically distributed across the sequence to interpolate run-by-run drift between actual anchor positions.",
+        drift_guide_desc: "For sequence drift monitoring, highly homogeneous fine-powder reference materials (e.g. <strong>IAEA-603</strong>) are strongly recommended over coarse crystalline standards. Use <strong>Anchor-to-Anchor Bracketing</strong> if anchors are distributed periodically; otherwise, maintain <strong>None (Off)</strong> for safe WLS calibration across sequences without periodic anchors.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
@@ -731,19 +744,21 @@
         version: "v1.1.0",
         date: "2026-09",
         badge: "Major Enhancement",
-        title_ko: "이중 동위원소 독립 드리프트 진단 플롯 (Figure 3 & 4) 탑재",
-        title_en: "Dual-Isotope Independent Drift Diagnostics (Fig 3 & 4)",
-        desc_ko: "탄소와 산소의 기기 드리프트 양상이 독립적으로 거동하는 현상을 시각화하기 위해 각 동위원소별 전용 진단 플롯이 분리 신설되었습니다.",
-        desc_en: "Independent time-series drift diagnostics for both primary and secondary isotopes (e.g. d13C and d18O) to address decoupled instrumental variations.",
+        title_ko: "이중 동위원소 독립 드리프트 진단 플롯 및 모니터 표준 선택 기능 탑재",
+        title_en: "Dual-Isotope Independent Drift Plots & Anchor Monitor Selector",
+        desc_ko: "탄소와 산소의 기기 드리프트 양상이 독립적으로 거동하는 현상을 시각화하기 위해 각 동위원소별 전용 진단 플롯이 분리 신설되었으며, 균질성이 우수한 미세 분말 표준(IAEA-603 등)을 드리프트 모니터로 직접 선택할 수 있습니다.",
+        desc_en: "Decoupled time-series drift diagnostics for both isotope channels (Fig 3 & 4) alongside customizable anchor standard selection for drift tracking.",
         changes_ko: [
           "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 첫 번째 동위원소(탄소 등)와 두 번째 동위원소(산소 등)의 런 시퀀스 표류 궤적을 각각 분리하여 시각화.",
-          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 시퀀스에 배치된 기준 표준물질 런 위치 사이를 1:1 선형 보간하여 각 동위원소별 파동형 드리프트를 독립적으로 정밀 보정.",
+          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질한 분말형 표준(IAEA-603 등)을 사용자가 직접 드리프트 기준 물질로 지정 가능.",
+          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 시퀀스에 배치된 선택 앵커의 런 위치 사이를 1:1 선형 보간하여 각 동위원소별 파동형 드리프트를 독립적으로 정밀 보정.",
           "<strong>체계별 입력값 영구 보존</strong>: 동위원소 체계 전환 및 언어 전환 시에도 사용자가 수정한 QC 표준물질 이름 및 참값이 리셋되지 않고 100% 안전하게 유지.",
           "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거."
         ],
         changes_en: [
           "<strong>Figure 3 & 4 Drift Plots</strong>: Dedicated, decoupled drift diagnostics for both primary and secondary isotope channels.",
-          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between anchor positions, computed independently per isotope system.",
+          "<strong>Drift Monitor Standard Selector</strong>: Select preferred reference material (e.g. fine-powder IAEA-603) as the anchor baseline.",
+          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, computed independently per isotope system.",
           "<strong>Persistent User Inputs per System</strong>: Complete preservation of custom QC and reference values across isotope modes and linguistic toggles.",
           "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, direct 1:1 Excel alignment without redundant columns."
         ]
@@ -818,6 +833,7 @@
           { name: "NBS-18", v1: -5.012, v2: -23.200 },
           { name: "IAEA-603", v1: 2.460, v2: -2.370 }
         ],
+        defaultDriftAnchorIdx: 1, // IAEA-603 기본 권장
         qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
         demo: [
           ["NBS-18_1", 21.744, 0.035, -0.801, 0.062],
@@ -842,6 +858,7 @@
           { name: "IAEA-NO-3", v1: 4.700, v2: 25.600 },
           { name: "USGS34", v1: -1.800, v2: -27.900 }
         ],
+        defaultDriftAnchorIdx: 0,
         qcStd: { name: "USGS35", v1: 5.700, v2: 57.500 },
         demo: [
           ["IAEA-NO-3_1", 5.120, 0.080, 26.110, 0.150],
@@ -862,6 +879,7 @@
           { name: "VSMOW2", v1: 0.000, v2: 0.000 },
           { name: "SLAP2", v1: -427.500, v2: -55.500 }
         ],
+        defaultDriftAnchorIdx: 0,
         qcStd: { name: "GISP", v1: -189.500, v2: -24.760 },
         demo: [
           ["VSMOW2_1", 1.200, 0.500, 0.120, 0.050],
@@ -881,6 +899,7 @@
           { name: "IAEA-S-1", v1: -0.300 },
           { name: "IAEA-S-2", v1: 22.700 }
         ],
+        defaultDriftAnchorIdx: 0,
         qcStd: { name: "NBS-127", v1: 21.100 },
         demo: [
           ["IAEA-S-1_1", -0.150, 0.120],
@@ -896,7 +915,7 @@
     let currentMode = "CO";
     let gridData = [];
 
-    // 동위원소 체계(CO, NO, HO, S)별 사용자 커스텀 표준물질 영구 보존 캐시
+    // 동위원소 체계별 사용자 커스텀 표준물질 영구 보존 캐시
     let userCustomStandardsByMode = {
       CO: null,
       NO: null,
@@ -911,7 +930,6 @@
     let selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
     let activeEditingCell = null;
 
-    // 현재 화면에 입력된 표준물질 값을 읽어와 객체로 반환
     function captureCurrentStandardsSnapshot(mode = currentMode) {
       const p = PRESETS[mode];
       const isDual = p.elements.length === 2;
@@ -937,14 +955,43 @@
         v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null
       };
 
-      return { stds, qcStd };
+      const elAnchorSelect = document.getElementById('drift-anchor-select');
+      const selectedDriftAnchor = elAnchorSelect ? parseInt(elAnchorSelect.value) : p.defaultDriftAnchorIdx;
+
+      return { stds, qcStd, selectedDriftAnchor };
     }
 
-    // 현재 모드의 사용자 입력을 캐시에 저장
     function saveCurrentModeStandards() {
       const snap = captureCurrentStandardsSnapshot(currentMode);
       if (snap && snap.stds && snap.stds[0].name !== null) {
         userCustomStandardsByMode[currentMode] = snap;
+      }
+    }
+
+    function syncDriftAnchorDropdown() {
+      const p = PRESETS[currentMode];
+      const select = document.getElementById('drift-anchor-select');
+      if (!select) return;
+
+      const prevVal = select.value !== "" ? parseInt(select.value) : null;
+      select.innerHTML = '';
+
+      p.stds.forEach((std, idx) => {
+        const nameInput = document.getElementById(`ref-std${idx}-name`);
+        const displayName = nameInput && nameInput.value.trim() !== '' ? nameInput.value.trim() : std.name;
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.innerText = `Anchor ${idx + 1} (${displayName})`;
+        select.appendChild(opt);
+      });
+
+      // 복원 우선순위: 캐시된 선택 -> 이전 선택 -> 기본값
+      if (userCustomStandardsByMode[currentMode] && userCustomStandardsByMode[currentMode].selectedDriftAnchor !== undefined) {
+        select.value = userCustomStandardsByMode[currentMode].selectedDriftAnchor;
+      } else if (prevVal !== null && prevVal < p.stds.length) {
+        select.value = prevVal;
+      } else {
+        select.value = p.defaultDriftAnchorIdx;
       }
     }
 
@@ -953,7 +1000,6 @@
       const isDual = p.elements.length === 2;
       const isEn = currentLang === 'en';
 
-      // 강제 리셋(데모 로드 등)이 아니면 사용자가 이 모드에서 수정한 값을 복원
       let snapshot = null;
       if (!forcePresetDefault && userCustomStandardsByMode[currentMode]) {
         snapshot = userCustomStandardsByMode[currentMode];
@@ -1032,10 +1078,17 @@
       `;
       stdContainer.appendChild(qcDiv);
 
-      // 입력란 수정 즉시 해당 체계의 캐시에 자동 저장
+      // 드롭다운 갱신 및 동기화
+      syncDriftAnchorDropdown();
+
       stdContainer.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', saveCurrentModeStandards);
+        input.addEventListener('input', () => {
+          saveCurrentModeStandards();
+          syncDriftAnchorDropdown();
+        });
       });
+
+      document.getElementById('drift-anchor-select').addEventListener('change', saveCurrentModeStandards);
 
       const gHead = document.getElementById('grid-head');
       if (isDual) {
@@ -1654,6 +1707,7 @@
       const isDual = p.elements.length === 2;
       const isEn = currentLang === 'en';
       const driftMode = document.getElementById('drift-mode').value;
+      const chosenDriftAnchorIdx = parseInt(document.getElementById('drift-anchor-select').value) || 0;
 
       const refStds = p.stds.map((s, idx) => {
         const nameInput = document.getElementById(`ref-std${idx}-name`).value.trim();
@@ -1677,28 +1731,29 @@
 
       let driftSlope1 = 0;
       let driftSlope2 = 0;
-      let anchor0Runs1 = [];
-      let anchor0Runs2 = [];
+      let monitorRuns1 = [];
+      let monitorRuns2 = [];
 
-      const anchor0 = refStds[0];
-      const rawAnchor0Runs = { seq: [], v1: [], v2: [] };
+      // 선택된 드리프트 모니터 표준물질
+      const monitorAnchor = refStds[chosenDriftAnchorIdx] || refStds[0];
+      const rawMonitorRuns = { seq: [], v1: [], v2: [] };
 
       gridData.forEach((row, rIdx) => {
         const id = (row[0] || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-        if (anchor0.keyMatch && id.includes(anchor0.keyMatch)) {
+        if (monitorAnchor.keyMatch && id.includes(monitorAnchor.keyMatch)) {
           const raw1 = parseFloat(row[1]);
           if (!isNaN(raw1)) {
-            rawAnchor0Runs.seq.push(rIdx + 1);
-            rawAnchor0Runs.v1.push(raw1);
-            if (isDual) rawAnchor0Runs.v2.push(parseFloat(row[3]) || 0);
+            rawMonitorRuns.seq.push(rIdx + 1);
+            rawMonitorRuns.v1.push(raw1);
+            if (isDual) rawMonitorRuns.v2.push(parseFloat(row[3]) || 0);
           }
         }
       });
 
       if (driftMode === 'linear') {
-        if (rawAnchor0Runs.seq.length >= 2) {
-          driftSlope1 = calcOLS(rawAnchor0Runs.seq, rawAnchor0Runs.v1).slope;
-          if (isDual) driftSlope2 = calcOLS(rawAnchor0Runs.seq, rawAnchor0Runs.v2).slope;
+        if (rawMonitorRuns.seq.length >= 2) {
+          driftSlope1 = calcOLS(rawMonitorRuns.seq, rawMonitorRuns.v1).slope;
+          if (isDual) driftSlope2 = calcOLS(rawMonitorRuns.seq, rawMonitorRuns.v2).slope;
         }
       } else if (driftMode === 'piecewise') {
         let baseline1 = null;
@@ -1706,16 +1761,16 @@
 
         gridData.forEach((row, rIdx) => {
           const id = (row[0] || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-          if (anchor0.keyMatch && id.includes(anchor0.keyMatch)) {
+          if (monitorAnchor.keyMatch && id.includes(monitorAnchor.keyMatch)) {
             const raw1 = parseFloat(row[1]);
             if (!isNaN(raw1)) {
               if (baseline1 === null) baseline1 = raw1;
-              anchor0Runs1.push({ idx: rIdx, diff: raw1 - baseline1 });
+              monitorRuns1.push({ idx: rIdx, diff: raw1 - baseline1 });
 
               if (isDual) {
                 const raw2 = parseFloat(row[3]) || 0;
                 if (baseline2 === null) baseline2 = raw2;
-                anchor0Runs2.push({ idx: rIdx, diff: raw2 - baseline2 });
+                monitorRuns2.push({ idx: rIdx, diff: raw2 - baseline2 });
               }
             }
           }
@@ -1726,7 +1781,7 @@
         if (driftMode === 'linear') {
           return isoIdx === 1 ? (val - driftSlope1 * rIdx) : (val - driftSlope2 * rIdx);
         } else if (driftMode === 'piecewise') {
-          const offset = isoIdx === 1 ? getInterpolatedDriftOffset(rIdx, anchor0Runs1) : getInterpolatedDriftOffset(rIdx, anchor0Runs2);
+          const offset = isoIdx === 1 ? getInterpolatedDriftOffset(rIdx, monitorRuns1) : getInterpolatedDriftOffset(rIdx, monitorRuns2);
           return val - offset;
         }
         return val;
@@ -1787,11 +1842,11 @@
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
       }
 
-      // Figure 3 & 4 독립 드리프트 차트 렌더링
-      drawDriftPlot('plot-drift-1', rawAnchor0Runs.seq, rawAnchor0Runs.v1, anchor0.name || 'Anchor-1', driftMode, driftSlope1, anchor0Runs1, gridData.length, p.elements[0].label);
+      // Figure 3 & 4 독립 드리프트 차트 렌더링 (선택된 모니터 앵커 적용)
+      drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor.name || 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
 
       if (isDual) {
-        drawDriftPlot('plot-drift-2', rawAnchor0Runs.seq, rawAnchor0Runs.v2, anchor0.name || 'Anchor-1', driftMode, driftSlope2, anchor0Runs2, gridData.length, p.elements[1].label);
+        drawDriftPlot('plot-drift-2', rawMonitorRuns.seq, rawMonitorRuns.v2, monitorAnchor.name || 'Anchor', driftMode, driftSlope2, monitorRuns2, gridData.length, p.elements[1].label);
       }
 
       const resBody = document.getElementById('result-body');
@@ -1904,9 +1959,9 @@
 
         qcHtml += `</div>`;
         if (driftMode === 'linear' && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Linear drift models applied' : '선형 드리프트 모델 적용됨'}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} =${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Linear drift model (${monitorAnchor.name}) applied` : `선형 드리프트 모델(${monitorAnchor.name} 기준) 적용됨`}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} =${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
         } else if (driftMode === 'piecewise') {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? 'Anchor-to-Anchor bracketing drift model applied across' : '앵커 간 선형 브래케팅 보정 적용됨 (앵커 표준물질'} ${anchor0Runs1.length} ${isEn ? 'anchor points' : '회 기준)'}</div>`;
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Anchor-to-Anchor bracketing drift model (${monitorAnchor.name}) applied across` : `앵커 간 선형 브래케팅 보정(${monitorAnchor.name} 기준) 적용됨:`} ${monitorRuns1.length} ${isEn ? 'anchor points' : '회 기준'}</div>`;
         }
 
         qcBanner.innerHTML = qcHtml;
@@ -1974,7 +2029,7 @@
       const isEn = currentLang === 'en';
 
       if (!seqArr || seqArr.length === 0) {
-        container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? `No repeat anchor runs detected for ${isoLabel} drift.` : `${isoLabel} 드리프트 진단을 위한 기준 표준물질의 반복 측정값이 없습니다.`}</span>`;
+        container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? `No repeat anchor runs detected for ${isoLabel} drift (${anchorName}).` : `${isoLabel} 드리프트 진단을 위한 [${anchorName}]의 반복 측정값이 없습니다.`}</span>`;
         return;
       }
 
@@ -2086,7 +2141,6 @@
       }
     });
 
-    // 동위원소 체계 드롭다운 변경 시 이전 체계 값 자동 저장 후 전환
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
       saveCurrentModeStandards();
       currentMode = e.target.value;
@@ -2096,7 +2150,7 @@
     document.getElementById('btn-calc').addEventListener('click', runCalibration);
 
     document.getElementById('btn-demo').addEventListener('click', () => {
-      userCustomStandardsByMode[currentMode] = null; // 데모 로드시 해당 체계 초기화
+      userCustomStandardsByMode[currentMode] = null;
       const p = PRESETS[currentMode];
       gridData = JSON.parse(JSON.stringify(p.demo));
       selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
