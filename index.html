@@ -738,13 +738,13 @@
         changes_ko: [
           "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 첫 번째 동위원소(탄소 등)와 두 번째 동위원소(산소 등)의 런 시퀀스 표류 궤적을 각각 분리하여 시각화.",
           "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 시퀀스에 배치된 기준 표준물질 런 위치 사이를 1:1 선형 보간하여 각 동위원소별 파동형 드리프트를 독립적으로 정밀 보정.",
-          "<strong>입력값 영구 보존 로직</strong>: 상단 언어(KO ↔ EN) 전환 시에도 사용자가 수정한 QC 표준물질 이름 및 참값이 리셋되지 않고 100% 안전하게 유지.",
+          "<strong>체계별 입력값 영구 보존</strong>: 동위원소 체계 전환 및 언어 전환 시에도 사용자가 수정한 QC 표준물질 이름 및 참값이 리셋되지 않고 100% 안전하게 유지.",
           "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거."
         ],
         changes_en: [
           "<strong>Figure 3 & 4 Drift Plots</strong>: Dedicated, decoupled drift diagnostics for both primary and secondary isotope channels.",
           "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between anchor positions, computed independently per isotope system.",
-          "<strong>Persistent User Inputs</strong>: Complete preservation of custom QC and reference values across linguistic toggles.",
+          "<strong>Persistent User Inputs per System</strong>: Complete preservation of custom QC and reference values across isotope modes and linguistic toggles.",
           "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, direct 1:1 Excel alignment without redundant columns."
         ]
       },
@@ -896,6 +896,14 @@
     let currentMode = "CO";
     let gridData = [];
 
+    // 동위원소 체계(CO, NO, HO, S)별 사용자 커스텀 표준물질 영구 보존 캐시
+    let userCustomStandardsByMode = {
+      CO: null,
+      NO: null,
+      HO: null,
+      S: null
+    };
+
     let isMouseDown = false;
     let isSelectingRows = false;
     let dragStart = { r: 0, c: 0 };
@@ -903,8 +911,9 @@
     let selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
     let activeEditingCell = null;
 
-    function getCurrentStandardsSnapshot() {
-      const p = PRESETS[currentMode];
+    // 현재 화면에 입력된 표준물질 값을 읽어와 객체로 반환
+    function captureCurrentStandardsSnapshot(mode = currentMode) {
+      const p = PRESETS[mode];
       const isDual = p.elements.length === 2;
 
       const stds = p.stds.map((_, idx) => {
@@ -912,9 +921,9 @@
         const elV1 = document.getElementById(`ref-std${idx}-v1`);
         const elV2 = document.getElementById(`ref-std${idx}-v2`);
         return {
-          name: elName ? elName.value : null,
-          v1: elV1 ? elV1.value : null,
-          v2: (isDual && elV2) ? elV2.value : null
+          name: elName ? elName.value.trim() : null,
+          v1: (elV1 && elV1.value !== '') ? parseFloat(elV1.value) : null,
+          v2: (isDual && elV2 && elV2.value !== '') ? parseFloat(elV2.value) : null
         };
       });
 
@@ -923,22 +932,31 @@
       const elQcV2 = document.getElementById('qc-std-v2');
 
       const qcStd = {
-        name: elQcName ? elQcName.value : null,
-        v1: elQcV1 ? elQcV1.value : null,
-        v2: (isDual && elQcV2) ? elQcV2.value : null
+        name: elQcName ? elQcName.value.trim() : null,
+        v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elQcV1.value) : null,
+        v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null
       };
 
       return { stds, qcStd };
     }
 
-    function updateLayoutForMode(preserveValues = true) {
+    // 현재 모드의 사용자 입력을 캐시에 저장
+    function saveCurrentModeStandards() {
+      const snap = captureCurrentStandardsSnapshot(currentMode);
+      if (snap && snap.stds && snap.stds[0].name !== null) {
+        userCustomStandardsByMode[currentMode] = snap;
+      }
+    }
+
+    function updateLayoutForMode(forcePresetDefault = false) {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
       const isEn = currentLang === 'en';
 
+      // 강제 리셋(데모 로드 등)이 아니면 사용자가 이 모드에서 수정한 값을 복원
       let snapshot = null;
-      if (preserveValues) {
-        snapshot = getCurrentStandardsSnapshot();
+      if (!forcePresetDefault && userCustomStandardsByMode[currentMode]) {
+        snapshot = userCustomStandardsByMode[currentMode];
       }
 
       const stdContainer = document.getElementById('std-input-container');
@@ -946,9 +964,9 @@
 
       p.stds.forEach((std, idx) => {
         const snap = snapshot && snapshot.stds && snapshot.stds[idx];
-        const valName = (snap && snap.name !== null) ? snap.name : std.name;
-        const valV1 = (snap && snap.v1 !== null) ? snap.v1 : std.v1;
-        const valV2 = (snap && snap.v2 !== null) ? snap.v2 : (std.v2 !== undefined ? std.v2 : 0);
+        const valName = (snap && snap.name !== null && snap.name !== undefined) ? snap.name : std.name;
+        const valV1 = (snap && snap.v1 !== null && !isNaN(snap.v1)) ? snap.v1 : std.v1;
+        const valV2 = (snap && snap.v2 !== null && !isNaN(snap.v2)) ? snap.v2 : (std.v2 !== undefined ? std.v2 : 0);
 
         const div = document.createElement('div');
         div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-sm';
@@ -980,9 +998,9 @@
       });
 
       const snapQc = snapshot && snapshot.qcStd;
-      const qcName = (snapQc && snapQc.name !== null) ? snapQc.name : (p.qcStd ? p.qcStd.name : 'QC');
-      const qcV1 = (snapQc && snapQc.v1 !== null) ? snapQc.v1 : (p.qcStd ? p.qcStd.v1 : 0);
-      const qcV2 = (snapQc && snapQc.v2 !== null) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
+      const qcName = (snapQc && snapQc.name !== null && snapQc.name !== undefined) ? snapQc.name : (p.qcStd ? p.qcStd.name : 'QC');
+      const qcV1 = (snapQc && snapQc.v1 !== null && !isNaN(snapQc.v1)) ? snapQc.v1 : (p.qcStd ? p.qcStd.v1 : 0);
+      const qcV2 = (snapQc && snapQc.v2 !== null && !isNaN(snapQc.v2)) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
 
       const qcDiv = document.createElement('div');
       qcDiv.className = 'bg-[#fcfdfc] p-4 border border-emerald-300 flex flex-col space-y-3 shadow-sm';
@@ -1013,6 +1031,11 @@
         </div>
       `;
       stdContainer.appendChild(qcDiv);
+
+      // 입력란 수정 즉시 해당 체계의 캐시에 자동 저장
+      stdContainer.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', saveCurrentModeStandards);
+      });
 
       const gHead = document.getElementById('grid-head');
       if (isDual) {
@@ -1145,7 +1168,8 @@
       }
 
       renderChangelog();
-      updateLayoutForMode(true);
+      saveCurrentModeStandards();
+      updateLayoutForMode(false);
 
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise();
@@ -1624,6 +1648,7 @@
 
     function runCalibration() {
       closeEditingCell();
+      saveCurrentModeStandards();
 
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
@@ -1943,7 +1968,6 @@
       Plotly.newPlot(elemId, [scatterTrace, lineTrace], layout, { responsive: true, displayModeBar: false });
     }
 
-    // 개별 동위원소 전용 드리프트 진단 플롯 그리기
     function drawDriftPlot(elemId, seqArr, valArr, anchorName, mode, slopeVal, anchorRuns, maxRun, isoLabel) {
       const container = document.getElementById(elemId);
       container.innerHTML = '';
@@ -2062,7 +2086,9 @@
       }
     });
 
+    // 동위원소 체계 드롭다운 변경 시 이전 체계 값 자동 저장 후 전환
     document.getElementById('isotope-preset').addEventListener('change', (e) => {
+      saveCurrentModeStandards();
       currentMode = e.target.value;
       updateLayoutForMode(false);
     });
@@ -2070,10 +2096,11 @@
     document.getElementById('btn-calc').addEventListener('click', runCalibration);
 
     document.getElementById('btn-demo').addEventListener('click', () => {
+      userCustomStandardsByMode[currentMode] = null; // 데모 로드시 해당 체계 초기화
       const p = PRESETS[currentMode];
       gridData = JSON.parse(JSON.stringify(p.demo));
       selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
-      updateLayoutForMode(false);
+      updateLayoutForMode(true);
       renderGrid();
       runCalibration();
       syncPasteTarget();
