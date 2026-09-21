@@ -739,30 +739,56 @@
 
     let currentLang = localStorage.getItem('isocalib_lang') || 'ko';
 
-    const CHANGELOG_DATA = [
+  const CHANGELOG_DATA = [
       {
         version: "v1.1.0",
         date: "2026-09",
         badge: "Major Enhancement",
-        title_ko: "이중 동위원소 독립 드리프트 진단 플롯 및 모니터 표준 선택 기능 탑재",
-        title_en: "Dual-Isotope Independent Drift Plots & Anchor Monitor Selector",
-        desc_ko: "탄소와 산소의 기기 드리프트 양상이 독립적으로 거동하는 현상을 시각화하기 위해 각 동위원소별 전용 진단 플롯이 분리 신설되었으며, 균질성이 우수한 미세 분말 표준(IAEA-603 등)을 드리프트 모니터로 직접 선택할 수 있습니다.",
-        desc_en: "Decoupled time-series drift diagnostics for both isotope channels (Fig 3 & 4) alongside customizable anchor standard selection for drift tracking.",
+        title_ko: "이중 동위원소 독립 드리프트 진단(Fig 3 & 4) 및 모니터 표준 선택 기능 탑재",
+        title_en: "Dual-Isotope Independent Drift Diagnostics & Customizable Anchor Monitor",
+        desc_ko: "탄소와 산소의 기기 드리프트 비동기 거동을 완벽히 모니터링하기 위해 동위원소별 독립 진단 플롯을 신설하고, 미세 분말 표준(IAEA-603 등)을 기준 앵커로 직접 선택할 수 있도록 고도화했습니다.",
+        desc_en: "Decoupled time-series drift diagnostics for dual isotope channels (Fig 3 & 4) alongside customizable anchor standard selection (e.g. fine-powder IAEA-603) and cross-mode state persistence.",
         changes_ko: [
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 첫 번째 동위원소(탄소 등)와 두 번째 동위원소(산소 등)의 런 시퀀스 표류 궤적을 각각 분리하여 시각화.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질한 분말형 표준(IAEA-603 등)을 사용자가 직접 드리프트 기준 물질로 지정 가능.",
-          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 시퀀스에 배치된 선택 앵커의 런 위치 사이를 1:1 선형 보간하여 각 동위원소별 파동형 드리프트를 독립적으로 정밀 보정.",
-          "<strong>체계별 입력값 영구 보존</strong>: 동위원소 체계 전환 및 언어 전환 시에도 사용자가 수정한 QC 표준물질 이름 및 참값이 리셋되지 않고 100% 안전하게 유지.",
-          "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거."
+          "<strong>Figure 3 & Figure 4 독립 진단 플롯 신설</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
+          "<strong>드리프트 모니터 표준물질 선택기 추가</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능 (기본값: IAEA-603).",
+          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 선택된 기준 앵커의 런 위치 사이를 1:1 선형 보간하여 시퀀스 내 파동형 드리프트를 각 동위원소 채널별로 독립 보정.",
+          "<strong>체계별(System) 및 언어별(KO/EN) 입력값 영구 보존</strong>: 동위원소 체계 전환 및 다국어 토글 시에도 사용자가 수정한 앵커 및 QC 표준물질의 이름과 참값이 리셋되지 않도록 캐시 분리.",
+          "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: 원본 엑셀 런 시퀀스와의 1:1 직접 매칭을 위해 불필요한 TYPE 열 제거, '+30 Rows' 대량 행 확장 지원."
         ],
         changes_en: [
-          "<strong>Figure 3 & 4 Drift Plots</strong>: Dedicated, decoupled drift diagnostics for both primary and secondary isotope channels.",
-          "<strong>Drift Monitor Standard Selector</strong>: Select preferred reference material (e.g. fine-powder IAEA-603) as the anchor baseline.",
-          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, computed independently per isotope system.",
-          "<strong>Persistent User Inputs per System</strong>: Complete preservation of custom QC and reference values across isotope modes and linguistic toggles.",
-          "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, direct 1:1 Excel alignment without redundant columns."
+          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes to capture decoupled instrumental behavior, with individual publication SVG exports.",
+          "<strong>Drift Monitor Standard Selector</strong>: Added flexible selection of preferred anchor reference materials (default: fine-powder IAEA-603) for baseline drift tracking.",
+          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, executed independently per isotope channel.",
+          "<strong>Cross-Mode & Linguistic Input Persistence</strong>: Complete preservation of user-defined reference/QC values across isotope system switches and KO/EN language toggles.",
+          "<strong>Spreadsheet & Sequence Refinement</strong>: Streamlined 1:1 row matching with spectrometer sequences by eliminating redundant TYPE columns, plus bulk '+30 Rows' expansion."
         ]
       },
+      {
+        version: "v1.0.0",
+        date: "2026-09",
+        badge: "Initial Release",
+        title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
+        title_en: "Initial Official Release of IsoCalib Platform",
+        desc_ko: "IsoplotR의 오픈 사이언스 웹 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
+        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's architecture, tailored for stable isotope geochemistry.",
+        changes_ko: [
+          "<strong>국제 표준 4대 동위원소 체계 지원</strong>: C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), S (δ³⁴S).",
+          "<strong>가중 선형 회귀 (WLS)</strong>: 기기 분석 1σ SD를 역제곱 가중치(1/σ²)로 반영하는 York-Ludwig 회귀 솔버 탑재.",
+          "<strong>MSWD(축약 카이제곱) 산출</strong>: 지화학 학술 저널 표준 회귀 적합도 지표 자동 계산.",
+          "<strong>독립 QC 블라인드 검증 리포트</strong>: 검량선에 미참여하는 미지의 품질관리 표준물질 편차(Accuracy Bias) 및 반복 정밀도(1σ) 자동 판정.",
+          "<strong>JCGM GUM 1차 편미분 오차 전파</strong>: 시료 측정 오차와 검량선 파라미터 불확도를 결합한 최종 합성 불확도 도출.",
+          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 로컬 브라우저 연산 및 논문 투고용 SVG / CSV 원클릭 저장."
+        ],
+        changes_en: [
+          "<strong>Core Isotope Systematics</strong>: Full support for C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), and S (δ³⁴S).",
+          "<strong>Weighted Least Squares (WLS)</strong>: Exact analytical regression weighting each datum by analytical variance (1/σ²).",
+          "<strong>MSWD Goodness-of-Fit</strong>: Automated geostatistical reduced chi-squared diagnostic evaluation.",
+          "<strong>Blind QC Validation Report</strong>: Quantitative tracking of accuracy bias and reproducibility against independent reference materials.",
+          "<strong>JCGM GUM-compliant Uncertainty Propagation</strong>: Combined first-order partial differential error budgets.",
+          "<strong>Zero-Server Privacy & Publication Exports</strong>: 100% local JavaScript execution with instant vector SVG and CSV export."
+        ]
+      }
+    ];
       {
         version: "v1.0.0",
         date: "2026-09",
