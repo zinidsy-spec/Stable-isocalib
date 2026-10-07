@@ -169,8 +169,17 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
         </div>
         
-        <!-- Drift Correction Settings -->
+        <!-- Controls: Oxygen Scale & Drift Correction -->
         <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
+          <!-- Oxygen Scale Selector (Only active in CO mode) -->
+          <div id="oxygen-scale-wrapper" class="flex items-center space-x-1.5 bg-blue-50/70 border border-blue-200 px-2.5 py-1.5 rounded">
+            <label for="oxygen-scale-select" class="font-bold text-blue-900" data-i18n="o_scale_label">δ¹⁸O Scale:</label>
+            <select id="oxygen-scale-select" class="bg-white border border-blue-300 text-blue-950 px-1.5 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-blue-900 cursor-pointer">
+              <option value="VPDB" selected>VPDB</option>
+              <option value="VSMOW">VSMOW</option>
+            </select>
+          </div>
+
           <!-- Drift Monitor Standard Selector -->
           <div class="flex items-center space-x-1.5 bg-stone-100 px-2.5 py-1.5 border border-stone-300 rounded">
             <label for="drift-anchor-select" class="font-bold text-stone-800" data-i18n="drift_anchor_label">Monitor:</label>
@@ -195,10 +204,10 @@
       <div class="bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600 space-y-1">
         <div class="flex items-center space-x-1.5 font-bold text-stone-800">
           <span>💡</span>
-          <span data-i18n="drift_guide_title">실험실 환경별 드리프트 옵션 및 모니터 표준 선택 가이드</span>
+          <span data-i18n="drift_guide_title">실험실 환경별 드리프트 및 산소 스케일 가이드</span>
         </div>
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          시퀀스 드리프트 보정의 기준 물질(Monitor)은 균질성과 입도가 우수한 앵커 표준물질(예: 분말 형태의 <strong>IAEA-603</strong>)을 권장합니다. 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하고, 낮-새벽 변동이 심하거나 브래케팅이 없다면 <strong>None(보정 안 함)</strong>으로 두어 WLS 검량선으로 일괄 정산하는 것이 안전합니다.
+          탄산염 연구에서 산소 동위원소($\delta^{18}\text{O}$)를 <strong>VSMOW</strong>로 보고해야 할 경우 상단 스케일을 전환하면 IUPAC/Coplen 공식에 따라 표준물질 참값이 자동 환산됩니다. 시퀀스 드리프트 기준 물질(Monitor)은 균질한 미세 분말(<strong>IAEA-603</strong> 권장)을 선택하세요.
         </p>
       </div>
 
@@ -414,13 +423,13 @@
 
       </div>
 
-      <!-- 일주기 변동 및 브래케팅 학술 주석 박스 -->
-      <div class="bg-white border border-[#d1cfc7] p-5 space-y-2 text-xs text-stone-700 shadow-sm">
+      <!-- 산소 스케일 및 일주기 변동 학술 주석 박스 -->
+      <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 text-xs text-stone-700 shadow-sm">
         <div class="flex items-center space-x-2 border-b border-stone-100 pb-2">
-          <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="diurnal_note_title">Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)</span>
+          <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="scale_note_title">IUPAC Oxygen Isotope Scale Conversion (VPDB ↔ VSMOW 환산 공식)</span>
         </div>
-        <p class="leading-relaxed font-light" data-i18n="diurnal_note_desc">
-          장시간 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시퀀스 전반에 기준 표준물질을 주기적으로 배치한 후 <strong>Anchor-to-Anchor Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.
+        <p class="leading-relaxed font-light" data-i18n="scale_note_desc">
+          탄산염의 산소 동위원소는 기본적으로 VPDB 스케일로 정산되나, 물(Water)과의 동위원소 평형 계산 또는 규산염 비교 시 VSMOW 스케일로 환산됩니다. 본 플랫폼은 IUPAC 공인 Coplen (1983) 공식($\delta^{18}\text{O}_{\text{VSMOW}} = 1.03092 \times \delta^{18}\text{O}_{\text{VPDB}} + 30.92$)을 적용하여 표준물질 참값과 축 라벨을 정밀하게 상호 변환합니다.
         </p>
       </div>
 
@@ -471,9 +480,9 @@
       <!-- References -->
       <div class="bg-white border border-[#d1cfc7] p-4 text-[11px] text-stone-500 font-mono space-y-1">
         <span class="text-stone-700 font-bold uppercase tracking-wider block text-[10px]" data-i18n="ref_title">Authoritative References & Methodological Basis:</span>
-        <div>[1] <strong>JCGM 100:2008 (GUM)</strong>: <em>Evaluation of measurement data — Guide to the expression of uncertainty in measurement</em>. Joint Committee for Guides in Metrology.</div>
-        <div>[2] <strong>Ludwig, K. R. (2003)</strong>: <em>User's Manual for Isoplot 3.00: A Geochronological Toolkit for Microsoft Excel</em>. Berkeley Geochronology Center Special Publication.</div>
-        <div>[3] <strong>York, D. (1968)</strong>: <em>Least squares fitting of a straight line with points having correlated errors</em>. Earth and Planetary Science Letters, 5, 320–324.</div>
+        <div>[1] <strong>Coplen, T. B. (1983)</strong>: <em>Comparison of VPDB and VSMOW isotope scales</em>. Nature, 302, 236–238.</div>
+        <div>[2] <strong>JCGM 100:2008 (GUM)</strong>: <em>Evaluation of measurement data — Guide to the expression of uncertainty in measurement</em>. Joint Committee for Guides in Metrology.</div>
+        <div>[3] <strong>Ludwig, K. R. (2003)</strong>: <em>User's Manual for Isoplot 3.00: A Geochronological Toolkit for Microsoft Excel</em>. Berkeley Geochronology Center.</div>
       </div>
 
       <!-- Zero-Server Privacy Statement -->
@@ -606,13 +615,14 @@
         hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
         system_label: "분석 동위원소 체계 (Isotope System)",
         sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
+        o_scale_label: "δ¹⁸O 스케일:",
         drift_anchor_label: "드리프트 모니터:",
         drift_label: "보정 모델:",
         drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
         drift_opt_linear: "Linear (단일 선형 표류)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 간 선형 보간)",
-        drift_guide_title: "실험실 환경별 드리프트 옵션 및 모니터 표준 선택 가이드",
-        drift_guide_desc: "시퀀스 드리프트 보정의 기준 물질(Monitor)은 균질성과 입도가 우수한 앵커 표준물질(예: 분말 형태의 <strong>IAEA-603</strong>)을 권장합니다. 시퀀스 전반에 기준 표준물질이 주기적으로 배치되어 있다면 <strong>Anchor-to-Anchor Bracketing</strong>을 선택하고, 낮-새벽 변동이 심하거나 브래케팅이 없다면 <strong>None(보정 안 함)</strong>으로 두어 WLS 검량선으로 일괄 정산하는 것이 안전합니다.",
+        drift_guide_title: "실험실 환경별 드리프트 및 산소 스케일 가이드",
+        drift_guide_desc: "탄산염 연구에서 산소 동위원소($\\delta^{18}\\text{O}$)를 <strong>VSMOW</strong>로 보고해야 할 경우 상단 스케일을 전환하면 IUPAC/Coplen 공식에 따라 표준물질 참값이 자동 환산됩니다. 시퀀스 드리프트 기준 물질(Monitor)은 균질한 미세 분말(<strong>IAEA-603</strong> 권장)을 선택하세요.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
         sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
@@ -640,8 +650,8 @@
         card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.",
         card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
         card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
-        diurnal_note_title: "Non-linear Diurnal Fluctuations & Sequence Bracketing (일주기 변동 및 브래케팅)",
-        diurnal_note_desc: "장시간 연속 분석 시퀀스에서는 실험실 낮-밤-새벽 항온항습 사이클로 인해 비선형(곡선형) 기기 표류가 발생할 수 있습니다. 단일 직선 회귀는 U자형 온도 곡선에서 과보정(Over-correction) 위험이 있으므로, 변동이 심한 환경에서는 <strong>None(보정 안 함)</strong>으로 안전하게 WLS 피팅을 수행하거나, 시퀀스 전반에 기준 표준물질을 주기적으로 배치한 후 <strong>Anchor-to-Anchor Bracketing(구간 선형 보간)</strong>을 적용하는 것이 지화학 표준 지침입니다.",
+        scale_note_title: "IUPAC Oxygen Isotope Scale Conversion (VPDB ↔ VSMOW 환산 공식)",
+        scale_note_desc: "탄산염의 산소 동위원소는 기본적으로 VPDB 스케일로 정산되나, 물(Water)과의 동위원소 평형 계산 또는 규산염 비교 시 VSMOW 스케일로 환산됩니다. 본 플랫폼은 IUPAC 공인 Coplen (1983) 공식($\\delta^{18}\\text{O}_{\\text{VSMOW}} = 1.03092 \\times \\delta^{18}\\text{O}_{\\text{VPDB}} + 30.92$)을 적용하여 표준물질 참값과 축 라벨을 정밀하게 상호 변환합니다.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
         acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
         acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
@@ -676,13 +686,14 @@
         hero_desc: "Performs sequence drift correction, weighted least squares (WLS) regression, blind QC verification, and rigorous uncertainty propagation in a single client-side pipeline.",
         system_label: "Isotope System",
         sec1_title: "Reference & QC Standards",
+        o_scale_label: "δ¹⁸O Scale:",
         drift_anchor_label: "Drift Monitor:",
         drift_label: "Model:",
         drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
         drift_opt_linear: "Linear (Single linear slope over sequence)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (Piecewise linear interpolation)",
-        drift_guide_title: "Laboratory Environment & Drift Strategy Guide",
-        drift_guide_desc: "For sequence drift monitoring, highly homogeneous fine-powder reference materials (e.g. <strong>IAEA-603</strong>) are strongly recommended over coarse crystalline standards. Use <strong>Anchor-to-Anchor Bracketing</strong> if anchors are distributed periodically; otherwise, maintain <strong>None (Off)</strong> for safe WLS calibration across sequences without periodic anchors.",
+        drift_guide_title: "Laboratory Environment & Oxygen Scale Guide",
+        drift_guide_desc: "When reporting carbonate oxygen isotopes ($\\delta^{18}\\text{O}$) relative to <strong>VSMOW</strong>, switching the scale above automatically recalculates reference values using the IUPAC/Coplen equation. Highly homogeneous fine-powder materials (<strong>IAEA-603</strong> recommended) serve as optimal drift monitors.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
@@ -710,8 +721,8 @@
         card3_desc: "Propagates not only the sample measurement repeatability, but also the <strong>covariance and standard errors of the regression parameters</strong>.",
         card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
         card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
-        diurnal_note_title: "Non-linear Diurnal Fluctuations & Sequence Bracketing",
-        diurnal_note_desc: "Long analytical sequences may encounter non-linear instrumental drift driven by day-night HVAC cycles. Enforcing a single linear slope risks over-correcting curved responses. Best practice recommends either maintaining <strong>None (Off)</strong> to preserve conservative WLS weighting, or implementing <strong>Anchor-to-Anchor Bracketing</strong> with anchor standards placed periodically throughout the run sequence.",
+        scale_note_title: "IUPAC Oxygen Isotope Scale Conversion (VPDB ↔ VSMOW)",
+        scale_note_desc: "Carbonate oxygen isotopic ratios are conventionally referenced to VPDB, but equilibrium calculations with water or silicate comparisons require VSMOW. IsoCalib incorporates the authoritative Coplen (1983) equation ($\\delta^{18}\\text{O}_{\\text{VSMOW}} = 1.03092 \\times \\delta^{18}\\text{O}_{\\text{VPDB}} + 30.92$) for exact two-way axis and reference conversions.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
         acc_a_title: "A. Weighted Least Squares Normal Equations",
         acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
@@ -744,23 +755,23 @@
         version: "v1.1.0",
         date: "2026-09",
         badge: "Major Enhancement",
-        title_ko: "이중 동위원소 독립 드리프트 진단 플롯 및 모니터 표준 선택 기능 탑재",
-        title_en: "Dual-Isotope Independent Drift Plots & Anchor Monitor Selector",
-        desc_ko: "탄소와 산소의 기기 드리프트 양상이 독립적으로 거동하는 현상을 시각화하기 위해 각 동위원소별 전용 진단 플롯이 분리 신설되었으며, 균질성이 우수한 미세 분말 표준(IAEA-603 등)을 드리프트 모니터로 직접 선택할 수 있습니다.",
-        desc_en: "Decoupled time-series drift diagnostics for both isotope channels (Fig 3 & 4) alongside customizable anchor standard selection for drift tracking.",
+        title_ko: "산소 스케일(VPDB ↔ VSMOW) 전환 및 독립 드리프트 모니터 탑재",
+        title_en: "Oxygen Scale Conversion (VPDB ↔ VSMOW) & Decoupled Drift Diagnostics",
+        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
+        desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
         changes_ko: [
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 첫 번째 동위원소(탄소 등)와 두 번째 동위원소(산소 등)의 런 시퀀스 표류 궤적을 각각 분리하여 시각화.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질한 분말형 표준(IAEA-603 등)을 사용자가 직접 드리프트 기준 물질로 지정 가능.",
-          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 시퀀스에 배치된 선택 앵커의 런 위치 사이를 1:1 선형 보간하여 각 동위원소별 파동형 드리프트를 독립적으로 정밀 보정.",
-          "<strong>체계별 입력값 영구 보존</strong>: 동위원소 체계 전환 및 언어 전환 시에도 사용자가 수정한 QC 표준물질 이름 및 참값이 리셋되지 않고 100% 안전하게 유지.",
-          "<strong>시퀀스 그리드 및 레이아웃 개선</strong>: '+30 Rows' 대량 행 추가 지원, 엑셀 런 시퀀스와 1:1 매칭을 위해 불필요한 TYPE 열 제거."
+          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV 헤더가 실시간 연동.",
+          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
+          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능.",
+          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 선택된 기준 앵커의 런 위치 사이를 1:1 선형 보간하여 시퀀스 내 파동형 드리프트를 각 동위원소 채널별로 독립 보정.",
+          "<strong>체계별(System) 및 언어별(KO/EN) 입력값 영구 보존</strong>: 동위원소 체계 전환 및 다국어 토글 시에도 사용자가 수정한 앵커 및 QC 표준물질의 이름과 참값이 리셋되지 않도록 캐시 분리."
         ],
         changes_en: [
-          "<strong>Figure 3 & 4 Drift Plots</strong>: Dedicated, decoupled drift diagnostics for both primary and secondary isotope channels.",
-          "<strong>Drift Monitor Standard Selector</strong>: Select preferred reference material (e.g. fine-powder IAEA-603) as the anchor baseline.",
-          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, computed independently per isotope system.",
-          "<strong>Persistent User Inputs per System</strong>: Complete preservation of custom QC and reference values across isotope modes and linguistic toggles.",
-          "<strong>UX & Spreadsheet Streamlining</strong>: +30 Rows bulk expansion, direct 1:1 Excel alignment without redundant columns."
+          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and CSV exports via IUPAC Coplen (1983) equation.",
+          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes to capture decoupled instrumental behavior.",
+          "<strong>Customizable Drift Monitor</strong>: Select preferred reference material (default: fine-powder IAEA-603) as the anchor baseline.",
+          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, computed independently per isotope channel.",
+          "<strong>Cross-Mode & Linguistic State Persistence</strong>: Complete preservation of user-defined reference/QC values across isotope system switches and language toggles."
         ]
       },
       {
@@ -769,15 +780,15 @@
         badge: "Initial Release",
         title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
         title_en: "Initial Official Release of IsoCalib Platform",
-        desc_ko: "IsoplotR의 웹 인터페이스 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 데이터 리덕션 엔진입니다.",
-        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's open-science architecture, tailored for stable isotope systematics.",
+        desc_ko: "IsoplotR의 오픈 사이언스 웹 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
+        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's architecture, tailored for stable isotope geochemistry.",
         changes_ko: [
           "<strong>국제 표준 4대 동위원소 체계 지원</strong>: C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), S (δ³⁴S).",
           "<strong>가중 선형 회귀 (WLS)</strong>: 기기 분석 1σ SD를 역제곱 가중치(1/σ²)로 반영하는 York-Ludwig 회귀 솔버 탑재.",
           "<strong>MSWD(축약 카이제곱) 산출</strong>: 지화학 학술 저널 표준 회귀 적합도 지표 자동 계산.",
           "<strong>독립 QC 블라인드 검증 리포트</strong>: 검량선에 미참여하는 미지의 품질관리 표준물질 편차(Accuracy Bias) 및 반복 정밀도(1σ) 자동 판정.",
           "<strong>JCGM GUM 1차 편미분 오차 전파</strong>: 시료 측정 오차와 검량선 파라미터 불확도를 결합한 최종 합성 불확도 도출.",
-          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 클라이언트 연산 및 논문 투고용 SVG / CSV 원클릭 저장."
+          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 로컬 브라우저 연산 및 논문 투고용 SVG / CSV 원클릭 저장."
         ],
         changes_en: [
           "<strong>Core Isotope Systematics</strong>: Full support for C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), and S (δ³⁴S).",
@@ -820,6 +831,19 @@
     }
 
     // -------------------------------------------------------------
+    // Coplen (1983) IUPAC Conversion Formulas
+    // -------------------------------------------------------------
+    function vpdbToVsmow(vpdb) {
+      if (isNaN(vpdb)) return vpdb;
+      return 1.03092 * vpdb + 30.92;
+    }
+
+    function vsmowToVpdb(vsmow) {
+      if (isNaN(vsmow)) return vsmow;
+      return (vsmow - 30.92) / 1.03092;
+    }
+
+    // -------------------------------------------------------------
     // Isotope Presets & System Core
     // -------------------------------------------------------------
     const PRESETS = {
@@ -833,7 +857,7 @@
           { name: "NBS-18", v1: -5.012, v2: -23.200 },
           { name: "IAEA-603", v1: 2.460, v2: -2.370 }
         ],
-        defaultDriftAnchorIdx: 1, // IAEA-603 기본 권장
+        defaultDriftAnchorIdx: 1, // IAEA-603 권장
         qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
         demo: [
           ["NBS-18_1", 21.744, 0.035, -0.801, 0.062],
@@ -913,9 +937,9 @@
     };
 
     let currentMode = "CO";
+    let oxygenScale = "VPDB"; // CO 모드 전용 산소 스케일 ('VPDB' or 'VSMOW')
     let gridData = [];
 
-    // 동위원소 체계별 사용자 커스텀 표준물질 영구 보존 캐시
     let userCustomStandardsByMode = {
       CO: null,
       NO: null,
@@ -929,6 +953,13 @@
     let dragEnd = { r: 0, c: 0 };
     let selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
     let activeEditingCell = null;
+
+    function getOxygenUnit() {
+      if (currentMode === "CO") {
+        return oxygenScale === "VSMOW" ? "‰ VSMOW" : "‰ VPDB";
+      }
+      return PRESETS[currentMode].elements[1] ? PRESETS[currentMode].elements[1].unit : "";
+    }
 
     function captureCurrentStandardsSnapshot(mode = currentMode) {
       const p = PRESETS[mode];
@@ -958,7 +989,7 @@
       const elAnchorSelect = document.getElementById('drift-anchor-select');
       const selectedDriftAnchor = elAnchorSelect ? parseInt(elAnchorSelect.value) : p.defaultDriftAnchorIdx;
 
-      return { stds, qcStd, selectedDriftAnchor };
+      return { stds, qcStd, selectedDriftAnchor, oxygenScale };
     }
 
     function saveCurrentModeStandards() {
@@ -985,7 +1016,6 @@
         select.appendChild(opt);
       });
 
-      // 복원 우선순위: 캐시된 선택 -> 이전 선택 -> 기본값
       if (userCustomStandardsByMode[currentMode] && userCustomStandardsByMode[currentMode].selectedDriftAnchor !== undefined) {
         select.value = userCustomStandardsByMode[currentMode].selectedDriftAnchor;
       } else if (prevVal !== null && prevVal < p.stds.length) {
@@ -1000,11 +1030,20 @@
       const isDual = p.elements.length === 2;
       const isEn = currentLang === 'en';
 
+      const oScaleWrapper = document.getElementById('oxygen-scale-wrapper');
+      if (currentMode === 'CO') {
+        oScaleWrapper.classList.remove('hidden');
+        document.getElementById('oxygen-scale-select').value = oxygenScale;
+      } else {
+        oScaleWrapper.classList.add('hidden');
+      }
+
       let snapshot = null;
       if (!forcePresetDefault && userCustomStandardsByMode[currentMode]) {
         snapshot = userCustomStandardsByMode[currentMode];
       }
 
+      const oUnit = getOxygenUnit();
       const stdContainer = document.getElementById('std-input-container');
       stdContainer.innerHTML = '';
 
@@ -1012,7 +1051,11 @@
         const snap = snapshot && snapshot.stds && snapshot.stds[idx];
         const valName = (snap && snap.name !== null && snap.name !== undefined) ? snap.name : std.name;
         const valV1 = (snap && snap.v1 !== null && !isNaN(snap.v1)) ? snap.v1 : std.v1;
-        const valV2 = (snap && snap.v2 !== null && !isNaN(snap.v2)) ? snap.v2 : (std.v2 !== undefined ? std.v2 : 0);
+        
+        let valV2 = (snap && snap.v2 !== null && !isNaN(snap.v2)) ? snap.v2 : (std.v2 !== undefined ? std.v2 : 0);
+        if (currentMode === 'CO' && !snap && oxygenScale === 'VSMOW') {
+          valV2 = parseFloat(vpdbToVsmow(valV2).toFixed(3));
+        }
 
         const div = document.createElement('div');
         div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-sm';
@@ -1033,7 +1076,7 @@
             <div class="flex-1 space-y-1">
               <div class="flex justify-between text-[11px] text-stone-600 font-medium">
                 <span>${p.elements[1].label} ${isEn ? 'True' : '참값'}</span>
-                <span class="text-stone-400 font-mono text-[10px]">${p.elements[1].unit}</span>
+                <span class="text-stone-400 font-mono text-[10px]">${oUnit}</span>
               </div>
               <input type="number" step="0.001" id="ref-std${idx}-v2" value="${valV2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
             </div>
@@ -1046,7 +1089,11 @@
       const snapQc = snapshot && snapshot.qcStd;
       const qcName = (snapQc && snapQc.name !== null && snapQc.name !== undefined) ? snapQc.name : (p.qcStd ? p.qcStd.name : 'QC');
       const qcV1 = (snapQc && snapQc.v1 !== null && !isNaN(snapQc.v1)) ? snapQc.v1 : (p.qcStd ? p.qcStd.v1 : 0);
-      const qcV2 = (snapQc && snapQc.v2 !== null && !isNaN(snapQc.v2)) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
+      
+      let qcV2 = (snapQc && snapQc.v2 !== null && !isNaN(snapQc.v2)) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
+      if (currentMode === 'CO' && !snapQc && oxygenScale === 'VSMOW') {
+        qcV2 = parseFloat(vpdbToVsmow(qcV2).toFixed(3));
+      }
 
       const qcDiv = document.createElement('div');
       qcDiv.className = 'bg-[#fcfdfc] p-4 border border-emerald-300 flex flex-col space-y-3 shadow-sm';
@@ -1069,7 +1116,7 @@
           <div class="flex-1 space-y-1">
             <div class="flex justify-between text-[11px] text-stone-600 font-medium">
               <span>${p.elements[1].label} ${isEn ? 'Accepted' : '공인값'}</span>
-              <span class="text-stone-400 font-mono text-[10px]">${p.elements[1].unit}</span>
+              <span class="text-stone-400 font-mono text-[10px]">${oUnit}</span>
             </div>
             <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
           </div>
@@ -1078,7 +1125,6 @@
       `;
       stdContainer.appendChild(qcDiv);
 
-      // 드롭다운 갱신 및 동기화
       syncDriftAnchorDropdown();
 
       stdContainer.querySelectorAll('input').forEach(input => {
@@ -1114,9 +1160,12 @@
       }
 
       const pContainer = document.getElementById('param-cards-container');
-      const cardHtml = (elem, idx) => `
+      const cardHtml = (elem, idx, unitLabel) => `
         <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
-          <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${elem.label} ${isEn ? 'Geostat Model' : '지화학 모델 통계'}</span>
+          <div class="flex justify-between items-baseline">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${elem.label} ${isEn ? 'Geostat Model' : '지화학 모델 통계'}</span>
+            <span class="text-[10px] font-mono text-stone-400">${unitLabel}</span>
+          </div>
           <div class="space-y-1.5 text-xs font-data">
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope (a)' : '기울기 (a)'}</span> <strong id="p${idx}-slope" class="text-stone-900 font-semibold">-</strong></div>
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Intercept (b)' : '절편 (b)'}</span> <strong id="p${idx}-intercept" class="text-stone-900 font-semibold">-</strong></div>
@@ -1129,14 +1178,14 @@
 
       if (isDual) {
         pContainer.className = "grid grid-cols-2 gap-4";
-        pContainer.innerHTML = cardHtml(p.elements[0], 1) + cardHtml(p.elements[1], 2);
+        pContainer.innerHTML = cardHtml(p.elements[0], 1, p.elements[0].unit) + cardHtml(p.elements[1], 2, oUnit);
         document.getElementById('plot-2-box').style.display = 'block';
         document.getElementById('plot-drift-box-2').style.display = 'block';
         document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} Drift Diagnostics`;
         document.getElementById('plot-drift-2-tag').innerText = `Figure 4 · ${p.elements[1].label} Drift Diagnostics`;
       } else {
         pContainer.className = "grid grid-cols-1 gap-4";
-        pContainer.innerHTML = cardHtml(p.elements[0], 1);
+        pContainer.innerHTML = cardHtml(p.elements[0], 1, p.elements[0].unit);
         document.getElementById('plot-2-box').style.display = 'none';
         document.getElementById('plot-drift-box-2').style.display = 'none';
         document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} Drift Diagnostics`;
@@ -1149,9 +1198,9 @@
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label}</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
             <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label}</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${oUnit})</th>
             <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
@@ -1173,6 +1222,33 @@
       renderGrid();
       resetOutputs();
     }
+
+    // 산소 스케일 드롭다운 변경 시 자동 상호 환산
+    document.getElementById('oxygen-scale-select').addEventListener('change', (e) => {
+      const newScale = e.target.value;
+      if (newScale === oxygenScale || currentMode !== "CO") return;
+
+      const p = PRESETS.CO;
+      p.stds.forEach((_, idx) => {
+        const elV2 = document.getElementById(`ref-std${idx}-v2`);
+        if (elV2 && elV2.value !== '') {
+          const curVal = parseFloat(elV2.value);
+          const converted = newScale === 'VSMOW' ? vpdbToVsmow(curVal) : vsmowToVpdb(curVal);
+          elV2.value = converted.toFixed(3);
+        }
+      });
+
+      const elQcV2 = document.getElementById('qc-std-v2');
+      if (elQcV2 && elQcV2.value !== '') {
+        const curVal = parseFloat(elQcV2.value);
+        const converted = newScale === 'VSMOW' ? vpdbToVsmow(curVal) : vsmowToVpdb(curVal);
+        elQcV2.value = converted.toFixed(3);
+      }
+
+      oxygenScale = newScale;
+      saveCurrentModeStandards();
+      updateLayoutForMode(false);
+    });
 
     function setLanguage(lang) {
       currentLang = lang;
@@ -1204,6 +1280,7 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
+          <li>IUPAC Coplen (1983) 공식 기반 산소 동위원소 스케일(VPDB ↔ VSMOW) 정밀 연동</li>
           <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
           <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
           <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
@@ -1212,6 +1289,7 @@
         `;
       } else {
         listEl.innerHTML = `
+          <li>IUPAC Coplen (1983) compliant Oxygen Isotope Scale Alignment (VPDB ↔ VSMOW)</li>
           <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
           <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
           <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
@@ -1708,6 +1786,7 @@
       const isEn = currentLang === 'en';
       const driftMode = document.getElementById('drift-mode').value;
       const chosenDriftAnchorIdx = parseInt(document.getElementById('drift-anchor-select').value) || 0;
+      const oUnit = getOxygenUnit();
 
       const refStds = p.stds.map((s, idx) => {
         const nameInput = document.getElementById(`ref-std${idx}-name`).value.trim();
@@ -1734,7 +1813,6 @@
       let monitorRuns1 = [];
       let monitorRuns2 = [];
 
-      // 선택된 드리프트 모니터 표준물질
       const monitorAnchor = refStds[chosenDriftAnchorIdx] || refStds[0];
       const rawMonitorRuns = { seq: [], v1: [], v2: [] };
 
@@ -1839,10 +1917,9 @@
         document.getElementById('p2-mswd').innerText = reg2.mswd.toFixed(3);
         document.getElementById('p2-r2').innerText = reg2.r2.toFixed(5);
 
-        drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${p.elements[1].unit})`);
+        drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${oUnit})`);
       }
 
-      // Figure 3 & 4 독립 드리프트 차트 렌더링 (선택된 모니터 앵커 적용)
       drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor.name || 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
 
       if (isDual) {
@@ -1949,7 +2026,7 @@
             <div class="space-y-1">
               <div class="text-stone-600 font-sans font-medium">${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
               <div class="flex justify-between bg-white p-2 border border-stone-200">
-                <span>${isEn ? 'Mean Calibrated' : '평균 보정값'}: <strong>${mean2.toFixed(3)} ${p.elements[1].unit}</strong></span>
+                <span>${isEn ? 'Mean Calibrated' : '평균 보정값'}: <strong>${mean2.toFixed(3)} ${oUnit}</strong></span>
                 <span>${isEn ? 'Accuracy Bias' : '정확도 편차'}: <strong class="${Math.abs(bias2) <= 0.1 ? 'text-emerald-700' : 'text-amber-700'}">${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
                 <span>${isEn ? 'Reproducibility' : '반복 정밀도'} (1σ): <strong>±${sdQc2.toFixed(3)} ‰</strong></span>
               </div>
@@ -2114,7 +2191,7 @@
           format: 'svg',
           width: 800,
           height: 600,
-          filename: `IsoCalib_${p.elements[1].label}_Fit`
+          filename: `IsoCalib_${p.elements[1].label}_Fit_${oxygenScale}`
         });
       }
     });
@@ -2151,6 +2228,7 @@
 
     document.getElementById('btn-demo').addEventListener('click', () => {
       userCustomStandardsByMode[currentMode] = null;
+      oxygenScale = "VPDB";
       const p = PRESETS[currentMode];
       gridData = JSON.parse(JSON.stringify(p.demo));
       selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
@@ -2198,7 +2276,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `IsoCalib_${currentMode}_Reduced.csv`;
+      a.download = `IsoCalib_${currentMode}_${oxygenScale}_Reduced.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
