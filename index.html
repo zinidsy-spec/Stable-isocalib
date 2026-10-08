@@ -5,12 +5,11 @@
   <title>IsoCalib | Isotope Geochemistry Data Reduction & Verification</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Editorial Google Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 
-  <!-- Core Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
@@ -37,7 +36,7 @@
       --border-subtle: #e5e3dc;
       --text-main: #111827;
       --text-sub: #374151;
-      --text-muted: #6b7280;
+      --text-muted: #4b5563;
     }
 
     body {
@@ -60,10 +59,10 @@
       height: 28px;
     }
     .grid-cell.cell-selected {
-      background-color: #f1f0ea !important;
+      background-color: #e0f2fe !important;
     }
     .grid-cell.cell-primary {
-      box-shadow: inset 0 0 0 2px #1c1917 !important;
+      box-shadow: inset 0 0 0 2px #0284c7 !important;
       background-color: #ffffff !important;
     }
     .grid-cell.cell-editing {
@@ -73,8 +72,8 @@
       box-shadow: inset 0 0 0 2px #111827 !important;
     }
     .row-header.row-selected {
-      background-color: #e7e5df !important;
-      color: #1c1917 !important;
+      background-color: #bae6fd !important;
+      color: #0369a1 !important;
       font-weight: 700;
     }
 
@@ -99,72 +98,73 @@
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #fbfaf8; }
-    ::-webkit-scrollbar-thumb { background: #c7c5bc; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb { background: #c7c5bc; border-radius: 3px; }
   </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
   <textarea id="paste-target" tabindex="-1"></textarea>
 
+  <!-- Editorial Top Navigation -->
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-6 h-16 py-3 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-6 h-18 py-4 flex items-center justify-between">
       <div class="flex items-baseline space-x-3">
-        <a href="#" class="font-brand text-lg font-bold tracking-wider text-stone-900">ISOCALIB</a>
-        <span class="text-[11px] uppercase tracking-widest text-stone-500 font-semibold font-mono" data-i18n="tagline">/ Open Geochemical Data Protocol</span>
+        <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</a>
+        <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono" data-i18n="tagline">/ 오픈 지화학 분석 플랫폼</span>
       </div>
-      <div class="flex items-center space-x-5">
-        <nav class="hidden md:flex items-center space-x-4 text-xs text-stone-600 font-serif-title italic">
+      <div class="flex items-center space-x-6">
+        <nav class="hidden md:flex items-center space-x-5 text-xs text-stone-600 font-serif-title italic">
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
-          <span class="text-stone-300 not-italic">·</span>
+          <span>·</span>
           <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.2.1)</button>
-          <span class="text-stone-300 not-italic">·</span>
+          <span>·</span>
           <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">통계 방법론 & 원리</a>
-          <span class="text-stone-300 not-italic">·</span>
-          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">인용 정보</a>
-          <span class="text-stone-300 not-italic">·</span>
-          <!-- Editorial Feedback Link -->
+          <span>·</span>
+          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">인용 정보 & DOI</a>
+          <span>·</span>
+          <!-- GitHub Issue Feedback Direct Link -->
           <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
              target="_blank" 
              rel="noopener noreferrer"
-             class="not-italic font-mono text-[11px] font-semibold text-stone-800 hover:text-stone-950 underline underline-offset-4 transition cursor-pointer flex items-center gap-1.5"
+             class="not-italic font-mono text-[11px] font-bold text-stone-800 hover:text-stone-950 bg-stone-100 hover:bg-stone-200 border border-stone-300 px-2 py-0.5 rounded transition cursor-pointer flex items-center gap-1 shadow-xs"
              data-i18n="nav_feedback">
-            <span class="text-[9px] uppercase tracking-wider text-stone-400">§</span>
-            <span>피드백 & 제안</span>
+            <span>💬 피드백 / 기능 제안</span>
           </a>
         </nav>
         
         <!-- Language Switcher Toggle -->
-        <div class="inline-flex items-center border border-stone-300 rounded-none p-0.5 bg-[#f0ede6] font-mono text-[11px] font-semibold">
-          <button id="lang-ko" class="px-2 py-0.5 transition cursor-pointer">KO</button>
-          <button id="lang-en" class="px-2 py-0.5 transition cursor-pointer">EN</button>
+        <div class="inline-flex items-center border border-stone-300 rounded p-0.5 bg-stone-100 font-mono text-[11px] font-bold">
+          <button id="lang-ko" class="px-2 py-0.5 rounded transition cursor-pointer">KO</button>
+          <button id="lang-en" class="px-2 py-0.5 rounded transition cursor-pointer">EN</button>
         </div>
       </div>
     </div>
   </header>
 
+  <!-- Main Work Area -->
   <main class="max-w-6xl mx-auto px-6 py-10 space-y-12 flex-grow w-full">
 
     <!-- Hero Section -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
-        <div class="flex items-center space-x-2.5">
-          <p class="text-[11px] font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.2 border border-stone-300 bg-white text-stone-700 font-mono text-[10px] font-semibold">v1.2.1</span>
+        <div class="flex items-center space-x-2">
+          <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.2.1</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
-        <p class="text-xs sm:text-sm text-stone-600 leading-relaxed font-light" data-i18n="hero_desc">
-          원시 측정 데이터(Raw Data)의 시퀀스 표류 보정, 가중 최소제곱법(WLS) 피팅, 독립 QC 표준물질 검증, 연속 인접 반복 시료 평균 요약 및 합성 불확도 전파를 수행합니다.
+        <p class="text-sm text-stone-600 leading-relaxed font-light" data-i18n="hero_desc">
+          원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증, 연속 반복 시료 평균 요약 및 불확도 전파를 수행합니다.
         </p>
       </div>
 
       <!-- Isotope Preset Selector -->
-      <div class="space-y-1.5 self-start md:self-end min-w-[310px]">
-        <label for="isotope-preset" class="text-[11px] uppercase tracking-wider text-stone-600 font-mono font-bold block" data-i18n="system_label">
+      <div class="space-y-1.5 self-start md:self-end min-w-[300px]">
+        <label for="isotope-preset" class="text-xs uppercase tracking-wider text-stone-700 font-mono font-bold block" data-i18n="system_label">
           Isotope System (분석 체계)
         </label>
-        <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3 py-2 text-xs text-stone-900 font-medium focus:border-stone-900 focus:outline-none transition shadow-xs cursor-pointer font-sans">
+        <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm cursor-pointer">
           <option value="CO">1. Carbon & Oxygen (δ¹³C, δ¹⁸O - Dual)</option>
           <option value="NO">2. Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O - Dual)</option>
           <option value="HO">3. Hydrogen & Oxygen (δD, δ¹⁸O - Dual)</option>
@@ -180,67 +180,67 @@
       <div class="flex flex-wrap items-center justify-between border-b border-stone-200 pb-2.5 gap-3">
         <div class="flex items-center space-x-3">
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">01</span>
-          <h2 class="text-xs sm:text-sm uppercase tracking-wider font-bold text-stone-900 font-mono" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
         </div>
         
         <!-- Controls: Oxygen Scale & Drift Correction -->
         <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
-          <!-- Oxygen Scale Selector -->
-          <div id="oxygen-scale-wrapper" class="flex items-center space-x-1.5 bg-stone-100/70 border border-stone-300 px-2 py-1">
-            <label for="oxygen-scale-select" class="font-semibold text-stone-700 text-[11px]" data-i18n="o_scale_label">Scale:</label>
-            <select id="oxygen-scale-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
+          <!-- Oxygen Scale Selector (Only active in CO mode) -->
+          <div id="oxygen-scale-wrapper" class="flex items-center space-x-1.5 bg-blue-50/70 border border-blue-200 px-2.5 py-1.5 rounded">
+            <label for="oxygen-scale-select" class="font-bold text-blue-900" data-i18n="o_scale_label">δ¹⁸O Scale:</label>
+            <select id="oxygen-scale-select" class="bg-white border border-blue-300 text-blue-950 px-1.5 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-blue-900 cursor-pointer">
               <option value="VPDB" selected>VPDB</option>
               <option value="VSMOW">VSMOW</option>
             </select>
           </div>
 
           <!-- Drift Monitor Standard Selector -->
-          <div class="flex items-center space-x-1.5 bg-stone-100/70 border border-stone-300 px-2 py-1">
-            <label for="drift-anchor-select" class="font-semibold text-stone-700 text-[11px]" data-i18n="drift_anchor_label">Monitor:</label>
-            <select id="drift-anchor-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
+          <div class="flex items-center space-x-1.5 bg-stone-100 px-2.5 py-1.5 border border-stone-300 rounded">
+            <label for="drift-anchor-select" class="font-bold text-stone-800" data-i18n="drift_anchor_label">Monitor:</label>
+            <select id="drift-anchor-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
               <!-- Dynamically populated -->
             </select>
           </div>
 
           <!-- Drift Model Selector -->
-          <div class="flex items-center space-x-1.5 bg-stone-100/70 border border-stone-300 px-2 py-1">
-            <label for="drift-mode" class="font-semibold text-stone-700 text-[11px]" data-i18n="drift_label">Model:</label>
-            <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
-              <option value="none" selected data-i18n="drift_opt_none">None (Off)</option>
-              <option value="linear" data-i18n="drift_opt_linear">Linear Drift</option>
-              <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor Bracketing</option>
+          <div class="flex items-center space-x-1.5 bg-stone-100 px-2.5 py-1.5 border border-stone-300 rounded">
+            <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Model:</label>
+            <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer">
+              <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
+              <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 표류)</option>
+              <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor-to-Anchor Bracketing (앵커 간 선형 보간)</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Harmonized Editorial User Custom Standards Preset Bar -->
-      <div class="bg-[#fcfbf9] border border-[#d1cfc7] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-        <div class="flex items-center flex-wrap gap-2.5">
-          <span class="font-semibold text-stone-700 text-[11px] tracking-wide flex items-center gap-1.5">
-            <span class="text-stone-400 font-serif-title italic">#</span>
-            <span data-i18n="preset_manage_label">Standards Presets (Browser Local):</span>
+      <!-- User Custom Standards Preset Bar (localStorage Zero-Server) -->
+      <div class="bg-[#fcfbf9] border border-[#d1cfc7] p-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="font-bold text-stone-800 flex items-center gap-1.5">
+            <span>💾</span> <span data-i18n="preset_manage_label">내 표준물질 프리셋 (Browser Local):</span>
           </span>
-          <select id="user-presets-select" class="bg-white border border-stone-300 text-stone-900 px-2 py-1 text-xs focus:outline-none focus:border-stone-900 cursor-pointer min-w-[200px]">
-            <option value="" data-i18n="preset_select_default">— Built-in Reference Standards —</option>
+          <select id="user-presets-select" class="bg-white border border-stone-300 text-stone-900 px-2.5 py-1 text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer min-w-[180px]">
+            <option value="" data-i18n="preset_select_default">-- 기본 프리셋 (Default) --</option>
           </select>
-          <button id="btn-load-preset" class="px-2.5 py-1 bg-white border border-stone-300 text-stone-800 hover:border-stone-900 transition font-medium cursor-pointer" data-i18n="btn_preset_load">Load</button>
-          <button id="btn-delete-preset" class="px-2 py-1 text-stone-500 hover:text-stone-900 underline underline-offset-2 transition cursor-pointer" data-i18n="btn_preset_delete">Delete</button>
+          <button id="btn-load-preset" class="px-2.5 py-1 bg-white border border-stone-300 text-stone-800 hover:border-stone-900 transition font-semibold cursor-pointer" data-i18n="btn_preset_load">불러오기</button>
+          <button id="btn-delete-preset" class="px-2.5 py-1 text-rose-700 hover:text-rose-900 border border-transparent hover:border-rose-300 transition cursor-pointer" data-i18n="btn_preset_delete">삭제</button>
         </div>
 
         <div class="flex items-center space-x-2">
-          <input type="text" id="preset-save-name" placeholder="Preset name (e.g. Lab_Carbonate)" class="bg-white border border-stone-300 px-2 py-1 text-xs text-stone-900 focus:outline-none focus:border-stone-900 w-48 font-data">
-          <button id="btn-save-preset" class="px-3 py-1 bg-stone-900 text-white font-medium hover:bg-stone-800 transition cursor-pointer" data-i18n="btn_preset_save">Save Current Set</button>
+          <input type="text" id="preset-save-name" placeholder="새 프리셋 이름 (예: 우리랩_탄산염)" class="bg-white border border-stone-300 px-2 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 w-44">
+          <button id="btn-save-preset" class="px-3 py-1 bg-stone-900 text-white font-bold hover:bg-stone-800 transition cursor-pointer" data-i18n="btn_preset_save">현재 값 저장</button>
         </div>
       </div>
 
-      <!-- Scholarly Callout Note (Zero-Server Privacy & Persistence) -->
-      <div class="bg-[#fcfbf9] border-l-2 border-stone-400 border-y border-r border-stone-200/80 px-4 py-2.5 text-xs text-stone-600 space-y-0.5">
-        <div class="font-mono text-[11px] font-semibold uppercase tracking-wider text-stone-700" data-i18n="drift_guide_title">
-          Client Storage & Privacy Notice
+      <!-- Drift & Persistence Guide Banner -->
+      <div class="bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600 space-y-1">
+        <div class="flex items-center space-x-1.5 font-bold text-stone-800">
+          <span>💡</span>
+          <span data-i18n="drift_guide_title">보안 및 프리셋 저장 안내</span>
         </div>
-        <p class="leading-relaxed font-light text-[11px]" data-i18n="drift_guide_desc">
-          모든 사용자 정의 표준물질 세트는 외부 서버로 전송되지 않고 <strong>로컬 브라우저(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 참값 세트를 즉시 불러올 수 있습니다.
+        <p class="leading-relaxed" data-i18n="drift_guide_desc">
+          모든 커스텀 표준물질 세트는 외부 서버로 전송되지 않고 <strong>현재 사용 중인 브라우저(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 앵커/QC 참값을 원클릭으로 다시 불러올 수 있습니다.
         </p>
       </div>
 
@@ -253,27 +253,27 @@
         <div class="space-y-1">
           <div class="flex items-center space-x-3">
             <span class="font-mono text-base sm:text-lg font-bold text-stone-400">02</span>
-            <h2 class="text-xs sm:text-sm uppercase tracking-wider font-bold text-stone-900 font-mono" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
+            <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
           </div>
-          <p class="text-xs text-stone-600 font-light" data-i18n="sec2_desc">
-            시작 셀을 클릭한 후 <kbd class="px-1.5 py-0.5 bg-stone-100 border border-stone-300 font-mono text-[10px] font-semibold text-stone-800">Ctrl + V</kbd>를 누르면 엑셀 런 시퀀스가 복사됩니다.
+          <p class="text-xs text-stone-600" data-i18n="sec2_desc">
+            시작할 셀을 한 번 클릭하고 바로 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 엑셀 런 시퀀스가 복사됩니다.
           </p>
         </div>
 
         <div class="flex items-center flex-wrap gap-2">
-          <button id="btn-delete-selected" class="px-3 py-1.5 text-xs font-medium text-stone-700 hover:text-stone-900 border border-stone-300 hover:border-stone-500 bg-white transition cursor-pointer" data-i18n="btn_delete_rows">
+          <button id="btn-delete-selected" class="px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 border border-rose-200 hover:border-rose-400 bg-rose-50/50 transition cursor-pointer" data-i18n="btn_delete_rows">
             선택 행 삭제
           </button>
-          <button id="btn-clear" class="px-3 py-1.5 text-xs font-medium text-stone-600 hover:text-stone-900 border border-transparent hover:border-stone-300 transition cursor-pointer" data-i18n="btn_clear">
+          <button id="btn-clear" class="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 border border-transparent hover:border-stone-300 transition cursor-pointer" data-i18n="btn_clear">
             Clear All
           </button>
-          <button id="btn-demo" class="px-3 py-1.5 text-xs font-medium text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-xs cursor-pointer" data-i18n="btn_demo">
+          <button id="btn-demo" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm cursor-pointer" data-i18n="btn_demo">
             Load Demo
           </button>
-          <button id="btn-add-row" class="px-3 py-1.5 text-xs font-medium text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-xs cursor-pointer" data-i18n="btn_add_rows">
+          <button id="btn-add-row" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm cursor-pointer" data-i18n="btn_add_rows">
             + 30 Rows
           </button>
-          <button id="btn-calc" class="px-4 py-1.5 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow-xs cursor-pointer" data-i18n="btn_calc">
+          <button id="btn-calc" class="px-5 py-2 text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow cursor-pointer" data-i18n="btn_calc">
             Run Calibration & QC
           </button>
         </div>
@@ -283,7 +283,7 @@
         
         <!-- Left: Spreadsheet Grid -->
         <div class="lg:col-span-6 space-y-2">
-          <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-xs relative">
+          <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm relative">
             <div class="max-h-[640px] overflow-auto select-none" id="grid-scroll-container">
               <table class="w-full border-collapse text-left font-data text-xs" id="interactive-grid">
                 <thead id="grid-head" class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-stone-800 uppercase text-[11px] font-bold tracking-wider select-none z-10"></thead>
@@ -304,7 +304,7 @@
           <div class="space-y-4">
             
             <!-- Figure 1: 1st Isotope Fit -->
-            <div class="border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2">
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-1-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 1</span>
                 <button id="btn-export-svg-1" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
@@ -315,7 +315,7 @@
             </div>
 
             <!-- Figure 2: 2nd Isotope Fit (Dual mode only) -->
-            <div class="border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2" id="plot-2-box">
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-2-box">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-2-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 2</span>
                 <button id="btn-export-svg-2" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
@@ -326,7 +326,7 @@
             </div>
 
             <!-- Figure 3: 1st Isotope Drift Diagnostics Plot -->
-            <div class="border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2" id="plot-drift-box-1">
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-drift-box-1">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-drift-1-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 3 · Drift Diagnostics</span>
                 <button id="btn-export-svg-drift-1" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
@@ -337,7 +337,7 @@
             </div>
 
             <!-- Figure 4: 2nd Isotope Drift Diagnostics Plot (Dual mode only) -->
-            <div class="border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2" id="plot-drift-box-2">
+            <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-drift-box-2">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-drift-2-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 4 · Drift Diagnostics</span>
                 <button id="btn-export-svg-drift-2" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer" data-i18n="btn_export_svg">Export Publication SVG</button>
@@ -358,17 +358,16 @@
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-3">
         <div class="flex items-center space-x-3">
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">03</span>
-          <h2 class="text-xs sm:text-sm uppercase tracking-wider font-bold text-stone-900 font-mono" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
         
         <!-- Native Excel (.XLSX) Export Button with Multi-Sheet support -->
-        <button id="btn-export" class="inline-flex items-center space-x-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-stone-800 border-b border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition cursor-pointer" data-i18n="btn_export_excel">
-          <span class="font-bold">↓</span>
-          <span>Export Multi-Sheet Excel (.XLSX)</span>
+        <button id="btn-export" class="inline-flex items-center space-x-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 border-b-2 border-emerald-800 pb-0.5 hover:text-emerald-700 hover:border-emerald-600 transition cursor-pointer" data-i18n="btn_export_excel">
+          <span>📊 Export Multi-Sheet Excel (.XLSX)</span>
         </button>
       </div>
 
-      <div id="qc-summary-banner" class="hidden bg-[#fcfbf9] border border-stone-300 p-4 space-y-2"></div>
+      <div id="qc-summary-banner" class="hidden bg-stone-50 border border-stone-300 p-4 rounded-none space-y-2"></div>
 
       <!-- View Switcher Tabs (Run-by-Run Sequence vs Adjacent Grouped Summary) -->
       <div class="flex items-center space-x-1 border-b border-stone-300 pt-2 font-mono text-xs">
@@ -381,7 +380,7 @@
       </div>
 
       <!-- Tab Content 1: Sequence Raw Calibrated Runs -->
-      <div id="tab-content-sequence" class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-xs">
+      <div id="tab-content-sequence" class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
         <table class="w-full text-left text-xs font-data text-stone-900">
           <thead id="result-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
           <tbody id="result-body" class="divide-y divide-[#e5e3dc]">
@@ -395,7 +394,7 @@
       </div>
 
       <!-- Tab Content 2: Adjacent Grouped Sample Summary -->
-      <div id="tab-content-grouped" class="hidden border border-[#c7c5bc] bg-white overflow-x-auto shadow-xs">
+      <div id="tab-content-grouped" class="hidden border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
         <table class="w-full text-left text-xs font-data text-stone-900">
           <thead id="grouped-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
           <tbody id="grouped-body" class="divide-y divide-[#e5e3dc]">
@@ -414,79 +413,79 @@
       <div class="max-w-3xl space-y-2">
         <div class="flex items-center space-x-3">
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">04</span>
-          <h2 class="text-xs sm:text-sm uppercase tracking-wider font-bold text-stone-900 font-mono" data-i18n="sec4_tag">Methodology & Standard Principles</h2>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec4_tag">Methodology & Standard Principles</h2>
         </div>
         <h3 class="font-serif-title text-2xl sm:text-3xl font-normal text-stone-900" data-i18n="sec4_heading">통계적 회귀 원리 및 표준 분석 지침</h3>
         <p class="text-xs text-stone-600 leading-relaxed font-light" data-i18n="sec4_subheading">
-          IsoCalib에 적용된 계산식은 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.
+          IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.
         </p>
       </div>
 
-      <!-- 3 Principles Cards -->
+      <!-- 직관적 3대 원리 카드 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-stone-700">
         
-        <!-- Principle 1: WLS -->
-        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-xs flex flex-col justify-between">
+        <!-- 원리 1: WLS -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
               <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card1_title">1. 가중 선형 회귀 (WLS)</h4>
-              <span class="text-stone-400 font-mono text-[10px]">Variance Weights</span>
+              <span class="text-stone-400 font-mono text-[10px]">Data Reliability</span>
             </div>
-            <p class="leading-relaxed font-light" data-i18n="card1_desc">
+            <p class="leading-relaxed" data-i18n="card1_desc">
               모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\sigma_i^2$)</strong>을 갖도록 계산합니다.
             </p>
-            <div class="bg-[#fcfbf9] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600">
-              <span class="text-stone-400 italic">Note:</span> <span data-i18n="card1_quote">측정 편차가 2배 큰 불안정한 런은, 검량선 결정 영향력을 1/4로 줄여 반영합니다.</span>
+            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
+              💡 <span data-i18n="card1_quote">측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card1_basis">
-            York (1968) / Ludwig (2003)
+            기준: York (1968) / Ludwig (2003)
           </div>
         </div>
 
-        <!-- Principle 2: MSWD -->
-        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-xs flex flex-col justify-between">
+        <!-- 원리 2: MSWD -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
               <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card2_title">2. 적합도 검증 (MSWD)</h4>
               <span class="text-stone-400 font-mono text-[10px]">Fit Quality</span>
             </div>
-            <p class="leading-relaxed font-light" data-i18n="card2_desc">
-              지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\chi^2$)</strong>을 통해 데이터 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.
+            <p class="leading-relaxed" data-i18n="card2_desc">
+              지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\chi^2$)</strong>을 통해, 데이터의 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.
             </p>
-            <div class="bg-[#fcfbf9] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600">
-              <span class="text-stone-400 italic">Note:</span> <span data-i18n="card2_quote">MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 표류나 추가 외란이 존재한다는 신호입니다.</span>
+            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
+              💡 <span data-i18n="card2_quote">MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card2_basis">
-            McIntyre et al. (1966) / IsoplotR
+            기준: McIntyre et al. (1966) / IsoplotR
           </div>
         </div>
 
-        <!-- Principle 3: Uncertainty Propagation -->
-        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-xs flex flex-col justify-between">
+        <!-- 원리 3: Error Propagation -->
+        <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
               <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card3_title">3. 합성 불확도 전파</h4>
-              <span class="text-stone-400 font-mono text-[10px]">Combined Budget</span>
+              <span class="text-stone-400 font-mono text-[10px]">Total Uncertainty</span>
             </div>
-            <p class="leading-relaxed font-light" data-i18n="card3_desc">
-              시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>검량선 파라미터의 통계적 표준오차까지 합성</strong>하여 최종 보고용 오차를 산출합니다.
+            <p class="leading-relaxed" data-i18n="card3_desc">
+              시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.
             </p>
-            <div class="bg-[#fcfbf9] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600">
-              <span class="text-stone-400 italic">Note:</span> <span data-i18n="card3_quote">심사위원의 "검량선 불확도를 오차에 반영했는가?"라는 질문에 완벽히 대응하는 표준식입니다.</span>
+            <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
+              💡 <span data-i18n="card3_quote">논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">
-            JCGM 100:2008 (GUM Guide)
+            기준: JCGM 100:2008 (GUM Guide)
           </div>
         </div>
 
       </div>
 
-      <!-- Equations Accordion -->
-      <details class="group bg-white border border-[#d1cfc7] shadow-xs transition-all">
-        <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100/70 transition">
+      <!-- 세부 수학 유도식 (Accordion) -->
+      <details class="group bg-white border border-[#d1cfc7] shadow-sm transition-all">
+        <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100 transition">
           <div class="flex items-center space-x-2">
             <span class="font-mono text-xs font-bold text-stone-800 uppercase tracking-wider" data-i18n="acc_title">[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)</span>
           </div>
@@ -498,7 +497,7 @@
             <p data-i18n="acc_a_desc">
               $x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:
             </p>
-            <div class="bg-[#fcfbf9] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
+            <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$w_i = \frac{1}{\sigma_{x,i}^2}, \quad \Delta = \sum w_i \sum w_i x_i^2 - \left(\sum w_i x_i\right)^2$$
               $$\text{Slope }(a) = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}, \quad \text{Intercept }(b) = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$
             </div>
@@ -509,7 +508,7 @@
             <p data-i18n="acc_b_desc">
               카이제곱($\chi^2$) 통계량을 자유도($\nu = N - 2$)로 나눈 분산비입니다:
             </p>
-            <div class="bg-[#fcfbf9] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
+            <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\chi^2 = \sum_{i=1}^N w_i \left(y_i - (a x_i + b)\right)^2, \quad \text{MSWD} = \frac{\chi^2}{N - 2}$$
             </div>
           </div>
@@ -527,10 +526,10 @@
       </details>
 
       <!-- Zero-Server Privacy Statement -->
-      <div class="bg-[#fcfbf9] border border-[#d1cfc7] p-6 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
+      <div class="bg-stone-100/60 border border-stone-200 p-6 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
         <div class="space-y-1.5 max-w-2xl">
           <div class="flex items-center space-x-2">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-stone-900"></span>
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
             <span class="text-xs font-mono font-bold text-stone-900 uppercase tracking-wider" data-i18n="privacy_title">Zero-Server Client Computation (완전 무서버 보안)</span>
           </div>
           <p class="text-xs text-stone-600 font-light" data-i18n="privacy_desc">
@@ -543,17 +542,25 @@
         </div>
       </div>
 
-      <!-- Citation Section -->
+      <!-- Citation & Permanent DOI Section -->
       <div id="citation" class="space-y-3 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
-          <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Repository Link</h4>
-          <span class="text-xs text-stone-500 font-serif-title italic" data-i18n="cite_format">Reference placeholder</span>
+          <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Permanent Archive (공식 인용 정보 및 영구 아카이브)</h4>
+          <a href="https://doi.org/10.5281/zenodo.23239186" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 text-xs font-mono text-emerald-800 hover:text-emerald-950 font-semibold underline underline-offset-2">
+            <span>DOI: 10.5281/zenodo.23239186</span>
+          </a>
         </div>
-        <p class="text-xs text-stone-600 font-light" data-i18n="cite_desc">
-          정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:
+        <p class="text-xs text-stone-600 font-light leading-relaxed" data-i18n="cite_desc">
+          본 플랫폼의 정산 알고리즘 및 데이터를 학술 논문에 인용하실 경우, 방법론(Analytical Methods) 섹션에 아래 공식 영구 DOI 식별자를 표기해 주시기 바랍니다:
         </p>
-        <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed">
-          IsoCalib: An Open-Source Web Tool for Stable Isotope Calibration, Sequence Drift Correction, and WLS Uncertainty Propagation. Available online: https://zinidsy-spec.github.io/Stable-isocalib/ (2026).
+        
+        <!-- 원클릭 복사용 인용 블록 -->
+        <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed space-y-2 shadow-xs">
+          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.2.1). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
+          <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-500 font-sans">
+            <span>Licensed under GNU General Public License v3.0 (GPL-3.0)</span>
+            <span class="font-mono text-stone-400">Click text to select all</span>
+          </div>
         </div>
       </div>
 
@@ -562,12 +569,12 @@
   </main>
 
   <!-- About IsoCalib Modal -->
-  <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+  <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.2.1 (Release 2026)</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.2.1 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -575,7 +582,7 @@
       <div class="space-y-4 text-xs text-stone-700 font-light leading-relaxed">
         <p id="about-p1"></p>
         <p id="about-p2"></p>
-        <div class="bg-[#fcfbf9] border border-stone-200 p-4 space-y-2">
+        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <strong class="font-mono uppercase tracking-wider text-[11px] text-stone-900 block" id="about-protocols-title">Core Analytical Protocols:</strong>
           <ul class="list-disc list-inside space-y-1 text-[11px] font-mono text-stone-600" id="about-protocols-list"></ul>
         </div>
@@ -584,16 +591,16 @@
 
       <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
         <div>
-          <span class="block text-stone-400">Inquiries & Bug Reports:</span>
-          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" target="_blank" rel="noopener noreferrer" class="text-stone-900 underline font-semibold">GitHub Issues (피드백 제안)</a>
+          <span class="block">Inquiries & Bug Reports:</span>
+          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" target="_blank" rel="noopener noreferrer" class="text-stone-900 underline font-semibold">GitHub Issues (피드백 & 제안)</a>
         </div>
         <button id="btn-modal-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Changelog Modal -->
-  <div id="changelog-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+  <!-- Changelog & Release Notes Modal -->
+  <div id="changelog-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
@@ -616,12 +623,12 @@
   </div>
 
   <!-- Context Menu -->
-  <div id="grid-context-menu" class="hidden fixed bg-white border border-[#c7c5bc] shadow-lg py-1.5 z-50 text-xs font-sans text-stone-800 min-w-[180px]">
-    <button id="ctx-del-rows" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-stone-900 font-medium">
+  <div id="grid-context-menu" class="hidden fixed bg-white border border-[#c7c5bc] shadow-lg py-1.5 z-50 text-xs font-sans text-stone-800 rounded min-w-[180px]">
+    <button id="ctx-del-rows" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-rose-700 font-medium">
       <span data-i18n="ctx_del_row">선택 행 완전 삭제</span>
       <span class="font-mono text-[10px] text-stone-400">Del row</span>
     </button>
-    <button id="ctx-clear-cells" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-stone-700">
+    <button id="ctx-clear-values" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-stone-700">
       <span data-i18n="ctx_clear_cells">선택 셀 내용 지우기</span>
       <span class="font-mono text-[10px] text-stone-400">Delete</span>
     </button>
@@ -631,9 +638,16 @@
     </button>
   </div>
 
+  <!-- Footer with GPL-3.0 License & DOI Badge -->
   <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <p>IsoCalib Project — Environmental & Isotope Geochemistry Research Group</p>
+      <div class="space-y-0.5 text-center sm:text-left">
+        <p class="font-sans font-medium text-stone-700">IsoCalib Project — Environmental & Isotope Geochemistry Research Group</p>
+        <p class="font-mono text-[11px] text-stone-500">
+          Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer" class="underline hover:text-stone-900">GNU GPL v3.0</a> · 
+          DOI: <a href="https://doi.org/10.5281/zenodo.23239186" target="_blank" rel="noopener noreferrer" class="underline hover:text-stone-900 font-semibold text-emerald-800">10.5281/zenodo.23239186</a>
+        </p>
+      </div>
       <p class="font-mono text-[11px] text-stone-400">Engineered for Academic Open Science</p>
     </div>
   </footer>
@@ -645,28 +659,28 @@
         nav_about: "IsoCalib 소개",
         nav_changelog: "업데이트 로그 (v1.2.1)",
         nav_methodology: "통계 방법론 & 원리",
-        nav_citation: "인용 정보",
-        nav_feedback: "<span class=\"text-[9px] uppercase tracking-wider text-stone-400\">§</span><span>피드백 & 제안</span>",
+        nav_citation: "인용 정보 & DOI",
+        nav_feedback: "<span>💬 피드백 / 기능 제안</span>",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
         hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
-        hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 표류 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증, 연속 반복 시료 평균 요약 및 불확도 전파를 수행합니다.",
+        hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증, 연속 반복 시료 평균 요약 및 불확도 전파를 수행합니다.",
         system_label: "분석 동위원소 체계 (Isotope System)",
         sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
-        o_scale_label: "스케일:",
-        drift_anchor_label: "모니터:",
-        drift_label: "보정:",
-        drift_opt_none: "None (Off)",
-        drift_opt_linear: "Linear (선형 표류)",
-        drift_opt_piecewise: "Anchor Bracketing (구간 보간)",
-        preset_manage_label: "표준물질 프리셋 (Browser Local):",
-        preset_select_default: "— 기본 표준물질 (Default) —",
+        o_scale_label: "δ¹⁸O 스케일:",
+        drift_anchor_label: "드리프트 모니터:",
+        drift_label: "보정 모델:",
+        drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
+        drift_opt_linear: "Linear (단일 선형 표류)",
+        drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 간 선형 보간)",
+        preset_manage_label: "내 표준물질 프리셋 (Browser Local):",
+        preset_select_default: "-- 기본 프리셋 (Default) --",
         btn_preset_load: "불러오기",
         btn_preset_delete: "삭제",
         btn_preset_save: "현재 값 저장",
-        drift_guide_title: "Client Storage & Privacy Notice",
-        drift_guide_desc: "모든 사용자 정의 표준물질 세트는 외부 서버로 전송되지 않고 <strong>로컬 브라우저(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 참값 세트를 즉시 불러올 수 있습니다.",
+        drift_guide_title: "보안 및 프리셋 저장 안내",
+        drift_guide_desc: "모든 커스텀 표준물질 세트는 외부 서버로 전송되지 않고 <strong>현재 사용 중인 브라우저(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 앵커/QC 참값을 원클릭으로 다시 불러올 수 있습니다.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
-        sec2_desc: "시작 셀을 클릭한 후 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
+        sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
@@ -675,26 +689,26 @@
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
-        btn_export_excel: "↓ 멀티 시트 엑셀 내보내기 (.XLSX)",
+        btn_export_excel: "📊 멀티 시트 엑셀 내보내기 (.XLSX)",
         tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
         tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
         result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
         grouped_empty: "상단에서 검량을 실행하면 연속으로 반복 측정된 미지시료의 평균(Mean ± 1σ) 요약표가 여기에 생성됩니다.",
         sec4_tag: "Methodology & Standard Principles",
         sec4_heading: "통계적 회귀 원리 및 표준 분석 지침",
-        sec4_subheading: "IsoCalib에 적용된 계산식은 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
+        sec4_subheading: "IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
         card1_title: "1. 가중 선형 회귀 (WLS)",
         card1_desc: "모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\\sigma_i^2$)</strong>을 갖도록 계산합니다.",
-        card1_quote: "측정 편차가 2배 큰 불안정한 런은, 검량선 결정 영향력을 1/4로 줄여 반영합니다.",
-        card1_basis: "York (1968) / Ludwig (2003)",
+        card1_quote: "측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.",
+        card1_basis: "기준: York (1968) / Ludwig (2003)",
         card2_title: "2. 적합도 검증 (MSWD)",
-        card2_desc: "지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\\chi^2$)</strong>을 통해 데이터 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.",
-        card2_quote: "MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 표류나 추가 외란이 존재한다는 신호입니다.",
-        card2_basis: "McIntyre et al. (1966) / IsoplotR",
+        card2_desc: "지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\\chi^2$)</strong>을 통해, 데이터의 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.",
+        card2_quote: "MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.",
+        card2_basis: "기준: McIntyre et al. (1966) / IsoplotR",
         card3_title: "3. 합성 불확도 전파",
-        card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>검량선 파라미터의 통계적 표준오차까지 합성</strong>하여 최종 보고용 오차를 산출합니다.",
-        card3_quote: "심사위원의 \"검량선 불확도를 오차에 반영했는가?\"라는 질문에 완벽히 대응하는 표준식입니다.",
-        card3_basis: "JCGM 100:2008 (GUM Guide)",
+        card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.",
+        card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
+        card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
         acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
         acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
@@ -704,9 +718,8 @@
         acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
         privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
         privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다.",
-        cite_title: "인용 정보 및 저장소 링크",
-        cite_format: "Reference placeholder",
-        cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
+        cite_title: "공식 인용 정보 및 영구 아카이브 (Citation & Permanent Archive)",
+        cite_desc: "본 플랫폼의 정산 알고리즘 및 데이터를 학술 논문에 인용하실 경우, 방법론(Analytical Methods) 섹션에 아래 공식 영구 DOI 식별자를 표기해 주시기 바랍니다:",
         changelog_title: "/ 버전별 업데이트 이력 (Release Notes)",
         changelog_subtitle: "안정동위원소 랩 실무진의 피드백을 반영한 지속적 알고리즘 및 UX 업데이트 내역입니다.",
         ctx_del_row: "선택 행 완전 삭제",
@@ -718,32 +731,32 @@
         about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다."
       },
       en: {
-        tagline: "/ Open Geochemical Data Protocol",
+        tagline: "/ Open Geochemistry Tool",
         nav_about: "About IsoCalib",
         nav_changelog: "Changelog (v1.2.1)",
         nav_methodology: "Methodology & Principles",
-        nav_citation: "Citation",
-        nav_feedback: "<span class=\"text-[9px] uppercase tracking-wider text-stone-400\">§</span><span>Feedback & Ideas</span>",
+        nav_citation: "Citation & DOI",
+        nav_feedback: "<span>💬 Feedback & Ideas</span>",
         hero_badge: "Precision Data Reduction & QC Protocol",
         hero_title: "Stable Isotope Calibration",
         hero_desc: "Performs sequence drift correction, weighted regression fitting, blind QC verification, adjacent replicate sample averaging, and uncertainty propagation.",
         system_label: "Isotope System",
         sec1_title: "Reference & QC Standards",
-        o_scale_label: "Scale:",
-        drift_anchor_label: "Monitor:",
+        o_scale_label: "δ¹⁸O Scale:",
+        drift_anchor_label: "Drift Monitor:",
         drift_label: "Model:",
-        drift_opt_none: "None (Off)",
-        drift_opt_linear: "Linear Drift",
-        drift_opt_piecewise: "Anchor Bracketing",
-        preset_manage_label: "Standards Presets (Browser Local):",
-        preset_select_default: "— Built-in Reference Standards —",
+        drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
+        drift_opt_linear: "Linear (Single linear slope over sequence)",
+        drift_opt_piecewise: "Anchor-to-Anchor Bracketing (Piecewise linear interpolation)",
+        preset_manage_label: "My Standards Presets (Browser Local):",
+        preset_select_default: "-- Default Presets --",
         btn_preset_load: "Load",
         btn_preset_delete: "Delete",
-        btn_preset_save: "Save Current Set",
-        drift_guide_title: "Client Storage & Privacy Notice",
-        drift_guide_desc: "All custom standard configurations are persisted in your browser's <strong>localStorage without external server communication</strong>, maintaining complete client-side data privacy.",
+        btn_preset_save: "Save Current",
+        drift_guide_title: "Privacy & Local Persistence Guide",
+        drift_guide_desc: "All custom standard sets are securely persisted in your browser's <strong>localStorage without server interaction</strong>, fully preserving client-side privacy.",
         sec2_title: "Measurement Sequence Data",
-        sec2_desc: "Select a cell and press Ctrl + V to paste tabular run sequence data directly from Excel.",
+        sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
@@ -752,7 +765,7 @@
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report",
-        btn_export_excel: "↓ Export Multi-Sheet Excel (.XLSX)",
+        btn_export_excel: "📊 Export Multi-Sheet Excel (.XLSX)",
         tab_sequence: "Run-by-Run Sequence",
         tab_grouped: "Grouped Sample Summary",
         result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
@@ -763,15 +776,15 @@
         card1_title: "1. Weighted Regression (WLS)",
         card1_desc: "Measurements with higher precision (smaller 1σ SD) are assigned greater statistical weight ($w_i = 1/\\sigma_i^2$).",
         card1_quote: "A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.",
-        card1_basis: "York (1968) / Ludwig (2003)",
+        card1_basis: "Basis: York (1968) / Ludwig (2003)",
         card2_title: "2. Goodness-of-Fit (MSWD)",
         card2_desc: "Evaluates the reduced chi-squared ($\\chi^2/\\nu$) to objectively determine whether residuals reflect pure analytical precision.",
         card2_quote: "An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-analytical variance.",
-        card2_basis: "McIntyre et al. (1966) / IsoplotR",
+        card2_basis: "Basis: McIntyre et al. (1966) / IsoplotR",
         card3_title: "3. Combined Uncertainty",
         card3_desc: "Propagates sample repeatability together with the standard errors of the regression parameters.",
         card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
-        card3_basis: "JCGM 100:2008 (GUM Guide)",
+        card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
         acc_a_title: "A. Weighted Least Squares Normal Equations",
         acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
@@ -781,9 +794,8 @@
         acc_c_desc: "Partial differential expansion for the linear calibration function $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$:",
         privacy_title: "Zero-Server Client Computation (Total Privacy)",
         privacy_desc: "All calculations execute 100% locally within your browser's JavaScript engine. Zero data is transmitted externally.",
-        cite_title: "Citation & Repository Link",
-        cite_format: "Reference placeholder",
-        cite_desc: "To cite this software in your Analytical Methods section, please refer to the repository URL below:",
+        cite_title: "Citation & Permanent Archive",
+        cite_desc: "To cite this software and its algorithms in your Analytical Methods section, please refer to the permanent Zenodo DOI below:",
         changelog_title: "/ Version Evolution & Changelog",
         changelog_subtitle: "Continuous methodological and UX advancements tailored to real isotope lab requirements.",
         ctx_del_row: "Delete Selected Rows",
@@ -805,22 +817,22 @@
       {
         version: "v1.2.1",
         date: "2026-10",
-        badge: "User Experience",
-        title_ko: "사용자 표준물질 프리셋 로컬 저장 시스템 (localStorage)",
-        title_en: "Client-Side User Standards Preset Management",
-        desc_ko: "서버 없이 브라우저 메모리에 연구실별 앵커 및 QC 표준물질 이름과 참값을 원하는 이름으로 영구 저장하고 원클릭으로 다시 불러올 수 있습니다.",
-        desc_en: "Enables zero-server local persistence for lab-customized standard reference values, allowing researchers to save, load, and manage named calibration sets.",
+        badge: "Zenodo DOI & Legal Protection",
+        title_ko: "공식 영구 DOI 발급 및 GPL-3.0 라이선스 적용, 로컬 프리셋 시스템",
+        title_en: "CERN Zenodo DOI Issued, GPL-3.0 License, and Browser Presets",
+        desc_ko: "CERN/Zenodo를 통해 영구 DOI(10.5281/zenodo.23239186)를 공식 발급받아 학술적 우선권을 선점하였으며, GPL-3.0 법적 보호 및 브라우저 프리셋 저장소를 완비했습니다.",
+        desc_en: "Formally secured academic priority via permanent Zenodo DOI (10.5281/zenodo.23239186), added GNU GPL v3.0 protection, and local standard persistence.",
         changes_ko: [
-          "<strong>내 표준물질 프리셋 저장 및 불러오기</strong>: 상단 01 섹션에 정제된 프리셋 바 신설, 연구실별 표준물질 세트를 브라우저에 보존.",
-          "<strong>완전 무서버(Zero-Server) 보안 유지</strong>: 외부 DB 전송 없이 사용자의 로컬 브라우저 내부에서만 안전하게 관리.",
-          "<strong>기본 공인 표준물질 원클릭 복원</strong>: 언제든지 초기화하여 기본값으로 전환 가능.",
-          "<strong>피드백 직행 링크 탑재</strong>: 연구자 및 분석 실무진의 피드백을 원클릭으로 접수할 수 있는 GitHub Issue 템플릿 직행 버튼 연결."
+          "<strong>CERN Zenodo 공식 영구 DOI 탑재</strong>: <code>10.5281/zenodo.23239186</code> 발급 및 플랫폼 내 원클릭 인용 블록 탑재.",
+          "<strong>GNU GPL-3.0 라이선스 법적 보호</strong>: 코드 사유화 방지 및 오픈 사이언스 원작자 권리 공식 확보.",
+          "<strong>내 표준물질 프리셋 로컬 저장 (localStorage)</strong>: 연구실별 앵커/QC 표준물질 이름과 참값을 브라우저에 안전하게 영구 저장.",
+          "<strong>연구자 피드백 직행 링크 탑재</strong>: 실무진 의견 수렴을 위한 GitHub Issue 템플릿 직행 버튼 연결."
         ],
         changes_en: [
-          "<strong>Named Standards Presets</strong>: Save and recall customized reference/QC true value configurations without repetitive manual input.",
-          "<strong>Zero-Server Local Persistence</strong>: Stored 100% inside client browser localStorage without cloud transmission.",
-          "<strong>Instant Default Restoration</strong>: Return to default international reference presets anytime.",
-          "<strong>Direct Feedback Link</strong>: Integrated one-click GitHub Issue template navigation for rapid community feedback."
+          "<strong>Permanent Zenodo DOI Integrated</strong>: Registered <code>10.5281/zenodo.23239186</code> for peer-review citations.",
+          "<strong>GNU GPL-3.0 Legal Protection</strong>: Preserves open-source integrity and attribution rights.",
+          "<strong>Named Local Standards Presets</strong>: Persistent client-side standard reference sets without server interactions.",
+          "<strong>Direct Feedback Navigation</strong>: Instant issue reporting template for lab practitioners."
         ]
       },
       {
@@ -900,7 +912,7 @@
           <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-stone-100 pb-1">
             <div class="flex items-center space-x-2">
               <span class="font-mono font-bold text-stone-900 text-sm">${rel.version}</span>
-              <span class="px-1.5 py-0.2 border border-stone-300 text-[10px] font-mono font-semibold text-stone-700">${rel.badge}</span>
+              <span class="px-1.5 py-0.5 bg-stone-100 border border-stone-300 text-[10px] font-mono font-bold text-stone-700">${rel.badge}</span>
             </div>
             <span class="text-[11px] font-mono text-stone-400">${rel.date}</span>
           </div>
@@ -1189,7 +1201,7 @@
       Object.keys(presets).forEach(name => {
         const opt = document.createElement('option');
         opt.value = name;
-        opt.innerText = `• ${name}`;
+        opt.innerText = `📌 ${name}`;
         select.appendChild(opt);
       });
     }
@@ -1211,11 +1223,13 @@
       nameInput.value = '';
       renderPresetDropdown();
       document.getElementById('user-presets-select').value = name;
+      alert(isEn ? `Preset '${name}' saved to browser.` : `프리셋 '${name}'이 브라우저에 안전하게 저장되었습니다.`);
     });
 
     document.getElementById('btn-load-preset').addEventListener('click', () => {
       const select = document.getElementById('user-presets-select');
       const name = select.value;
+      const isEn = currentLang === 'en';
 
       if (!name) {
         userCustomStandardsByMode[currentMode] = null;
@@ -1239,13 +1253,16 @@
       const isEn = currentLang === 'en';
 
       if (!name) {
+        alert(isEn ? "Please select a custom preset to delete." : "삭제할 커스텀 프리셋을 선택해 주세요.");
         return;
       }
 
-      const presets = getStoredPresets();
-      delete presets[name];
-      localStorage.setItem(getStoredPresetsKey(), JSON.stringify(presets));
-      renderPresetDropdown();
+      if (confirm(isEn ? `Delete preset '${name}'?` : `정말 '${name}' 프리셋을 삭제하시겠습니까?`)) {
+        const presets = getStoredPresets();
+        delete presets[name];
+        localStorage.setItem(getStoredPresetsKey(), JSON.stringify(presets));
+        renderPresetDropdown();
+      }
     });
 
     function updateLayoutForMode(forcePresetDefault = false) {
@@ -1281,7 +1298,7 @@
         }
 
         const div = document.createElement('div');
-        div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-xs';
+        div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-sm';
         div.innerHTML = `
           <div class="flex items-center justify-between border-b border-stone-200 pb-1.5">
             <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">${isEn ? 'Anchor Standard' : '앵커 표준물질'} 0${idx+1}</span>
@@ -1319,13 +1336,13 @@
       }
 
       const qcDiv = document.createElement('div');
-      qcDiv.className = 'bg-[#fcfbf9] p-4 border border-[#c7c5bc] flex flex-col space-y-3 shadow-xs';
+      qcDiv.className = 'bg-[#fcfdfc] p-4 border border-emerald-300 flex flex-col space-y-3 shadow-sm';
       qcDiv.innerHTML = `
-        <div class="flex items-center justify-between border-b border-stone-200 pb-1.5">
-          <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span> ${isEn ? 'QC Check Standard' : '품질관리(QC) 검증 표준'}
+        <div class="flex items-center justify-between border-b border-emerald-200 pb-1.5">
+          <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> ${isEn ? 'QC Check Standard' : '품질관리(QC) 검증 표준'}
           </span>
-          <input type="text" id="qc-std-name" value="${qcName}" class="w-28 text-xs font-bold text-stone-900 border-b border-stone-400 focus:border-stone-900 outline-none text-right font-mono bg-transparent">
+          <input type="text" id="qc-std-name" value="${qcName}" class="w-28 text-xs font-bold text-emerald-950 border-b border-emerald-400 focus:border-emerald-800 outline-none text-right font-mono bg-transparent">
         </div>
         <div class="flex items-center gap-4">
           <div class="flex-1 space-y-1">
@@ -1333,7 +1350,7 @@
               <span>${p.elements[0].label} ${isEn ? 'Accepted' : '공인값'}</span>
               <span class="text-stone-400 font-mono text-[10px]">${p.elements[0].unit}</span>
             </div>
-            <input type="number" step="0.001" id="qc-std-v1" value="${qcV1}" class="w-full bg-white border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
+            <input type="number" step="0.001" id="qc-std-v1" value="${qcV1}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
           </div>
           ${isDual ? `
           <div class="flex-1 space-y-1">
@@ -1341,7 +1358,7 @@
               <span>${p.elements[1].label} ${isEn ? 'Accepted' : '공인값'}</span>
               <span class="text-stone-400 font-mono text-[10px]">${oUnit}</span>
             </div>
-            <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
+            <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
           </div>
           ` : ''}
         </div>
@@ -1385,17 +1402,17 @@
 
       const pContainer = document.getElementById('param-cards-container');
       const cardHtml = (elem, idx, unitLabel) => `
-        <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-xs">
+        <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
           <div class="flex justify-between items-baseline">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${elem.label} ${isEn ? 'Model Parameters' : '회귀 모델 파라미터'}</span>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${elem.label} ${isEn ? 'Geostat Model' : '지화학 모델 통계'}</span>
             <span class="text-[10px] font-mono text-stone-400">${unitLabel}</span>
           </div>
           <div class="space-y-1.5 text-xs font-data">
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope (a)' : '기울기 (a)'}</span> <strong id="p${idx}-slope" class="text-stone-900 font-semibold">-</strong></div>
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Intercept (b)' : '절편 (b)'}</span> <strong id="p${idx}-intercept" class="text-stone-900 font-semibold">-</strong></div>
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope SE (1σ)' : '기울기 표준오차'}</span> <span id="p${idx}-se" class="text-stone-700 font-medium">-</span></div>
-            <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p${idx}-mswd" class="text-stone-900 font-bold">-</strong></div>
-            <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">${isEn ? 'Weighted R²' : '가중 결정계수 R²'}</span> <strong id="p${idx}-r2" class="text-stone-900 font-bold">-</strong></div>
+            <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p${idx}-mswd" class="text-cyan-900 font-bold">-</strong></div>
+            <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">${isEn ? 'Weighted R²' : '가중 결정계수 R²'}</span> <strong id="p${idx}-r2" class="text-emerald-800 font-bold">-</strong></div>
           </div>
         </div>
       `;
@@ -1422,9 +1439,9 @@
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-[#fcfbf9] font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
             <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-[#fcfbf9] font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${oUnit})</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${oUnit})</th>
             <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
@@ -1433,7 +1450,7 @@
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-[#fcfbf9] font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
             <th class="px-4 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
@@ -1445,10 +1462,10 @@
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
             <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-[#fcfbf9] font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">Rep. 1σ SD</th>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-[#fcfbf9] font-bold text-stone-900">Mean ${p.elements[1].label} (${oUnit})</th>
-            <th class="px-3.5 py-2.5 text-stone-600">Rep. 1σ SD</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-700 font-medium">Rep. 1σ SD</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[1].label} (${oUnit})</th>
+            <th class="px-3.5 py-2.5 text-stone-700 font-medium">Rep. 1σ SD</th>
           </tr>
         `;
       } else {
@@ -1456,8 +1473,8 @@
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
             <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-[#fcfbf9] font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-4 py-2.5 text-stone-700 font-medium">Rep. 1σ SD</th>
           </tr>
         `;
       }
@@ -1526,11 +1543,11 @@
       const btnKo = document.getElementById('lang-ko');
       const btnEn = document.getElementById('lang-en');
       if (lang === 'ko') {
-        btnKo.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
-        btnEn.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+        btnKo.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
       } else {
-        btnEn.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
-        btnKo.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
+        btnKo.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
       }
 
       const dict = TRANSLATIONS[lang];
@@ -1945,7 +1962,7 @@
       contextMenu.classList.add('hidden');
     });
 
-    document.getElementById('ctx-clear-cells').addEventListener('click', () => {
+    document.getElementById('ctx-clear-values').addEventListener('click', () => {
       if (!selectedCellRange) return;
       const { minR, maxR, minC, maxC } = selectedCellRange;
       for (let r = minR; r <= maxR; r++) {
@@ -1968,6 +1985,9 @@
 
     document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
 
+    // -------------------------------------------------------------
+    // WLS & MSWD 통계 연산 엔진
+    // -------------------------------------------------------------
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
       if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0, mswd: 0, chi2: 0 };
@@ -2278,6 +2298,9 @@
         resBody.appendChild(tr);
       });
 
+      // -------------------------------------------------------------
+      // 연속 인접 시료 그룹화 (Adjacent Chunk Grouping - Samples Only)
+      // -------------------------------------------------------------
       groupedSummaryData = [];
       const groupedBody = document.getElementById('grouped-body');
       groupedBody.innerHTML = '';
@@ -2340,16 +2363,16 @@
             tr.innerHTML = `
               <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
               <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-[#fcfbf9]">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
               <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
-              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-[#fcfbf9]">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
               <td class="px-3.5 py-2 text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
             `;
           } else {
             tr.innerHTML = `
               <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
               <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-[#fcfbf9]">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
               <td class="px-4 py-2 text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
             `;
           }
@@ -2368,18 +2391,18 @@
 
         let qcHtml = `
           <div class="flex items-center justify-between border-b border-stone-200 pb-2">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span> ${isEn ? 'Quality Control (QC) Independent Validation Report' : '품질관리(QC) 독립 검증 리포트'}
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span> ${isEn ? 'Quality Control (QC) Independent Validation Report' : '품질관리(QC) 독립 검증 리포트'}
             </span>
             <span class="text-[11px] font-mono text-stone-500">${isEn ? 'Evaluated on' : '평가 대상:'} ${qcResults.cals1.length} ${isEn ? 'runs of' : '회 반복측정'} [${qcStd.name}]</span>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-1">
             <div class="space-y-1">
-              <div class="text-stone-600 font-sans font-medium text-[11px]">${p.elements[0].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
+              <div class="text-stone-600 font-sans font-medium">${p.elements[0].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
               <div class="flex justify-between bg-white p-2 border border-stone-200">
-                <span>${isEn ? 'Mean' : '평균'}: <strong>${mean1.toFixed(3)} ${p.elements[0].unit}</strong></span>
-                <span>${isEn ? 'Bias' : '편차'}: <strong>${bias1 >= 0 ? '+' : ''}${bias1.toFixed(3)} ‰</strong></span>
-                <span>${isEn ? 'Rep. (1σ)' : '정밀도 (1σ)'}: <strong>±${sdQc1.toFixed(3)} ‰</strong></span>
+                <span>${isEn ? 'Mean Calibrated' : '평균 보정값'}: <strong>${mean1.toFixed(3)} ${p.elements[0].unit}</strong></span>
+                <span>${isEn ? 'Accuracy Bias' : '정확도 편차'}: <strong class="${Math.abs(bias1) <= 0.05 ? 'text-emerald-700' : 'text-amber-700'}">${bias1 >= 0 ? '+' : ''}${bias1.toFixed(3)} ‰</strong></span>
+                <span>${isEn ? 'Reproducibility' : '반복 정밀도'} (1σ): <strong>±${sdQc1.toFixed(3)} ‰</strong></span>
               </div>
             </div>
         `;
@@ -2393,11 +2416,11 @@
 
           qcHtml += `
             <div class="space-y-1">
-              <div class="text-stone-600 font-sans font-medium text-[11px]">${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
+              <div class="text-stone-600 font-sans font-medium">${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
               <div class="flex justify-between bg-white p-2 border border-stone-200">
-                <span>${isEn ? 'Mean' : '평균'}: <strong>${mean2.toFixed(3)} ${oUnit}</strong></span>
-                <span>${isEn ? 'Bias' : '편차'}: <strong>${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
-                <span>${isEn ? 'Rep. (1σ)' : '정밀도 (1σ)'}: <strong>±${sdQc2.toFixed(3)} ‰</strong></span>
+                <span>${isEn ? 'Mean Calibrated' : '평균 보정값'}: <strong>${mean2.toFixed(3)} ${oUnit}</strong></span>
+                <span>${isEn ? 'Accuracy Bias' : '정확도 편차'}: <strong class="${Math.abs(bias2) <= 0.1 ? 'text-emerald-700' : 'text-amber-700'}">${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
+                <span>${isEn ? 'Reproducibility' : '반복 정밀도'} (1σ): <strong>±${sdQc2.toFixed(3)} ‰</strong></span>
               </div>
             </div>
           `;
@@ -2405,9 +2428,9 @@
 
         qcHtml += `</div>`;
         if (driftMode === 'linear' && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Linear drift model (${monitorAnchor.name}) applied` : `선형 표류 모델(${monitorAnchor.name} 기준) 적용됨`}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} = ${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Linear drift model (${monitorAnchor.name}) applied` : `선형 드리프트 모델(${monitorAnchor.name} 기준) 적용됨`}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} =${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
         } else if (driftMode === 'piecewise') {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Anchor bracketing model (${monitorAnchor.name}) applied across` : `앵커 간 선형 브래케팅 보정(${monitorAnchor.name} 기준) 적용됨:`} ${monitorRuns1.length} ${isEn ? 'anchor points' : '회 기준'}</div>`;
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Anchor-to-Anchor bracketing drift model (${monitorAnchor.name}) applied across` : `앵커 간 선형 브래케팅 보정(${monitorAnchor.name} 기준) 적용됨:`} ${monitorRuns1.length} ${isEn ? 'anchor points' : '회 기준'}</div>`;
         }
 
         qcBanner.innerHTML = qcHtml;
@@ -2444,7 +2467,7 @@
         mode: 'lines',
         type: 'scatter',
         name: `WLS: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)} (MSWD = ${reg.mswd.toFixed(2)})`,
-        line: { dash: 'solid', width: 1.5, color: '#4b5563' }
+        line: { dash: 'solid', width: 1.5, color: '#6b7280' }
       };
 
       const layout = {
@@ -2475,7 +2498,7 @@
       const isEn = currentLang === 'en';
 
       if (!seqArr || seqArr.length === 0) {
-        container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? `No repeat anchor runs detected for ${isoLabel} drift (${anchorName}).` : `${isoLabel} 표류 진단을 위한 [${anchorName}]의 반복 측정값이 없습니다.`}</span>`;
+        container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? `No repeat anchor runs detected for ${isoLabel} drift (${anchorName}).` : `${isoLabel} 드리프트 진단을 위한 [${anchorName}]의 반복 측정값이 없습니다.`}</span>`;
         return;
       }
 
@@ -2487,8 +2510,8 @@
         mode: 'markers+lines',
         type: 'scatter',
         name: `${anchorName} ${isEn ? 'Raw Runs' : '원시 측정값'}`,
-        marker: { size: 6.5, color: '#1c1917' },
-        line: { dash: 'dot', color: '#a8a29e', width: 1.2 }
+        marker: { size: 7, color: '#0369a1' },
+        line: { dash: 'dot', color: '#93c5fd', width: 1.2 }
       });
 
       if (mode === 'linear') {
@@ -2500,8 +2523,8 @@
           y: lineY,
           mode: 'lines',
           type: 'scatter',
-          name: `${isEn ? 'Linear Drift Trend' : '선형 표류 모델'} (${(slopeVal).toExponential(2)} ‰/run)`,
-          line: { color: '#44403c', width: 1.7 }
+          name: `${isEn ? 'Linear Drift Trend' : '선형 드리프트 모델'} (${(slopeVal).toExponential(2)} ‰/run)`,
+          line: { color: '#b91c1c', width: 2 }
         });
       } else if (mode === 'piecewise' && anchorRuns && anchorRuns.length >= 2) {
         const baseVal = valArr[0];
@@ -2513,7 +2536,7 @@
           mode: 'lines',
           type: 'scatter',
           name: isEn ? 'Bracketing Spline' : '앵커 간 선형 보간선',
-          line: { color: '#44403c', width: 1.7 }
+          line: { color: '#047857', width: 2 }
         });
       }
 
@@ -2623,6 +2646,7 @@
       syncPasteTarget();
     });
 
+    // Native Multi-Sheet Excel (.XLSX) Export via SheetJS
     document.getElementById('btn-export').addEventListener('click', () => {
       if (!sequenceExportData || sequenceExportData.length === 0) {
         alert(currentLang === 'en' ? "Please run calibration first before exporting." : "먼저 상단에서 검량을 실행한 후 내보내기를 진행해 주세요.");
