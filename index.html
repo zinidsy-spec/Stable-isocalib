@@ -113,7 +113,7 @@
         <nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
           <span>·</span>
-          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.1)</button>
+          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.2)</button>
           <span>·</span>
           <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">통계 방법론 & 원리</a>
           <span>·</span>
@@ -137,26 +137,28 @@
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
           <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.1.0</span>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.2.0</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light" data-i18n="hero_desc">
-          원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.
+          원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증, 연속 반복 시료 평균 요약 및 불확도 전파를 수행합니다.
         </p>
       </div>
 
       <!-- Isotope Preset Selector -->
-      <div class="space-y-1.5 self-start md:self-end min-w-[280px]">
+      <div class="space-y-1.5 self-start md:self-end min-w-[300px]">
         <label for="isotope-preset" class="text-xs uppercase tracking-wider text-stone-700 font-mono font-bold block" data-i18n="system_label">
           Isotope System (분석 체계)
         </label>
         <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm cursor-pointer">
-          <option value="CO">1. Carbon & Oxygen (δ¹³C, δ¹⁸O)</option>
-          <option value="NO">2. Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O)</option>
-          <option value="HO">3. Hydrogen & Oxygen (δD, δ¹⁸O)</option>
-          <option value="S">4. Sulfur Isotope (δ³⁴S)</option>
+          <option value="CO">1. Carbon & Oxygen (δ¹³C, δ¹⁸O - Dual)</option>
+          <option value="NO">2. Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O - Dual)</option>
+          <option value="HO">3. Hydrogen & Oxygen (δD, δ¹⁸O - Dual)</option>
+          <option value="WATER_H">4. Water Hydrogen (δD only - Single)</option>
+          <option value="WATER_O">5. Water Oxygen (δ¹⁸O only - Single)</option>
+          <option value="S">6. Sulfur Isotope (δ³⁴S - Single)</option>
         </select>
       </div>
     </div>
@@ -204,10 +206,10 @@
       <div class="bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600 space-y-1">
         <div class="flex items-center space-x-1.5 font-bold text-stone-800">
           <span>💡</span>
-          <span data-i18n="drift_guide_title">실험실 환경별 드리프트 및 산소 스케일 가이드</span>
+          <span data-i18n="drift_guide_title">실험실 환경별 분석 가이드</span>
         </div>
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          탄산염 연구에서 산소 동위원소($\delta^{18}\text{O}$)를 <strong>VSMOW</strong>로 보고해야 할 경우 상단 스케일을 전환하면 IUPAC/Coplen 공식에 따라 표준물질 참값이 자동 환산됩니다. 시퀀스 드리프트 기준 물질(Monitor)은 균질한 미세 분말(<strong>IAEA-603</strong> 권장)을 선택하세요.
+          물 분석 시 수소와 산소를 개별 분석 라인으로 측정하시는 경우 <strong>'Water Hydrogen'</strong> 또는 <strong>'Water Oxygen'</strong> 단일 모드를 선택하시면 엑셀에서 3열(ID, Raw, SD)만 바로 복사하여 정산하실 수 있습니다.
         </p>
       </div>
 
@@ -328,19 +330,44 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
         <button id="btn-export" class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b-2 border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition cursor-pointer" data-i18n="btn_export_csv">
-          Export as .CSV
+          Export Sequence (.CSV)
         </button>
       </div>
 
       <div id="qc-summary-banner" class="hidden bg-stone-50 border border-stone-300 p-4 rounded-none space-y-2"></div>
 
-      <div class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
+      <!-- View Switcher Tabs (Run-by-Run Sequence vs Adjacent Grouped Summary) -->
+      <div class="flex items-center space-x-1 border-b border-stone-300 pt-2 font-mono text-xs">
+        <button id="tab-btn-sequence" class="px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer" data-i18n="tab_sequence">
+          개별 런 시퀀스 (Run-by-Run)
+        </button>
+        <button id="tab-btn-grouped" class="px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer" data-i18n="tab_grouped">
+          시료별 평균 보고서 (Grouped Sample Summary)
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Sequence Raw Calibrated Runs -->
+      <div id="tab-content-sequence" class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
         <table class="w-full text-left text-xs font-data text-stone-900">
           <thead id="result-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
           <tbody id="result-body" class="divide-y divide-[#e5e3dc]">
             <tr>
               <td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400" data-i18n="result_empty">
                 Execute calibration above to view reduced isotopic ratios and propagated uncertainties.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab Content 2: Adjacent Grouped Sample Summary -->
+      <div id="tab-content-grouped" class="hidden border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
+        <table class="w-full text-left text-xs font-data text-stone-900">
+          <thead id="grouped-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
+          <tbody id="grouped-body" class="divide-y divide-[#e5e3dc]">
+            <tr>
+              <td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400" data-i18n="grouped_empty">
+                No grouped sample replicates calculated yet.
               </td>
             </tr>
           </tbody>
@@ -423,16 +450,6 @@
 
       </div>
 
-      <!-- 산소 스케일 및 일주기 변동 학술 주석 박스 -->
-      <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 text-xs text-stone-700 shadow-sm">
-        <div class="flex items-center space-x-2 border-b border-stone-100 pb-2">
-          <span class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="scale_note_title">IUPAC Oxygen Isotope Scale Conversion (VPDB ↔ VSMOW 환산 공식)</span>
-        </div>
-        <p class="leading-relaxed font-light" data-i18n="scale_note_desc">
-          탄산염의 산소 동위원소는 기본적으로 VPDB 스케일로 정산되나, 물(Water)과의 동위원소 평형 계산 또는 규산염 비교 시 VSMOW 스케일로 환산됩니다. 본 플랫폼은 IUPAC 공인 Coplen (1983) 공식($\delta^{18}\text{O}_{\text{VSMOW}} = 1.03092 \times \delta^{18}\text{O}_{\text{VPDB}} + 30.92$)을 적용하여 표준물질 참값과 축 라벨을 정밀하게 상호 변환합니다.
-        </p>
-      </div>
-
       <!-- 세부 수학 유도식 (Accordion) -->
       <details class="group bg-white border border-[#d1cfc7] shadow-sm transition-all">
         <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100 transition">
@@ -442,7 +459,6 @@
           <span class="text-xs font-mono text-stone-400 group-open:rotate-180 transition-transform">▼</span>
         </summary>
         <div class="p-6 border-t border-[#d1cfc7] space-y-6 text-xs text-stone-700 font-light leading-relaxed">
-          
           <div class="space-y-2">
             <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_a_title">A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)</h5>
             <p data-i18n="acc_a_desc">
@@ -473,17 +489,8 @@
               $$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x_{\text{raw}}} \sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a} \text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b} \text{SE}_b\right)^2 } = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$
             </div>
           </div>
-
         </div>
       </details>
-
-      <!-- References -->
-      <div class="bg-white border border-[#d1cfc7] p-4 text-[11px] text-stone-500 font-mono space-y-1">
-        <span class="text-stone-700 font-bold uppercase tracking-wider block text-[10px]" data-i18n="ref_title">Authoritative References & Methodological Basis:</span>
-        <div>[1] <strong>Coplen, T. B. (1983)</strong>: <em>Comparison of VPDB and VSMOW isotope scales</em>. Nature, 302, 236–238.</div>
-        <div>[2] <strong>JCGM 100:2008 (GUM)</strong>: <em>Evaluation of measurement data — Guide to the expression of uncertainty in measurement</em>. Joint Committee for Guides in Metrology.</div>
-        <div>[3] <strong>Ludwig, K. R. (2003)</strong>: <em>User's Manual for Isoplot 3.00: A Geochronological Toolkit for Microsoft Excel</em>. Berkeley Geochronology Center.</div>
-      </div>
 
       <!-- Zero-Server Privacy Statement -->
       <div class="bg-stone-100/60 border border-stone-200 p-6 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
@@ -493,7 +500,7 @@
             <span class="text-xs font-mono font-bold text-stone-900 uppercase tracking-wider" data-i18n="privacy_title">Zero-Server Client Computation (완전 무서버 보안)</span>
           </div>
           <p class="text-xs text-stone-600 font-light" data-i18n="privacy_desc">
-            연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.
+            연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다.
           </p>
         </div>
         <div class="text-right font-mono text-[11px] text-stone-500 shrink-0">
@@ -526,7 +533,7 @@
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.1.0 (Release 2026)</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.2.0 (Release 2026)</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -534,12 +541,10 @@
       <div class="space-y-4 text-xs text-stone-700 font-light leading-relaxed">
         <p id="about-p1"></p>
         <p id="about-p2"></p>
-
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <strong class="font-mono uppercase tracking-wider text-[11px] text-stone-900 block" id="about-protocols-title">Core Analytical Protocols:</strong>
           <ul class="list-disc list-inside space-y-1 text-[11px] font-mono text-stone-600" id="about-protocols-list"></ul>
         </div>
-
         <p id="about-p3"></p>
       </div>
 
@@ -600,19 +605,16 @@
   </footer>
 
   <script>
-    // -------------------------------------------------------------
-    // 다국어 i18n 번역 딕셔너리 (KO / EN)
-    // -------------------------------------------------------------
     const TRANSLATIONS = {
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_about: "IsoCalib 소개",
-        nav_changelog: "업데이트 로그 (v1.1)",
+        nav_changelog: "업데이트 로그 (v1.2)",
         nav_methodology: "통계 방법론 & 원리",
         nav_citation: "인용 정보",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
         hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
-        hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증 및 국제 표준 불확도 전파를 일괄 수행합니다.",
+        hero_desc: "원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증, 연속 반복 시료 평균 요약 및 불확도 전파를 수행합니다.",
         system_label: "분석 동위원소 체계 (Isotope System)",
         sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
         o_scale_label: "δ¹⁸O 스케일:",
@@ -621,8 +623,8 @@
         drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
         drift_opt_linear: "Linear (단일 선형 표류)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 간 선형 보간)",
-        drift_guide_title: "실험실 환경별 드리프트 및 산소 스케일 가이드",
-        drift_guide_desc: "탄산염 연구에서 산소 동위원소($\\delta^{18}\\text{O}$)를 <strong>VSMOW</strong>로 보고해야 할 경우 상단 스케일을 전환하면 IUPAC/Coplen 공식에 따라 표준물질 참값이 자동 환산됩니다. 시퀀스 드리프트 기준 물질(Monitor)은 균질한 미세 분말(<strong>IAEA-603</strong> 권장)을 선택하세요.",
+        drift_guide_title: "실험실 환경별 분석 가이드",
+        drift_guide_desc: "물 분석 시 수소와 산소를 개별 분석 라인으로 측정하시는 경우 <strong>'Water Hydrogen'</strong> 또는 <strong>'Water Oxygen'</strong> 단일 모드를 선택하시면 엑셀에서 3열(ID, Raw, SD)만 바로 복사하여 정산하실 수 있습니다.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
         sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
@@ -633,8 +635,11 @@
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
-        btn_export_csv: "Export as .CSV",
+        btn_export_csv: "Export Sequence (.CSV)",
+        tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
+        tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
         result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
+        grouped_empty: "상단에서 검량을 실행하면 연속으로 반복 측정된 미지시료의 평균(Mean ± 1σ) 요약표가 여기에 생성됩니다.",
         sec4_tag: "Methodology & Standard Principles",
         sec4_heading: "통계적 회귀 원리 및 표준 분석 지침",
         sec4_subheading: "IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
@@ -650,8 +655,6 @@
         card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.",
         card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
         card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
-        scale_note_title: "IUPAC Oxygen Isotope Scale Conversion (VPDB ↔ VSMOW 환산 공식)",
-        scale_note_desc: "탄산염의 산소 동위원소는 기본적으로 VPDB 스케일로 정산되나, 물(Water)과의 동위원소 평형 계산 또는 규산염 비교 시 VSMOW 스케일로 환산됩니다. 본 플랫폼은 IUPAC 공인 Coplen (1983) 공식($\\delta^{18}\\text{O}_{\\text{VSMOW}} = 1.03092 \\times \\delta^{18}\\text{O}_{\\text{VPDB}} + 30.92$)을 적용하여 표준물질 참값과 축 라벨을 정밀하게 상호 변환합니다.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
         acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
         acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
@@ -659,9 +662,8 @@
         acc_b_desc: "카이제곱($\\chi^2$) 통계량을 자유도($\\nu = N - 2$)로 나눈 분산비입니다:",
         acc_c_title: "C. 1차 편미분 가우스 오차 전파 유도식 (GUM 5.1.2)",
         acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
-        ref_title: "공신력 있는 학술 문헌 및 방법론 근거 (Authoritative References):",
         privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
-        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다. 어떠한 외부 서버로도 전송되거나 기록되지 않습니다.",
+        privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다.",
         cite_title: "인용 정보 및 저장소 링크",
         cite_format: "Reference placeholder",
         cite_desc: "정식 학술 논문 및 DOI 발급 준비 중입니다. 연구 및 분석 방법(Analytical Methods) 섹션에 소프트웨어를 명시하실 경우 아래 저장소 주소를 인용하실 수 있습니다:",
@@ -670,20 +672,20 @@
         ctx_del_row: "선택 행 완전 삭제",
         ctx_clear_cells: "선택 셀 내용 지우기",
         ctx_insert_row: "아래에 빈 행 1줄 삽입",
-        about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다. 기존 실험실 엑셀 매크로 시트의 수식 오류 및 호환성 문제를 해결하기 위해 개발되었으며, 설치나 외부 서버 통신 없이 웹 브라우저 상에서 시퀀스 드리프트 보정, 가중 회귀 피팅, 오차 전파를 즉시 수행합니다.",
-        about_p2: "본 도구는 국제 표준 스케일(VPDB, VSMOW, Air, VCDT)을 기반으로 주요 동위원소 체계인 탄소·산소(δ¹³C, δ¹⁸O), 질소·산소(δ¹⁵N, δ¹⁸O), 수소·산소(δD, δ¹⁸O), 황(δ³⁴S) 분석을 완벽히 지원합니다.",
+        about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
+        about_p2: "탄소·산소, 질소·산소, 수소·산소 동시 분석뿐만 아니라 물 분석 전용 단일 수소(δD), 단일 산소(δ¹⁸O), 황(δ³⁴S) 체계를 모두 지원합니다.",
         about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
-        about_p3: "연구자의 미발표 데이터 보호를 위해 모든 연산은 <strong>사용자 브라우저 내부(JavaScript Engine)에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다. 한국어 및 영어를 실시간 지원하며, 논문 투고용 벡터 피겨(SVG)와 최종 정산표(CSV) 다운로드를 지원합니다."
+        about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다."
       },
       en: {
         tagline: "/ Open Geochemistry Tool",
         nav_about: "About IsoCalib",
-        nav_changelog: "Changelog (v1.1)",
+        nav_changelog: "Changelog (v1.2)",
         nav_methodology: "Methodology & Principles",
         nav_citation: "Citation",
         hero_badge: "Precision Data Reduction & QC Protocol",
         hero_title: "Stable Isotope Calibration",
-        hero_desc: "Performs sequence drift correction, weighted least squares (WLS) regression, blind QC verification, and rigorous uncertainty propagation in a single client-side pipeline.",
+        hero_desc: "Performs sequence drift correction, weighted regression fitting, blind QC verification, adjacent replicate sample averaging, and uncertainty propagation.",
         system_label: "Isotope System",
         sec1_title: "Reference & QC Standards",
         o_scale_label: "δ¹⁸O Scale:",
@@ -692,8 +694,8 @@
         drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
         drift_opt_linear: "Linear (Single linear slope over sequence)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (Piecewise linear interpolation)",
-        drift_guide_title: "Laboratory Environment & Oxygen Scale Guide",
-        drift_guide_desc: "When reporting carbonate oxygen isotopes ($\\delta^{18}\\text{O}$) relative to <strong>VSMOW</strong>, switching the scale above automatically recalculates reference values using the IUPAC/Coplen equation. Highly homogeneous fine-powder materials (<strong>IAEA-603</strong> recommended) serve as optimal drift monitors.",
+        drift_guide_title: "Laboratory Analytical Guidance",
+        drift_guide_desc: "For water isotopes measured separately across lines, selecting <strong>'Water Hydrogen'</strong> or <strong>'Water Oxygen'</strong> allows direct 3-column (ID, Raw, SD) copy-pasting.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
@@ -704,25 +706,26 @@
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report",
-        btn_export_csv: "Export as .CSV",
+        btn_export_csv: "Export Sequence (.CSV)",
+        tab_sequence: "Run-by-Run Sequence",
+        tab_grouped: "Grouped Sample Summary",
         result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
+        grouped_empty: "Execute calibration above to generate grouped adjacent sample replicate summaries (Mean ± 1σ).",
         sec4_tag: "Methodology & Standard Principles",
         sec4_heading: "Statistical Principles & Analytical Guidelines",
-        sec4_subheading: "All calibrations in IsoCalib are computed strictly adhering to international metrological frameworks (JCGM 100:2008 GUM) and established geochronological standards (Ludwig Isoplot).",
+        sec4_subheading: "All calibrations adhere strictly to international metrological frameworks (JCGM 100:2008 GUM) and geochronological standards (Ludwig Isoplot).",
         card1_title: "1. Weighted Regression (WLS)",
-        card1_desc: "Rather than treating all runs equally, <strong>measurements with higher precision (smaller 1σ SD) are assigned greater statistical weight ($w_i = 1/\\sigma_i^2$)</strong>.",
+        card1_desc: "Measurements with higher precision (smaller 1σ SD) are assigned greater statistical weight ($w_i = 1/\\sigma_i^2$).",
         card1_quote: "A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.",
         card1_basis: "Basis: York (1968) / Ludwig (2003)",
         card2_title: "2. Goodness-of-Fit (MSWD)",
-        card2_desc: "Evaluates the <strong>reduced chi-squared ($\\chi^2/\\nu$)</strong> to objectively determine whether observed residuals are statistically consistent with analytical precision.",
+        card2_desc: "Evaluates the reduced chi-squared ($\\chi^2/\\nu$) to objectively determine whether residuals reflect pure analytical precision.",
         card2_quote: "An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-analytical variance.",
         card2_basis: "Basis: McIntyre et al. (1966) / IsoplotR",
         card3_title: "3. Combined Uncertainty",
-        card3_desc: "Propagates not only the sample measurement repeatability, but also the <strong>covariance and standard errors of the regression parameters</strong>.",
+        card3_desc: "Propagates sample repeatability together with the standard errors of the regression parameters.",
         card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
         card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
-        scale_note_title: "IUPAC Oxygen Isotope Scale Conversion (VPDB ↔ VSMOW)",
-        scale_note_desc: "Carbonate oxygen isotopic ratios are conventionally referenced to VPDB, but equilibrium calculations with water or silicate comparisons require VSMOW. IsoCalib incorporates the authoritative Coplen (1983) equation ($\\delta^{18}\\text{O}_{\\text{VSMOW}} = 1.03092 \\times \\delta^{18}\\text{O}_{\\text{VPDB}} + 30.92$) for exact two-way axis and reference conversions.",
         acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
         acc_a_title: "A. Weighted Least Squares Normal Equations",
         acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
@@ -730,27 +733,48 @@
         acc_b_desc: "The ratio of the weighted sum of squared residuals to degrees of freedom ($\\nu = N - 2$):",
         acc_c_title: "C. First-Order Gaussian Error Propagation (GUM 5.1.2)",
         acc_c_desc: "Partial differential expansion for the linear calibration function $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$:",
-        ref_title: "Authoritative References & Methodological Basis:",
         privacy_title: "Zero-Server Client Computation (Total Privacy)",
-        privacy_desc: "To safeguard unpublished laboratory datasets, all regression routines and data manipulation are <strong>executed 100% locally within your browser's JavaScript engine</strong>. Zero data is transmitted or logged externally.",
+        privacy_desc: "All calculations execute 100% locally within your browser's JavaScript engine. Zero data is transmitted externally.",
         cite_title: "Citation & Repository Link",
         cite_format: "Reference placeholder",
-        cite_desc: "Formal journal publication and DOI assignment are currently in preparation. To cite this software in your Analytical Methods section, please refer to the repository URL below:",
+        cite_desc: "To cite this software in your Analytical Methods section, please refer to the repository URL below:",
         changelog_title: "/ Version Evolution & Changelog",
         changelog_subtitle: "Continuous methodological and UX advancements tailored to real isotope lab requirements.",
         ctx_del_row: "Delete Selected Rows",
         ctx_clear_cells: "Clear Selected Cells",
         ctx_insert_row: "Insert 1 Blank Row Below",
-        about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof. Developed to liberate researchers and laboratory technicians from brittle, error-prone spreadsheet templates, IsoCalib executes sequence drift correction, weighted regression fitting, and rigorous uncertainty propagation directly inside the web browser.",
-        about_p2: "It supports standard isotope systematics including Carbon & Oxygen (δ¹³C, δ¹⁸O), Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O), Hydrogen & Oxygen (δD, δ¹⁸O), and Sulfur (δ³⁴S) across common international reference scales (VPDB, VSMOW, Air, VCDT).",
+        about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
+        about_p2: "It supports dual isotope systems as well as dedicated single-isotope water channels (δD only, δ¹⁸O only) and sulfur (δ³⁴S).",
         about_protocols_title: "Core Analytical Protocols:",
-        about_p3: "All computations are executed 100% locally within the client-side JavaScript engine; <strong>no analytical data is ever transferred to or stored on external servers</strong>. IsoCalib is accessible in both Korean and English. Vector graphics (publication-quality SVG) and reduced datasets (.CSV) can be exported with a single click."
+        about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally."
       }
     };
 
     let currentLang = localStorage.getItem('isocalib_lang') || 'ko';
+    let currentTab = 'sequence'; // 'sequence' or 'grouped'
+    let groupedSummaryData = []; // Array of grouped replicates for CSV export
 
     const CHANGELOG_DATA = [
+      {
+        version: "v1.2.0",
+        date: "2026-10",
+        badge: "Workflow Upgrade",
+        title_ko: "단일 물 분석 모드(δD, δ¹⁸O 분리) 및 연속 시료 평균 요약표 탑재",
+        title_en: "Dedicated Single-Water Modes & Adjacent Replicate Sample Averaging",
+        desc_ko: "물 분석 라인의 수소/산소 개별 측정 워크플로우에 최적화된 단일 모드를 신설하고, 연속 측정된 동일 미지 시료(Triplicate 등)의 평균(Mean ± 1σ)을 산출하는 전용 요약표 및 CSV 내보내기를 지원합니다.",
+        desc_en: "Added dedicated single-element water presets (δD only, δ¹⁸O only) and adjacent replicate chunk grouping for immediate publication-ready sample statistics (Mean ± 1σ).",
+        changes_ko: [
+          "<strong>Water Hydrogen (δD) 및 Water Oxygen (δ¹⁸O) 단일 모드 신설</strong>: 물 시료를 원소별로 분리 분석하는 실험실을 위해 3열(ID, Raw, SD) 전용 프리셋 탑재.",
+          "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 표준물질은 제외하고, 연속으로 인접하여 분석된 동일 미지 시료(예: Sample-1_1, Sample-1_2, Sample-1_3)의 기본명을 추출하여 평균 및 표준편차(1σ) 요약표 자동 산출.",
+          "<strong>논문용 시료 평균 전용 CSV 추출 지원</strong>: 탭 전환 시 요약된 시료 통계 테이블만 즉시 CSV로 다운로드 가능.",
+          "<strong>산소 스케일 정밀 연동 유지</strong>: CO 모드 산소 VSMOW 변환 및 독립 드리프트 플롯(Fig 3 & 4) 완전 통합 유지."
+        ],
+        changes_en: [
+          "<strong>Dedicated Single-Water Presets</strong>: Introduced standalone 'Water Hydrogen (δD only)' and 'Water Oxygen (δ¹⁸O only)' modes for streamlined 3-column sequence reduction.",
+          "<strong>Adjacent Replicate Chunk Grouping</strong>: Automatically groups adjacent unknown sample replicates (e.g., Triplicates) to calculate final Mean ± 1σ while keeping reference standards isolated.",
+          "<strong>Publication-Ready Averaged CSV Export</strong>: Export summarized sample statistics directly to CSV via dynamic tab controls."
+        ]
+      },
       {
         version: "v1.1.0",
         date: "2026-09",
@@ -762,41 +786,11 @@
         changes_ko: [
           "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV 헤더가 실시간 연동.",
           "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능.",
-          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 선택된 기준 앵커의 런 위치 사이를 1:1 선형 보간하여 시퀀스 내 파동형 드리프트를 각 동위원소 채널별로 독립 보정.",
-          "<strong>체계별(System) 및 언어별(KO/EN) 입력값 영구 보존</strong>: 동위원소 체계 전환 및 다국어 토글 시에도 사용자가 수정한 앵커 및 QC 표준물질의 이름과 참값이 리셋되지 않도록 캐시 분리."
+          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능."
         ],
         changes_en: [
           "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and CSV exports via IUPAC Coplen (1983) equation.",
-          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes to capture decoupled instrumental behavior.",
-          "<strong>Customizable Drift Monitor</strong>: Select preferred reference material (default: fine-powder IAEA-603) as the anchor baseline.",
-          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, computed independently per isotope channel.",
-          "<strong>Cross-Mode & Linguistic State Persistence</strong>: Complete preservation of user-defined reference/QC values across isotope system switches and language toggles."
-        ]
-      },
-      {
-        version: "v1.0.0",
-        date: "2026-09",
-        badge: "Initial Release",
-        title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
-        title_en: "Initial Official Release of IsoCalib Platform",
-        desc_ko: "IsoplotR의 오픈 사이언스 웹 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
-        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's architecture, tailored for stable isotope geochemistry.",
-        changes_ko: [
-          "<strong>국제 표준 4대 동위원소 체계 지원</strong>: C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), S (δ³⁴S).",
-          "<strong>가중 선형 회귀 (WLS)</strong>: 기기 분석 1σ SD를 역제곱 가중치(1/σ²)로 반영하는 York-Ludwig 회귀 솔버 탑재.",
-          "<strong>MSWD(축약 카이제곱) 산출</strong>: 지화학 학술 저널 표준 회귀 적합도 지표 자동 계산.",
-          "<strong>독립 QC 블라인드 검증 리포트</strong>: 검량선에 미참여하는 미지의 품질관리 표준물질 편차(Accuracy Bias) 및 반복 정밀도(1σ) 자동 판정.",
-          "<strong>JCGM GUM 1차 편미분 오차 전파</strong>: 시료 측정 오차와 검량선 파라미터 불확도를 결합한 최종 합성 불확도 도출.",
-          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 로컬 브라우저 연산 및 논문 투고용 SVG / CSV 원클릭 저장."
-        ],
-        changes_en: [
-          "<strong>Core Isotope Systematics</strong>: Full support for C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), and S (δ³⁴S).",
-          "<strong>Weighted Least Squares (WLS)</strong>: Exact analytical regression weighting each datum by analytical variance (1/σ²).",
-          "<strong>MSWD Goodness-of-Fit</strong>: Automated geostatistical reduced chi-squared diagnostic evaluation.",
-          "<strong>Blind QC Validation Report</strong>: Quantitative tracking of accuracy bias and reproducibility against independent reference materials.",
-          "<strong>JCGM GUM-compliant Uncertainty Propagation</strong>: Combined first-order partial differential error budgets.",
-          "<strong>Zero-Server Privacy & Publication Exports</strong>: 100% local JavaScript execution with instant vector SVG and CSV export."
+          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes."
         ]
       }
     ];
@@ -809,7 +803,6 @@
       container.innerHTML = CHANGELOG_DATA.map((rel, idx) => `
         <div class="border-l-2 ${idx === 0 ? 'border-stone-900' : 'border-stone-300'} pl-4 space-y-2 relative">
           <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full ${idx === 0 ? 'bg-stone-900 ring-4 ring-stone-100' : 'bg-stone-400'}"></div>
-          
           <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-stone-100 pb-1">
             <div class="flex items-center space-x-2">
               <span class="font-mono font-bold text-stone-900 text-sm">${rel.version}</span>
@@ -817,12 +810,10 @@
             </div>
             <span class="text-[11px] font-mono text-stone-400">${rel.date}</span>
           </div>
-
           <div>
             <h4 class="font-serif-title text-base font-semibold text-stone-900">${isEn ? rel.title_en : rel.title_ko}</h4>
             <p class="text-stone-600 font-light text-[11px] leading-relaxed">${isEn ? rel.desc_en : rel.desc_ko}</p>
           </div>
-
           <ul class="list-disc list-inside space-y-1.5 text-[11px] text-stone-700 font-light leading-relaxed pt-1">
             ${(isEn ? rel.changes_en : rel.changes_ko).map(c => `<li>${c}</li>`).join('')}
           </ul>
@@ -830,9 +821,6 @@
       `).join('');
     }
 
-    // -------------------------------------------------------------
-    // Coplen (1983) IUPAC Conversion Formulas
-    // -------------------------------------------------------------
     function vpdbToVsmow(vpdb) {
       if (isNaN(vpdb)) return vpdb;
       return 1.03092 * vpdb + 30.92;
@@ -843,9 +831,12 @@
       return (vsmow - 30.92) / 1.03092;
     }
 
-    // -------------------------------------------------------------
-    // Isotope Presets & System Core
-    // -------------------------------------------------------------
+    // 기본 시료명 추출 정규식 (접미사 -1, _1, #1, -a, _02 등 제거)
+    function extractBaseId(rawId) {
+      if (!rawId) return '';
+      return rawId.trim().replace(/[-_.#\s]+(0?[1-9]|[a-zA-Z])$/, '').trim();
+    }
+
     const PRESETS = {
       CO: {
         name: "Carbon & Oxygen",
@@ -857,19 +848,21 @@
           { name: "NBS-18", v1: -5.012, v2: -23.200 },
           { name: "IAEA-603", v1: 2.460, v2: -2.370 }
         ],
-        defaultDriftAnchorIdx: 1, // IAEA-603 권장
+        defaultDriftAnchorIdx: 1,
         qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
         demo: [
           ["NBS-18_1", 21.744, 0.035, -0.801, 0.062],
           ["IAEA-603_1", 29.326, 0.028, 20.043, 0.055],
           ["KDO_QC1", 25.560, 0.030, 7.820, 0.058],
-          ["Sample-A", 26.815, 0.032, 11.799, 0.060],
+          ["Sample-A_1", 26.815, 0.032, 11.799, 0.060],
+          ["Sample-A_2", 26.820, 0.029, 11.810, 0.055],
+          ["Sample-A_3", 26.808, 0.031, 11.790, 0.058],
           ["NBS-18_2", 21.703, 0.031, -0.774, 0.059],
-          ["Sample-B", 26.413, 0.029, 11.031, 0.054],
+          ["Sample-B_1", 26.413, 0.029, 11.031, 0.054],
+          ["Sample-B_2", 26.425, 0.027, 11.045, 0.052],
+          ["Sample-B_3", 26.405, 0.030, 11.020, 0.056],
           ["KDO_QC2", 25.535, 0.028, 7.795, 0.050],
-          ["IAEA-603_2", 29.270, 0.025, 19.974, 0.048],
-          ["Sample-C", 27.110, 0.034, 12.450, 0.062],
-          ["NBS-18_3", 21.663, 0.040, -0.697, 0.071]
+          ["IAEA-603_2", 29.270, 0.025, 19.974, 0.048]
         ]
       },
       NO: {
@@ -888,13 +881,14 @@
           ["IAEA-NO-3_1", 5.120, 0.080, 26.110, 0.150],
           ["USGS34_1", -1.450, 0.090, -27.320, 0.180],
           ["USGS35_QC1", 6.130, 0.085, 58.200, 0.200],
-          ["Nitrate-01", 3.250, 0.090, 15.400, 0.170],
-          ["IAEA-NO-3_2", 5.090, 0.070, 26.050, 0.140],
-          ["USGS34_2", -1.490, 0.080, -27.410, 0.160]
+          ["Nitrate-01_1", 3.250, 0.090, 15.400, 0.170],
+          ["Nitrate-01_2", 3.270, 0.085, 15.420, 0.160],
+          ["Nitrate-01_3", 3.240, 0.080, 15.390, 0.150],
+          ["IAEA-NO-3_2", 5.090, 0.070, 26.050, 0.140]
         ]
       },
       HO: {
-        name: "Hydrogen & Oxygen",
+        name: "Hydrogen & Oxygen (Dual)",
         elements: [
           { key: "iso1", label: "δD", unit: "‰ VSMOW" },
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
@@ -909,9 +903,60 @@
           ["VSMOW2_1", 1.200, 0.500, 0.120, 0.050],
           ["SLAP2_1", -424.300, 0.800, -54.900, 0.080],
           ["GISP_QC1", -187.900, 0.600, -24.450, 0.060],
-          ["Water-Sample-1", -65.400, 0.550, -9.210, 0.060],
-          ["VSMOW2_2", 0.900, 0.450, 0.080, 0.040],
-          ["SLAP2_2", -425.100, 0.750, -55.020, 0.070]
+          ["Water-Sample-1_1", -65.400, 0.550, -9.210, 0.060],
+          ["Water-Sample-1_2", -65.350, 0.520, -9.200, 0.058],
+          ["Water-Sample-1_3", -65.450, 0.500, -9.230, 0.055],
+          ["VSMOW2_2", 0.900, 0.450, 0.080, 0.040]
+        ]
+      },
+      WATER_H: {
+        name: "Water Hydrogen (δD only)",
+        elements: [
+          { key: "iso1", label: "δD", unit: "‰ VSMOW" }
+        ],
+        stds: [
+          { name: "VSMOW2", v1: 0.000 },
+          { name: "SLAP2", v1: -427.500 }
+        ],
+        defaultDriftAnchorIdx: 0,
+        qcStd: { name: "GISP", v1: -189.500 },
+        demo: [
+          ["VSMOW2_1", 1.250, 0.500],
+          ["SLAP2_1", -424.100, 0.800],
+          ["GISP_QC1", -187.800, 0.600],
+          ["Well-Water-A_1", -72.400, 0.550],
+          ["Well-Water-A_2", -72.350, 0.520],
+          ["Well-Water-A_3", -72.480, 0.500],
+          ["VSMOW2_2", 0.950, 0.450],
+          ["Lake-Water-B_1", -54.100, 0.500],
+          ["Lake-Water-B_2", -54.050, 0.480],
+          ["Lake-Water-B_3", -54.200, 0.510],
+          ["SLAP2_2", -424.900, 0.750]
+        ]
+      },
+      WATER_O: {
+        name: "Water Oxygen (δ¹⁸O only)",
+        elements: [
+          { key: "iso1", label: "δ¹⁸O", unit: "‰ VSMOW" }
+        ],
+        stds: [
+          { name: "VSMOW2", v1: 0.000 },
+          { name: "SLAP2", v1: -55.500 }
+        ],
+        defaultDriftAnchorIdx: 0,
+        qcStd: { name: "GISP", v1: -24.760 },
+        demo: [
+          ["VSMOW2_1", 0.150, 0.050],
+          ["SLAP2_1", -54.850, 0.080],
+          ["GISP_QC1", -24.400, 0.060],
+          ["Well-Water-A_1", -9.850, 0.055],
+          ["Well-Water-A_2", -9.840, 0.052],
+          ["Well-Water-A_3", -9.860, 0.050],
+          ["VSMOW2_2", 0.080, 0.040],
+          ["Lake-Water-B_1", -7.150, 0.050],
+          ["Lake-Water-B_2", -7.140, 0.048],
+          ["Lake-Water-B_3", -7.170, 0.051],
+          ["SLAP2_2", -55.020, 0.070]
         ]
       },
       S: {
@@ -929,7 +974,9 @@
           ["IAEA-S-1_1", -0.150, 0.120],
           ["IAEA-S-2_1", 23.150, 0.150],
           ["NBS-127_QC1", 21.480, 0.130],
-          ["Pyrite-01", 12.450, 0.130],
+          ["Pyrite-01_1", 12.450, 0.130],
+          ["Pyrite-01_2", 12.470, 0.120],
+          ["Pyrite-01_3", 12.440, 0.110],
           ["IAEA-S-1_2", -0.180, 0.100],
           ["IAEA-S-2_2", 23.080, 0.140]
         ]
@@ -937,13 +984,15 @@
     };
 
     let currentMode = "CO";
-    let oxygenScale = "VPDB"; // CO 모드 전용 산소 스케일 ('VPDB' or 'VSMOW')
+    let oxygenScale = "VPDB";
     let gridData = [];
 
     let userCustomStandardsByMode = {
       CO: null,
       NO: null,
       HO: null,
+      WATER_H: null,
+      WATER_O: null,
       S: null
     };
 
@@ -1191,6 +1240,7 @@
         document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} Drift Diagnostics`;
       }
 
+      // Tab 1: Sequence Head
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -1215,6 +1265,30 @@
         `;
       }
 
+      // Tab 2: Grouped Summary Head
+      const gSummaryHead = document.getElementById('grouped-head');
+      if (isDual) {
+        gSummaryHead.innerHTML = `
+          <tr>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
+            <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">Rep. 1σ SD</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[1].label} (${oUnit})</th>
+            <th class="px-3.5 py-2.5 text-stone-600">Rep. 1σ SD</th>
+          </tr>
+        `;
+      } else {
+        gSummaryHead.innerHTML = `
+          <tr>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
+            <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
+          </tr>
+        `;
+      }
+
       const numCols = isDual ? 5 : 3;
       if (gridData.length === 0) {
         gridData = Array.from({ length: 30 }, () => Array(numCols).fill(''));
@@ -1223,7 +1297,35 @@
       resetOutputs();
     }
 
-    // 산소 스케일 드롭다운 변경 시 자동 상호 환산
+    // Tab Switcher Handling
+    function switchTab(target) {
+      currentTab = target;
+      const btnSeq = document.getElementById('tab-btn-sequence');
+      const btnGrp = document.getElementById('tab-btn-grouped');
+      const contentSeq = document.getElementById('tab-content-sequence');
+      const contentGrp = document.getElementById('tab-content-grouped');
+      const btnExport = document.getElementById('btn-export');
+      const isEn = currentLang === 'en';
+
+      if (target === 'sequence') {
+        btnSeq.className = 'px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer';
+        btnGrp.className = 'px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer';
+        contentSeq.classList.remove('hidden');
+        contentGrp.classList.add('hidden');
+        btnExport.innerText = isEn ? "Export Sequence (.CSV)" : "Export Sequence (.CSV)";
+      } else {
+        btnGrp.className = 'px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer';
+        btnSeq.className = 'px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer';
+        contentGrp.classList.remove('hidden');
+        contentSeq.classList.add('hidden');
+        btnExport.innerText = isEn ? "Export Summary (.CSV)" : "Export Summary (.CSV)";
+      }
+    }
+
+    document.getElementById('tab-btn-sequence').addEventListener('click', () => switchTab('sequence'));
+    document.getElementById('tab-btn-grouped').addEventListener('click', () => switchTab('grouped'));
+
+    // 산소 스케일 전환
     document.getElementById('oxygen-scale-select').addEventListener('change', (e) => {
       const newScale = e.target.value;
       if (newScale === oxygenScale || currentMode !== "CO") return;
@@ -1280,27 +1382,27 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
+          <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
+          <li>연속 인접 런 시료(Triplicate 등)에 대한 스마트 평균 및 표준편차 요약 산출</li>
           <li>IUPAC Coplen (1983) 공식 기반 산소 동위원소 스케일(VPDB ↔ VSMOW) 정밀 연동</li>
           <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
           <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
           <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
-          <li>검량선에 미참여하는 미지의 독립 QC 표준물질 편차(Bias) 및 정밀도 검증</li>
-          <li>국제측정학위원회(JCGM 100:2008 GUM) 표준 1차 편미분 합성 불확도 전파</li>
         `;
       } else {
         listEl.innerHTML = `
+          <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
+          <li>Adjacent replicate sample chunk grouping for automated Mean ± 1σ summaries</li>
           <li>IUPAC Coplen (1983) compliant Oxygen Isotope Scale Alignment (VPDB ↔ VSMOW)</li>
           <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
           <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
-          <li>Geostatistical Goodness-of-Fit Diagnostics via reduced chi-squared (MSWD)</li>
-          <li>Independent Blind Quality Control (QC) accuracy bias and reproducibility tracking</li>
-          <li>Combined First-Order Uncertainty Propagation adhering to JCGM 100:2008 (GUM) guidelines</li>
         `;
       }
 
       renderChangelog();
       saveCurrentModeStandards();
       updateLayoutForMode(false);
+      switchTab(currentTab);
 
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise();
@@ -1349,7 +1451,9 @@
       document.getElementById('plot-drift-1').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
       document.getElementById('plot-drift-2').innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
       document.getElementById('result-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
+      document.getElementById('grouped-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].grouped_empty}</td></tr>`;
       document.getElementById('qc-summary-banner').classList.add('hidden');
+      groupedSummaryData = [];
     }
 
     function renderGrid() {
@@ -1930,6 +2034,7 @@
       resBody.innerHTML = '';
 
       const qcResults = { cals1: [], cals2: [] };
+      const computedRows = [];
 
       gridData.forEach((row, rIdx) => {
         const id = (row[0] || '').toString().trim();
@@ -1941,29 +2046,45 @@
 
         let raw1 = parseFloat(row[1]);
         const sd1 = parseFloat(row[2]) || 0;
-        let cal1 = '-';
-        let propSd1 = '-';
+        let cal1 = null;
+        let propSd1 = null;
 
         if (!isNaN(raw1) && reg1.slope !== 0) {
           const adjRaw1 = getCorrectedRaw(rIdx, raw1, 1);
           const cVal1 = adjRaw1 * reg1.slope + reg1.intercept;
-          cal1 = cVal1.toFixed(3);
-          propSd1 = Math.sqrt(Math.pow(reg1.slope * sd1, 2) + Math.pow(adjRaw1 * reg1.seSlope, 2) + Math.pow(reg1.seIntercept, 2)).toFixed(3);
+          cal1 = cVal1;
+          propSd1 = Math.sqrt(Math.pow(reg1.slope * sd1, 2) + Math.pow(adjRaw1 * reg1.seSlope, 2) + Math.pow(reg1.seIntercept, 2));
           if (isQC) qcResults.cals1.push(cVal1);
         }
 
         let raw2 = isDual ? parseFloat(row[3]) : null;
         const sd2 = isDual ? (parseFloat(row[4]) || 0) : 0;
-        let cal2 = '-';
-        let propSd2 = '-';
+        let cal2 = null;
+        let propSd2 = null;
 
         if (isDual && !isNaN(raw2) && reg2 && reg2.slope !== 0) {
           const adjRaw2 = getCorrectedRaw(rIdx, raw2, 2);
           const cVal2 = adjRaw2 * reg2.slope + reg2.intercept;
-          cal2 = cVal2.toFixed(3);
-          propSd2 = Math.sqrt(Math.pow(reg2.slope * sd2, 2) + Math.pow(adjRaw2 * reg2.seSlope, 2) + Math.pow(reg2.seIntercept, 2)).toFixed(3);
+          cal2 = cVal2;
+          propSd2 = Math.sqrt(Math.pow(reg2.slope * sd2, 2) + Math.pow(adjRaw2 * reg2.seSlope, 2) + Math.pow(reg2.seIntercept, 2));
           if (isQC) qcResults.cals2.push(cVal2);
         }
+
+        computedRows.push({
+          rIdx,
+          id,
+          clean,
+          isAnchor,
+          isQC,
+          raw1,
+          sd1,
+          cal1,
+          propSd1,
+          raw2,
+          sd2,
+          cal2,
+          propSd2
+        });
 
         const tr = document.createElement('tr');
         tr.className = isAnchor ? 'bg-[#fcfbf9] text-stone-500' : 'hover:bg-stone-50';
@@ -1973,22 +2094,106 @@
             <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold ${isAnchor ? 'text-stone-500' : 'text-stone-900'}">${id}</td>
             <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
             <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw2) ? raw2.toFixed(3) : '-'}</td>
-            <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1}</td>
-            <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">±${propSd1}</td>
-            <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal2}</td>
-            <td class="px-3.5 py-2 text-stone-600 font-medium">±${propSd2}</td>
+            <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1 !== null ? cal1.toFixed(3) : '-'}</td>
+            <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
+            <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal2 !== null ? cal2.toFixed(3) : '-'}</td>
+            <td class="px-3.5 py-2 text-stone-600 font-medium">${propSd2 !== null ? '±' + propSd2.toFixed(3) : '-'}</td>
           `;
         } else {
           tr.innerHTML = `
             <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold ${isAnchor ? 'text-stone-500' : 'text-stone-900'}">${id}</td>
             <td class="px-4 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(raw1) ? raw1.toFixed(3) : '-'}</td>
-            <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1}</td>
-            <td class="px-4 py-2 text-stone-600 font-medium">±${propSd1}</td>
+            <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-stone-50/50">${cal1 !== null ? cal1.toFixed(3) : '-'}</td>
+            <td class="px-4 py-2 text-stone-600 font-medium">${propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
           `;
         }
         resBody.appendChild(tr);
       });
 
+      // -------------------------------------------------------------
+      // 연속 인접 시료 그룹화 (Adjacent Chunk Grouping - Samples Only)
+      // -------------------------------------------------------------
+      groupedSummaryData = [];
+      const groupedBody = document.getElementById('grouped-body');
+      groupedBody.innerHTML = '';
+
+      let currentGroup = null;
+
+      function finishGroup() {
+        if (!currentGroup || currentGroup.items.length === 0) return;
+        const n = currentGroup.items.length;
+        const c1List = currentGroup.items.map(x => x.cal1).filter(v => v !== null && !isNaN(v));
+        const c2List = currentGroup.items.map(x => x.cal2).filter(v => v !== null && !isNaN(v));
+
+        const mean1 = c1List.length > 0 ? (c1List.reduce((a, b) => a + b, 0) / c1List.length) : null;
+        const sd1 = c1List.length > 1
+          ? Math.sqrt(c1List.map(v => Math.pow(v - mean1, 2)).reduce((a, b) => a + b) / (c1List.length - 1))
+          : (c1List.length === 1 ? currentGroup.items[0].propSd1 : 0);
+
+        const mean2 = (isDual && c2List.length > 0) ? (c2List.reduce((a, b) => a + b, 0) / c2List.length) : null;
+        const sd2 = (isDual && c2List.length > 1)
+          ? Math.sqrt(c2List.map(v => Math.pow(v - mean2, 2)).reduce((a, b) => a + b) / (c2List.length - 1))
+          : (isDual && c2List.length === 1 ? currentGroup.items[0].propSd2 : 0);
+
+        groupedSummaryData.push({
+          baseId: currentGroup.baseId,
+          n,
+          mean1,
+          sd1,
+          mean2,
+          sd2
+        });
+        currentGroup = null;
+      }
+
+      computedRows.forEach(row => {
+        // 표준물질(Anchor 및 QC)은 평균 그룹표에서 제외하고 순수 미지 시료만 대상
+        if (row.isAnchor || row.isQC) {
+          finishGroup();
+          return;
+        }
+
+        const bId = extractBaseId(row.id);
+        if (!currentGroup) {
+          currentGroup = { baseId: bId, items: [row] };
+        } else if (currentGroup.baseId === bId) {
+          currentGroup.items.push(row);
+        } else {
+          finishGroup();
+          currentGroup = { baseId: bId, items: [row] };
+        }
+      });
+      finishGroup();
+
+      if (groupedSummaryData.length === 0) {
+        groupedBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${isEn ? 'No unknown sample replicates found in this sequence.' : '시퀀스 내에 그룹화 가능한 미지 시료(Unknown Sample)가 없습니다.'}</td></tr>`;
+      } else {
+        groupedSummaryData.forEach(g => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-stone-50';
+
+          if (isDual) {
+            tr.innerHTML = `
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
+              <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
+              <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
+              <td class="px-3.5 py-2 text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
+            `;
+          } else {
+            tr.innerHTML = `
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
+              <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
+              <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
+              <td class="px-4 py-2 text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
+            `;
+          }
+          groupedBody.appendChild(tr);
+        });
+      }
+
+      // QC Validation Summary Banner
       const qcBanner = document.getElementById('qc-summary-banner');
       if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
         const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
@@ -2254,33 +2459,69 @@
       syncPasteTarget();
     });
 
-    // CSV Export Handler
+    // -------------------------------------------------------------
+    // CSV 내보내기 (탭에 따라 Sequence 또는 Grouped Summary 자동 분기)
+    // -------------------------------------------------------------
     document.getElementById('btn-export').addEventListener('click', () => {
-      const rows = document.querySelectorAll('#result-body tr');
-      const ths = Array.from(document.querySelectorAll('#result-head th')).map(th => th.innerText.replace(/[\n\r]/g, ' '));
-      
-      let csvContent = ths.join(',') + '\n';
+      const p = PRESETS[currentMode];
+      const isDual = p.elements.length === 2;
+      const oUnit = getOxygenUnit();
 
-      rows.forEach(tr => {
-        const cols = Array.from(tr.querySelectorAll('td')).map(td => {
-          let text = td.innerText.replace('±', '').trim();
-          if (text.includes(',') || text.includes('"') || text.includes('\n')) {
-            text = `"${text.replace(/"/g, '""')}"`;
-          }
-          return text;
+      if (currentTab === 'grouped') {
+        if (!groupedSummaryData || groupedSummaryData.length === 0) {
+          alert(currentLang === 'en' ? "No grouped summary data to export." : "내보낼 시료 요약 데이터가 없습니다.");
+          return;
+        }
+
+        let csv = '';
+        if (isDual) {
+          csv = `Sample_Base_ID,Replicate_Count,Mean_${p.elements[0].label}_(${p.elements[0].unit}),Rep_1SD,Mean_${p.elements[1].label}_(${oUnit}),Rep_1SD\n`;
+          groupedSummaryData.forEach(g => {
+            csv += `"${g.baseId}",${g.n},${g.mean1 !== null ? g.mean1.toFixed(3) : ''},${g.sd1 !== null ? g.sd1.toFixed(3) : ''},${g.mean2 !== null ? g.mean2.toFixed(3) : ''},${g.sd2 !== null ? g.sd2.toFixed(3) : ''}\n`;
+          });
+        } else {
+          csv = `Sample_Base_ID,Replicate_Count,Mean_${p.elements[0].label}_(${p.elements[0].unit}),Rep_1SD\n`;
+          groupedSummaryData.forEach(g => {
+            csv += `"${g.baseId}",${g.n},${g.mean1 !== null ? g.mean1.toFixed(3) : ''},${g.sd1 !== null ? g.sd1.toFixed(3) : ''}\n`;
+          });
+        }
+
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `IsoCalib_${currentMode}_Grouped_Summary.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        const rows = document.querySelectorAll('#result-body tr');
+        const ths = Array.from(document.querySelectorAll('#result-head th')).map(th => th.innerText.replace(/[\n\r]/g, ' '));
+        
+        let csvContent = ths.join(',') + '\n';
+
+        rows.forEach(tr => {
+          const cols = Array.from(tr.querySelectorAll('td')).map(td => {
+            let text = td.innerText.replace('±', '').trim();
+            if (text.includes(',') || text.includes('"') || text.includes('\n')) {
+              text = `"${text.replace(/"/g, '""')}"`;
+            }
+            return text;
+          });
+          if (cols.length === ths.length) csvContent += cols.join(',') + '\n';
         });
-        if (cols.length === ths.length) csvContent += cols.join(',') + '\n';
-      });
 
-      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `IsoCalib_${currentMode}_${oxygenScale}_Reduced.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `IsoCalib_${currentMode}_${oxygenScale}_Sequence_Reduced.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
     });
 
     window.addEventListener('DOMContentLoaded', () => {
