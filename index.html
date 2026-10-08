@@ -13,6 +13,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
+  <!-- SheetJS: Native Multi-sheet Excel (.xlsx) Generation -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <!-- MathJax for Scientific Formula Rendering -->
   <script>
     window.MathJax = {
@@ -329,8 +332,10 @@
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">03</span>
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
-        <button id="btn-export" class="text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b-2 border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-500 transition cursor-pointer" data-i18n="btn_export_csv">
-          Export Sequence (.CSV)
+        
+        <!-- Native Excel (.XLSX) Export Button with Multi-Sheet support -->
+        <button id="btn-export" class="inline-flex items-center space-x-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 border-b-2 border-emerald-800 pb-0.5 hover:text-emerald-700 hover:border-emerald-600 transition cursor-pointer" data-i18n="btn_export_excel">
+          <span>📊 Export Multi-Sheet Excel (.XLSX)</span>
         </button>
       </div>
 
@@ -504,7 +509,7 @@
           </p>
         </div>
         <div class="text-right font-mono text-[11px] text-stone-500 shrink-0">
-          <div>Engine: Native JS Float64</div>
+          <div>Engine: Native JS Float64 + SheetJS</div>
           <div>Scale: VPDB / VSMOW / Air / VCDT</div>
         </div>
       </div>
@@ -635,7 +640,7 @@
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
-        btn_export_csv: "Export Sequence (.CSV)",
+        btn_export_excel: "📊 멀티 시트 엑셀 내보내기 (.XLSX)",
         tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
         tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
         result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
@@ -706,7 +711,7 @@
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report",
-        btn_export_csv: "Export Sequence (.CSV)",
+        btn_export_excel: "📊 Export Multi-Sheet Excel (.XLSX)",
         tab_sequence: "Run-by-Run Sequence",
         tab_grouped: "Grouped Sample Summary",
         result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
@@ -751,46 +756,30 @@
     };
 
     let currentLang = localStorage.getItem('isocalib_lang') || 'ko';
-    let currentTab = 'sequence'; // 'sequence' or 'grouped'
-    let groupedSummaryData = []; // Array of grouped replicates for CSV export
+    let currentTab = 'sequence';
+    let groupedSummaryData = [];
+    let sequenceExportData = [];
 
     const CHANGELOG_DATA = [
       {
         version: "v1.2.0",
         date: "2026-10",
-        badge: "Workflow Upgrade",
-        title_ko: "단일 물 분석 모드(δD, δ¹⁸O 분리) 및 연속 시료 평균 요약표 탑재",
-        title_en: "Dedicated Single-Water Modes & Adjacent Replicate Sample Averaging",
-        desc_ko: "물 분석 라인의 수소/산소 개별 측정 워크플로우에 최적화된 단일 모드를 신설하고, 연속 측정된 동일 미지 시료(Triplicate 등)의 평균(Mean ± 1σ)을 산출하는 전용 요약표 및 CSV 내보내기를 지원합니다.",
-        desc_en: "Added dedicated single-element water presets (δD only, δ¹⁸O only) and adjacent replicate chunk grouping for immediate publication-ready sample statistics (Mean ± 1σ).",
+        badge: "Major Excel Upgrade",
+        title_ko: "멀티 시트 엑셀(.xlsx) 내보내기 & 단일 물 모드 및 연속 시료 평균 탑재",
+        title_en: "Native Multi-Sheet Excel (.XLSX) Export & Adjacent Sample Averaging",
+        desc_ko: "CSV 저장 시 그림이나 서식이 유실되는 치명적 문제를 원천 방지하기 위해 SheetJS 기반 2개 탭 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
+        desc_en: "Integrated SheetJS to export native dual-sheet Excel workbooks (.xlsx) to permanently eliminate image/formatting loss caused by traditional text CSVs.",
         changes_ko: [
-          "<strong>Water Hydrogen (δD) 및 Water Oxygen (δ¹⁸O) 단일 모드 신설</strong>: 물 시료를 원소별로 분리 분석하는 실험실을 위해 3열(ID, Raw, SD) 전용 프리셋 탑재.",
-          "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 표준물질은 제외하고, 연속으로 인접하여 분석된 동일 미지 시료(예: Sample-1_1, Sample-1_2, Sample-1_3)의 기본명을 추출하여 평균 및 표준편차(1σ) 요약표 자동 산출.",
-          "<strong>논문용 시료 평균 전용 CSV 추출 지원</strong>: 탭 전환 시 요약된 시료 통계 테이블만 즉시 CSV로 다운로드 가능.",
-          "<strong>산소 스케일 정밀 연동 유지</strong>: CO 모드 산소 VSMOW 변환 및 독립 드리프트 플롯(Fig 3 & 4) 완전 통합 유지."
+          "<strong>멀티 시트 엑셀(.xlsx) 원클릭 다운로드</strong>: Sheet 1(Grouped_Summary: 시료별 평균 요약표)과 Sheet 2(Sequence_Runs: 개별 런 전체 데이터)가 하단 탭으로 완벽 분리된 진짜 엑셀 파일 제공.",
+          "<strong>그림 및 차트 유실 방지</strong>: 다운로드 파일이 .xlsx 규격이므로, 엑셀에서 피겨나 메모를 추가하고 저장해도 영구 보존.",
+          "<strong>단일 물 분석 모드(δD only, δ¹⁸O only) 신설</strong>: 물 시료 개별 라인 분석(3열: ID, Raw, SD) 전용 워크플로우 지원.",
+          "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 연속 측정된 동일 미지 시료(Triplicate 등)의 평균(Mean ± 1σ) 자동 집계."
         ],
         changes_en: [
-          "<strong>Dedicated Single-Water Presets</strong>: Introduced standalone 'Water Hydrogen (δD only)' and 'Water Oxygen (δ¹⁸O only)' modes for streamlined 3-column sequence reduction.",
-          "<strong>Adjacent Replicate Chunk Grouping</strong>: Automatically groups adjacent unknown sample replicates (e.g., Triplicates) to calculate final Mean ± 1σ while keeping reference standards isolated.",
-          "<strong>Publication-Ready Averaged CSV Export</strong>: Export summarized sample statistics directly to CSV via dynamic tab controls."
-        ]
-      },
-      {
-        version: "v1.1.0",
-        date: "2026-09",
-        badge: "Major Enhancement",
-        title_ko: "산소 스케일(VPDB ↔ VSMOW) 전환 및 독립 드리프트 모니터 탑재",
-        title_en: "Oxygen Scale Conversion (VPDB ↔ VSMOW) & Decoupled Drift Diagnostics",
-        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
-        desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
-        changes_ko: [
-          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV 헤더가 실시간 연동.",
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능."
-        ],
-        changes_en: [
-          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and CSV exports via IUPAC Coplen (1983) equation.",
-          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes."
+          "<strong>Native Multi-Sheet Excel Export (.xlsx)</strong>: Dual-sheet workbook with Sheet 1 for Grouped Summary and Sheet 2 for Run-by-run sequence data.",
+          "<strong>Permanent Graphic & Formatting Retention</strong>: Guarantees that inserted figures and notes remain intact without CSV flattening.",
+          "<strong>Dedicated Single-Water Presets</strong>: Added standalone 'Water Hydrogen (δD only)' and 'Water Oxygen (δ¹⁸O only)' presets.",
+          "<strong>Adjacent Replicate Grouping</strong>: Automatic chunking of adjacent unknown replicates for publication-ready statistics."
         ]
       }
     ];
@@ -831,7 +820,6 @@
       return (vsmow - 30.92) / 1.03092;
     }
 
-    // 기본 시료명 추출 정규식 (접미사 -1, _1, #1, -a, _02 등 제거)
     function extractBaseId(rawId) {
       if (!rawId) return '';
       return rawId.trim().replace(/[-_.#\s]+(0?[1-9]|[a-zA-Z])$/, '').trim();
@@ -1240,7 +1228,6 @@
         document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} Drift Diagnostics`;
       }
 
-      // Tab 1: Sequence Head
       const rHead = document.getElementById('result-head');
       if (isDual) {
         rHead.innerHTML = `
@@ -1265,7 +1252,6 @@
         `;
       }
 
-      // Tab 2: Grouped Summary Head
       const gSummaryHead = document.getElementById('grouped-head');
       if (isDual) {
         gSummaryHead.innerHTML = `
@@ -1297,35 +1283,29 @@
       resetOutputs();
     }
 
-    // Tab Switcher Handling
     function switchTab(target) {
       currentTab = target;
       const btnSeq = document.getElementById('tab-btn-sequence');
       const btnGrp = document.getElementById('tab-btn-grouped');
       const contentSeq = document.getElementById('tab-content-sequence');
       const contentGrp = document.getElementById('tab-content-grouped');
-      const btnExport = document.getElementById('btn-export');
-      const isEn = currentLang === 'en';
 
       if (target === 'sequence') {
         btnSeq.className = 'px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer';
         btnGrp.className = 'px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer';
         contentSeq.classList.remove('hidden');
         contentGrp.classList.add('hidden');
-        btnExport.innerText = isEn ? "Export Sequence (.CSV)" : "Export Sequence (.CSV)";
       } else {
         btnGrp.className = 'px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer';
         btnSeq.className = 'px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer';
         contentGrp.classList.remove('hidden');
         contentSeq.classList.add('hidden');
-        btnExport.innerText = isEn ? "Export Summary (.CSV)" : "Export Summary (.CSV)";
       }
     }
 
     document.getElementById('tab-btn-sequence').addEventListener('click', () => switchTab('sequence'));
     document.getElementById('tab-btn-grouped').addEventListener('click', () => switchTab('grouped'));
 
-    // 산소 스케일 전환
     document.getElementById('oxygen-scale-select').addEventListener('change', (e) => {
       const newScale = e.target.value;
       if (newScale === oxygenScale || currentMode !== "CO") return;
@@ -1382,20 +1362,20 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
+          <li>멀티 시트 엑셀(.xlsx) 워크북 내보내기를 통한 그림 및 서식 영구 보존</li>
           <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
           <li>연속 인접 런 시료(Triplicate 등)에 대한 스마트 평균 및 표준편차 요약 산출</li>
           <li>IUPAC Coplen (1983) 공식 기반 산소 동위원소 스케일(VPDB ↔ VSMOW) 정밀 연동</li>
           <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
           <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
-          <li>지화학 저널 표준 적합도 지표인 축약 카이제곱(MSWD) 자동 산출</li>
         `;
       } else {
         listEl.innerHTML = `
+          <li>Native Multi-sheet Excel workbook export (.xlsx) preserving figures and notes</li>
           <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
           <li>Adjacent replicate sample chunk grouping for automated Mean ± 1σ summaries</li>
           <li>IUPAC Coplen (1983) compliant Oxygen Isotope Scale Alignment (VPDB ↔ VSMOW)</li>
           <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
-          <li>Weighted Least Squares (WLS) Regression with variance-weighted parameter estimation</li>
         `;
       }
 
@@ -1412,7 +1392,6 @@
     document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
     document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
 
-    // About & Changelog Modals
     const aboutModal = document.getElementById('about-modal');
     const changelogModal = document.getElementById('changelog-modal');
 
@@ -1454,6 +1433,7 @@
       document.getElementById('grouped-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].grouped_empty}</td></tr>`;
       document.getElementById('qc-summary-banner').classList.add('hidden');
       groupedSummaryData = [];
+      sequenceExportData = [];
     }
 
     function renderGrid() {
@@ -2035,6 +2015,7 @@
 
       const qcResults = { cals1: [], cals2: [] };
       const computedRows = [];
+      sequenceExportData = [];
 
       gridData.forEach((row, rIdx) => {
         const id = (row[0] || '').toString().trim();
@@ -2071,19 +2052,21 @@
         }
 
         computedRows.push({
-          rIdx,
+          rIdx, id, clean, isAnchor, isQC, raw1, sd1, cal1, propSd1, raw2, sd2, cal2, propSd2
+        });
+
+        // Sequence Export Dataset
+        sequenceExportData.push({
+          runNumber: rIdx + 1,
           id,
-          clean,
-          isAnchor,
-          isQC,
-          raw1,
-          sd1,
-          cal1,
-          propSd1,
-          raw2,
-          sd2,
-          cal2,
-          propSd2
+          raw1: !isNaN(raw1) ? parseFloat(raw1.toFixed(3)) : null,
+          sd1: sd1 > 0 ? parseFloat(sd1.toFixed(3)) : null,
+          cal1: cal1 !== null ? parseFloat(cal1.toFixed(3)) : null,
+          propSd1: propSd1 !== null ? parseFloat(propSd1.toFixed(3)) : null,
+          raw2: (isDual && !isNaN(raw2)) ? parseFloat(raw2.toFixed(3)) : null,
+          sd2: (isDual && sd2 > 0) ? parseFloat(sd2.toFixed(3)) : null,
+          cal2: (isDual && cal2 !== null) ? parseFloat(cal2.toFixed(3)) : null,
+          propSd2: (isDual && propSd2 !== null) ? parseFloat(propSd2.toFixed(3)) : null
         });
 
         const tr = document.createElement('tr');
@@ -2138,16 +2121,15 @@
         groupedSummaryData.push({
           baseId: currentGroup.baseId,
           n,
-          mean1,
-          sd1,
-          mean2,
-          sd2
+          mean1: mean1 !== null ? parseFloat(mean1.toFixed(3)) : null,
+          sd1: sd1 !== null ? parseFloat(sd1.toFixed(3)) : null,
+          mean2: mean2 !== null ? parseFloat(mean2.toFixed(3)) : null,
+          sd2: sd2 !== null ? parseFloat(sd2.toFixed(3)) : null
         });
         currentGroup = null;
       }
 
       computedRows.forEach(row => {
-        // 표준물질(Anchor 및 QC)은 평균 그룹표에서 제외하고 순수 미지 시료만 대상
         if (row.isAnchor || row.isQC) {
           finishGroup();
           return;
@@ -2460,68 +2442,119 @@
     });
 
     // -------------------------------------------------------------
-    // CSV 내보내기 (탭에 따라 Sequence 또는 Grouped Summary 자동 분기)
+    // Native Multi-Sheet Excel (.XLSX) Export via SheetJS
     // -------------------------------------------------------------
     document.getElementById('btn-export').addEventListener('click', () => {
+      if (!sequenceExportData || sequenceExportData.length === 0) {
+        alert(currentLang === 'en' ? "Please run calibration first before exporting." : "먼저 상단에서 검량을 실행한 후 내보내기를 진행해 주세요.");
+        return;
+      }
+
+      if (typeof XLSX === 'undefined') {
+        alert("SheetJS library is not loaded. Please check your internet connection.");
+        return;
+      }
+
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
       const oUnit = getOxygenUnit();
+      const wb = XLSX.utils.book_new();
 
-      if (currentTab === 'grouped') {
-        if (!groupedSummaryData || groupedSummaryData.length === 0) {
-          alert(currentLang === 'en' ? "No grouped summary data to export." : "내보낼 시료 요약 데이터가 없습니다.");
-          return;
-        }
-
-        let csv = '';
-        if (isDual) {
-          csv = `Sample_Base_ID,Replicate_Count,Mean_${p.elements[0].label}_(${p.elements[0].unit}),Rep_1SD,Mean_${p.elements[1].label}_(${oUnit}),Rep_1SD\n`;
-          groupedSummaryData.forEach(g => {
-            csv += `"${g.baseId}",${g.n},${g.mean1 !== null ? g.mean1.toFixed(3) : ''},${g.sd1 !== null ? g.sd1.toFixed(3) : ''},${g.mean2 !== null ? g.mean2.toFixed(3) : ''},${g.sd2 !== null ? g.sd2.toFixed(3) : ''}\n`;
-          });
-        } else {
-          csv = `Sample_Base_ID,Replicate_Count,Mean_${p.elements[0].label}_(${p.elements[0].unit}),Rep_1SD\n`;
-          groupedSummaryData.forEach(g => {
-            csv += `"${g.baseId}",${g.n},${g.mean1 !== null ? g.mean1.toFixed(3) : ''},${g.sd1 !== null ? g.sd1.toFixed(3) : ''}\n`;
-          });
-        }
-
-        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `IsoCalib_${currentMode}_Grouped_Summary.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } else {
-        const rows = document.querySelectorAll('#result-body tr');
-        const ths = Array.from(document.querySelectorAll('#result-head th')).map(th => th.innerText.replace(/[\n\r]/g, ' '));
-        
-        let csvContent = ths.join(',') + '\n';
-
-        rows.forEach(tr => {
-          const cols = Array.from(tr.querySelectorAll('td')).map(td => {
-            let text = td.innerText.replace('±', '').trim();
-            if (text.includes(',') || text.includes('"') || text.includes('\n')) {
-              text = `"${text.replace(/"/g, '""')}"`;
-            }
-            return text;
-          });
-          if (cols.length === ths.length) csvContent += cols.join(',') + '\n';
+      // Sheet 1: Grouped Summary Data Table
+      const summaryRows = [];
+      if (isDual) {
+        summaryRows.push([
+          "Sample_Base_ID",
+          "Replicate_Count (n)",
+          `Mean_${p.elements[0].label} (${p.elements[0].unit})`,
+          "Rep_1SD",
+          `Mean_${p.elements[1].label} (${oUnit})`,
+          "Rep_1SD"
+        ]);
+        groupedSummaryData.forEach(g => {
+          summaryRows.push([
+            g.baseId,
+            g.n,
+            g.mean1,
+            g.sd1,
+            g.mean2,
+            g.sd2
+          ]);
         });
-
-        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `IsoCalib_${currentMode}_${oxygenScale}_Sequence_Reduced.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+      } else {
+        summaryRows.push([
+          "Sample_Base_ID",
+          "Replicate_Count (n)",
+          `Mean_${p.elements[0].label} (${p.elements[0].unit})`,
+          "Rep_1SD"
+        ]);
+        groupedSummaryData.forEach(g => {
+          summaryRows.push([
+            g.baseId,
+            g.n,
+            g.mean1,
+            g.sd1
+          ]);
+        });
       }
+      const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+      XLSX.utils.book_append_sheet(wb, wsSummary, "Grouped_Summary");
+
+      // Sheet 2: Run-by-Run Sequence Data Table
+      const seqRows = [];
+      if (isDual) {
+        seqRows.push([
+          "Run_Order",
+          "Sample_ID",
+          `Raw_${p.elements[0].label}`,
+          `1SD`,
+          `Raw_${p.elements[1].label}`,
+          `1SD`,
+          `Calibrated_${p.elements[0].label} (${p.elements[0].unit})`,
+          `Combined_1SD`,
+          `Calibrated_${p.elements[1].label} (${oUnit})`,
+          `Combined_1SD`
+        ]);
+        sequenceExportData.forEach(r => {
+          seqRows.push([
+            r.runNumber,
+            r.id,
+            r.raw1,
+            r.sd1,
+            r.raw2,
+            r.sd2,
+            r.cal1,
+            r.propSd1,
+            r.cal2,
+            r.propSd2
+          ]);
+        });
+      } else {
+        seqRows.push([
+          "Run_Order",
+          "Sample_ID",
+          `Raw_${p.elements[0].label}`,
+          `1SD`,
+          `Calibrated_${p.elements[0].label} (${p.elements[0].unit})`,
+          `Combined_1SD`
+        ]);
+        sequenceExportData.forEach(r => {
+          seqRows.push([
+            r.runNumber,
+            r.id,
+            r.raw1,
+            r.sd1,
+            r.cal1,
+            r.propSd1
+          ]);
+        });
+      }
+      const wsSequence = XLSX.utils.aoa_to_sheet(seqRows);
+      XLSX.utils.book_append_sheet(wb, wsSequence, "Sequence_Runs");
+
+      // Trigger Native .xlsx File Download
+      const fileName = `IsoCalib_${currentMode}_${oxygenScale}_Reduced_Data.xlsx`;
+      XLSX.writeFile(wb, fileName);
     });
 
     window.addEventListener('DOMContentLoaded', () => {
