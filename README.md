@@ -14,7 +14,7 @@
 
 ### 📝 피드백 남기는 방법
 1. 상단 **[Issues]** 탭 클릭 $\rightarrow$ **[New Issue]** 버튼 클릭 후 한국어로 자유롭게 작성
-2. 깃허브 계정이 없거나 부담스러우실 경우, 이메일로 편하게 보내주셔도 좋습니다: `[여러분의 이메일 주소]`
+2. 깃허브 계정이 없거나 부담스러우실 경우, 이메일로 편하게 보내주셔도 좋습니다: `[zinid@pusan.ac.kr]`
 
 여러분의 현장 경험이 더 견고하고 편리한 오픈 지화학 분석 플랫폼을 만듭니다. 많은 의견 부탁드립니다! 🙏
 
@@ -35,6 +35,6 @@ Formal bug reports are not required—everyday lab experiences, minor workflow f
 
 ### 📝 How to Share Feedback
 1. Navigate to the repository's **[Issues]** tab $\rightarrow$ click **[New Issue]** $\rightarrow$ select the feedback template to submit your thoughts.
-2. If you do not have a GitHub account, feedback and inquiries are also welcome via email: `[Your Email Address]`
+2. If you do not have a GitHub account, feedback and inquiries are also welcome via email: `[zinid@pusan.ac.kr]`
 
 Your practical bench experience directly drives the development of an open, reproducible isotope data reduction tool. Thank you for your contributions! 🙏
