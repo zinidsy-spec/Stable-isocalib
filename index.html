@@ -760,6 +760,7 @@
     let groupedSummaryData = [];
     let sequenceExportData = [];
 
+    // 완전 복원된 v1.2, v1.1, v1.0 업데이트 로그
     const CHANGELOG_DATA = [
       {
         version: "v1.2.0",
@@ -770,7 +771,7 @@
         desc_ko: "CSV 저장 시 그림이나 서식이 유실되는 치명적 문제를 원천 방지하기 위해 SheetJS 기반 2개 탭 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
         desc_en: "Integrated SheetJS to export native dual-sheet Excel workbooks (.xlsx) to permanently eliminate image/formatting loss caused by traditional text CSVs.",
         changes_ko: [
-          "<strong>멀티 시트 엑셀(.xlsx) 원클릭 다운로드</strong>: Sheet 1(Grouped_Summary: 시료별 평균 요약표)과 Sheet 2(Sequence_Runs: 개별 런 전체 데이터)가 하단 탭으로 완벽 분리된 진짜 엑셀 파일 제공.",
+          "<strong>멀티 시트 엑셀(.xlsx) 원클릭 다운로드</strong>: Sheet 1(Grouped_Summary: 시료별 평균 요약표)과 Sheet 2(Sequence_Runs: 개별 런 전체 데이터)가 하단 탭으로 분리된 진짜 엑셀 파일 제공.",
           "<strong>그림 및 차트 유실 방지</strong>: 다운로드 파일이 .xlsx 규격이므로, 엑셀에서 피겨나 메모를 추가하고 저장해도 영구 보존.",
           "<strong>단일 물 분석 모드(δD only, δ¹⁸O only) 신설</strong>: 물 시료 개별 라인 분석(3열: ID, Raw, SD) 전용 워크플로우 지원.",
           "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 연속 측정된 동일 미지 시료(Triplicate 등)의 평균(Mean ± 1σ) 자동 집계."
@@ -780,6 +781,54 @@
           "<strong>Permanent Graphic & Formatting Retention</strong>: Guarantees that inserted figures and notes remain intact without CSV flattening.",
           "<strong>Dedicated Single-Water Presets</strong>: Added standalone 'Water Hydrogen (δD only)' and 'Water Oxygen (δ¹⁸O only)' presets.",
           "<strong>Adjacent Replicate Grouping</strong>: Automatic chunking of adjacent unknown replicates for publication-ready statistics."
+        ]
+      },
+      {
+        version: "v1.1.0",
+        date: "2026-09",
+        badge: "Major Enhancement",
+        title_ko: "산소 스케일(VPDB ↔ VSMOW) 전환 및 독립 드리프트 모니터 탑재",
+        title_en: "Oxygen Scale Conversion (VPDB ↔ VSMOW) & Decoupled Drift Diagnostics",
+        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
+        desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
+        changes_ko: [
+          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV/Excel 헤더가 실시간 연동.",
+          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
+          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능.",
+          "<strong>Anchor-to-Anchor Bracketing 모델</strong>: 선택된 기준 앵커의 런 위치 사이를 1:1 선형 보간하여 시퀀스 내 파동형 드리프트를 각 동위원소 채널별로 독립 보정.",
+          "<strong>체계별(System) 및 언어별(KO/EN) 입력값 영구 보존</strong>: 동위원소 체계 전환 및 다국어 토글 시에도 사용자가 수정한 앵커 및 QC 표준물질의 이름과 참값이 리셋되지 않도록 캐시 분리."
+        ],
+        changes_en: [
+          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and exports via IUPAC Coplen (1983) equation.",
+          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes to capture decoupled instrumental behavior.",
+          "<strong>Customizable Drift Monitor</strong>: Select preferred reference material (default: fine-powder IAEA-603) as the anchor baseline.",
+          "<strong>Anchor-to-Anchor Bracketing Model</strong>: Run-by-run piecewise linear interpolation between selected anchor positions, computed independently per isotope channel.",
+          "<strong>Cross-Mode & Linguistic State Persistence</strong>: Complete preservation of user-defined reference/QC values across isotope system switches and language toggles."
+        ]
+      },
+      {
+        version: "v1.0.0",
+        date: "2026-09",
+        badge: "Initial Release",
+        title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
+        title_en: "Initial Official Release of IsoCalib Platform",
+        desc_ko: "IsoplotR의 오픈 사이언스 웹 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
+        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's architecture, tailored for stable isotope geochemistry.",
+        changes_ko: [
+          "<strong>국제 표준 4대 동위원소 체계 지원</strong>: C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), S (δ³⁴S).",
+          "<strong>가중 선형 회귀 (WLS)</strong>: 기기 분석 1σ SD를 역제곱 가중치(1/σ²)로 반영하는 York-Ludwig 회귀 솔버 탑재.",
+          "<strong>MSWD(축약 카이제곱) 산출</strong>: 지화학 학술 저널 표준 회귀 적합도 지표 자동 계산.",
+          "<strong>독립 QC 블라인드 검증 리포트</strong>: 검량선에 미참여하는 미지의 품질관리 표준물질 편차(Accuracy Bias) 및 반복 정밀도(1σ) 자동 판정.",
+          "<strong>JCGM GUM 1차 편미분 오차 전파</strong>: 시료 측정 오차와 검량선 파라미터 불확도를 결합한 최종 합성 불확도 도출.",
+          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 로컬 브라우저 연산 및 논문 투고용 SVG 원클릭 저장."
+        ],
+        changes_en: [
+          "<strong>Core Isotope Systematics</strong>: Full support for C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), and S (δ³⁴S).",
+          "<strong>Weighted Least Squares (WLS)</strong>: Exact analytical regression weighting each datum by analytical variance (1/σ²).",
+          "<strong>MSWD Goodness-of-Fit</strong>: Automated geostatistical reduced chi-squared diagnostic evaluation.",
+          "<strong>Blind QC Validation Report</strong>: Quantitative tracking of accuracy bias and reproducibility against independent reference materials.",
+          "<strong>JCGM GUM-compliant Uncertainty Propagation</strong>: Combined first-order partial differential error budgets.",
+          "<strong>Zero-Server Privacy & Publication Exports</strong>: 100% local JavaScript execution with instant vector SVG export."
         ]
       }
     ];
@@ -2055,7 +2104,6 @@
           rIdx, id, clean, isAnchor, isQC, raw1, sd1, cal1, propSd1, raw2, sd2, cal2, propSd2
         });
 
-        // Sequence Export Dataset
         sequenceExportData.push({
           runNumber: rIdx + 1,
           id,
