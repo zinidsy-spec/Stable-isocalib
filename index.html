@@ -17,7 +17,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
-  <!-- ExcelJS: Native In-browser Excel (.xlsx) with High-res Image Insertion -->
+  <!-- ExcelJS: Native In-browser Excel (.xlsx) with Embedded Figures -->
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
   <!-- MathJax for Scientific Formula Rendering -->
@@ -188,7 +188,7 @@
         
         <!-- Controls: Oxygen Scale & Drift Correction -->
         <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
-          <!-- Oxygen Scale Selector (Only active in CO mode) -->
+          <!-- Oxygen Scale Selector -->
           <div id="oxygen-scale-wrapper" class="flex items-center space-x-1.5 bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1.5">
             <label for="oxygen-scale-select" class="font-bold text-stone-800" data-i18n="o_scale_label">δ¹⁸O Scale:</label>
             <select id="oxygen-scale-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
@@ -217,7 +217,7 @@
         </div>
       </div>
 
-      <!-- Harmonized Standards Preset Bar -->
+      <!-- Standards Preset Bar -->
       <div class="bg-white border border-[#c7c5bc] p-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-xs">
         <div class="flex items-center flex-wrap gap-2.5">
           <span class="font-bold text-stone-800 uppercase tracking-wider text-[11px]" data-i18n="preset_manage_label">Reference Presets:</span>
@@ -358,9 +358,9 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
         
-        <!-- Native Excel (.XLSX) with Embedded Figures Export Button -->
-        <button id="btn-export" class="inline-flex items-center space-x-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 border-b-2 border-emerald-800 pb-0.5 hover:text-emerald-700 hover:border-emerald-600 transition cursor-pointer" data-i18n="btn_export_excel">
-          <span>📊 Export Complete Excel Workbook with Figures (.XLSX)</span>
+        <!-- Harmonized Editorial Style Export Button -->
+        <button id="btn-export" class="inline-flex items-center text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-600 transition cursor-pointer" data-i18n="btn_export_excel">
+          <span>Export Excel Report (.xlsx)</span>
         </button>
       </div>
 
@@ -432,7 +432,7 @@
               모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\sigma_i^2$)</strong>을 갖도록 계산합니다.
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              💡 <span data-i18n="card1_quote">측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</span>
+              * <span data-i18n="card1_quote">측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card1_basis">
@@ -451,7 +451,7 @@
               지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\chi^2$)</strong>을 통해, 데이터의 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              💡 <span data-i18n="card2_quote">MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</span>
+              * <span data-i18n="card2_quote">MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card2_basis">
@@ -470,7 +470,7 @@
               시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              💡 <span data-i18n="card3_quote">논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
+              * <span data-i18n="card3_quote">논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">
@@ -685,7 +685,7 @@
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
-        btn_export_excel: "📊 그림 포함 통합 엑셀 내보내기 (.XLSX)",
+        btn_export_excel: "엑셀 보고서 내보내기 (.xlsx)",
         tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
         tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
         result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
@@ -760,7 +760,7 @@
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report",
-        btn_export_excel: "📊 Export Complete Excel Workbook with Figures (.XLSX)",
+        btn_export_excel: "Export Excel Report (.xlsx)",
         tab_sequence: "Run-by-Run Sequence",
         tab_grouped: "Grouped Sample Summary",
         result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
@@ -803,7 +803,6 @@
       }
     };
 
-    // Smart Initial Language Detection: Browser KO -> ko, otherwise en
     let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
     let currentTab = 'sequence';
     let groupedSummaryData = [];
@@ -2680,7 +2679,7 @@
       const originalBtnText = exportBtn.innerHTML;
 
       try {
-        exportBtn.innerHTML = `<span>⏳ Generating Workbook with Embedded Figures...</span>`;
+        exportBtn.innerHTML = `<span>Exporting (.xlsx)...</span>`;
         exportBtn.style.opacity = '0.6';
         exportBtn.style.pointerEvents = 'none';
 
@@ -2766,7 +2765,6 @@
         wsFig.getCell('B3').value = `Exported: ${new Date().toISOString()} | Permanent DOI: 10.5281/zenodo.23239186 | License: GNU GPL v3.0`;
         wsFig.getCell('B3').font = { size: 9, italic: true, color: { argb: 'FF6B7280' } };
 
-        // Append QC text metrics if available
         let curRow = 5;
         if (lastQcSummaryReport) {
           wsFig.getCell(`B${curRow}`).value = `QC Standard: [${lastQcSummaryReport.qcName}] (Evaluated across ${lastQcSummaryReport.count} repeat runs)`;
@@ -2783,7 +2781,6 @@
           curRow++;
         }
 
-        // Capture plots and embed
         const img1Base64 = await capturePlotAsBase64Png('plot-1');
         const img2Base64 = isDual ? await capturePlotAsBase64Png('plot-2') : null;
         const imgDrift1Base64 = await capturePlotAsBase64Png('plot-drift-1');
@@ -2827,7 +2824,6 @@
           imgRow += 20;
         }
 
-        // Generate buffer and trigger browser download
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);
