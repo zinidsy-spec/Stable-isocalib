@@ -802,7 +802,7 @@
       }
     };
 
-    let currentLang = localStorage.getItem('isocalib_lang') || 'ko';
+    let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
     let currentTab = 'sequence';
     let groupedSummaryData = [];
     let sequenceExportData = [];
