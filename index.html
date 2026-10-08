@@ -116,7 +116,7 @@
         <nav class="hidden md:flex items-center space-x-6 text-xs text-stone-600 font-serif-title italic">
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
           <span>·</span>
-          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.2)</button>
+          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.2.1)</button>
           <span>·</span>
           <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">통계 방법론 & 원리</a>
           <span>·</span>
@@ -140,7 +140,7 @@
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
           <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.2.0</span>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.2.1</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
@@ -205,14 +205,33 @@
         </div>
       </div>
 
+      <!-- User Custom Standards Preset Bar (localStorage Zero-Server) -->
+      <div class="bg-[#fcfbf9] border border-[#d1cfc7] p-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="font-bold text-stone-800 flex items-center gap-1.5">
+            <span>💾</span> <span data-i18n="preset_manage_label">내 표준물질 프리셋 (Browser Local):</span>
+          </span>
+          <select id="user-presets-select" class="bg-white border border-stone-300 text-stone-900 px-2.5 py-1 text-xs rounded focus:outline-none focus:border-stone-900 cursor-pointer min-w-[180px]">
+            <option value="" data-i18n="preset_select_default">-- 기본 프리셋 (Default) --</option>
+          </select>
+          <button id="btn-load-preset" class="px-2.5 py-1 bg-white border border-stone-300 text-stone-800 hover:border-stone-900 transition font-semibold cursor-pointer" data-i18n="btn_preset_load">불러오기</button>
+          <button id="btn-delete-preset" class="px-2.5 py-1 text-rose-700 hover:text-rose-900 border border-transparent hover:border-rose-300 transition cursor-pointer" data-i18n="btn_preset_delete">삭제</button>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <input type="text" id="preset-save-name" placeholder="새 프리셋 이름 (예: 우리랩_탄산염)" class="bg-white border border-stone-300 px-2 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 w-44">
+          <button id="btn-save-preset" class="px-3 py-1 bg-stone-900 text-white font-bold hover:bg-stone-800 transition cursor-pointer" data-i18n="btn_preset_save">현재 값 저장</button>
+        </div>
+      </div>
+
       <!-- Drift Hint Banner -->
       <div class="bg-stone-50 border border-stone-200 p-3 text-xs text-stone-600 space-y-1">
         <div class="flex items-center space-x-1.5 font-bold text-stone-800">
           <span>💡</span>
-          <span data-i18n="drift_guide_title">실험실 환경별 분석 가이드</span>
+          <span data-i18n="drift_guide_title">보안 및 프리셋 저장 안내</span>
         </div>
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          물 분석 시 수소와 산소를 개별 분석 라인으로 측정하시는 경우 <strong>'Water Hydrogen'</strong> 또는 <strong>'Water Oxygen'</strong> 단일 모드를 선택하시면 엑셀에서 3열(ID, Raw, SD)만 바로 복사하여 정산하실 수 있습니다.
+          모든 커스텀 표준물질 세트는 외부 서버로 전송되지 않고 <strong>현재 사용 중인 브라우저(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 앵커/QC 참값을 원클릭으로 다시 불러올 수 있습니다.
         </p>
       </div>
 
@@ -510,7 +529,7 @@
         </div>
         <div class="text-right font-mono text-[11px] text-stone-500 shrink-0">
           <div>Engine: Native JS Float64 + SheetJS</div>
-          <div>Scale: VPDB / VSMOW / Air / VCDT</div>
+          <div>Storage: Local Client Persistence</div>
         </div>
       </div>
 
@@ -538,7 +557,7 @@
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.2.0 (Release 2026)</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.2.1 (Release 2026)</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -614,7 +633,7 @@
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_about: "IsoCalib 소개",
-        nav_changelog: "업데이트 로그 (v1.2)",
+        nav_changelog: "업데이트 로그 (v1.2.1)",
         nav_methodology: "통계 방법론 & 원리",
         nav_citation: "인용 정보",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
@@ -628,8 +647,13 @@
         drift_opt_none: "None (Off - 일주기/랜덤 노이즈 권장)",
         drift_opt_linear: "Linear (단일 선형 표류)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (앵커 간 선형 보간)",
-        drift_guide_title: "실험실 환경별 분석 가이드",
-        drift_guide_desc: "물 분석 시 수소와 산소를 개별 분석 라인으로 측정하시는 경우 <strong>'Water Hydrogen'</strong> 또는 <strong>'Water Oxygen'</strong> 단일 모드를 선택하시면 엑셀에서 3열(ID, Raw, SD)만 바로 복사하여 정산하실 수 있습니다.",
+        preset_manage_label: "내 표준물질 프리셋 (Browser Local):",
+        preset_select_default: "-- 기본 프리셋 (Default) --",
+        btn_preset_load: "불러오기",
+        btn_preset_delete: "삭제",
+        btn_preset_save: "현재 값 저장",
+        drift_guide_title: "보안 및 프리셋 저장 안내",
+        drift_guide_desc: "모든 커스텀 표준물질 세트는 외부 서버로 전송되지 않고 <strong>현재 사용 중인 브라우저(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 앵커/QC 참값을 원클릭으로 다시 불러올 수 있습니다.",
         sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
         sec2_desc: "시작할 셀을 한 번 클릭하고 바로 Ctrl + V를 누르면 엑셀 런 시퀀스가 복사됩니다.",
         btn_delete_rows: "선택 행 삭제",
@@ -685,7 +709,7 @@
       en: {
         tagline: "/ Open Geochemistry Tool",
         nav_about: "About IsoCalib",
-        nav_changelog: "Changelog (v1.2)",
+        nav_changelog: "Changelog (v1.2.1)",
         nav_methodology: "Methodology & Principles",
         nav_citation: "Citation",
         hero_badge: "Precision Data Reduction & QC Protocol",
@@ -699,8 +723,13 @@
         drift_opt_none: "None (Off - Recommended for diurnal/random noise)",
         drift_opt_linear: "Linear (Single linear slope over sequence)",
         drift_opt_piecewise: "Anchor-to-Anchor Bracketing (Piecewise linear interpolation)",
-        drift_guide_title: "Laboratory Analytical Guidance",
-        drift_guide_desc: "For water isotopes measured separately across lines, selecting <strong>'Water Hydrogen'</strong> or <strong>'Water Oxygen'</strong> allows direct 3-column (ID, Raw, SD) copy-pasting.",
+        preset_manage_label: "My Standards Presets (Browser Local):",
+        preset_select_default: "-- Default Presets --",
+        btn_preset_load: "Load",
+        btn_preset_delete: "Delete",
+        btn_preset_save: "Save Current",
+        drift_guide_title: "Privacy & Local Persistence Guide",
+        drift_guide_desc: "All custom standard sets are securely persisted in your browser's <strong>localStorage without server interaction</strong>, fully preserving client-side privacy.",
         sec2_title: "Measurement Sequence Data",
         sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.",
         btn_delete_rows: "Delete Row(s)",
@@ -760,8 +789,27 @@
     let groupedSummaryData = [];
     let sequenceExportData = [];
 
-    // 완전 복원된 v1.2, v1.1, v1.0 업데이트 로그
+    // 완전 복원된 v1.2.1, v1.2.0, v1.1.0, v1.0.0
     const CHANGELOG_DATA = [
+      {
+        version: "v1.2.1",
+        date: "2026-10",
+        badge: "User Experience",
+        title_ko: "사용자 표준물질 프리셋 로컬 저장 시스템 (localStorage)",
+        title_en: "Client-Side User Standards Preset Management",
+        desc_ko: "서버 없이 브라우저 메모리에 연구실별 앵커 및 QC 표준물질 이름과 참값을 원하는 이름으로 영구 저장하고 원클릭으로 다시 불러올 수 있습니다.",
+        desc_en: "Enables zero-server local persistence for lab-customized standard reference values, allowing researchers to save, load, and manage named calibration sets.",
+        changes_ko: [
+          "<strong>내 표준물질 프리셋 저장 및 불러오기</strong>: 상단 01 섹션에 프리셋 저장 바 신설, 연구실별 표준물질 세트를 브라우저에 보존.",
+          "<strong>완전 무서버(Zero-Server) 보안 유지</strong>: 외부 DB 전송 없이 사용자의 로컬 브라우저 내부에서만 안전하게 관리.",
+          "<strong>기본 공인 표준물질 원클릭 복원</strong>: 언제든지 초기화하여 기본값으로 전환 가능."
+        ],
+        changes_en: [
+          "<strong>Named Standards Presets</strong>: Save and recall customized reference/QC true value configurations without repetitive manual input.",
+          "<strong>Zero-Server Local Persistence</strong>: Stored 100% inside client browser localStorage without cloud transmission.",
+          "<strong>Instant Default Restoration</strong>: Return to default international reference presets anytime."
+        ]
+      },
       {
         version: "v1.2.0",
         date: "2026-10",
@@ -1111,6 +1159,95 @@
       }
     }
 
+    // -------------------------------------------------------------
+    // localStorage 기반 사용자 프리셋 관리 시스템
+    // -------------------------------------------------------------
+    function getStoredPresetsKey() {
+      return `isocalib_custom_presets_${currentMode}`;
+    }
+
+    function getStoredPresets() {
+      try {
+        const raw = localStorage.getItem(getStoredPresetsKey());
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function renderPresetDropdown() {
+      const select = document.getElementById('user-presets-select');
+      if (!select) return;
+      const presets = getStoredPresets();
+      select.innerHTML = `<option value="">${TRANSLATIONS[currentLang].preset_select_default}</option>`;
+
+      Object.keys(presets).forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.innerText = `📌 ${name}`;
+        select.appendChild(opt);
+      });
+    }
+
+    document.getElementById('btn-save-preset').addEventListener('click', () => {
+      const nameInput = document.getElementById('preset-save-name');
+      const name = nameInput.value.trim();
+      const isEn = currentLang === 'en';
+
+      if (!name) {
+        alert(isEn ? "Please enter a preset name." : "프리셋 이름을 입력해 주세요.");
+        return;
+      }
+
+      const snap = captureCurrentStandardsSnapshot(currentMode);
+      const presets = getStoredPresets();
+      presets[name] = snap;
+      localStorage.setItem(getStoredPresetsKey(), JSON.stringify(presets));
+      nameInput.value = '';
+      renderPresetDropdown();
+      document.getElementById('user-presets-select').value = name;
+      alert(isEn ? `Preset '${name}' saved to browser.` : `프리셋 '${name}'이 브라우저에 안전하게 저장되었습니다.`);
+    });
+
+    document.getElementById('btn-load-preset').addEventListener('click', () => {
+      const select = document.getElementById('user-presets-select');
+      const name = select.value;
+      const isEn = currentLang === 'en';
+
+      if (!name) {
+        userCustomStandardsByMode[currentMode] = null;
+        updateLayoutForMode(true);
+        return;
+      }
+
+      const presets = getStoredPresets();
+      if (presets[name]) {
+        userCustomStandardsByMode[currentMode] = presets[name];
+        if (presets[name].oxygenScale) {
+          oxygenScale = presets[name].oxygenScale;
+        }
+        updateLayoutForMode(false);
+      }
+    });
+
+    document.getElementById('btn-delete-preset').addEventListener('click', () => {
+      const select = document.getElementById('user-presets-select');
+      const name = select.value;
+      const isEn = currentLang === 'en';
+
+      if (!name) {
+        alert(isEn ? "Please select a custom preset to delete." : "삭제할 커스텀 프리셋을 선택해 주세요.");
+        return;
+      }
+
+      if (confirm(isEn ? `Delete preset '${name}'?` : `정말 '${name}' 프리셋을 삭제하시겠습니까?`)) {
+        const presets = getStoredPresets();
+        delete presets[name];
+        localStorage.setItem(getStoredPresetsKey(), JSON.stringify(presets));
+        renderPresetDropdown();
+      }
+    });
+
     function updateLayoutForMode(forcePresetDefault = false) {
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
@@ -1212,6 +1349,7 @@
       stdContainer.appendChild(qcDiv);
 
       syncDriftAnchorDropdown();
+      renderPresetDropdown();
 
       stdContainer.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', () => {
@@ -1411,6 +1549,7 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
+          <li>사용자 커스텀 표준물질 프리셋 로컬 저장소(localStorage) 보존 시스템</li>
           <li>멀티 시트 엑셀(.xlsx) 워크북 내보내기를 통한 그림 및 서식 영구 보존</li>
           <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
           <li>연속 인접 런 시료(Triplicate 등)에 대한 스마트 평균 및 표준편차 요약 산출</li>
@@ -1420,6 +1559,7 @@
         `;
       } else {
         listEl.innerHTML = `
+          <li>Local browser standard reference preset persistence (Zero-Server)</li>
           <li>Native Multi-sheet Excel workbook export (.xlsx) preserving figures and notes</li>
           <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
           <li>Adjacent replicate sample chunk grouping for automated Mean ± 1σ summaries</li>
@@ -2489,9 +2629,7 @@
       syncPasteTarget();
     });
 
-    // -------------------------------------------------------------
     // Native Multi-Sheet Excel (.XLSX) Export via SheetJS
-    // -------------------------------------------------------------
     document.getElementById('btn-export').addEventListener('click', () => {
       if (!sequenceExportData || sequenceExportData.length === 0) {
         alert(currentLang === 'en' ? "Please run calibration first before exporting." : "먼저 상단에서 검량을 실행한 후 내보내기를 진행해 주세요.");
@@ -2600,7 +2738,6 @@
       const wsSequence = XLSX.utils.aoa_to_sheet(seqRows);
       XLSX.utils.book_append_sheet(wb, wsSequence, "Sequence_Runs");
 
-      // Trigger Native .xlsx File Download
       const fileName = `IsoCalib_${currentMode}_${oxygenScale}_Reduced_Data.xlsx`;
       XLSX.writeFile(wb, fileName);
     });
