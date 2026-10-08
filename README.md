@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23239186.svg)](https://doi.org/10.5281/zenodo.23239186)
 ## 💬 연구자 & 분석 실무진 피드백 요청 (Feedback & Suggestions)
 
 **IsoCalib**은 안정동위원소 지화학 분석 현장에서 겪는 엑셀 매크로의 한계와 정산 시간 낭비를 줄이기 위해 만들어진 오픈소스 프로젝트입니다.
