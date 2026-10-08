@@ -5,8 +5,10 @@
   <title>IsoCalib | Isotope Geochemistry Data Reduction & Verification</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="5leUfUP0Pldumsv4A1GGExW5MbB-HVvHlOjuUsnlYKQ" />
+
+  <!-- IsoCalib Custom Academic Favicon (Mass Spec Dual Peaks) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23111827'/><path d='M6 24 L10 24 L14 8 L18 24 L21 24 L23 15 L25 24 L26 24' fill='none' stroke='%2338bdf8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/><circle cx='14' cy='8' r='2' fill='%23fbfaf8'/><circle cx='23' cy='15' r='1.6' fill='%23fbfaf8'/></svg>">
-  
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +17,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
-  <!-- SheetJS: Native Multi-sheet Excel (.xlsx) Generation -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- ExcelJS: Native In-browser Excel (.xlsx) with High-res Image Insertion -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
   <!-- MathJax for Scientific Formula Rendering -->
   <script>
@@ -118,13 +120,12 @@
         <nav class="hidden md:flex items-center space-x-5 text-xs text-stone-600 font-serif-title italic">
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
           <span>·</span>
-          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.2.1)</button>
+          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.3.0)</button>
           <span>·</span>
           <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">통계 방법론 & 원리</a>
           <span>·</span>
           <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">인용 정보 & DOI</a>
           <span>·</span>
-          <!-- Harmonized Editorial Link -->
           <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
              target="_blank" 
              rel="noopener noreferrer"
@@ -151,7 +152,7 @@
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
           <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.2.1</span>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.3.0</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
@@ -233,7 +234,7 @@
         </div>
       </div>
 
-      <!-- Editorial Guide Note (No Emojis) -->
+      <!-- Editorial Guide Note -->
       <div class="border-l-2 border-stone-400 pl-3.5 py-1 text-xs text-stone-600 space-y-0.5">
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
           * 모든 커스텀 표준물질 세트는 외부 서버로 전송되지 않고 <strong>브라우저 내부(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 참값을 원클릭으로 다시 불러올 수 있습니다.
@@ -357,15 +358,15 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
         
-        <!-- Native Excel (.XLSX) Export Button with Multi-Sheet support -->
+        <!-- Native Excel (.XLSX) with Embedded Figures Export Button -->
         <button id="btn-export" class="inline-flex items-center space-x-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 border-b-2 border-emerald-800 pb-0.5 hover:text-emerald-700 hover:border-emerald-600 transition cursor-pointer" data-i18n="btn_export_excel">
-          <span>📊 Export Multi-Sheet Excel (.XLSX)</span>
+          <span>📊 Export Complete Excel Workbook with Figures (.XLSX)</span>
         </button>
       </div>
 
       <div id="qc-summary-banner" class="hidden bg-stone-50 border border-stone-300 p-4 rounded-none space-y-2"></div>
 
-      <!-- View Switcher Tabs (Run-by-Run Sequence vs Adjacent Grouped Summary) -->
+      <!-- View Switcher Tabs -->
       <div class="flex items-center space-x-1 border-b border-stone-300 pt-2 font-mono text-xs">
         <button id="tab-btn-sequence" class="px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer" data-i18n="tab_sequence">
           개별 런 시퀀스 (Run-by-Run)
@@ -417,7 +418,7 @@
         </p>
       </div>
 
-      <!-- 직관적 3대 원리 카드 -->
+      <!-- 3 Principles -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-stone-700">
         
         <!-- 원리 1: WLS -->
@@ -533,7 +534,7 @@
           </p>
         </div>
         <div class="text-right font-mono text-[11px] text-stone-500 shrink-0">
-          <div>Engine: Native JS Float64 + SheetJS</div>
+          <div>Engine: Native JS Float64 + ExcelJS</div>
           <div>Storage: Local Client Persistence</div>
         </div>
       </div>
@@ -552,7 +553,7 @@
         
         <!-- 원클릭 복사용 인용 블록 -->
         <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed space-y-2 shadow-xs">
-          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.2.1). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
+          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.3.0). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
           <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-500 font-sans">
             <span>Licensed under GNU General Public License v3.0 (GPL-3.0)</span>
             <span class="font-mono text-stone-400">Click text to select all</span>
@@ -570,7 +571,7 @@
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.2.1 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.3.0 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -653,7 +654,7 @@
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_about: "IsoCalib 소개",
-        nav_changelog: "업데이트 로그 (v1.2.1)",
+        nav_changelog: "업데이트 로그 (v1.3.0)",
         nav_methodology: "통계 방법론 & 원리",
         nav_citation: "인용 정보 & DOI",
         nav_feedback: "피드백 & 제안",
@@ -684,7 +685,7 @@
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
-        btn_export_excel: "📊 멀티 시트 엑셀 내보내기 (.XLSX)",
+        btn_export_excel: "📊 그림 포함 통합 엑셀 내보내기 (.XLSX)",
         tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
         tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
         result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
@@ -728,7 +729,7 @@
       en: {
         tagline: "/ Open Geochemistry Tool",
         nav_about: "About IsoCalib",
-        nav_changelog: "Changelog (v1.2.1)",
+        nav_changelog: "Changelog (v1.3.0)",
         nav_methodology: "Methodology & Principles",
         nav_citation: "Citation & DOI",
         nav_feedback: "Feedback & Ideas",
@@ -759,7 +760,7 @@
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
         btn_export_svg: "Export Publication SVG",
         sec3_title: "Calibrated Results & Quality Control Report",
-        btn_export_excel: "📊 Export Multi-Sheet Excel (.XLSX)",
+        btn_export_excel: "📊 Export Complete Excel Workbook with Figures (.XLSX)",
         tab_sequence: "Run-by-Run Sequence",
         tab_grouped: "Grouped Sample Summary",
         result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
@@ -802,12 +803,35 @@
       }
     };
 
+    // Smart Initial Language Detection: Browser KO -> ko, otherwise en
     let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
     let currentTab = 'sequence';
     let groupedSummaryData = [];
     let sequenceExportData = [];
+    let lastQcSummaryReport = null;
 
     const CHANGELOG_DATA = [
+      {
+        version: "v1.3.0",
+        date: "2026-10",
+        badge: "Excel Graphics Upgrade",
+        title_ko: "ExcelJS 엔진 전환: 엑셀 내 검량선 및 드리프트 그래프 자동 삽입 탑재",
+        title_en: "ExcelJS Engine Upgrade: Embedded Figures & Publication Plots in Excel",
+        desc_ko: "엑셀 다운로드 파일 내 세 번째 시트(Figures_and_QC)에 고해상도 검량선 피팅 차트 및 드리프트 진단 그래프를 직접 포함하여, 별도 캡처 없이 완전한 완성형 분석 보고서가 생성됩니다.",
+        desc_en: "Integrated ExcelJS engine to directly embed high-resolution Plotly calibration fits and drift diagnostics into a dedicated third sheet (Figures_and_QC).",
+        changes_ko: [
+          "<strong>ExcelJS 통합 엔진 도입</strong>: SheetJS의 한계를 극복하고 브라우저 로컬에서 실제 이미지 객체(`.addImage`)가 포함된 워크북 생성.",
+          "<strong>세 번째 탭 'Figures_and_QC' 신설</strong>: Sheet 1(시료 요약표), Sheet 2(런 시퀀스)에 이어 Sheet 3에 Figure 1~4 그래프와 QC 통계 지표가 자동으로 깔끔하게 배치.",
+          "<strong>질량분석 듀얼 피크 파비콘 정식 적용</strong>: IRMS 분석 빔 피크를 형상화한 전용 고대비 SVG 파비콘 장착.",
+          "<strong>글로벌 접속자 브라우저 언어 자동 감지</strong>: 해외 연구자 접속 시 자동으로 EN 모드로 전환되는 스마트 감지 로직 적용."
+        ],
+        changes_en: [
+          "<strong>ExcelJS Integration</strong>: Generates true binary Excel workbooks embedding vector-rendered raster figures without external servers.",
+          "<strong>Dedicated 'Figures_and_QC' Sheet</strong>: Complete report containing Figure 1-4 calibration & drift diagnostic plots alongside QC performance metrics.",
+          "<strong>Mass Spec Dual Peaks Favicon</strong>: High-contrast academic SVG symbol tailored for mass spectrometry workflows.",
+          "<strong>Smart Locale Detection</strong>: Automatically serves English UI to global users based on browser locale."
+        ]
+      },
       {
         version: "v1.2.1",
         date: "2026-10",
@@ -835,37 +859,17 @@
         badge: "Major Excel Upgrade",
         title_ko: "멀티 시트 엑셀(.xlsx) 내보내기 & 단일 물 모드 및 연속 시료 평균 탑재",
         title_en: "Native Multi-Sheet Excel (.XLSX) Export & Adjacent Sample Averaging",
-        desc_ko: "CSV 저장 시 그림이나 서식이 유실되는 치명적 문제를 원천 방지하기 위해 SheetJS 기반 2개 탭 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
-        desc_en: "Integrated SheetJS to export native dual-sheet Excel workbooks (.xlsx) to permanently eliminate image/formatting loss caused by traditional text CSVs.",
+        desc_ko: "CSV 저장 시 서식이 유실되는 문제를 방지하기 위해 2개 탭 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
+        desc_en: "Integrated dual-sheet Excel exports to preserve formatting across Grouped Summary and Sequence Runs.",
         changes_ko: [
-          "<strong>멀티 시트 엑셀(.xlsx) 원클릭 다운로드</strong>: Sheet 1(Grouped_Summary: 시료별 평균 요약표)과 Sheet 2(Sequence_Runs: 개별 런 전체 데이터)가 하단 탭으로 분리된 진짜 엑셀 파일 제공.",
-          "<strong>그림 및 차트 유실 방지</strong>: 다운로드 파일이 .xlsx 규격이므로, 엑셀에서 피겨나 메모를 추가하고 저장해도 영구 보존.",
-          "<strong>단일 물 분석 모드(δD only, δ¹⁸O only) 신설</strong>: 물 시료 개별 라인 분석(3열: ID, Raw, SD) 전용 워크플로우 지원.",
-          "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 연속 측정된 동일 미지 시료(Triplicate 등)의 평균(Mean ± 1σ) 자동 집계."
+          "<strong>멀티 시트 엑셀 워크북 내보내기</strong>: Sheet 1(시료별 평균)과 Sheet 2(개별 런 전체 데이터) 분리 제공.",
+          "<strong>단일 물 분석 모드(δD only, δ¹⁸O only) 신설</strong>: 물 시료 개별 라인 분석 전용 워크플로우 지원.",
+          "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 연속 측정된 동일 미지 시료의 평균(Mean ± 1σ) 자동 집계."
         ],
         changes_en: [
-          "<strong>Native Multi-Sheet Excel Export (.xlsx)</strong>: Dual-sheet workbook with Sheet 1 for Grouped Summary and Sheet 2 for Run-by-run sequence data.",
-          "<strong>Permanent Graphic & Formatting Retention</strong>: Guarantees that inserted figures and notes remain intact without CSV flattening.",
-          "<strong>Dedicated Single-Water Presets</strong>: Added standalone 'Water Hydrogen (δD only)' and 'Water Oxygen (δ¹⁸O only)' presets.",
-          "<strong>Adjacent Replicate Grouping</strong>: Automatic chunking of adjacent unknown replicates for publication-ready statistics."
-        ]
-      },
-      {
-        version: "v1.1.0",
-        date: "2026-09",
-        badge: "Major Enhancement",
-        title_ko: "산소 스케일(VPDB ↔ VSMOW) 전환 및 독립 드리프트 모니터 탑재",
-        title_en: "Oxygen Scale Conversion (VPDB ↔ VSMOW) & Decoupled Drift Diagnostics",
-        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
-        desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
-        changes_ko: [
-          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV/Excel 헤더가 실시간 연동.",
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능."
-        ],
-        changes_en: [
-          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and exports via IUPAC Coplen (1983) equation.",
-          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes."
+          "<strong>Multi-Sheet Excel Export</strong>: Grouped Summary and Sequence Runs tabs.",
+          "<strong>Single Water Channels</strong>: Standalone δD and δ¹⁸O presets.",
+          "<strong>Adjacent Replicate Grouping</strong>: Automatic chunking of adjacent replicates."
         ]
       },
       {
@@ -874,23 +878,15 @@
         badge: "Initial Release",
         title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
         title_en: "Initial Official Release of IsoCalib Platform",
-        desc_ko: "IsoplotR의 오픈 사이언스 웹 철학에서 영감을 받아 안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
-        desc_en: "Client-side, zero-server data reduction engine inspired by IsoplotR's architecture, tailored for stable isotope geochemistry.",
+        desc_ko: "안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
+        desc_en: "Client-side, zero-server data reduction engine tailored for stable isotope geochemistry.",
         changes_ko: [
-          "<strong>국제 표준 4대 동위원소 체계 지원</strong>: C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), S (δ³⁴S).",
-          "<strong>가중 선형 회귀 (WLS)</strong>: 기기 분석 1σ SD를 역제곱 가중치(1/σ²)로 반영하는 York-Ludwig 회귀 솔버 탑재.",
-          "<strong>MSWD(축약 카이제곱) 산출</strong>: 지화학 학술 저널 표준 회귀 적합도 지표 자동 계산.",
-          "<strong>독립 QC 블라인드 검증 리포트</strong>: 검량선에 미참여하는 미지의 품질관리 표준물질 편차(Accuracy Bias) 및 반복 정밀도(1σ) 자동 판정.",
-          "<strong>JCGM GUM 1차 편미분 오차 전파</strong>: 시료 측정 오차와 검량선 파라미터 불확도를 결합한 최종 합성 불확도 도출.",
-          "<strong>Zero-Server 보안 및 벡터 피겨 내보내기</strong>: 100% 로컬 브라우저 연산 및 논문 투고용 SVG 원클릭 저장."
+          "국제 표준 4대 동위원소 체계 지원 및 가중 선형 회귀(WLS York-Ludwig) 솔버 탑재.",
+          "MSWD(축약 카이제곱) 산출 및 JCGM GUM 1차 편미분 오차 전파 도출."
         ],
         changes_en: [
-          "<strong>Core Isotope Systematics</strong>: Full support for C & O (δ¹³C, δ¹⁸O), N & O (δ¹⁵N, δ¹⁸O), H & O (δD, δ¹⁸O), and S (δ³⁴S).",
-          "<strong>Weighted Least Squares (WLS)</strong>: Exact analytical regression weighting each datum by analytical variance (1/σ²).",
-          "<strong>MSWD Goodness-of-Fit</strong>: Automated geostatistical reduced chi-squared diagnostic evaluation.",
-          "<strong>Blind QC Validation Report</strong>: Quantitative tracking of accuracy bias and reproducibility against independent reference materials.",
-          "<strong>JCGM GUM-compliant Uncertainty Propagation</strong>: Combined first-order partial differential error budgets.",
-          "<strong>Zero-Server Privacy & Publication Exports</strong>: 100% local JavaScript execution with instant vector SVG export."
+          "Core Isotope Systems with Weighted Least Squares (WLS) regression.",
+          "MSWD Goodness-of-Fit and GUM uncertainty propagation."
         ]
       }
     ];
@@ -1560,6 +1556,7 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
+          <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
           <li>사용자 커스텀 표준물질 프리셋 로컬 저장소(localStorage) 보존 시스템</li>
           <li>멀티 시트 엑셀(.xlsx) 워크북 내보내기를 통한 그림 및 서식 영구 보존</li>
           <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
@@ -1570,8 +1567,8 @@
         `;
       } else {
         listEl.innerHTML = `
+          <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
           <li>Local browser standard reference preset persistence (Zero-Server)</li>
-          <li>Native Multi-sheet Excel workbook export (.xlsx) preserving figures and notes</li>
           <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
           <li>Adjacent replicate sample chunk grouping for automated Mean ± 1σ summaries</li>
           <li>IUPAC Coplen (1983) compliant Oxygen Isotope Scale Alignment (VPDB ↔ VSMOW)</li>
@@ -1634,6 +1631,7 @@
       document.getElementById('qc-summary-banner').classList.add('hidden');
       groupedSummaryData = [];
       sequenceExportData = [];
+      lastQcSummaryReport = null;
     }
 
     function renderGrid() {
@@ -2292,9 +2290,7 @@
         resBody.appendChild(tr);
       });
 
-      // -------------------------------------------------------------
-      // 연속 인접 시료 그룹화 (Adjacent Chunk Grouping - Samples Only)
-      // -------------------------------------------------------------
+      // Grouped Sample Summary (Adjacent Chunk)
       groupedSummaryData = [];
       const groupedBody = document.getElementById('grouped-body');
       groupedBody.innerHTML = '';
@@ -2383,6 +2379,22 @@
           ? Math.sqrt(qcResults.cals1.map(x => Math.pow(x - mean1, 2)).reduce((a, b) => a + b) / (qcResults.cals1.length - 1))
           : 0;
 
+        let mean2 = null, bias2 = null, sdQc2 = null;
+        if (isDual && qcResults.cals2.length > 0 && !isNaN(qcStd.v2)) {
+          mean2 = qcResults.cals2.reduce((a, b) => a + b, 0) / qcResults.cals2.length;
+          bias2 = mean2 - qcStd.v2;
+          sdQc2 = qcResults.cals2.length > 1
+            ? Math.sqrt(qcResults.cals2.map(x => Math.pow(x - mean2, 2)).reduce((a, b) => a + b) / (qcResults.cals2.length - 1))
+            : 0;
+        }
+
+        lastQcSummaryReport = {
+          qcName: qcStd.name,
+          count: qcResults.cals1.length,
+          mean1, bias1, sdQc1,
+          mean2, bias2, sdQc2
+        };
+
         let qcHtml = `
           <div class="flex items-center justify-between border-b border-stone-200 pb-2">
             <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
@@ -2401,13 +2413,7 @@
             </div>
         `;
 
-        if (isDual && qcResults.cals2.length > 0 && !isNaN(qcStd.v2)) {
-          const mean2 = qcResults.cals2.reduce((a, b) => a + b, 0) / qcResults.cals2.length;
-          const bias2 = mean2 - qcStd.v2;
-          const sdQc2 = qcResults.cals2.length > 1
-            ? Math.sqrt(qcResults.cals2.map(x => Math.pow(x - mean2, 2)).reduce((a, b) => a + b) / (qcResults.cals2.length - 1))
-            : 0;
-
+        if (isDual && mean2 !== null) {
           qcHtml += `
             <div class="space-y-1">
               <div class="text-stone-600 font-sans font-medium">${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
@@ -2422,7 +2428,7 @@
 
         qcHtml += `</div>`;
         if (driftMode === 'linear' && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
-          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Linear drift model (${monitorAnchor.name}) applied` : `선형 드리프트 모델(${monitorAnchor.name} 기준) 적용됨`}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} =${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
+          qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Linear drift model (${monitorAnchor.name}) applied` : `선형 드리프트 모델(${monitorAnchor.name} 기준) 적용됨`}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} = ${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
         } else if (driftMode === 'piecewise') {
           qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Anchor-to-Anchor bracketing drift model (${monitorAnchor.name}) applied across` : `앵커 간 선형 브래케팅 보정(${monitorAnchor.name} 기준) 적용됨:`} ${monitorRuns1.length} ${isEn ? 'anchor points' : '회 기준'}</div>`;
         }
@@ -2431,6 +2437,7 @@
         qcBanner.classList.remove('hidden');
       } else {
         qcBanner.classList.add('hidden');
+        lastQcSummaryReport = null;
       }
     }
 
@@ -2640,117 +2647,206 @@
       syncPasteTarget();
     });
 
-    // Native Multi-Sheet Excel (.XLSX) Export via SheetJS
-    document.getElementById('btn-export').addEventListener('click', () => {
+    // -------------------------------------------------------------
+    // ExcelJS Multi-Sheet + Figures (.XLSX) Export Engine
+    // -------------------------------------------------------------
+    async function capturePlotAsBase64Png(elemId) {
+      const el = document.getElementById(elemId);
+      if (!el || !el.data || el.data.length === 0) return null;
+      try {
+        const dataUrl = await Plotly.toImage(el, { format: 'png', width: 750, height: 480 });
+        return dataUrl.split(',')[1];
+      } catch (err) {
+        console.warn(`Could not export plot ${elemId}:`, err);
+        return null;
+      }
+    }
+
+    document.getElementById('btn-export').addEventListener('click', async () => {
       if (!sequenceExportData || sequenceExportData.length === 0) {
         alert(currentLang === 'en' ? "Please run calibration first before exporting." : "먼저 상단에서 검량을 실행한 후 내보내기를 진행해 주세요.");
         return;
       }
 
-      if (typeof XLSX === 'undefined') {
-        alert("SheetJS library is not loaded. Please check your internet connection.");
+      if (typeof ExcelJS === 'undefined') {
+        alert("ExcelJS library is not loaded. Please verify your internet connection.");
         return;
       }
 
       const p = PRESETS[currentMode];
       const isDual = p.elements.length === 2;
       const oUnit = getOxygenUnit();
-      const wb = XLSX.utils.book_new();
+      const exportBtn = document.getElementById('btn-export');
+      const originalBtnText = exportBtn.innerHTML;
 
-      // Sheet 1: Grouped Summary Data Table
-      const summaryRows = [];
-      if (isDual) {
-        summaryRows.push([
-          "Sample_Base_ID",
-          "Replicate_Count (n)",
-          `Mean_${p.elements[0].label} (${p.elements[0].unit})`,
-          "Rep_1SD",
-          `Mean_${p.elements[1].label} (${oUnit})`,
-          "Rep_1SD"
-        ]);
-        groupedSummaryData.forEach(g => {
-          summaryRows.push([
-            g.baseId,
-            g.n,
-            g.mean1,
-            g.sd1,
-            g.mean2,
-            g.sd2
-          ]);
-        });
-      } else {
-        summaryRows.push([
-          "Sample_Base_ID",
-          "Replicate_Count (n)",
-          `Mean_${p.elements[0].label} (${p.elements[0].unit})`,
-          "Rep_1SD"
-        ]);
-        groupedSummaryData.forEach(g => {
-          summaryRows.push([
-            g.baseId,
-            g.n,
-            g.mean1,
-            g.sd1
-          ]);
-        });
+      try {
+        exportBtn.innerHTML = `<span>⏳ Generating Workbook with Embedded Figures...</span>`;
+        exportBtn.style.opacity = '0.6';
+        exportBtn.style.pointerEvents = 'none';
+
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'IsoCalib Platform (Zenodo: 10.5281/zenodo.23239186)';
+        workbook.created = new Date();
+
+        // 1. Grouped Summary Sheet
+        const wsGrouped = workbook.addWorksheet('Grouped_Summary');
+        if (isDual) {
+          wsGrouped.columns = [
+            { header: 'Sample_Base_ID', key: 'baseId', width: 22 },
+            { header: 'Replicate_Count (n)', key: 'n', width: 18 },
+            { header: `Mean_${p.elements[0].label} (${p.elements[0].unit})`, key: 'mean1', width: 24 },
+            { header: 'Rep_1SD', key: 'sd1', width: 14 },
+            { header: `Mean_${p.elements[1].label} (${oUnit})`, key: 'mean2', width: 24 },
+            { header: 'Rep_1SD', key: 'sd2', width: 14 }
+          ];
+          groupedSummaryData.forEach(g => {
+            wsGrouped.addRow({
+              baseId: g.baseId,
+              n: g.n,
+              mean1: g.mean1,
+              sd1: g.sd1,
+              mean2: g.mean2,
+              sd2: g.sd2
+            });
+          });
+        } else {
+          wsGrouped.columns = [
+            { header: 'Sample_Base_ID', key: 'baseId', width: 22 },
+            { header: 'Replicate_Count (n)', key: 'n', width: 18 },
+            { header: `Mean_${p.elements[0].label} (${p.elements[0].unit})`, key: 'mean1', width: 24 },
+            { header: 'Rep_1SD', key: 'sd1', width: 14 }
+          ];
+          groupedSummaryData.forEach(g => {
+            wsGrouped.addRow({
+              baseId: g.baseId,
+              n: g.n,
+              mean1: g.mean1,
+              sd1: g.sd1
+            });
+          });
+        }
+
+        // 2. Sequence Runs Sheet
+        const wsSeq = workbook.addWorksheet('Sequence_Runs');
+        if (isDual) {
+          wsSeq.columns = [
+            { header: 'Run_Order', key: 'runNumber', width: 12 },
+            { header: 'Sample_ID', key: 'id', width: 22 },
+            { header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 },
+            { header: '1SD', key: 'sd1', width: 12 },
+            { header: `Raw_${p.elements[1].label}`, key: 'raw2', width: 16 },
+            { header: '1SD', key: 'sd2', width: 12 },
+            { header: `Calibrated_${p.elements[0].label} (${p.elements[0].unit})`, key: 'cal1', width: 22 },
+            { header: 'Combined_1SD', key: 'propSd1', width: 16 },
+            { header: `Calibrated_${p.elements[1].label} (${oUnit})`, key: 'cal2', width: 22 },
+            { header: 'Combined_1SD', key: 'propSd2', width: 16 }
+          ];
+          sequenceExportData.forEach(r => wsSeq.addRow(r));
+        } else {
+          wsSeq.columns = [
+            { header: 'Run_Order', key: 'runNumber', width: 12 },
+            { header: 'Sample_ID', key: 'id', width: 22 },
+            { header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 },
+            { header: '1SD', key: 'sd1', width: 12 },
+            { header: `Calibrated_${p.elements[0].label} (${p.elements[0].unit})`, key: 'cal1', width: 22 },
+            { header: 'Combined_1SD', key: 'propSd1', width: 16 }
+          ];
+          sequenceExportData.forEach(r => wsSeq.addRow(r));
+        }
+
+        // 3. Figures & QC Diagnostics Sheet (Embedding High-res Images)
+        const wsFig = workbook.addWorksheet('Figures_and_QC');
+        wsFig.columns = [
+          { width: 4 }, { width: 30 }, { width: 30 }, { width: 30 }
+        ];
+
+        wsFig.getCell('B2').value = `IsoCalib Analytical Figures & QC Verification Report (${currentMode})`;
+        wsFig.getCell('B2').font = { size: 14, bold: true, color: { argb: 'FF111827' } };
+
+        wsFig.getCell('B3').value = `Exported: ${new Date().toISOString()} | Permanent DOI: 10.5281/zenodo.23239186 | License: GNU GPL v3.0`;
+        wsFig.getCell('B3').font = { size: 9, italic: true, color: { argb: 'FF6B7280' } };
+
+        // Append QC text metrics if available
+        let curRow = 5;
+        if (lastQcSummaryReport) {
+          wsFig.getCell(`B${curRow}`).value = `QC Standard: [${lastQcSummaryReport.qcName}] (Evaluated across ${lastQcSummaryReport.count} repeat runs)`;
+          wsFig.getCell(`B${curRow}`).font = { bold: true };
+          curRow++;
+
+          wsFig.getCell(`B${curRow}`).value = `${p.elements[0].label} Mean Calibrated: ${lastQcSummaryReport.mean1.toFixed(3)} ${p.elements[0].unit} | Bias: ${lastQcSummaryReport.bias1 >= 0 ? '+' : ''}${lastQcSummaryReport.bias1.toFixed(3)} ‰ | Rep 1σ: ±${lastQcSummaryReport.sdQc1.toFixed(3)} ‰`;
+          curRow++;
+
+          if (isDual && lastQcSummaryReport.mean2 !== null) {
+            wsFig.getCell(`B${curRow}`).value = `${p.elements[1].label} Mean Calibrated: ${lastQcSummaryReport.mean2.toFixed(3)} ${oUnit} | Bias: ${lastQcSummaryReport.bias2 >= 0 ? '+' : ''}${lastQcSummaryReport.bias2.toFixed(3)} ‰ | Rep 1σ: ±${lastQcSummaryReport.sdQc2.toFixed(3)} ‰`;
+            curRow++;
+          }
+          curRow++;
+        }
+
+        // Capture plots and embed
+        const img1Base64 = await capturePlotAsBase64Png('plot-1');
+        const img2Base64 = isDual ? await capturePlotAsBase64Png('plot-2') : null;
+        const imgDrift1Base64 = await capturePlotAsBase64Png('plot-drift-1');
+        const imgDrift2Base64 = isDual ? await capturePlotAsBase64Png('plot-drift-2') : null;
+
+        let imgRow = curRow + 1;
+
+        if (img1Base64) {
+          const imageId1 = workbook.addImage({ base64: img1Base64, extension: 'png' });
+          wsFig.addImage(imageId1, {
+            tl: { col: 1, row: imgRow },
+            ext: { width: 580, height: 360 }
+          });
+          imgRow += 20;
+        }
+
+        if (img2Base64) {
+          const imageId2 = workbook.addImage({ base64: img2Base64, extension: 'png' });
+          wsFig.addImage(imageId2, {
+            tl: { col: 1, row: imgRow },
+            ext: { width: 580, height: 360 }
+          });
+          imgRow += 20;
+        }
+
+        if (imgDrift1Base64) {
+          const imageIdD1 = workbook.addImage({ base64: imgDrift1Base64, extension: 'png' });
+          wsFig.addImage(imageIdD1, {
+            tl: { col: 1, row: imgRow },
+            ext: { width: 580, height: 360 }
+          });
+          imgRow += 20;
+        }
+
+        if (imgDrift2Base64) {
+          const imageIdD2 = workbook.addImage({ base64: imgDrift2Base64, extension: 'png' });
+          wsFig.addImage(imageIdD2, {
+            tl: { col: 1, row: imgRow },
+            ext: { width: 580, height: 360 }
+          });
+          imgRow += 20;
+        }
+
+        // Generate buffer and trigger browser download
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `IsoCalib_${currentMode}_${oxygenScale}_Full_Report.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+      } catch (error) {
+        console.error('Error during Excel export:', error);
+        alert(currentLang === 'en' ? `Excel export failed: ${error.message}` : `엑셀 생성 중 오류가 발생했습니다: ${error.message}`);
+      } finally {
+        exportBtn.innerHTML = originalBtnText;
+        exportBtn.style.opacity = '1';
+        exportBtn.style.pointerEvents = 'auto';
       }
-      const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
-      XLSX.utils.book_append_sheet(wb, wsSummary, "Grouped_Summary");
-
-      // Sheet 2: Run-by-Run Sequence Data Table
-      const seqRows = [];
-      if (isDual) {
-        seqRows.push([
-          "Run_Order",
-          "Sample_ID",
-          `Raw_${p.elements[0].label}`,
-          `1SD`,
-          `Raw_${p.elements[1].label}`,
-          `1SD`,
-          `Calibrated_${p.elements[0].label} (${p.elements[0].unit})`,
-          `Combined_1SD`,
-          `Calibrated_${p.elements[1].label} (${oUnit})`,
-          `Combined_1SD`
-        ]);
-        sequenceExportData.forEach(r => {
-          seqRows.push([
-            r.runNumber,
-            r.id,
-            r.raw1,
-            r.sd1,
-            r.raw2,
-            r.sd2,
-            r.cal1,
-            r.propSd1,
-            r.cal2,
-            r.propSd2
-          ]);
-        });
-      } else {
-        seqRows.push([
-          "Run_Order",
-          "Sample_ID",
-          `Raw_${p.elements[0].label}`,
-          `1SD`,
-          `Calibrated_${p.elements[0].label} (${p.elements[0].unit})`,
-          `Combined_1SD`
-        ]);
-        sequenceExportData.forEach(r => {
-          seqRows.push([
-            r.runNumber,
-            r.id,
-            r.raw1,
-            r.sd1,
-            r.cal1,
-            r.propSd1
-          ]);
-        });
-      }
-      const wsSequence = XLSX.utils.aoa_to_sheet(seqRows);
-      XLSX.utils.book_append_sheet(wb, wsSequence, "Sequence_Runs");
-
-      const fileName = `IsoCalib_${currentMode}_${oxygenScale}_Reduced_Data.xlsx`;
-      XLSX.writeFile(wb, fileName);
     });
 
     window.addEventListener('DOMContentLoaded', () => {
