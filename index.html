@@ -118,6 +118,8 @@
       </div>
       <div class="flex items-center space-x-6">
         <nav class="hidden md:flex items-center space-x-5 text-xs text-stone-600 font-serif-title italic">
+          <button id="btn-open-quickstart" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer font-semibold text-stone-900" data-i18n="nav_quickstart">사용법 (Quick Start)</button>
+          <span>·</span>
           <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
           <span>·</span>
           <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.3.0)</button>
@@ -264,10 +266,18 @@
           <button id="btn-clear" class="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 border border-transparent hover:border-stone-300 transition cursor-pointer" data-i18n="btn_clear">
             Clear All
           </button>
-          <button id="btn-demo" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm cursor-pointer" data-i18n="btn_demo">
-            Load Demo
-          </button>
-          <button id="btn-add-row" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-sm cursor-pointer" data-i18n="btn_add_rows">
+          
+          <!-- Harmonized Demo Button with Subtle Guide Tag -->
+          <div class="inline-flex items-center border border-[#c7c5bc] bg-white hover:border-stone-900 transition shadow-xs group">
+            <button id="btn-demo" class="px-3 py-2 text-xs font-semibold text-stone-800 transition cursor-pointer" data-i18n="btn_demo">
+              Load Demo
+            </button>
+            <span class="border-l border-stone-200 px-2 py-2 text-[10px] font-mono text-stone-400 group-hover:text-stone-600 bg-[#fbfaf8] select-none" data-i18n="demo_guide_tag">
+              시연 데이터
+            </span>
+          </div>
+
+          <button id="btn-add-row" class="px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-xs cursor-pointer" data-i18n="btn_add_rows">
             + 30 Rows
           </button>
           <button id="btn-calc" class="px-5 py-2 text-xs font-bold text-white bg-stone-900 hover:bg-stone-800 transition tracking-wider uppercase shadow cursor-pointer" data-i18n="btn_calc">
@@ -565,6 +575,73 @@
 
   </main>
 
+  <!-- Quick Start Guide Modal -->
+  <div id="quickstart-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
+      <div class="flex justify-between items-start border-b border-stone-200 pb-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
+            <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="qs_modal_title">/ Quick Start Protocol</span>
+          </div>
+          <p class="text-xs text-stone-500 pt-1" data-i18n="qs_modal_subtitle">안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드</p>
+        </div>
+        <button id="btn-close-quickstart" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs text-stone-700 leading-relaxed font-light">
+        
+        <!-- Step 1 Card -->
+        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">Step 1. 표준물질 참값 및 옵션 확인 (Section 01)</span>
+            <span class="font-mono text-[10px] text-stone-400">01 SETUP</span>
+          </div>
+          <p data-i18n="qs_step1_desc">
+            사용 중인 검량 표준물질(Anchor 1, 2)과 품질관리 표준물질(QC)의 이름과 공인 참값을 입력합니다. 자주 사용하는 세트는 <code>Save</code> 버튼으로 브라우저에 영구 저장해 둘 수 있습니다.
+          </p>
+          <div class="text-[11px] font-mono text-stone-500 bg-white p-2 border border-stone-200">
+            * 팁: 시퀀스 표의 표준물질 행 이름(예: <code>NBS-18_1</code>)에 상단 앵커 이름(<code>NBS-18</code>)이 포함되어 있으면 시스템이 자동으로 감지합니다.
+          </div>
+        </div>
+
+        <!-- Step 2 Card -->
+        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">Step 2. 엑셀 런 시퀀스 복사 & 붙여넣기 (Section 02)</span>
+            <span class="font-mono text-[10px] text-stone-400">02 INPUT</span>
+          </div>
+          <p data-i18n="qs_step2_desc">
+            기기 소프트웨어(Isodat 등)나 엑셀 파일에서 분석 열을 복사한 후, 표의 첫 번째 셀을 클릭하고 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 즉시 표에 채워집니다.
+          </p>
+          <div class="text-[11px] font-mono text-stone-600 bg-white p-2 border border-stone-200 overflow-x-auto">
+            [열 순서] 시료 ID | Raw 1차 동위원소 | 1σ SD | Raw 2차 동위원소 | 1σ SD
+          </div>
+        </div>
+
+        <!-- Step 3 Card -->
+        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">Step 3. 보정 실행 및 엑셀 다운로드 (Section 03)</span>
+            <span class="font-mono text-[10px] text-stone-400">03 REDUCE</span>
+          </div>
+          <p data-i18n="qs_step3_desc">
+            <code class="bg-stone-900 text-white px-2 py-0.5 font-bold font-mono">Run Calibration & QC</code>를 클릭하면 드리프트 보정, WLS 검량선 피팅, 독립 QC 오차 평가 및 연속 시료 평균(Grouped Summary)이 한 번에 계산됩니다.
+          </p>
+          <p data-i18n="qs_step3_desc2">
+            완료 후 상단의 <code>Export Excel Report (.xlsx)</code> 버튼을 누르면 고해상도 그래프(Figure 1~4)가 포함된 최종 분석 성적서 엑셀 파일이 다운로드됩니다.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
+        <span data-i18n="qs_footer_tip">* Load Demo 버튼을 누르면 샘플 데이터로 즉시 시연해 보실 수 있습니다.</span>
+        <button id="btn-quickstart-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- About IsoCalib Modal -->
   <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
@@ -653,6 +730,7 @@
     const TRANSLATIONS = {
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
+        nav_quickstart: "사용법 (Quick Start)",
         nav_about: "IsoCalib 소개",
         nav_changelog: "업데이트 로그 (v1.3.0)",
         nav_methodology: "통계 방법론 & 원리",
@@ -680,6 +758,7 @@
         btn_delete_rows: "선택 행 삭제",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
+        demo_guide_tag: "시연 데이터",
         btn_add_rows: "+ 30 Rows",
         btn_calc: "Run Calibration & QC",
         grid_hint: "* 행 번호(#)는 시퀀스 런 순서로 반영됩니다",
@@ -724,10 +803,21 @@
         about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
         about_p2: "탄소·산소, 질소·산소, 수소·산소 동시 분석뿐만 아니라 물 분석 전용 단일 수소(δD), 단일 산소(δ¹⁸O), 황(δ³⁴S) 체계를 모두 지원합니다.",
         about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
-        about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다."
+        about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다.",
+        qs_modal_title: "/ Quick Start Protocol (빠른 시작 가이드)",
+        qs_modal_subtitle: "안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드",
+        qs_step1_title: "Step 1. 표준물질 참값 및 옵션 확인 (Section 01)",
+        qs_step1_desc: "사용 중인 검량 표준물질(Anchor 1, 2)과 품질관리 표준물질(QC)의 이름과 공인 참값을 입력합니다. 자주 사용하는 세트는 Save 버튼으로 브라우저에 영구 저장해 둘 수 있습니다.",
+        qs_step2_title: "Step 2. 엑셀 런 시퀀스 복사 & 붙여넣기 (Section 02)",
+        qs_step2_desc: "기기 소프트웨어(Isodat 등)나 엑셀 파일에서 분석 열을 복사한 후, 표의 첫 번째 셀을 클릭하고 Ctrl + V를 누르면 즉시 표에 채워집니다.",
+        qs_step3_title: "Step 3. 보정 실행 및 엑셀 다운로드 (Section 03)",
+        qs_step3_desc: "Run Calibration & QC를 클릭하면 드리프트 보정, WLS 검량선 피팅, 독립 QC 오차 평가 및 연속 시료 평균(Grouped Summary)이 한 번에 계산됩니다.",
+        qs_step3_desc2: "완료 후 상단의 Export Excel Report (.xlsx) 버튼을 누르면 고해상도 그래프(Figure 1~4)가 포함된 최종 분석 성적서 엑셀 파일이 다운로드됩니다.",
+        qs_footer_tip: "* Load Demo 버튼을 누르면 샘플 데이터로 즉시 시연해 보실 수 있습니다."
       },
       en: {
         tagline: "/ Open Geochemistry Tool",
+        nav_quickstart: "Quick Start",
         nav_about: "About IsoCalib",
         nav_changelog: "Changelog (v1.3.0)",
         nav_methodology: "Methodology & Principles",
@@ -755,6 +845,7 @@
         btn_delete_rows: "Delete Row(s)",
         btn_clear: "Clear All",
         btn_demo: "Load Demo",
+        demo_guide_tag: "Sample Runs",
         btn_add_rows: "+ 30 Rows",
         btn_calc: "Run Calibration & QC",
         grid_hint: "* Row numbers (#) correspond to sequence acquisition order",
@@ -799,7 +890,17 @@
         about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
         about_p2: "It supports dual isotope systems as well as dedicated single-isotope water channels (δD only, δ¹⁸O only) and sulfur (δ³⁴S).",
         about_protocols_title: "Core Analytical Protocols:",
-        about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally."
+        about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally.",
+        qs_modal_title: "/ Quick Start Protocol",
+        qs_modal_subtitle: "Essential 3-step guideline for fast and reproducible data reduction",
+        qs_step1_title: "Step 1. Configure Reference Standards (Section 01)",
+        qs_step1_desc: "Check and verify accepted values for Anchor 1, 2 and independent QC standards. Save persistent lab presets directly into local browser storage.",
+        qs_step2_title: "Step 2. Paste Sequence Rows (Section 02)",
+        qs_step2_desc: "Copy tabular sequence runs from your instrument file, select the starting cell, and press Ctrl + V to populate.",
+        qs_step3_title: "Step 3. Calibrate & Export (Section 03)",
+        qs_step3_desc: "Click Run Calibration & QC to calculate drift corrections, WLS fits, QC bias metrics, and replicate group averages.",
+        qs_step3_desc2: "Export complete Excel (.xlsx) workbooks embedding high-resolution figures (Figure 1-4) with one click.",
+        qs_footer_tip: "* Click 'Load Demo' on the spreadsheet to inspect an active calculation immediately."
       }
     };
 
@@ -821,12 +922,14 @@
         changes_ko: [
           "<strong>ExcelJS 통합 엔진 도입</strong>: SheetJS의 한계를 극복하고 브라우저 로컬에서 실제 이미지 객체(`.addImage`)가 포함된 워크북 생성.",
           "<strong>세 번째 탭 'Figures_and_QC' 신설</strong>: Sheet 1(시료 요약표), Sheet 2(런 시퀀스)에 이어 Sheet 3에 Figure 1~4 그래프와 QC 통계 지표가 자동으로 깔끔하게 배치.",
+          "<strong>초보 사용자를 위한 빠른 시작(Quick Start) 가이드 탑재</strong>: 실무진이 10초 만에 3단계 워크플로우를 파악할 수 있는 직관적인 안내 모달 추가.",
           "<strong>질량분석 듀얼 피크 파비콘 정식 적용</strong>: IRMS 분석 빔 피크를 형상화한 전용 고대비 SVG 파비콘 장착.",
           "<strong>글로벌 접속자 브라우저 언어 자동 감지</strong>: 해외 연구자 접속 시 자동으로 EN 모드로 전환되는 스마트 감지 로직 적용."
         ],
         changes_en: [
           "<strong>ExcelJS Integration</strong>: Generates true binary Excel workbooks embedding vector-rendered raster figures without external servers.",
           "<strong>Dedicated 'Figures_and_QC' Sheet</strong>: Complete report containing Figure 1-4 calibration & drift diagnostic plots alongside QC performance metrics.",
+          "<strong>Quick Start Onboarding Protocol</strong>: Interactive 3-step modal helping new researchers grasp data reduction in seconds.",
           "<strong>Mass Spec Dual Peaks Favicon</strong>: High-contrast academic SVG symbol tailored for mass spectrometry workflows.",
           "<strong>Smart Locale Detection</strong>: Automatically serves English UI to global users based on browser locale."
         ]
@@ -1606,8 +1709,20 @@
     document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
     document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
 
+    // Modals Handling (QuickStart, About, Changelog)
+    const quickstartModal = document.getElementById('quickstart-modal');
     const aboutModal = document.getElementById('about-modal');
     const changelogModal = document.getElementById('changelog-modal');
+
+    document.getElementById('btn-open-quickstart').addEventListener('click', () => {
+      quickstartModal.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-quickstart').addEventListener('click', () => {
+      quickstartModal.classList.add('hidden');
+    });
+    document.getElementById('btn-quickstart-close-bottom').addEventListener('click', () => {
+      quickstartModal.classList.add('hidden');
+    });
 
     document.getElementById('btn-open-about').addEventListener('click', () => {
       aboutModal.classList.remove('hidden');
@@ -1632,6 +1747,7 @@
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        if (!quickstartModal.classList.contains('hidden')) quickstartModal.classList.add('hidden');
         if (!aboutModal.classList.contains('hidden')) aboutModal.classList.add('hidden');
         if (!changelogModal.classList.contains('hidden')) changelogModal.classList.add('hidden');
       }
