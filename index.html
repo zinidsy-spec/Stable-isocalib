@@ -147,7 +147,7 @@
             </button>
 
             <!-- Dropdown Menu Box -->
-            <div id="more-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-[#c7c5bc] shadow-lg rounded-none py-1.5 z-50 text-xs font-sans text-stone-800 divide-y divide-stone-100 animate-in fade-in zoom-in-95 duration-100">
+            <div id="more-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-[#c7c5bc] shadow-lg rounded-none py-1.5 z-50 text-xs font-sans text-stone-800 divide-y divide-stone-100">
               <div class="py-1">
                 <button id="btn-open-about" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_about">
                   <span>IsoCalib 소개</span>
@@ -639,7 +639,7 @@
           <p data-i18n="qs_step1_desc">
             사용 중인 검량 표준물질(Anchor 1, 2)과 품질관리 표준물질(QC)의 이름과 공인 참값을 입력합니다. 자주 사용하는 세트는 <code>Save</code> 버튼으로 브라우저에 영구 저장해 둘 수 있습니다.
           </p>
-          <div class="text-[11px] font-mono text-stone-500 bg-white p-2 border border-stone-200">
+          <div class="text-[11px] font-mono text-stone-500 bg-white p-2 border border-stone-200" data-i18n="qs_step1_tip">
             * 팁: 시퀀스 표의 표준물질 행 이름(예: <code>NBS-18_1</code>)에 상단 앵커 이름(<code>NBS-18</code>)이 포함되어 있으면 시스템이 자동으로 감지합니다.
           </div>
         </div>
@@ -653,7 +653,7 @@
           <p data-i18n="qs_step2_desc">
             기기 소프트웨어(Isodat 등)나 엑셀 파일에서 분석 열을 복사한 후, 표의 첫 번째 셀을 클릭하고 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 즉시 표에 채워집니다.
           </p>
-          <div class="text-[11px] font-mono text-stone-600 bg-white p-2 border border-stone-200 overflow-x-auto">
+          <div class="text-[11px] font-mono text-stone-600 bg-white p-2 border border-stone-200 overflow-x-auto" data-i18n="qs_step2_columns">
             [열 순서] 시료 ID | Raw 1차 동위원소 | 1σ SD | Raw 2차 동위원소 | 1σ SD
           </div>
         </div>
@@ -848,8 +848,10 @@
         qs_modal_subtitle: "안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드",
         qs_step1_title: "Step 1. 표준물질 참값 및 옵션 확인 (Section 01)",
         qs_step1_desc: "사용 중인 검량 표준물질(Anchor 1, 2)과 품질관리 표준물질(QC)의 이름과 공인 참값을 입력합니다. 자주 사용하는 세트는 Save 버튼으로 브라우저에 영구 저장해 둘 수 있습니다.",
+        qs_step1_tip: "* 팁: 시퀀스 표의 표준물질 행 이름(예: NBS-18_1)에 상단 앵커 이름(NBS-18)이 포함되어 있으면 시스템이 자동으로 감지합니다.",
         qs_step2_title: "Step 2. 엑셀 런 시퀀스 복사 & 붙여넣기 (Section 02)",
         qs_step2_desc: "기기 소프트웨어(Isodat 등)나 엑셀 파일에서 분석 열을 복사한 후, 표의 첫 번째 셀을 클릭하고 Ctrl + V를 누르면 즉시 표에 채워집니다.",
+        qs_step2_columns: "[열 순서] 시료 ID | Raw 1차 동위원소 | 1σ SD | Raw 2차 동위원소 | 1σ SD",
         qs_step3_title: "Step 3. 보정 실행 및 엑셀 다운로드 (Section 03)",
         qs_step3_desc: "Run Calibration & QC를 클릭하면 드리프트 보정, WLS 검량선 피팅, 독립 QC 오차 평가 및 연속 시료 평균(Grouped Summary)이 한 번에 계산됩니다.",
         qs_step3_desc2: "완료 후 상단의 Export Excel Report (.xlsx) 버튼을 누르면 고해상도 그래프(Figure 1~4)가 포함된 최종 분석 성적서 엑셀 파일이 다운로드됩니다.",
@@ -936,8 +938,10 @@
         qs_modal_subtitle: "Essential 3-step guideline for fast and reproducible data reduction",
         qs_step1_title: "Step 1. Configure Reference Standards (Section 01)",
         qs_step1_desc: "Check and verify accepted values for Anchor 1, 2 and independent QC standards. Save persistent lab presets directly into local browser storage.",
+        qs_step1_tip: "* Tip: If sequence standard names (e.g. NBS-18_1) contain the anchor name (NBS-18), they are auto-detected by the engine.",
         qs_step2_title: "Step 2. Paste Sequence Rows (Section 02)",
         qs_step2_desc: "Copy tabular sequence runs from your instrument file, select the starting cell, and press Ctrl + V to populate.",
+        qs_step2_columns: "[Columns] Sample ID | Raw Isotope 1 | 1σ SD | Raw Isotope 2 | 1σ SD",
         qs_step3_title: "Step 3. Calibrate & Export (Section 03)",
         qs_step3_desc: "Click Run Calibration & QC to calculate drift corrections, WLS fits, QC bias metrics, and replicate group averages.",
         qs_step3_desc2: "Export complete Excel (.xlsx) workbooks embedding high-resolution figures (Figure 1-4) with one click.",
