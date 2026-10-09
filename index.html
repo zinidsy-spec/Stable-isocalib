@@ -109,40 +109,79 @@
 
   <textarea id="paste-target" tabindex="-1"></textarea>
 
-  <!-- Editorial Top Navigation -->
+  <!-- Editorial Top Navigation (Refined Minimal Layout) -->
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-6 h-18 py-4 flex items-center justify-between">
-      <div class="flex items-baseline space-x-3">
-        <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</a>
-        <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold font-mono" data-i18n="tagline">/ 오픈 지화학 분석 플랫폼</span>
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo & Clean Sub-badge -->
+      <div class="flex items-center space-x-3 whitespace-nowrap">
+        <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900 hover:text-stone-700 transition">ISOCALIB</a>
+        <span class="hidden sm:inline-block text-[11px] uppercase tracking-wider text-stone-400 font-mono">/ Geochemistry</span>
       </div>
-      <div class="flex items-center space-x-6">
-        <nav class="hidden md:flex items-center space-x-5 text-xs text-stone-600 font-serif-title italic">
-          <button id="btn-open-quickstart" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer font-semibold text-stone-900" data-i18n="nav_quickstart">사용법 (Quick Start)</button>
-          <span>·</span>
-          <button id="btn-open-about" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_about">IsoCalib 소개</button>
-          <span>·</span>
-          <button id="btn-open-changelog" class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer" data-i18n="nav_changelog">업데이트 로그 (v1.3.0)</button>
-          <span>·</span>
-          <a href="#methodology" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_methodology">통계 방법론 & 원리</a>
-          <span>·</span>
-          <a href="#citation" class="hover:text-stone-900 transition underline underline-offset-4" data-i18n="nav_citation">인용 정보 & DOI</a>
-          <span>·</span>
-          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
-             target="_blank" 
-             rel="noopener noreferrer"
-             class="hover:text-stone-900 transition underline underline-offset-4 cursor-pointer"
-             data-i18n="nav_feedback">
-            피드백 & 제안
+
+      <!-- Action Navigation Links -->
+      <div class="flex items-center space-x-5 whitespace-nowrap">
+        <nav class="flex items-center space-x-4 sm:space-x-5 text-xs text-stone-600 font-sans">
+          
+          <!-- Primary 1: Quick Start -->
+          <button id="btn-open-quickstart" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1" data-i18n="nav_quickstart">
+            사용법 (Quick Start)
+          </button>
+          
+          <span class="text-stone-300">·</span>
+
+          <!-- Primary 2: Methodology -->
+          <a href="#methodology" class="hover:text-stone-900 transition text-stone-600 hover:font-medium" data-i18n="nav_methodology">
+            통계 방법론
           </a>
+
+          <span class="text-stone-300">·</span>
+
+          <!-- Grouped Dropdown Menu: More -->
+          <div class="relative inline-block text-left" id="more-menu-container">
+            <button id="btn-toggle-more" type="button" class="inline-flex items-center gap-1 text-stone-600 hover:text-stone-900 transition cursor-pointer font-medium py-1">
+              <span data-i18n="nav_more">더보기</span>
+              <svg class="w-3.5 h-3.5 text-stone-400 transition-transform duration-200" id="more-menu-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu Box -->
+            <div id="more-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-[#c7c5bc] shadow-lg rounded-none py-1.5 z-50 text-xs font-sans text-stone-800 divide-y divide-stone-100 animate-in fade-in zoom-in-95 duration-100">
+              <div class="py-1">
+                <button id="btn-open-about" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_about">
+                  <span>IsoCalib 소개</span>
+                  <span class="font-mono text-[10px] text-stone-400">About</span>
+                </button>
+                <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_changelog">
+                  <span>업데이트 로그</span>
+                  <span class="font-mono text-[10px] text-stone-400">v1.3.0</span>
+                </button>
+              </div>
+              <div class="py-1">
+                <a href="#citation" class="block px-3.5 py-1.5 hover:bg-stone-50 transition flex justify-between items-center" data-i18n="nav_citation">
+                  <span>인용 정보 & DOI</span>
+                  <span class="font-mono text-[10px] text-stone-400">Cite</span>
+                </a>
+                <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="block px-3.5 py-1.5 hover:bg-stone-50 transition flex justify-between items-center" data-i18n="nav_feedback">
+                  <span>피드백 & 제안</span>
+                  <span class="font-mono text-[10px] text-stone-400">GitHub</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </nav>
         
         <!-- Language Switcher Toggle -->
-        <div class="inline-flex items-center border border-stone-300 rounded p-0.5 bg-stone-100 font-mono text-[11px] font-bold">
-          <button id="lang-ko" class="px-2 py-0.5 rounded transition cursor-pointer">KO</button>
-          <button id="lang-en" class="px-2 py-0.5 rounded transition cursor-pointer">EN</button>
+        <div class="inline-flex items-center border border-stone-300 p-0.5 bg-stone-100 font-mono text-[11px] font-bold">
+          <button id="lang-ko" class="px-2 py-0.5 transition cursor-pointer">KO</button>
+          <button id="lang-en" class="px-2 py-0.5 transition cursor-pointer">EN</button>
         </div>
       </div>
+
     </div>
   </header>
 
@@ -731,9 +770,10 @@
       ko: {
         tagline: "/ 오픈 지화학 분석 플랫폼",
         nav_quickstart: "사용법 (Quick Start)",
+        nav_methodology: "통계 방법론",
+        nav_more: "더보기",
         nav_about: "IsoCalib 소개",
-        nav_changelog: "업데이트 로그 (v1.3.0)",
-        nav_methodology: "통계 방법론 & 원리",
+        nav_changelog: "업데이트 로그",
         nav_citation: "인용 정보 & DOI",
         nav_feedback: "피드백 & 제안",
         hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
@@ -818,9 +858,10 @@
       en: {
         tagline: "/ Open Geochemistry Tool",
         nav_quickstart: "Quick Start",
+        nav_methodology: "Methodology",
+        nav_more: "More",
         nav_about: "About IsoCalib",
-        nav_changelog: "Changelog (v1.3.0)",
-        nav_methodology: "Methodology & Principles",
+        nav_changelog: "Changelog",
         nav_citation: "Citation & DOI",
         nav_feedback: "Feedback & Ideas",
         hero_badge: "Precision Data Reduction & QC Protocol",
@@ -923,6 +964,7 @@
           "<strong>ExcelJS 통합 엔진 도입</strong>: SheetJS의 한계를 극복하고 브라우저 로컬에서 실제 이미지 객체(`.addImage`)가 포함된 워크북 생성.",
           "<strong>세 번째 탭 'Figures_and_QC' 신설</strong>: Sheet 1(시료 요약표), Sheet 2(런 시퀀스)에 이어 Sheet 3에 Figure 1~4 그래프와 QC 통계 지표가 자동으로 깔끔하게 배치.",
           "<strong>초보 사용자를 위한 빠른 시작(Quick Start) 가이드 탑재</strong>: 실무진이 10초 만에 3단계 워크플로우를 파악할 수 있는 직관적인 안내 모달 추가.",
+          "<strong>미니멀 내비게이션 바 정돈</strong>: 핵심 메뉴와 더보기(More ▾) 드롭다운으로 상단 헤더 공간 최적화.",
           "<strong>질량분석 듀얼 피크 파비콘 정식 적용</strong>: IRMS 분석 빔 피크를 형상화한 전용 고대비 SVG 파비콘 장착.",
           "<strong>글로벌 접속자 브라우저 언어 자동 감지</strong>: 해외 연구자 접속 시 자동으로 EN 모드로 전환되는 스마트 감지 로직 적용."
         ],
@@ -930,6 +972,7 @@
           "<strong>ExcelJS Integration</strong>: Generates true binary Excel workbooks embedding vector-rendered raster figures without external servers.",
           "<strong>Dedicated 'Figures_and_QC' Sheet</strong>: Complete report containing Figure 1-4 calibration & drift diagnostic plots alongside QC performance metrics.",
           "<strong>Quick Start Onboarding Protocol</strong>: Interactive 3-step modal helping new researchers grasp data reduction in seconds.",
+          "<strong>Refined Minimal Navigation Bar</strong>: Compact header layout with primary links and streamlined More dropdown menu.",
           "<strong>Mass Spec Dual Peaks Favicon</strong>: High-contrast academic SVG symbol tailored for mass spectrometry workflows.",
           "<strong>Smart Locale Detection</strong>: Automatically serves English UI to global users based on browser locale."
         ]
@@ -1010,6 +1053,35 @@
         ]
       }
     ];
+
+    // More Dropdown Logic
+    const btnToggleMore = document.getElementById('btn-toggle-more');
+    const moreMenuDropdown = document.getElementById('more-menu-dropdown');
+    const moreMenuArrow = document.getElementById('more-menu-arrow');
+    const moreMenuContainer = document.getElementById('more-menu-container');
+
+    function closeMoreDropdown() {
+      if (!moreMenuDropdown.classList.contains('hidden')) {
+        moreMenuDropdown.classList.add('hidden');
+        moreMenuArrow.classList.remove('rotate-180');
+      }
+    }
+
+    btnToggleMore.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = moreMenuDropdown.classList.toggle('hidden');
+      if (isHidden) {
+        moreMenuArrow.classList.remove('rotate-180');
+      } else {
+        moreMenuArrow.classList.add('rotate-180');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!moreMenuContainer.contains(e.target)) {
+        closeMoreDropdown();
+      }
+    });
 
     function renderChangelog() {
       const container = document.getElementById('changelog-content');
@@ -1653,11 +1725,11 @@
       const btnKo = document.getElementById('lang-ko');
       const btnEn = document.getElementById('lang-en');
       if (lang === 'ko') {
-        btnKo.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
-        btnEn.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
+        btnKo.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
       } else {
-        btnEn.className = 'px-2 py-0.5 rounded bg-stone-900 text-white transition cursor-pointer';
-        btnKo.className = 'px-2 py-0.5 rounded text-stone-600 hover:text-stone-900 transition cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
+        btnKo.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
       }
 
       const dict = TRANSLATIONS[lang];
@@ -1715,6 +1787,7 @@
     const changelogModal = document.getElementById('changelog-modal');
 
     document.getElementById('btn-open-quickstart').addEventListener('click', () => {
+      closeMoreDropdown();
       quickstartModal.classList.remove('hidden');
     });
     document.getElementById('btn-close-quickstart').addEventListener('click', () => {
@@ -1725,6 +1798,7 @@
     });
 
     document.getElementById('btn-open-about').addEventListener('click', () => {
+      closeMoreDropdown();
       aboutModal.classList.remove('hidden');
     });
     document.getElementById('btn-close-about').addEventListener('click', () => {
@@ -1735,6 +1809,7 @@
     });
 
     document.getElementById('btn-open-changelog').addEventListener('click', () => {
+      closeMoreDropdown();
       renderChangelog();
       changelogModal.classList.remove('hidden');
     });
@@ -1747,6 +1822,7 @@
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        closeMoreDropdown();
         if (!quickstartModal.classList.contains('hidden')) quickstartModal.classList.add('hidden');
         if (!aboutModal.classList.contains('hidden')) aboutModal.classList.add('hidden');
         if (!changelogModal.classList.contains('hidden')) changelogModal.classList.add('hidden');
