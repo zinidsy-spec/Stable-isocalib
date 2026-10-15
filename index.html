@@ -5,7 +5,6 @@
   <title>IsoCalib | Isotope Geochemistry Data Reduction & Verification</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="5leUfUP0Pldumsv4A1GGExW5MbB-HVvHlOjuUsnlYKQ" />
-  <!-- 영문 구글 검색 스니펫 메타 태그 -->
   <meta name="description" content="IsoCalib: Open-source web platform for stable isotope calibration, sequence drift correction, WLS regression, and uncertainty propagation.">
 
   <!-- IsoCalib Custom Academic Favicon (Mass Spec Dual Peaks) -->
@@ -127,14 +126,14 @@
           
           <!-- Primary 1: Quick Start -->
           <button id="btn-open-quickstart" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1" data-i18n="nav_quickstart">
-            사용법 (Quick Start)
+            Quick Start
           </button>
           
           <span class="text-stone-300">·</span>
 
           <!-- Primary 2: Methodology -->
           <a href="#methodology" class="hover:text-stone-900 transition text-stone-600 hover:font-medium" data-i18n="nav_methodology">
-            통계 방법론
+            Methodology
           </a>
 
           <span class="text-stone-300">·</span>
@@ -142,7 +141,7 @@
           <!-- Grouped Dropdown Menu: More -->
           <div class="relative inline-block text-left" id="more-menu-container">
             <button id="btn-toggle-more" type="button" class="inline-flex items-center gap-1 text-stone-600 hover:text-stone-900 transition cursor-pointer font-medium py-1">
-              <span data-i18n="nav_more">더보기</span>
+              <span data-i18n="nav_more">More</span>
               <svg class="w-3.5 h-3.5 text-stone-400 transition-transform duration-200" id="more-menu-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -152,24 +151,24 @@
             <div id="more-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-[#c7c5bc] shadow-lg rounded-none py-1.5 z-50 text-xs font-sans text-stone-800 divide-y divide-stone-100">
               <div class="py-1">
                 <button id="btn-open-about" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_about">
-                  <span>IsoCalib 소개</span>
+                  <span>About IsoCalib</span>
                   <span class="font-mono text-[10px] text-stone-400">About</span>
                 </button>
                 <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_changelog">
-                  <span>업데이트 로그</span>
+                  <span>Changelog</span>
                   <span class="font-mono text-[10px] text-stone-400">v1.3.0</span>
                 </button>
               </div>
               <div class="py-1">
                 <a href="#citation" class="block px-3.5 py-1.5 hover:bg-stone-50 transition flex justify-between items-center" data-i18n="nav_citation">
-                  <span>인용 정보 & DOI</span>
+                  <span>Citation & DOI</span>
                   <span class="font-mono text-[10px] text-stone-400">Cite</span>
                 </a>
                 <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="block px-3.5 py-1.5 hover:bg-stone-50 transition flex justify-between items-center" data-i18n="nav_feedback">
-                  <span>피드백 & 제안</span>
+                  <span>Feedback & Ideas</span>
                   <span class="font-mono text-[10px] text-stone-400">GitHub</span>
                 </a>
               </div>
@@ -201,14 +200,14 @@
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light" data-i18n="hero_desc">
-          원시 측정 데이터(Raw Data)의 시퀀스 드리프트 보정, WLS 검량선 피팅, 독립 QC 표준물질 검증, 연속 반복 시료 평균 요약 및 불확도 전파를 수행합니다.
+          Performs sequence drift correction, weighted regression fitting, blind QC verification, adjacent replicate sample averaging, and uncertainty propagation.
         </p>
       </div>
 
       <!-- Isotope Preset Selector -->
       <div class="space-y-1.5 self-start md:self-end min-w-[300px]">
         <label for="isotope-preset" class="text-xs uppercase tracking-wider text-stone-700 font-mono font-bold block" data-i18n="system_label">
-          Isotope System (분석 체계)
+          Isotope System
         </label>
         <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm cursor-pointer">
           <option value="CO">1. Carbon & Oxygen (δ¹³C, δ¹⁸O - Dual)</option>
@@ -226,7 +225,7 @@
       <div class="flex flex-wrap items-center justify-between border-b border-stone-200 pb-2.5 gap-3">
         <div class="flex items-center space-x-3">
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">01</span>
-          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards (검량 및 품질관리 표준)</h2>
+          <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards</h2>
         </div>
         
         <!-- Controls: Oxygen Scale & Drift Correction -->
@@ -252,9 +251,9 @@
           <div class="flex items-center space-x-1.5 bg-[#fbfaf8] px-2.5 py-1.5 border border-[#c7c5bc]">
             <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Model:</label>
             <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
-              <option value="none" selected data-i18n="drift_opt_none">None (Off - 일주기/랜덤 노이즈 권장)</option>
-              <option value="linear" data-i18n="drift_opt_linear">Linear (단일 선형 표류)</option>
-              <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor-to-Anchor Bracketing (앵커 간 선형 보간)</option>
+              <option value="none" selected data-i18n="drift_opt_none">None (Off - Recommended for diurnal/random noise)</option>
+              <option value="linear" data-i18n="drift_opt_linear">Linear (Single linear slope over sequence)</option>
+              <option value="piecewise" data-i18n="drift_opt_piecewise">Anchor-to-Anchor Bracketing (Piecewise linear interpolation)</option>
             </select>
           </div>
         </div>
@@ -265,14 +264,14 @@
         <div class="flex items-center flex-wrap gap-2.5">
           <span class="font-bold text-stone-800 uppercase tracking-wider text-[11px]" data-i18n="preset_manage_label">Reference Presets:</span>
           <select id="user-presets-select" class="bg-[#fbfaf8] border border-[#c7c5bc] text-stone-900 px-2.5 py-1 text-xs focus:outline-none focus:border-stone-900 cursor-pointer min-w-[200px]">
-            <option value="" data-i18n="preset_select_default">-- 기본 프리셋 (Default) --</option>
+            <option value="" data-i18n="preset_select_default">-- Default Presets --</option>
           </select>
           <button id="btn-load-preset" class="px-3 py-1 bg-white border border-[#c7c5bc] text-stone-800 hover:border-stone-900 transition font-semibold cursor-pointer" data-i18n="btn_preset_load">Load</button>
           <button id="btn-delete-preset" class="px-2 py-1 text-rose-700 hover:text-rose-900 underline underline-offset-2 transition cursor-pointer" data-i18n="btn_preset_delete">Delete</button>
         </div>
 
         <div class="flex items-center space-x-2">
-          <input type="text" id="preset-save-name" placeholder="프리셋 이름 (예: Lab_Carbonate)" class="bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 w-44">
+          <input type="text" id="preset-save-name" placeholder="Preset Name (e.g. Lab_Carbonate)" class="bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 w-44">
           <button id="btn-save-preset" class="px-3.5 py-1 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer tracking-wider text-[11px]" data-i18n="btn_preset_save">Save</button>
         </div>
       </div>
@@ -280,7 +279,7 @@
       <!-- Editorial Guide Note -->
       <div class="border-l-2 border-stone-400 pl-3.5 py-1 text-xs text-stone-600 space-y-0.5">
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          * 모든 커스텀 표준물질 세트는 외부 서버로 전송되지 않고 <strong>브라우저 내부(localStorage)에 안전하게 영구 저장</strong>됩니다. 다음 방문 시에도 동일한 참값을 원클릭으로 다시 불러올 수 있습니다.
+          * All custom standard sets are securely persisted in your browser's <strong>localStorage without server interaction</strong>, fully preserving client-side privacy.
         </p>
       </div>
 
@@ -293,16 +292,16 @@
         <div class="space-y-1">
           <div class="flex items-center space-x-3">
             <span class="font-mono text-base sm:text-lg font-bold text-stone-400">02</span>
-            <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data (런 시퀀스 데이터 입력)</h2>
+            <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec2_title">Measurement Sequence Data</h2>
           </div>
           <p class="text-xs text-stone-600" data-i18n="sec2_desc">
-            시작할 셀을 한 번 클릭하고 바로 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 엑셀 런 시퀀스가 복사됩니다.
+            Select a cell and press <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd> to paste tabular run sequence data directly from Excel.
           </p>
         </div>
 
         <div class="flex items-center flex-wrap gap-2">
           <button id="btn-delete-selected" class="px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 border border-rose-200 hover:border-rose-400 bg-rose-50/50 transition cursor-pointer" data-i18n="btn_delete_rows">
-            선택 행 삭제
+            Delete Row(s)
           </button>
           <button id="btn-clear" class="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 border border-transparent hover:border-stone-300 transition cursor-pointer" data-i18n="btn_clear">
             Clear All
@@ -314,7 +313,7 @@
               Load Demo
             </button>
             <span class="border-l border-stone-200 px-2 py-2 text-[10px] font-mono text-stone-400 group-hover:text-stone-600 bg-[#fbfaf8] select-none" data-i18n="demo_guide_tag">
-              시연 데이터
+              Sample Runs
             </span>
           </div>
 
@@ -340,7 +339,7 @@
             </div>
           </div>
           <div class="flex justify-between text-xs text-stone-500 font-mono font-medium">
-            <span data-i18n="grid_hint">* 행 번호(#)는 시퀀스 런 순서로 반영됩니다</span>
+            <span data-i18n="grid_hint">* Row numbers (#) correspond to sequence acquisition order</span>
             <span id="row-count">0 samples loaded</span>
           </div>
         </div>
@@ -420,10 +419,10 @@
       <!-- View Switcher Tabs -->
       <div class="flex items-center space-x-1 border-b border-stone-300 pt-2 font-mono text-xs">
         <button id="tab-btn-sequence" class="px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer" data-i18n="tab_sequence">
-          개별 런 시퀀스 (Run-by-Run)
+          Run-by-Run Sequence
         </button>
         <button id="tab-btn-grouped" class="px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer" data-i18n="tab_grouped">
-          시료별 평균 보고서 (Grouped Sample Summary)
+          Grouped Sample Summary
         </button>
       </div>
 
@@ -463,9 +462,9 @@
           <span class="font-mono text-base sm:text-lg font-bold text-stone-400">04</span>
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec4_tag">Methodology & Standard Principles</h2>
         </div>
-        <h3 class="font-serif-title text-2xl sm:text-3xl font-normal text-stone-900" data-i18n="sec4_heading">통계적 회귀 원리 및 표준 분석 지침</h3>
+        <h3 class="font-serif-title text-2xl sm:text-3xl font-normal text-stone-900" data-i18n="sec4_heading">Statistical Principles & Analytical Guidelines</h3>
         <p class="text-xs text-stone-600 leading-relaxed font-light" data-i18n="sec4_subheading">
-          IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.
+          All calibrations adhere strictly to international metrological frameworks (JCGM 100:2008 GUM) and geochronological standards (Ludwig Isoplot).
         </p>
       </div>
 
@@ -476,18 +475,18 @@
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
-              <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card1_title">1. 가중 선형 회귀 (WLS)</h4>
+              <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card1_title">1. Weighted Regression (WLS)</h4>
               <span class="text-stone-400 font-mono text-[10px]">Data Reliability</span>
             </div>
             <p class="leading-relaxed" data-i18n="card1_desc">
-              모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\sigma_i^2$)</strong>을 갖도록 계산합니다.
+              Measurements with higher precision (smaller 1σ SD) are assigned greater statistical weight ($w_i = 1/\sigma_i^2$).
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              * <span data-i18n="card1_quote">측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.</span>
+              * <span data-i18n="card1_quote">A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card1_basis">
-            기준: York (1968) / Ludwig (2003)
+            Basis: York (1968) / Ludwig (2003)
           </div>
         </div>
 
@@ -495,18 +494,18 @@
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
-              <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card2_title">2. 적합도 검증 (MSWD)</h4>
+              <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card2_title">2. Goodness-of-Fit (MSWD)</h4>
               <span class="text-stone-400 font-mono text-[10px]">Fit Quality</span>
             </div>
             <p class="leading-relaxed" data-i18n="card2_desc">
-              지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\chi^2$)</strong>을 통해, 데이터의 오차가 통계적으로 회귀선에 완벽히 부합하는지 진단합니다.
+              Evaluates the reduced chi-squared ($\chi^2/\nu$) to objectively determine whether residuals reflect pure analytical precision.
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              * <span data-i18n="card2_quote">MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 숨겨진 외란이 존재한다는 신호입니다.</span>
+              * <span data-i18n="card2_quote">An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-analytical variance.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card2_basis">
-            기준: McIntyre et al. (1966) / IsoplotR
+            Basis: McIntyre et al. (1966) / IsoplotR
           </div>
         </div>
 
@@ -514,18 +513,18 @@
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
-              <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card3_title">3. 합성 불확도 전파</h4>
+              <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="card3_title">3. Combined Uncertainty</h4>
               <span class="text-stone-400 font-mono text-[10px]">Total Uncertainty</span>
             </div>
             <p class="leading-relaxed" data-i18n="card3_desc">
-              시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.
+              Propagates sample repeatability together with the standard errors of the regression parameters.
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-2.5 font-mono text-[11px] text-stone-600 rounded">
-              * <span data-i18n="card3_quote">논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.</span>
+              * <span data-i18n="card3_quote">Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.</span>
             </div>
           </div>
           <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">
-            기준: JCGM 100:2008 (GUM Guide)
+            Basis: JCGM 100:2008 (GUM Guide)
           </div>
         </div>
 
@@ -535,15 +534,15 @@
       <details class="group bg-white border border-[#d1cfc7] shadow-sm transition-all">
         <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100 transition">
           <div class="flex items-center space-x-2">
-            <span class="font-mono text-xs font-bold text-stone-800 uppercase tracking-wider" data-i18n="acc_title">[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)</span>
+            <span class="font-mono text-xs font-bold text-stone-800 uppercase tracking-wider" data-i18n="acc_title">[+] Detailed Mathematical Derivations & Formulas (Click to expand)</span>
           </div>
           <span class="text-xs font-mono text-stone-400 group-open:rotate-180 transition-transform">▼</span>
         </summary>
         <div class="p-6 border-t border-[#d1cfc7] space-y-6 text-xs text-stone-700 font-light leading-relaxed">
           <div class="space-y-2">
-            <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_a_title">A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)</h5>
+            <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_a_title">A. Weighted Least Squares Normal Equations</h5>
             <p data-i18n="acc_a_desc">
-              $x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:
+              Exact analytical solution minimizing the sum of weighted squared residuals $\sum w_i (y_i - ax_i - b)^2$:
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$w_i = \frac{1}{\sigma_{x,i}^2}, \quad \Delta = \sum w_i \sum w_i x_i^2 - \left(\sum w_i x_i\right)^2$$
@@ -552,9 +551,9 @@
           </div>
 
           <div class="space-y-2">
-            <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_b_title">B. MSWD (Mean Square of Weighted Deviates) 산출식</h5>
+            <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_b_title">B. MSWD (Mean Square of Weighted Deviates)</h5>
             <p data-i18n="acc_b_desc">
-              카이제곱($\chi^2$) 통계량을 자유도($\nu = N - 2$)로 나눈 분산비입니다:
+              The ratio of the weighted sum of squared residuals to degrees of freedom ($\nu = N - 2$):
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\chi^2 = \sum_{i=1}^N w_i \left(y_i - (a x_i + b)\right)^2, \quad \text{MSWD} = \frac{\chi^2}{N - 2}$$
@@ -562,9 +561,9 @@
           </div>
 
           <div class="space-y-2">
-            <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_c_title">C. 1차 편미분 가우스 오차 전파 유도식 (GUM 5.1.2)</h5>
+            <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_c_title">C. First-Order Gaussian Error Propagation (GUM 5.1.2)</h5>
             <p data-i18n="acc_c_desc">
-              선형 변환식 $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$에 대해 각 변수($x_{\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:
+              Partial differential expansion for the linear calibration function $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$:
             </p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x_{\text{raw}}} \sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a} \text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b} \text{SE}_b\right)^2 } = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$
@@ -578,10 +577,10 @@
         <div class="space-y-1.5 max-w-2xl">
           <div class="flex items-center space-x-2">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span class="text-xs font-mono font-bold text-stone-900 uppercase tracking-wider" data-i18n="privacy_title">Zero-Server Client Computation (완전 무서버 보안)</span>
+            <span class="text-xs font-mono font-bold text-stone-900 uppercase tracking-wider" data-i18n="privacy_title">Zero-Server Client Computation (Total Privacy)</span>
           </div>
           <p class="text-xs text-stone-600 font-light" data-i18n="privacy_desc">
-            연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다.
+            All calculations execute 100% locally within your browser's JavaScript engine. Zero data is transmitted externally.
           </p>
         </div>
         <div class="text-right font-mono text-[11px] text-stone-500 shrink-0">
@@ -593,13 +592,13 @@
       <!-- Citation & Permanent DOI Section -->
       <div id="citation" class="space-y-3 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
-          <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Permanent Archive (공식 인용 정보 및 영구 아카이브)</h4>
+          <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Permanent Archive</h4>
           <a href="https://doi.org/10.5281/zenodo.23239186" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 text-xs font-mono text-emerald-800 hover:text-emerald-950 font-semibold underline underline-offset-2">
             <span>DOI: 10.5281/zenodo.23239186</span>
           </a>
         </div>
         <p class="text-xs text-stone-600 font-light leading-relaxed" data-i18n="cite_desc">
-          본 플랫폼의 정산 알고리즘 및 데이터를 학술 논문에 인용하실 경우, 방법론(Analytical Methods) 섹션에 아래 공식 영구 DOI 식별자를 표기해 주시기 바랍니다:
+          To cite this software and its algorithms in your Analytical Methods section, please refer to the permanent Zenodo DOI below:
         </p>
         
         <!-- 원클릭 복사용 인용 블록 -->
@@ -625,7 +624,7 @@
             <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
             <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="qs_modal_title">/ Quick Start Protocol</span>
           </div>
-          <p class="text-xs text-stone-500 pt-1" data-i18n="qs_modal_subtitle">안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드</p>
+          <p class="text-xs text-stone-500 pt-1" data-i18n="qs_modal_subtitle">Essential 3-step guideline for fast and reproducible data reduction</p>
         </div>
         <button id="btn-close-quickstart" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -635,49 +634,49 @@
         <!-- Step 1 Card -->
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">Step 1. 표준물질 참값 및 옵션 확인 (Section 01)</span>
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">Step 1. Configure Reference Standards (Section 01)</span>
             <span class="font-mono text-[10px] text-stone-400">01 SETUP</span>
           </div>
           <p data-i18n="qs_step1_desc">
-            사용 중인 검량 표준물질(Anchor 1, 2)과 품질관리 표준물질(QC)의 이름과 공인 참값을 입력합니다. 자주 사용하는 세트는 <code>Save</code> 버튼으로 브라우저에 영구 저장해 둘 수 있습니다.
+            Check and verify accepted values for Anchor 1, 2 and independent QC standards. Save persistent lab presets directly into local browser storage.
           </p>
           <div class="text-[11px] font-mono text-stone-500 bg-white p-2 border border-stone-200" data-i18n="qs_step1_tip">
-            * 팁: 시퀀스 표의 표준물질 행 이름(예: <code>NBS-18_1</code>)에 상단 앵커 이름(<code>NBS-18</code>)이 포함되어 있으면 시스템이 자동으로 감지합니다.
+            * Tip: If sequence standard names (e.g. NBS-18_1) contain the anchor name (NBS-18), they are auto-detected by the engine.
           </div>
         </div>
 
         <!-- Step 2 Card -->
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">Step 2. 엑셀 런 시퀀스 복사 & 붙여넣기 (Section 02)</span>
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">Step 2. Paste Sequence Rows (Section 02)</span>
             <span class="font-mono text-[10px] text-stone-400">02 INPUT</span>
           </div>
           <p data-i18n="qs_step2_desc">
-            기기 소프트웨어(Isodat 등)나 엑셀 파일에서 분석 열을 복사한 후, 표의 첫 번째 셀을 클릭하고 <kbd class="px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold">Ctrl + V</kbd>를 누르면 즉시 표에 채워집니다.
+            Copy tabular sequence runs from your instrument file, select the starting cell, and press Ctrl + V to populate.
           </p>
           <div class="text-[11px] font-mono text-stone-600 bg-white p-2 border border-stone-200 overflow-x-auto" data-i18n="qs_step2_columns">
-            [열 순서] 시료 ID | Raw 1차 동위원소 | 1σ SD | Raw 2차 동위원소 | 1σ SD
+            [Columns] Sample ID | Raw Isotope 1 | 1σ SD | Raw Isotope 2 | 1σ SD
           </div>
         </div>
 
         <!-- Step 3 Card -->
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">Step 3. 보정 실행 및 엑셀 다운로드 (Section 03)</span>
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">Step 3. Calibrate & Export (Section 03)</span>
             <span class="font-mono text-[10px] text-stone-400">03 REDUCE</span>
           </div>
           <p data-i18n="qs_step3_desc">
-            <code class="bg-stone-900 text-white px-2 py-0.5 font-bold font-mono">Run Calibration & QC</code>를 클릭하면 드리프트 보정, WLS 검량선 피팅, 독립 QC 오차 평가 및 연속 시료 평균(Grouped Summary)이 한 번에 계산됩니다.
+            Click Run Calibration & QC to calculate drift corrections, WLS fits, QC bias metrics, and replicate group averages.
           </p>
           <p data-i18n="qs_step3_desc2">
-            완료 후 상단의 <code>Export Excel Report (.xlsx)</code> 버튼을 누르면 고해상도 그래프(Figure 1~4)가 포함된 최종 분석 성적서 엑셀 파일이 다운로드됩니다.
+            Export complete Excel (.xlsx) workbooks embedding high-resolution figures (Figure 1-4) with one click.
           </p>
         </div>
 
       </div>
 
       <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
-        <span data-i18n="qs_footer_tip">* Load Demo 버튼을 누르면 샘플 데이터로 즉시 시연해 보실 수 있습니다.</span>
+        <span data-i18n="qs_footer_tip">* Click 'Load Demo' on the spreadsheet to inspect an active calculation immediately.</span>
         <button id="btn-quickstart-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
       </div>
     </div>
@@ -707,7 +706,7 @@
       <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
         <div>
           <span class="block">Inquiries & Bug Reports:</span>
-          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" target="_blank" rel="noopener noreferrer" class="text-stone-900 underline font-semibold">GitHub Issues (피드백 & 제안)</a>
+          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" target="_blank" rel="noopener noreferrer" class="text-stone-900 underline font-semibold">GitHub Issues (Feedback)</a>
         </div>
         <button id="btn-modal-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
       </div>
@@ -723,7 +722,7 @@
             <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
             <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="changelog_title">/ Version Evolution & Changelog</span>
           </div>
-          <p class="text-xs text-stone-500 pt-1" data-i18n="changelog_subtitle">안정동위원소 랩 실무진의 피드백을 반영한 지속적 알고리즘 및 UX 업데이트 내역입니다.</p>
+          <p class="text-xs text-stone-500 pt-1" data-i18n="changelog_subtitle">Continuous methodological and UX advancements tailored to real isotope lab requirements.</p>
         </div>
         <button id="btn-close-changelog" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -740,16 +739,16 @@
   <!-- Context Menu -->
   <div id="grid-context-menu" class="hidden fixed bg-white border border-[#c7c5bc] shadow-lg py-1.5 z-50 text-xs font-sans text-stone-800 rounded min-w-[180px]">
     <button id="ctx-del-rows" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-rose-700 font-medium">
-      <span data-i18n="ctx_del_row">선택 행 완전 삭제</span>
+      <span data-i18n="ctx_del_row">Delete Selected Rows</span>
       <span class="font-mono text-[10px] text-stone-400">Del row</span>
     </button>
     <button id="ctx-clear-values" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-stone-700">
-      <span data-i18n="ctx_clear_cells">선택 셀 내용 지우기</span>
+      <span data-i18n="ctx_clear_cells">Clear Selected Cells</span>
       <span class="font-mono text-[10px] text-stone-400">Delete</span>
     </button>
     <div class="h-px bg-stone-200 my-1"></div>
     <button id="ctx-insert-below" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-100 text-stone-700" data-i18n="ctx_insert_row">
-      아래에 빈 행 1줄 삽입
+      Insert 1 Blank Row Below
     </button>
   </div>
 
@@ -1150,12 +1149,29 @@
           ["Sample-A_1", 26.815, 0.032, 11.799, 0.060],
           ["Sample-A_2", 26.820, 0.029, 11.810, 0.055],
           ["Sample-A_3", 26.808, 0.031, 11.790, 0.058],
-          ["NBS-18_2", 21.703, 0.031, -0.774, 0.059],
-          ["Sample-B_1", 26.413, 0.029, 11.031, 0.054],
-          ["Sample-B_2", 26.425, 0.027, 11.045, 0.052],
-          ["Sample-B_3", 26.405, 0.030, 11.020, 0.056],
-          ["KDO_QC2", 25.535, 0.028, 7.795, 0.050],
-          ["IAEA-603_2", 29.270, 0.025, 19.974, 0.048]
+          ["Sample-B_1", 24.112, 0.027, 15.320, 0.051],
+          ["Sample-B_2", 24.125, 0.030, 15.335, 0.054],
+          ["Sample-B_3", 24.105, 0.028, 15.312, 0.049],
+          ["NBS-18_2", 21.718, 0.033, -0.785, 0.060],
+          ["IAEA-603_2", 29.298, 0.026, 20.012, 0.052],
+          ["KDO_QC2", 25.545, 0.029, 7.805, 0.053],
+          ["Sample-C_1", 18.450, 0.035, 13.890, 0.064],
+          ["Sample-C_2", 18.462, 0.031, 13.905, 0.059],
+          ["Sample-C_3", 18.441, 0.033, 13.882, 0.061],
+          ["Sample-D_1", 22.910, 0.028, 16.410, 0.052],
+          ["Sample-D_2", 22.898, 0.026, 16.395, 0.048],
+          ["Sample-D_3", 22.905, 0.029, 16.402, 0.050],
+          ["NBS-18_3", 21.692, 0.031, -0.768, 0.058],
+          ["IAEA-603_3", 29.275, 0.025, 19.985, 0.049],
+          ["Sample-E_1", 20.330, 0.030, 14.210, 0.056],
+          ["Sample-E_2", 20.342, 0.028, 14.225, 0.053],
+          ["Sample-E_3", 20.325, 0.032, 14.201, 0.057],
+          ["Sample-F_1", 25.180, 0.027, 17.650, 0.051],
+          ["Sample-F_2", 25.192, 0.029, 17.662, 0.054],
+          ["Sample-F_3", 25.175, 0.026, 17.641, 0.049],
+          ["KDO_QC3", 25.522, 0.027, 7.782, 0.050],
+          ["NBS-18_4", 21.670, 0.030, -0.750, 0.056],
+          ["IAEA-603_4", 29.250, 0.024, 19.960, 0.047]
         ]
       },
       NO: {
@@ -1177,7 +1193,26 @@
           ["Nitrate-01_1", 3.250, 0.090, 15.400, 0.170],
           ["Nitrate-01_2", 3.270, 0.085, 15.420, 0.160],
           ["Nitrate-01_3", 3.240, 0.080, 15.390, 0.150],
-          ["IAEA-NO-3_2", 5.090, 0.070, 26.050, 0.140]
+          ["Nitrate-02_1", 8.410, 0.075, 22.150, 0.140],
+          ["Nitrate-02_2", 8.390, 0.082, 22.120, 0.155],
+          ["Nitrate-02_3", 8.420, 0.078, 22.165, 0.148],
+          ["IAEA-NO-3_2", 5.102, 0.075, 26.080, 0.145],
+          ["USGS34_2", -1.468, 0.085, -27.350, 0.170],
+          ["USGS35_QC2", 6.112, 0.080, 58.160, 0.190],
+          ["Nitrate-03_1", 12.650, 0.095, 8.740, 0.165],
+          ["Nitrate-03_2", 12.630, 0.088, 8.715, 0.160],
+          ["Nitrate-03_3", 12.665, 0.092, 8.755, 0.172],
+          ["Nitrate-04_1", 1.850, 0.070, 31.200, 0.180],
+          ["Nitrate-04_2", 1.865, 0.074, 31.230, 0.175],
+          ["Nitrate-04_3", 1.840, 0.068, 31.185, 0.168],
+          ["IAEA-NO-3_3", 5.085, 0.072, 26.050, 0.140],
+          ["USGS34_3", -1.482, 0.080, -27.380, 0.165],
+          ["Nitrate-05_1", 6.540, 0.085, 19.820, 0.150],
+          ["Nitrate-05_2", 6.555, 0.080, 19.845, 0.145],
+          ["Nitrate-05_3", 6.530, 0.083, 19.805, 0.155],
+          ["USGS35_QC3", 6.095, 0.078, 58.120, 0.185],
+          ["IAEA-NO-3_4", 5.070, 0.070, 26.020, 0.138],
+          ["USGS34_4", -1.495, 0.078, -27.410, 0.160]
         ]
       },
       HO: {
@@ -1196,10 +1231,29 @@
           ["VSMOW2_1", 1.200, 0.500, 0.120, 0.050],
           ["SLAP2_1", -424.300, 0.800, -54.900, 0.080],
           ["GISP_QC1", -187.900, 0.600, -24.450, 0.060],
-          ["Water-Sample-1_1", -65.400, 0.550, -9.210, 0.060],
-          ["Water-Sample-1_2", -65.350, 0.520, -9.200, 0.058],
-          ["Water-Sample-1_3", -65.450, 0.500, -9.230, 0.055],
-          ["VSMOW2_2", 0.900, 0.450, 0.080, 0.040]
+          ["Rain-01_1", -45.200, 0.520, -7.120, 0.055],
+          ["Rain-01_2", -45.100, 0.480, -7.105, 0.052],
+          ["Rain-01_3", -45.300, 0.510, -7.135, 0.058],
+          ["Ground-01_1", -65.400, 0.550, -9.210, 0.060],
+          ["Ground-01_2", -65.350, 0.520, -9.200, 0.058],
+          ["Ground-01_3", -65.450, 0.500, -9.230, 0.055],
+          ["VSMOW2_2", 1.050, 0.480, 0.100, 0.048],
+          ["SLAP2_2", -424.550, 0.750, -54.940, 0.075],
+          ["GISP_QC2", -188.050, 0.580, -24.480, 0.058],
+          ["River-01_1", -52.800, 0.490, -8.050, 0.050],
+          ["River-01_2", -52.720, 0.510, -8.035, 0.053],
+          ["River-01_3", -52.850, 0.470, -8.060, 0.049],
+          ["Glacier-01_1", -210.400, 0.650, -27.300, 0.070],
+          ["Glacier-01_2", -210.250, 0.620, -27.280, 0.065],
+          ["Glacier-01_3", -210.500, 0.680, -27.320, 0.072],
+          ["VSMOW2_3", 0.900, 0.450, 0.080, 0.045],
+          ["SLAP2_3", -424.800, 0.720, -54.980, 0.070],
+          ["Spring-01_1", -78.100, 0.530, -10.950, 0.056],
+          ["Spring-01_2", -78.020, 0.500, -10.935, 0.054],
+          ["Spring-01_3", -78.180, 0.540, -10.965, 0.059],
+          ["GISP_QC3", -188.200, 0.550, -24.510, 0.055],
+          ["VSMOW2_4", 0.780, 0.440, 0.060, 0.042],
+          ["SLAP2_4", -425.000, 0.700, -55.020, 0.068]
         ]
       },
       WATER_H: {
@@ -1220,11 +1274,26 @@
           ["Well-Water-A_1", -72.400, 0.550],
           ["Well-Water-A_2", -72.350, 0.520],
           ["Well-Water-A_3", -72.480, 0.500],
-          ["VSMOW2_2", 0.950, 0.450],
           ["Lake-Water-B_1", -54.100, 0.500],
           ["Lake-Water-B_2", -54.050, 0.480],
           ["Lake-Water-B_3", -54.200, 0.510],
-          ["SLAP2_2", -424.900, 0.750]
+          ["VSMOW2_2", 1.080, 0.470],
+          ["SLAP2_2", -424.450, 0.760],
+          ["GISP_QC2", -187.980, 0.580],
+          ["Stream-C_1", -61.200, 0.490],
+          ["Stream-C_2", -61.120, 0.510],
+          ["Stream-C_3", -61.280, 0.480],
+          ["Snow-Core-D_1", -145.600, 0.620],
+          ["Snow-Core-D_2", -145.480, 0.590],
+          ["Snow-Core-D_3", -145.710, 0.640],
+          ["VSMOW2_3", 0.920, 0.450],
+          ["SLAP2_3", -424.750, 0.740],
+          ["Pore-Water-E_1", -38.900, 0.460],
+          ["Pore-Water-E_2", -38.820, 0.440],
+          ["Pore-Water-E_3", -38.950, 0.470],
+          ["GISP_QC3", -188.150, 0.560],
+          ["VSMOW2_4", 0.790, 0.430],
+          ["SLAP2_4", -425.050, 0.710]
         ]
       },
       WATER_O: {
@@ -1245,11 +1314,26 @@
           ["Well-Water-A_1", -9.850, 0.055],
           ["Well-Water-A_2", -9.840, 0.052],
           ["Well-Water-A_3", -9.860, 0.050],
-          ["VSMOW2_2", 0.080, 0.040],
           ["Lake-Water-B_1", -7.150, 0.050],
           ["Lake-Water-B_2", -7.140, 0.048],
           ["Lake-Water-B_3", -7.170, 0.051],
-          ["SLAP2_2", -55.020, 0.070]
+          ["VSMOW2_2", 0.115, 0.045],
+          ["SLAP2_2", -54.910, 0.075],
+          ["GISP_QC2", -24.440, 0.055],
+          ["Stream-C_1", -8.420, 0.048],
+          ["Stream-C_2", -8.410, 0.051],
+          ["Stream-C_3", -8.435, 0.049],
+          ["Snow-Core-D_1", -19.250, 0.062],
+          ["Snow-Core-D_2", -19.235, 0.058],
+          ["Snow-Core-D_3", -19.265, 0.060],
+          ["VSMOW2_3", 0.080, 0.042],
+          ["SLAP2_3", -54.970, 0.072],
+          ["Pore-Water-E_1", -5.620, 0.046],
+          ["Pore-Water-E_2", -5.608, 0.044],
+          ["Pore-Water-E_3", -5.630, 0.047],
+          ["GISP_QC3", -24.480, 0.052],
+          ["VSMOW2_4", 0.050, 0.040],
+          ["SLAP2_4", -55.020, 0.070]
         ]
       },
       S: {
@@ -1270,8 +1354,26 @@
           ["Pyrite-01_1", 12.450, 0.130],
           ["Pyrite-01_2", 12.470, 0.120],
           ["Pyrite-01_3", 12.440, 0.110],
-          ["IAEA-S-1_2", -0.180, 0.100],
-          ["IAEA-S-2_2", 23.080, 0.140]
+          ["Galena-02_1", 4.820, 0.115],
+          ["Galena-02_2", 4.805, 0.125],
+          ["Galena-02_3", 4.835, 0.118],
+          ["IAEA-S-1_2", -0.168, 0.110],
+          ["IAEA-S-2_2", 23.115, 0.140],
+          ["NBS-127_QC2", 21.450, 0.125],
+          ["Sphalerite-03_1", 8.910, 0.135],
+          ["Sphalerite-03_2", 8.930, 0.128],
+          ["Sphalerite-03_3", 8.895, 0.132],
+          ["Barite-04_1", 18.650, 0.145],
+          ["Barite-04_2", 18.620, 0.138],
+          ["Barite-04_3", 18.670, 0.142],
+          ["IAEA-S-1_3", -0.185, 0.105],
+          ["IAEA-S-2_3", 23.080, 0.135],
+          ["Gypsum-05_1", 15.210, 0.122],
+          ["Gypsum-05_2", 15.230, 0.118],
+          ["Gypsum-05_3", 15.195, 0.125],
+          ["NBS-127_QC3", 21.420, 0.120],
+          ["IAEA-S-1_4", -0.200, 0.100],
+          ["IAEA-S-2_4", 23.050, 0.130]
         ]
       }
     };
