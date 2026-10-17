@@ -414,7 +414,8 @@
         </button>
       </div>
 
-      <div id="qc-summary-banner" class="hidden bg-stone-50 border border-stone-300 p-4 rounded-none space-y-2"></div>
+      <!-- Dynamic QC Banner with Actionable Diagnostics -->
+      <div id="qc-summary-banner" class="hidden p-4 rounded-none space-y-3 transition-colors"></div>
 
       <!-- View Switcher Tabs -->
       <div class="flex items-center space-x-1 border-b border-stone-300 pt-2 font-mono text-xs">
@@ -960,26 +961,22 @@
       {
         version: "v1.3.0",
         date: "2026-10",
-        badge: "Excel Graphics Upgrade",
-        title_ko: "ExcelJS 엔진 전환: 엑셀 내 검량선 및 드리프트 그래프 자동 삽입 탑재",
-        title_en: "ExcelJS Engine Upgrade: Embedded Figures & Publication Plots in Excel",
-        desc_ko: "엑셀 다운로드 파일 내 세 번째 시트(Figures_and_QC)에 고해상도 검량선 피팅 차트 및 드리프트 진단 그래프를 직접 포함하여, 별도 캡처 없이 완전한 완성형 분석 보고서가 생성됩니다.",
-        desc_en: "Integrated ExcelJS engine to directly embed high-resolution Plotly calibration fits and drift diagnostics into a dedicated third sheet (Figures_and_QC).",
+        badge: "Excel Graphics & Smart QC",
+        title_ko: "ExcelJS 그래프 자동 삽입 및 지능형 QC 경고/진단 가이드 탑재",
+        title_en: "ExcelJS Embedded Figures & Smart QC Diagnostic Alerts",
+        desc_ko: "엑셀 내 검량선/드리프트 그래프(Figure 1~4) 자동 삽입과 함께, 초보 연구자도 오차 원인을 즉시 파악할 수 있는 지능형 QC 진단 배너 및 MSWD 상태 태그가 탑재되었습니다.",
+        desc_en: "Integrated ExcelJS figure embedding alongside automated QC Pass/Warning badges and actionable drift diagnostics.",
         changes_ko: [
-          "<strong>ExcelJS 통합 엔진 도입</strong>: SheetJS의 한계를 극복하고 브라우저 로컬에서 실제 이미지 객체(`.addImage`)가 포함된 워크북 생성.",
-          "<strong>세 번째 탭 'Figures_and_QC' 신설</strong>: Sheet 1(시료 요약표), Sheet 2(런 시퀀스)에 이어 Sheet 3에 Figure 1~4 그래프와 QC 통계 지표가 자동으로 깔끔하게 배치.",
-          "<strong>초보 사용자를 위한 빠른 시작(Quick Start) 가이드 탑재</strong>: 실무진이 10초 만에 3단계 워크플로우를 파악할 수 있는 직관적인 안내 모달 추가.",
-          "<strong>미니멀 내비게이션 바 정돈</strong>: 핵심 메뉴와 더보기(More ▾) 드롭다운으로 상단 헤더 공간 최적화.",
-          "<strong>질량분석 듀얼 피크 파비콘 정식 적용</strong>: IRMS 분석 빔 피크를 형상화한 전용 고대비 SVG 파비콘 장착.",
-          "<strong>글로벌 접속자 브라우저 언어 자동 감지</strong>: 해외 연구자 접속 시 자동으로 EN 모드로 전환되는 스마트 감지 로직 적용."
+          "<strong>지능형 QC 진단 배너 (PASS / WARNING)</strong>: 동위원소별 허용 오차 임계값을 자동 평가하여 시각적 배지와 함께 원인별 해결 가이드(드리프트 모델 전환 안내 등) 출력.",
+          "<strong>MSWD 적합도 상태 태그</strong>: 지화학 통계 카드 내 MSWD 수치 옆에 <code>Optimal</code> 또는 <code>High Scatter</code> 진단 태그 실시간 표시.",
+          "<strong>ExcelJS 통합 엔진 도입</strong>: 세 번째 시트(<code>Figures_and_QC</code>)에 Figure 1~4 그래프와 QC 판정 결과를 고해상도 이미지로 자동 삽입.",
+          "<strong>초보 사용자를 위한 빠른 시작(Quick Start) 가이드 탑재</strong>: 3단계 워크플로우 안내 모달 및 미니멀 상단 헤더 적용."
         ],
         changes_en: [
-          "<strong>ExcelJS Integration</strong>: Generates true binary Excel workbooks embedding vector-rendered raster figures without external servers.",
-          "<strong>Dedicated 'Figures_and_QC' Sheet</strong>: Complete report containing Figure 1-4 calibration & drift diagnostic plots alongside QC performance metrics.",
-          "<strong>Quick Start Onboarding Protocol</strong>: Interactive 3-step modal helping new researchers grasp data reduction in seconds.",
-          "<strong>Refined Minimal Navigation Bar</strong>: Compact header layout with primary links and streamlined More dropdown menu.",
-          "<strong>Mass Spec Dual Peaks Favicon</strong>: High-contrast academic SVG symbol tailored for mass spectrometry workflows.",
-          "<strong>Smart Locale Detection</strong>: Automatically serves English UI to global users based on browser locale."
+          "<strong>Smart QC Diagnostic Banner (PASS / WARNING)</strong>: Evaluates isotope-specific accuracy/precision thresholds and provides actionable guidance.",
+          "<strong>MSWD Status Indicator</strong>: Real-time <code>Optimal</code> vs <code>High Scatter</code> badges on geostatistical model cards.",
+          "<strong>ExcelJS Figure Embedding</strong>: Dedicated <code>Figures_and_QC</code> sheet containing Figure 1-4 plots and QC metrics.",
+          "<strong>Quick Start Onboarding & Minimal Header</strong>: Streamlined 3-step guide and compact navigation."
         ]
       },
       {
@@ -993,14 +990,12 @@
         changes_ko: [
           "<strong>CERN Zenodo 공식 영구 DOI 탑재</strong>: <code>10.5281/zenodo.23239186</code> 발급 및 플랫폼 내 원클릭 인용 블록 탑재.",
           "<strong>GNU GPL-3.0 라이선스 법적 보호</strong>: 코드 사유화 방지 및 오픈 사이언스 원작자 권리 공식 확보.",
-          "<strong>내 표준물질 프리셋 로컬 저장 (localStorage)</strong>: 연구실별 앵커/QC 표준물질 이름과 참값을 브라우저에 안전하게 영구 저장.",
-          "<strong>연구자 피드백 직행 링크 탑재</strong>: 실무진 의견 수렴을 위한 GitHub Issue 템플릿 직행 버튼 연결."
+          "<strong>내 표준물질 프리셋 로컬 저장 (localStorage)</strong>: 연구실별 앵커/QC 표준물질 이름과 참값을 브라우저에 안전하게 영구 저장."
         ],
         changes_en: [
           "<strong>Permanent Zenodo DOI Integrated</strong>: Registered <code>10.5281/zenodo.23239186</code> for peer-review citations.",
           "<strong>GNU GPL-3.0 Legal Protection</strong>: Preserves open-source integrity and attribution rights.",
-          "<strong>Named Local Standards Presets</strong>: Persistent client-side standard reference sets without server interactions.",
-          "<strong>Direct Feedback Navigation</strong>: Instant issue reporting template for lab practitioners."
+          "<strong>Named Local Standards Presets</strong>: Persistent client-side standard reference sets without server interactions."
         ]
       },
       {
@@ -1009,8 +1004,8 @@
         badge: "Major Excel Upgrade",
         title_ko: "멀티 시트 엑셀(.xlsx) 내보내기 & 단일 물 모드 및 연속 시료 평균 탑재",
         title_en: "Native Multi-Sheet Excel (.XLSX) Export & Adjacent Sample Averaging",
-        desc_ko: "CSV 저장 시 서식이 유실되는 문제를 방지하기 위해 2개 탭 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
-        desc_en: "Integrated dual-sheet Excel exports to preserve formatting across Grouped Summary and Sequence Runs.",
+        desc_ko: "CSV 저장 시 서식이 유실되는 문제를 방지하기 위해 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
+        desc_en: "Integrated multi-sheet Excel exports to preserve formatting across Grouped Summary and Sequence Runs.",
         changes_ko: [
           "<strong>멀티 시트 엑셀 워크북 내보내기</strong>: Sheet 1(시료별 평균)과 Sheet 2(개별 런 전체 데이터) 분리 제공.",
           "<strong>단일 물 분석 모드(δD only, δ¹⁸O only) 신설</strong>: 물 시료 개별 라인 분석 전용 워크플로우 지원.",
@@ -1031,13 +1026,12 @@
         desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
         desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
         changes_ko: [
-          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV/Excel 헤더가 실시간 연동.",
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능."
+          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, 엑셀 헤더 실시간 연동.",
+          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 1차 및 2차 동위원소의 기기 표류 양상을 독립된 시계열 플롯으로 시각화."
         ],
         changes_en: [
-          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and exports via IUPAC Coplen (1983) equation.",
-          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes."
+          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion via IUPAC Coplen (1983) equation.",
+          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary and secondary isotopes."
         ]
       },
       {
@@ -1049,12 +1043,10 @@
         desc_ko: "안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
         desc_en: "Client-side, zero-server data reduction engine tailored for stable isotope geochemistry.",
         changes_ko: [
-          "국제 표준 4대 동위원소 체계 지원 및 가중 선형 회귀(WLS York-Ludwig) 솔버 탑재.",
-          "MSWD(축약 카이제곱) 산출 및 JCGM GUM 1차 편미분 오차 전파 도출."
+          "가중 선형 회귀(WLS York-Ludwig) 솔버 탑재 및 MSWD 산출, JCGM GUM 1차 편미분 오차 전파 도출."
         ],
         changes_en: [
-          "Core Isotope Systems with Weighted Least Squares (WLS) regression.",
-          "MSWD Goodness-of-Fit and GUM uncertainty propagation."
+          "Weighted Least Squares (WLS) regression, MSWD Goodness-of-Fit, and GUM uncertainty propagation."
         ]
       }
     ];
@@ -1127,6 +1119,21 @@
     function extractBaseId(rawId) {
       if (!rawId) return '';
       return rawId.trim().replace(/[-_.#\s]+(0?[1-9]|[a-zA-Z])$/, '').trim();
+    }
+
+    // Isotope-specific QC Tolerance Thresholds (Bias & 1σ Reproducibility)
+    function getElementThreshold(label) {
+      if (label.includes('δD') || label.includes('2H')) {
+        return { bias: 1.50, sd: 1.50 };
+      }
+      if (label.includes('³⁴S') || label.includes('34S')) {
+        return { bias: 0.20, sd: 0.20 };
+      }
+      if (label.includes('¹⁸O') || label.includes('18O') || label.includes('¹⁵N') || label.includes('15N')) {
+        return { bias: 0.12, sd: 0.12 };
+      }
+      // Default (e.g. δ¹³C)
+      return { bias: 0.06, sd: 0.06 };
     }
 
     const PRESETS = {
@@ -1705,7 +1712,7 @@
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope (a)' : '기울기 (a)'}</span> <strong id="p${idx}-slope" class="text-stone-900 font-semibold">-</strong></div>
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Intercept (b)' : '절편 (b)'}</span> <strong id="p${idx}-intercept" class="text-stone-900 font-semibold">-</strong></div>
             <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope SE (1σ)' : '기울기 표준오차'}</span> <span id="p${idx}-se" class="text-stone-700 font-medium">-</span></div>
-            <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p${idx}-mswd" class="text-cyan-900 font-bold">-</strong></div>
+            <div class="flex justify-between items-center border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p${idx}-mswd" class="text-cyan-900 font-bold">-</strong></div>
             <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">${isEn ? 'Weighted R²' : '가중 결정계수 R²'}</span> <strong id="p${idx}-r2" class="text-emerald-800 font-bold">-</strong></div>
           </div>
         </div>
@@ -1860,17 +1867,17 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
+          <li>동위원소별 맞춤 허용 오차 기반 지능형 QC 경고 배지 및 자동 원인 진단 시스템</li>
           <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
           <li>사용자 커스텀 표준물질 프리셋 로컬 저장소(localStorage) 보존 시스템</li>
-          <li>멀티 시트 엑셀(.xlsx) 워크북 내보내기를 통한 그림 및 서식 영구 보존</li>
           <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
           <li>연속 인접 런 시료(Triplicate 등)에 대한 스마트 평균 및 표준편차 요약 산출</li>
           <li>IUPAC Coplen (1983) 공식 기반 산소 동위원소 스케일(VPDB ↔ VSMOW) 정밀 연동</li>
           <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
-          <li>측정 정밀도(1σ SD)를 역제곱 가중치로 반영하는 가중 최소제곱법(WLS) 회귀</li>
         `;
       } else {
         listEl.innerHTML = `
+          <li>Smart QC diagnostic badges and automated troubleshooting guidance</li>
           <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
           <li>Local browser standard reference preset persistence (Zero-Server)</li>
           <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
@@ -2380,6 +2387,13 @@
       return 0;
     }
 
+    function formatMswdWithStatus(mswd, isEn) {
+      if (mswd > 2.5) {
+        return `<span class="text-amber-700 font-bold">${mswd.toFixed(3)}</span> <span class="px-1.5 py-0.5 text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-sans font-semibold ml-1">${isEn ? 'High Scatter' : '분산 큼'}</span>`;
+      }
+      return `<span class="text-cyan-900 font-bold">${mswd.toFixed(3)}</span> <span class="px-1.5 py-0.5 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 font-sans font-semibold ml-1">${isEn ? 'Optimal' : '양호'}</span>`;
+    }
+
     function runCalibration() {
       closeEditingCell();
       saveCurrentModeStandards();
@@ -2506,7 +2520,7 @@
       document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
       document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
       document.getElementById('p1-se').innerText = `± ${reg1.seSlope.toFixed(6)}`;
-      document.getElementById('p1-mswd').innerText = reg1.mswd.toFixed(3);
+      document.getElementById('p1-mswd').innerHTML = formatMswdWithStatus(reg1.mswd, isEn);
       document.getElementById('p1-r2').innerText = reg1.r2.toFixed(5);
 
       drawPlot('plot-1', `${p.elements[0].label} Calibration Fit`, pts1, reg1, `Measured ${p.elements[0].label} (‰)`, `True ${p.elements[0].label} (${p.elements[0].unit})`);
@@ -2517,7 +2531,7 @@
         document.getElementById('p2-slope').innerText = reg2.slope.toFixed(6);
         document.getElementById('p2-intercept').innerText = reg2.intercept.toFixed(6);
         document.getElementById('p2-se').innerText = `± ${reg2.seSlope.toFixed(6)}`;
-        document.getElementById('p2-mswd').innerText = reg2.mswd.toFixed(3);
+        document.getElementById('p2-mswd').innerHTML = formatMswdWithStatus(reg2.mswd, isEn);
         document.getElementById('p2-r2').innerText = reg2.r2.toFixed(5);
 
         drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Measured ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${oUnit})`);
@@ -2691,7 +2705,9 @@
         });
       }
 
-      // QC Validation Summary Banner
+      // -------------------------------------------------------------
+      // Smart QC Validation Summary Banner & Actionable Diagnostics
+      // -------------------------------------------------------------
       const qcBanner = document.getElementById('qc-summary-banner');
       if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
         const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
@@ -2700,36 +2716,72 @@
           ? Math.sqrt(qcResults.cals1.map(x => Math.pow(x - mean1, 2)).reduce((a, b) => a + b) / (qcResults.cals1.length - 1))
           : 0;
 
+        const thresh1 = getElementThreshold(p.elements[0].label);
+        const failBias1 = Math.abs(bias1) > thresh1.bias;
+        const failSd1 = sdQc1 > thresh1.sd;
+
         let mean2 = null, bias2 = null, sdQc2 = null;
+        let thresh2 = null, failBias2 = false, failSd2 = false;
+
         if (isDual && qcResults.cals2.length > 0 && !isNaN(qcStd.v2)) {
           mean2 = qcResults.cals2.reduce((a, b) => a + b, 0) / qcResults.cals2.length;
           bias2 = mean2 - qcStd.v2;
           sdQc2 = qcResults.cals2.length > 1
             ? Math.sqrt(qcResults.cals2.map(x => Math.pow(x - mean2, 2)).reduce((a, b) => a + b) / (qcResults.cals2.length - 1))
             : 0;
+
+          thresh2 = getElementThreshold(p.elements[1].label);
+          failBias2 = Math.abs(bias2) > thresh2.bias;
+          failSd2 = sdQc2 > thresh2.sd;
         }
+
+        const highMswd = reg1.mswd > 2.5 || (isDual && reg2 && reg2.mswd > 2.5);
+        const isOverallPass = !failBias1 && !failSd1 && !failBias2 && !failSd2 && !highMswd;
 
         lastQcSummaryReport = {
           qcName: qcStd.name,
           count: qcResults.cals1.length,
+          status: isOverallPass ? 'PASS' : 'WARNING',
           mean1, bias1, sdQc1,
           mean2, bias2, sdQc2
         };
 
+        // Banner outer styling based on Pass / Warning
+        if (isOverallPass) {
+          qcBanner.className = 'bg-[#f8fdf9] border-2 border-emerald-400 p-4 rounded-none space-y-3 shadow-xs';
+        } else {
+          qcBanner.className = 'bg-[#fffcf5] border-2 border-amber-400 p-4 rounded-none space-y-3 shadow-xs';
+        }
+
+        const statusBadgeHtml = isOverallPass
+          ? `<span class="px-2.5 py-0.5 bg-emerald-700 text-white font-mono text-[11px] font-bold tracking-wider uppercase flex items-center gap-1.5">
+               <span>●</span> ${isEn ? 'QC PASS · Ready for Publication' : 'QC PASS · 학술 보고 기준 만족'}
+             </span>`
+          : `<span class="px-2.5 py-0.5 bg-amber-600 text-white font-mono text-[11px] font-bold tracking-wider uppercase flex items-center gap-1.5">
+               <span>▲</span> ${isEn ? 'QC WARNING · Action Required' : 'QC WARNING · 데이터 점검 및 보정 필요'}
+             </span>`;
+
         let qcHtml = `
-          <div class="flex items-center justify-between border-b border-stone-200 pb-2">
-            <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-600"></span> ${isEn ? 'Quality Control (QC) Independent Validation Report' : '품질관리(QC) 독립 검증 리포트'}
-            </span>
+          <div class="flex flex-wrap items-center justify-between border-b ${isOverallPass ? 'border-emerald-200' : 'border-amber-200'} pb-2.5 gap-2">
+            <div class="flex items-center flex-wrap gap-2.5">
+              ${statusBadgeHtml}
+              <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-800">
+                ${isEn ? 'Independent Validation Report' : '독립 품질관리(QC) 검증 리포트'}
+              </span>
+            </div>
             <span class="text-[11px] font-mono text-stone-500">${isEn ? 'Evaluated on' : '평가 대상:'} ${qcResults.cals1.length} ${isEn ? 'runs of' : '회 반복측정'} [${qcStd.name}]</span>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-1">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-0.5">
             <div class="space-y-1">
-              <div class="text-stone-600 font-sans font-medium">${p.elements[0].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
-              <div class="flex justify-between bg-white p-2 border border-stone-200">
-                <span>${isEn ? 'Mean Calibrated' : '평균 보정값'}: <strong>${mean1.toFixed(3)} ${p.elements[0].unit}</strong></span>
-                <span>${isEn ? 'Accuracy Bias' : '정확도 편차'}: <strong class="${Math.abs(bias1) <= 0.05 ? 'text-emerald-700' : 'text-amber-700'}">${bias1 >= 0 ? '+' : ''}${bias1.toFixed(3)} ‰</strong></span>
-                <span>${isEn ? 'Reproducibility' : '반복 정밀도'} (1σ): <strong>±${sdQc1.toFixed(3)} ‰</strong></span>
+              <div class="flex justify-between text-stone-700 font-sans font-semibold">
+                <span>${p.elements[0].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}</span>
+                <span class="text-[10px] font-mono text-stone-400">${isEn ? 'Criterion' : '허용기준'}: ±${thresh1.bias.toFixed(2)} ‰</span>
+              </div>
+              <div class="flex justify-between bg-white p-2.5 border ${failBias1 || failSd1 ? 'border-amber-300 bg-amber-50/20' : 'border-stone-200'}">
+                <span>${isEn ? 'Mean' : '평균 보정값'}: <strong>${mean1.toFixed(3)} ${p.elements[0].unit}</strong></span>
+                <span>${isEn ? 'Bias' : '정확도 편차'}: <strong class="${!failBias1 ? 'text-emerald-700' : 'text-amber-700 underline decoration-amber-500'}">${bias1 >= 0 ? '+' : ''}${bias1.toFixed(3)} ‰</strong></span>
+                <span>${isEn ? 'Rep (1σ)' : '반복 정밀도(1σ)'}: <strong class="${!failSd1 ? 'text-emerald-700' : 'text-amber-700 underline decoration-amber-500'}">±${sdQc1.toFixed(3)} ‰</strong></span>
               </div>
             </div>
         `;
@@ -2737,17 +2789,63 @@
         if (isDual && mean2 !== null) {
           qcHtml += `
             <div class="space-y-1">
-              <div class="text-stone-600 font-sans font-medium">${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}:</div>
-              <div class="flex justify-between bg-white p-2 border border-stone-200">
-                <span>${isEn ? 'Mean Calibrated' : '평균 보정값'}: <strong>${mean2.toFixed(3)} ${oUnit}</strong></span>
-                <span>${isEn ? 'Accuracy Bias' : '정확도 편차'}: <strong class="${Math.abs(bias2) <= 0.1 ? 'text-emerald-700' : 'text-amber-700'}">${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
-                <span>${isEn ? 'Reproducibility' : '반복 정밀도'} (1σ): <strong>±${sdQc2.toFixed(3)} ‰</strong></span>
+              <div class="flex justify-between text-stone-700 font-sans font-semibold">
+                <span>${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}</span>
+                <span class="text-[10px] font-mono text-stone-400">${isEn ? 'Criterion' : '허용기준'}: ±${thresh2.bias.toFixed(2)} ‰</span>
+              </div>
+              <div class="flex justify-between bg-white p-2.5 border ${failBias2 || failSd2 ? 'border-amber-300 bg-amber-50/20' : 'border-stone-200'}">
+                <span>${isEn ? 'Mean' : '평균 보정값'}: <strong>${mean2.toFixed(3)} ${oUnit}</strong></span>
+                <span>${isEn ? 'Bias' : '정확도 편차'}: <strong class="${!failBias2 ? 'text-emerald-700' : 'text-amber-700 underline decoration-amber-500'}">${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
+                <span>${isEn ? 'Rep (1σ)' : '반복 정밀도(1σ)'}: <strong class="${!failSd2 ? 'text-emerald-700' : 'text-amber-700 underline decoration-amber-500'}">±${sdQc2.toFixed(3)} ‰</strong></span>
               </div>
             </div>
           `;
         }
 
         qcHtml += `</div>`;
+
+        // Smart Diagnostic Action Guide Box
+        let guideHtml = '';
+        if (!isOverallPass) {
+          if (driftMode === 'none' && (highMswd || failSd1 || failSd2)) {
+            guideHtml = `
+              <div class="bg-amber-100/70 border-l-4 border-amber-600 p-3 text-xs text-amber-950 font-sans space-y-1">
+                <div class="font-bold flex items-center gap-1.5">
+                  <span>💡</span>
+                  <span>${isEn ? 'Diagnostic Action Guide: Uncorrected Sequence Drift Detected' : '자동 진단 가이드: 시퀀스 내 기기 표류(Drift) 미보정 감지'}</span>
+                </div>
+                <p class="text-[11px] leading-relaxed text-amber-900">
+                  ${isEn
+                    ? `Anchor scatter (MSWD > 2.5) or QC replicate variance exceeds threshold because instrumental drift is currently unmodeled (<strong>Model: None</strong>). Please change <strong>01 Reference & QC Standards → Model</strong> to <strong>Linear</strong> or <strong>Anchor-to-Anchor Bracketing</strong> and click <strong>Run Calibration & QC</strong> again.`
+                    : `현재 드리프트 보정이 꺼져 있어(<strong>Model: None</strong>) 시간 경과에 따른 기기 표류로 인해 검량선 분산(MSWD) 및 QC 반복 오차가 허용 기준을 초과했습니다. 상단 <strong>01 섹션의 Model</strong>을 <strong>Linear</strong> 또는 <strong>Anchor-to-Anchor Bracketing</strong>으로 변경한 뒤 다시 <strong>Run Calibration & QC</strong>를 실행해 보세요.`}
+                </p>
+              </div>
+            `;
+          } else {
+            guideHtml = `
+              <div class="bg-amber-100/70 border-l-4 border-amber-600 p-3 text-xs text-amber-950 font-sans space-y-1">
+                <div class="font-bold flex items-center gap-1.5">
+                  <span>💡</span>
+                  <span>${isEn ? 'Diagnostic Action Guide: QC Offset or Outlier Detected' : '자동 진단 가이드: QC 표준물질 편차(Bias) 또는 이상치 점검 필요'}</span>
+                </div>
+                <p class="text-[11px] leading-relaxed text-amber-900">
+                  ${isEn
+                    ? `One or more QC metrics exceed analytical tolerance. Verify that the accepted true values and isotope scale (VPDB/VSMOW) match your laboratory standards, or inspect Figure 3 & 4 for anomalous outlier runs.`
+                    : `QC 표준물질의 정확도 편차(Bias) 또는 반복 정밀도가 허용 기준을 초과했습니다. 01 섹션에 입력된 QC 공인값 및 산소 스케일(VPDB/VSMOW)이 맞는지 확인하거나, 특정 런에 이상치(Outlier)가 있는지 점검하세요.`}
+                </p>
+              </div>
+            `;
+          }
+        } else {
+          guideHtml = `
+            <div class="bg-emerald-100/50 border-l-4 border-emerald-600 px-3 py-2 text-[11px] text-emerald-950 font-sans flex items-center justify-between">
+              <span><strong>✓ ${isEn ? 'Diagnostic Summary:' : '진단 요약:'}</strong> ${isEn ? 'Calibration linearity (MSWD), QC accuracy bias, and replicate reproducibility all satisfy international publication criteria.' : '검량선 적합도(MSWD), QC 정확도 편차 및 반복 정밀도가 모두 학술 보고 기준을 완벽히 충족합니다.'}</span>
+            </div>
+          `;
+        }
+
+        qcHtml += guideHtml;
+
         if (driftMode === 'linear' && (driftSlope1 !== 0 || driftSlope2 !== 0)) {
           qcHtml += `<div class="text-[11px] font-mono text-stone-500 pt-1 border-t border-stone-200">* ${isEn ? `Linear drift model (${monitorAnchor.name}) applied` : `선형 드리프트 모델(${monitorAnchor.name} 기준) 적용됨`}: ${p.elements[0].label} = ${(driftSlope1).toExponential(3)} ‰/run ${isDual ? `| ${p.elements[1].label} = ${(driftSlope2).toExponential(3)} ‰/run` : ''}</div>`;
         } else if (driftMode === 'piecewise') {
@@ -3089,8 +3187,8 @@
 
         let curRow = 5;
         if (lastQcSummaryReport) {
-          wsFig.getCell(`B${curRow}`).value = `QC Standard: [${lastQcSummaryReport.qcName}] (Evaluated across ${lastQcSummaryReport.count} repeat runs)`;
-          wsFig.getCell(`B${curRow}`).font = { bold: true };
+          wsFig.getCell(`B${curRow}`).value = `QC Evaluation Status: [${lastQcSummaryReport.status}] — Standard: [${lastQcSummaryReport.qcName}] (${lastQcSummaryReport.count} runs)`;
+          wsFig.getCell(`B${curRow}`).font = { bold: true, color: { argb: lastQcSummaryReport.status === 'PASS' ? 'FF047857' : 'FFD97706' } };
           curRow++;
 
           wsFig.getCell(`B${curRow}`).value = `${p.elements[0].label} Mean Calibrated: ${lastQcSummaryReport.mean1.toFixed(3)} ${p.elements[0].unit} | Bias: ${lastQcSummaryReport.bias1 >= 0 ? '+' : ''}${lastQcSummaryReport.bias1.toFixed(3)} ‰ | Rep 1σ: ±${lastQcSummaryReport.sdQc1.toFixed(3)} ‰`;
