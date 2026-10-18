@@ -964,19 +964,17 @@
         badge: "Excel Graphics & Smart QC",
         title_ko: "ExcelJS 그래프 자동 삽입 및 지능형 QC 경고/진단 가이드 탑재",
         title_en: "ExcelJS Embedded Figures & Smart QC Diagnostic Alerts",
-        desc_ko: "엑셀 내 검량선/드리프트 그래프(Figure 1~4) 자동 삽입과 함께, 초보 연구자도 오차 원인을 즉시 파악할 수 있는 지능형 QC 진단 배너 및 MSWD 상태 태그가 탑재되었습니다.",
-        desc_en: "Integrated ExcelJS figure embedding alongside automated QC Pass/Warning badges and actionable drift diagnostics.",
+        desc_ko: "엑셀 내 검량선/드리프트 그래프 자동 삽입과 함께, 새로운 커스텀 표준물질 세트에서도 독립 QC 진단과 경고가 완벽히 연동되도록 개선되었습니다.",
+        desc_en: "Enhanced robust matching for user-defined custom reference standards and independent QC diagnostics.",
         changes_ko: [
-          "<strong>지능형 QC 진단 배너 (PASS / WARNING)</strong>: 동위원소별 허용 오차 임계값을 자동 평가하여 시각적 배지와 함께 원인별 해결 가이드(드리프트 모델 전환 안내 등) 출력.",
-          "<strong>MSWD 적합도 상태 태그</strong>: 지화학 통계 카드 내 MSWD 수치 옆에 <code>Optimal</code> 또는 <code>High Scatter</code> 진단 태그 실시간 표시.",
-          "<strong>ExcelJS 통합 엔진 도입</strong>: 세 번째 시트(<code>Figures_and_QC</code>)에 Figure 1~4 그래프와 QC 판정 결과를 고해상도 이미지로 자동 삽입.",
-          "<strong>초보 사용자를 위한 빠른 시작(Quick Start) 가이드 탑재</strong>: 3단계 워크플로우 안내 모달 및 미니멀 상단 헤더 적용."
+          "<strong>유연한 QC 표준물질 매칭 엔진 강화</strong>: 사용자가 새로운 표준물질 세트나 커스텀 이름을 입력해도 시퀀스 런 내 키워드 포함 여부를 유연하게 인식하여 QC 독립 검증 배너 상시 출력.",
+          "<strong>지능형 QC 진단 배너 및 MSWD 상태 태그 탑재</strong>.",
+          "<strong>ExcelJS 통합 엔진 도입 및 Figures_and_QC 시트 신설</strong>."
         ],
         changes_en: [
-          "<strong>Smart QC Diagnostic Banner (PASS / WARNING)</strong>: Evaluates isotope-specific accuracy/precision thresholds and provides actionable guidance.",
-          "<strong>MSWD Status Indicator</strong>: Real-time <code>Optimal</code> vs <code>High Scatter</code> badges on geostatistical model cards.",
-          "<strong>ExcelJS Figure Embedding</strong>: Dedicated <code>Figures_and_QC</code> sheet containing Figure 1-4 plots and QC metrics.",
-          "<strong>Quick Start Onboarding & Minimal Header</strong>: Streamlined 3-step guide and compact navigation."
+          "<strong>Robust QC Standard Matching</strong>: Ensures smart QC diagnostic alerts appear seamlessly with user-defined standard sets.",
+          "<strong>Smart QC Diagnostic Banner & MSWD Status Indicators</strong>.",
+          "<strong>ExcelJS Integration & Figures_and_QC Sheet</strong>."
         ]
       },
       {
@@ -985,69 +983,10 @@
         badge: "Zenodo DOI & Legal Protection",
         title_ko: "공식 영구 DOI 발급 및 GPL-3.0 라이선스 적용, 로컬 프리셋 시스템",
         title_en: "CERN Zenodo DOI Issued, GPL-3.0 License, and Browser Presets",
-        desc_ko: "CERN/Zenodo를 통해 영구 DOI(10.5281/zenodo.23239186)를 공식 발급받아 학술적 우선권을 선점하였으며, GPL-3.0 법적 보호 및 브라우저 프리셋 저장소를 완비했습니다.",
-        desc_en: "Formally secured academic priority via permanent Zenodo DOI (10.5281/zenodo.23239186), added GNU GPL v3.0 protection, and local standard persistence.",
-        changes_ko: [
-          "<strong>CERN Zenodo 공식 영구 DOI 탑재</strong>: <code>10.5281/zenodo.23239186</code> 발급 및 플랫폼 내 원클릭 인용 블록 탑재.",
-          "<strong>GNU GPL-3.0 라이선스 법적 보호</strong>: 코드 사유화 방지 및 오픈 사이언스 원작자 권리 공식 확보.",
-          "<strong>내 표준물질 프리셋 로컬 저장 (localStorage)</strong>: 연구실별 앵커/QC 표준물질 이름과 참값을 브라우저에 안전하게 영구 저장."
-        ],
-        changes_en: [
-          "<strong>Permanent Zenodo DOI Integrated</strong>: Registered <code>10.5281/zenodo.23239186</code> for peer-review citations.",
-          "<strong>GNU GPL-3.0 Legal Protection</strong>: Preserves open-source integrity and attribution rights.",
-          "<strong>Named Local Standards Presets</strong>: Persistent client-side standard reference sets without server interactions."
-        ]
-      },
-      {
-        version: "v1.2.0",
-        date: "2026-10",
-        badge: "Major Excel Upgrade",
-        title_ko: "멀티 시트 엑셀(.xlsx) 내보내기 & 단일 물 모드 및 연속 시료 평균 탑재",
-        title_en: "Native Multi-Sheet Excel (.XLSX) Export & Adjacent Sample Averaging",
-        desc_ko: "CSV 저장 시 서식이 유실되는 문제를 방지하기 위해 멀티 시트 엑셀(.xlsx) 내보내기를 기본 탑재했습니다.",
-        desc_en: "Integrated multi-sheet Excel exports to preserve formatting across Grouped Summary and Sequence Runs.",
-        changes_ko: [
-          "<strong>멀티 시트 엑셀 워크북 내보내기</strong>: Sheet 1(시료별 평균)과 Sheet 2(개별 런 전체 데이터) 분리 제공.",
-          "<strong>단일 물 분석 모드(δD only, δ¹⁸O only) 신설</strong>: 물 시료 개별 라인 분석 전용 워크플로우 지원.",
-          "<strong>연속 시료 인접 묶음(Adjacent Chunk Grouping)</strong>: 연속 측정된 동일 미지 시료의 평균(Mean ± 1σ) 자동 집계."
-        ],
-        changes_en: [
-          "<strong>Multi-Sheet Excel Export</strong>: Grouped Summary and Sequence Runs tabs.",
-          "<strong>Single Water Channels</strong>: Standalone δD and δ¹⁸O presets.",
-          "<strong>Adjacent Replicate Grouping</strong>: Automatic chunking of adjacent replicates."
-        ]
-      },
-      {
-        version: "v1.1.0",
-        date: "2026-09",
-        badge: "Major Enhancement",
-        title_ko: "산소 스케일(VPDB ↔ VSMOW) 전환 및 독립 드리프트 모니터 탑재",
-        title_en: "Oxygen Scale Conversion (VPDB ↔ VSMOW) & Decoupled Drift Diagnostics",
-        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
-        desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
-        changes_ko: [
-          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, 엑셀 헤더 실시간 연동.",
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 1차 및 2차 동위원소의 기기 표류 양상을 독립된 시계열 플롯으로 시각화."
-        ],
-        changes_en: [
-          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion via IUPAC Coplen (1983) equation.",
-          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary and secondary isotopes."
-        ]
-      },
-      {
-        version: "v1.0.0",
-        date: "2026-09",
-        badge: "Initial Release",
-        title_ko: "IsoCalib 오픈 플랫폼 정식 런칭",
-        title_en: "Initial Official Release of IsoCalib Platform",
-        desc_ko: "안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
-        desc_en: "Client-side, zero-server data reduction engine tailored for stable isotope geochemistry.",
-        changes_ko: [
-          "가중 선형 회귀(WLS York-Ludwig) 솔버 탑재 및 MSWD 산출, JCGM GUM 1차 편미분 오차 전파 도출."
-        ],
-        changes_en: [
-          "Weighted Least Squares (WLS) regression, MSWD Goodness-of-Fit, and GUM uncertainty propagation."
-        ]
+        desc_ko: "CERN/Zenodo를 통해 영구 DOI(10.5281/zenodo.23239186)를 공식 발급받았습니다.",
+        desc_en: "Formally secured academic priority via permanent Zenodo DOI (10.5281/zenodo.23239186).",
+        changes_ko: ["<strong>CERN Zenodo 공식 영구 DOI 탑재</strong>.", "<strong>내 표준물질 프리셋 로컬 저장 (localStorage)</strong>."],
+        changes_en: ["<strong>Permanent Zenodo DOI Integrated</strong>.", "<strong>Named Local Standards Presets</strong>."]
       }
     ];
 
@@ -1121,7 +1060,6 @@
       return rawId.trim().replace(/[-_.#\s]+(0?[1-9]|[a-zA-Z])$/, '').trim();
     }
 
-    // Isotope-specific QC Tolerance Thresholds (Bias & 1σ Reproducibility)
     function getElementThreshold(label) {
       if (label.includes('δD') || label.includes('2H')) {
         return { bias: 1.50, sd: 1.50 };
@@ -1132,7 +1070,6 @@
       if (label.includes('¹⁸O') || label.includes('18O') || label.includes('¹⁵N') || label.includes('15N')) {
         return { bias: 0.12, sd: 0.12 };
       }
-      // Default (e.g. δ¹³C)
       return { bias: 0.06, sd: 0.06 };
     }
 
@@ -1150,7 +1087,6 @@
         defaultDriftAnchorIdx: 1,
         qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
         demo: [
-          // [Run 1~9] 기기 초기 상태 (Baseline)
           ["NBS-18_1", 21.745, 0.032, -0.775, 0.055],
           ["IAEA-603_1", 29.325, 0.028, 20.055, 0.052],
           ["KDO_QC1", 25.562, 0.030, 7.655, 0.054],
@@ -1160,7 +1096,6 @@
           ["Sample-B_1", 24.085, 0.028, 15.290, 0.051],
           ["Sample-B_2", 24.072, 0.030, 15.275, 0.054],
           ["Sample-B_3", 24.058, 0.027, 15.260, 0.050],
-          // [Run 10~18] 시퀀스 드리프트 진행 (-0.11‰(C), -0.18‰(O) 하강)
           ["NBS-18_2", 21.635, 0.033, -0.955, 0.058],
           ["IAEA-603_2", 29.215, 0.026, 19.875, 0.050],
           ["KDO_QC2", 25.442, 0.029, 7.460, 0.052],
@@ -1170,7 +1105,6 @@
           ["Sample-D_1", 22.760, 0.028, 16.210, 0.052],
           ["Sample-D_2", 22.748, 0.027, 16.195, 0.049],
           ["Sample-D_3", 22.735, 0.029, 16.180, 0.051],
-          // [Run 19~26] 드리프트 누적 심화 (-0.22‰(C), -0.34‰(O) 하강)
           ["NBS-18_3", 21.525, 0.031, -1.115, 0.056],
           ["IAEA-603_3", 29.105, 0.025, 19.715, 0.049],
           ["Sample-E_1", 20.110, 0.030, 13.870, 0.055],
@@ -1179,7 +1113,6 @@
           ["Sample-F_1", 24.930, 0.027, 17.290, 0.050],
           ["Sample-F_2", 24.918, 0.029, 17.275, 0.053],
           ["Sample-F_3", 24.905, 0.026, 17.260, 0.049],
-          // [Run 27~29] 시퀀스 종료 브래케팅 (-0.32‰(C), -0.48‰(O) 하강)
           ["KDO_QC3", 25.245, 0.028, 7.175, 0.051],
           ["NBS-18_4", 21.425, 0.030, -1.255, 0.055],
           ["IAEA-603_4", 29.005, 0.025, 19.575, 0.048]
@@ -1750,9 +1683,9 @@
         rHead.innerHTML = `
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-4 py-2.5 text-stone-600">± 1σ</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
       }
@@ -1773,9 +1706,9 @@
         gSummaryHead.innerHTML = `
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
-            <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
+            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
+            <th class="px-3.5 py-2.5 text-stone-600">Rep. 1σ SD</th>
           </tr>
         `;
       }
@@ -1867,9 +1800,10 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
-          <li>동위원소별 맞춤 허용 오차 기반 지능형 QC 경고 배지 및 자동 원인 진단 시스템</li>
+          <li>새로운 커스텀 표준물질 입력 시에도 작동하는 지능형 QC 경고 및 자동 진단 가이드</li>
           <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
           <li>사용자 커스텀 표준물질 프리셋 로컬 저장소(localStorage) 보존 시스템</li>
+          <li>멀티 시트 엑셀(.xlsx) 워크북 내보내기를 통한 그림 및 서식 영구 보존</li>
           <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
           <li>연속 인접 런 시료(Triplicate 등)에 대한 스마트 평균 및 표준편차 요약 산출</li>
           <li>IUPAC Coplen (1983) 공식 기반 산소 동위원소 스케일(VPDB ↔ VSMOW) 정밀 연동</li>
@@ -1877,7 +1811,7 @@
         `;
       } else {
         listEl.innerHTML = `
-          <li>Smart QC diagnostic badges and automated troubleshooting guidance</li>
+          <li>Robust QC diagnostic alerts supporting user-defined custom standards</li>
           <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
           <li>Local browser standard reference preset persistence (Zero-Server)</li>
           <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
@@ -2556,7 +2490,7 @@
         const clean = id.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
         const isAnchor = refStds.some(s => s.keyMatch && clean.includes(s.keyMatch));
-        const isQC = qcStd.keyMatch && clean.includes(qcStd.keyMatch);
+        const isQC = qcStd.keyMatch && (clean.includes(qcStd.keyMatch) || clean.includes('QC'));
 
         let raw1 = parseFloat(row[1]);
         const sd1 = parseFloat(row[2]) || 0;
@@ -2746,7 +2680,6 @@
           mean2, bias2, sdQc2
         };
 
-        // Banner outer styling based on Pass / Warning
         if (isOverallPass) {
           qcBanner.className = 'bg-[#f8fdf9] border-2 border-emerald-400 p-4 rounded-none space-y-3 shadow-xs';
         } else {
@@ -2804,7 +2737,6 @@
 
         qcHtml += `</div>`;
 
-        // Smart Diagnostic Action Guide Box
         let guideHtml = '';
         if (!isOverallPass) {
           if (driftMode === 'none' && (highMswd || failSd1 || failSd2)) {
@@ -2855,7 +2787,17 @@
         qcBanner.innerHTML = qcHtml;
         qcBanner.classList.remove('hidden');
       } else {
-        qcBanner.classList.add('hidden');
+        // Fallback banner if QC standard name is not matched but runs exist
+        if (qcResults.cals1.length === 0 && computedRows.some(r => r.isQC)) {
+          qcBanner.innerHTML = `
+            <div class="bg-amber-50 border border-amber-300 p-3 text-xs text-amber-900 font-sans">
+              <strong>▲ QC Notice:</strong> Sequence rows matching QC standard name were found, but values could not be calculated. Please check your QC standard configuration in Section 01.
+            </div>
+          `;
+          qcBanner.classList.remove('hidden');
+        } else {
+          qcBanner.classList.add('hidden');
+        }
         lastQcSummaryReport = null;
       }
     }
