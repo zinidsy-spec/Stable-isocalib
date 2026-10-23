@@ -114,7 +114,7 @@
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       
-      <!-- Brand Logo & Clean Sub-badge -->
+      <!-- Brand Logo & Sub-badge -->
       <div class="flex items-center space-x-3 whitespace-nowrap">
         <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900 hover:text-stone-700 transition">ISOCALIB</a>
         <span class="hidden sm:inline-block text-[11px] uppercase tracking-wider text-stone-400 font-mono">/ Geochemistry</span>
@@ -124,14 +124,12 @@
       <div class="flex items-center space-x-5 whitespace-nowrap">
         <nav class="flex items-center space-x-4 sm:space-x-5 text-xs text-stone-600 font-sans">
           
-          <!-- Primary 1: Quick Start -->
           <button id="btn-open-quickstart" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1" data-i18n="nav_quickstart">
             Quick Start
           </button>
           
           <span class="text-stone-300">·</span>
 
-          <!-- Primary 2: Methodology -->
           <a href="#methodology" class="hover:text-stone-900 transition text-stone-600 hover:font-medium" data-i18n="nav_methodology">
             Methodology
           </a>
@@ -156,7 +154,7 @@
                 </button>
                 <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_changelog">
                   <span>Changelog</span>
-                  <span class="font-mono text-[10px] text-stone-400">v1.3.0</span>
+                  <span class="font-mono text-[10px] text-stone-400">v1.3.1</span>
                 </button>
               </div>
               <div class="py-1">
@@ -164,21 +162,22 @@
                   <span>Citation & DOI</span>
                   <span class="font-mono text-[10px] text-stone-400">Cite</span>
                 </a>
-
-                <!-- 1) Google Forms Direct Link (No Login Required) -->
+                
+                <!-- Google Form Link (No Login) -->
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5iGrGYK5UNSosEULELVSLTNxYG1t1MBBsWGiCF6aQxhhNYQ/viewform" 
+                   id="nav-feedback-form"
                    target="_blank" 
                    rel="noopener noreferrer" 
-                   class="block px-3.5 py-1.5 hover:bg-emerald-50 text-emerald-950 font-medium transition flex justify-between items-center" data-i18n="nav_feedback_form">
-                  <span>Feedback (No Login)</span>
-                  <span class="font-mono text-[10px] text-emerald-800 bg-emerald-100 px-1 py-0.5">Google Form</span>
+                   class="block px-3.5 py-1.5 hover:bg-emerald-50 text-emerald-950 font-semibold transition flex justify-between items-center" data-i18n="nav_feedback_form">
+                  <span class="flex items-center gap-1"><span>💬</span> 빠른 피드백 남기기</span>
+                  <span class="font-mono text-[10px] text-emerald-700 bg-emerald-100 px-1 py-0.2">No Login</span>
                 </a>
 
-                <!-- 2) GitHub Developer Issues -->
+                <!-- GitHub Issues Link -->
                 <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
                    target="_blank" 
                    rel="noopener noreferrer" 
-                   class="block px-3.5 py-1.5 hover:bg-stone-50 text-stone-600 transition flex justify-between items-center" data-i18n="nav_feedback_github">
+                   class="block px-3.5 py-1.5 hover:bg-stone-50 text-stone-500 transition flex justify-between items-center" data-i18n="nav_feedback_github">
                   <span>GitHub Issues</span>
                   <span class="font-mono text-[10px] text-stone-400">GitHub</span>
                 </a>
@@ -205,7 +204,7 @@
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
           <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.3.0</span>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.3.1</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
@@ -216,17 +215,27 @@
       </div>
 
       <!-- Isotope Preset Selector -->
-      <div class="space-y-1.5 self-start md:self-end min-w-[300px]">
+      <div class="space-y-1.5 self-start md:self-end min-w-[320px]">
         <label for="isotope-preset" class="text-xs uppercase tracking-wider text-stone-700 font-mono font-bold block" data-i18n="system_label">
           Isotope System
         </label>
         <select id="isotope-preset" class="w-full bg-white border border-[#c7c5bc] px-3.5 py-2.5 text-xs text-stone-900 font-semibold focus:border-stone-900 focus:outline-none transition shadow-sm cursor-pointer">
-          <option value="CO">1. Carbon & Oxygen (δ¹³C, δ¹⁸O - Dual)</option>
-          <option value="NO">2. Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O - Dual)</option>
-          <option value="HO">3. Hydrogen & Oxygen (δD, δ¹⁸O - Dual)</option>
-          <option value="WATER_H">4. Water Hydrogen (δD only - Single)</option>
-          <option value="WATER_O">5. Water Oxygen (δ¹⁸O only - Single)</option>
-          <option value="S">6. Sulfur Isotope (δ³⁴S - Single)</option>
+          <optgroup label="Carbonate & GasBench Systems">
+            <option value="CO" selected>1. Carbon & Oxygen (δ¹³C, δ¹⁸O - Dual)</option>
+            <option value="NO">2. Nitrogen & Oxygen (δ¹⁵N, δ¹⁸O - Dual)</option>
+            <option value="HO">3. Hydrogen & Oxygen (δD, δ¹⁸O - Dual)</option>
+          </optgroup>
+          <optgroup label="EA-IRMS (Bulk Organic & Sediments)">
+            <option value="CN">4. EA Organic Bulk C & N (δ¹³C, δ¹⁵N - Dual)</option>
+            <option value="EA_C">5. EA Organic Carbon only (δ¹³C - Acidified Sediments)</option>
+            <option value="EA_N">6. EA Total Nitrogen only (δ¹⁵N - Untreated Sediments)</option>
+            <option value="CH">7. EA Organic Bulk C & H (δ¹³C, δD - Dual)</option>
+          </optgroup>
+          <optgroup label="Water & Single Element Lines">
+            <option value="WATER_H">8. Water Hydrogen (δD only - Single)</option>
+            <option value="WATER_O">9. Water Oxygen (δ¹⁸O only - Single)</option>
+            <option value="S">10. Sulfur Isotope (δ³⁴S - Single)</option>
+          </optgroup>
         </select>
       </div>
     </div>
@@ -282,7 +291,7 @@
         </div>
 
         <div class="flex items-center space-x-2">
-          <input type="text" id="preset-save-name" placeholder="Preset Name (e.g. Lab_Carbonate)" class="bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 w-44">
+          <input type="text" id="preset-save-name" placeholder="Preset Name (e.g. EA_Sediments)" class="bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 w-44">
           <button id="btn-save-preset" class="px-3.5 py-1 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer tracking-wider text-[11px]" data-i18n="btn_preset_save">Save</button>
         </div>
       </div>
@@ -318,7 +327,6 @@
             Clear All
           </button>
           
-          <!-- Harmonized Demo Button with Subtle Guide Tag -->
           <div class="inline-flex items-center border border-[#c7c5bc] bg-white hover:border-stone-900 transition shadow-xs group">
             <button id="btn-demo" class="px-3 py-2 text-xs font-semibold text-stone-800 transition cursor-pointer" data-i18n="btn_demo">
               Load Demo
@@ -419,7 +427,6 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec3_title">Calibrated Results & Quality Control Report</h2>
         </div>
         
-        <!-- Harmonized Editorial Style Export Button -->
         <button id="btn-export" class="inline-flex items-center text-xs font-mono font-bold uppercase tracking-wider text-stone-900 border-b border-stone-900 pb-0.5 hover:text-stone-600 hover:border-stone-600 transition cursor-pointer" data-i18n="btn_export_excel">
           <span>Export Excel Report (.xlsx)</span>
         </button>
@@ -483,7 +490,6 @@
       <!-- 3 Principles -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-stone-700">
         
-        <!-- Principle 1: WLS -->
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
@@ -502,7 +508,6 @@
           </div>
         </div>
 
-        <!-- Principle 2: MSWD -->
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
@@ -521,7 +526,6 @@
           </div>
         </div>
 
-        <!-- Principle 3: Error Propagation -->
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
@@ -542,7 +546,7 @@
 
       </div>
 
-      <!-- Mathematical Derivations Accordion -->
+      <!-- Accordion Mathematical Derivations -->
       <details class="group bg-white border border-[#d1cfc7] shadow-sm transition-all">
         <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100 transition">
           <div class="flex items-center space-x-2">
@@ -613,9 +617,8 @@
           To cite this software and its algorithms in your Analytical Methods section, please refer to the permanent Zenodo DOI below:
         </p>
         
-        <!-- One-click Citation Block -->
         <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed space-y-2 shadow-xs">
-          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.3.0). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
+          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.3.1). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
           <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-500 font-sans">
             <span>Licensed under GNU General Public License v3.0 (GPL-3.0)</span>
             <span class="font-mono text-stone-400">Click text to select all</span>
@@ -643,7 +646,6 @@
 
       <div class="space-y-4 text-xs text-stone-700 leading-relaxed font-light">
         
-        <!-- Step 1 Card -->
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
             <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">Step 1. Configure Reference Standards (Section 01)</span>
@@ -653,11 +655,10 @@
             Check and verify accepted values for Anchor 1, 2 and independent QC standards. Save persistent lab presets directly into local browser storage.
           </p>
           <div class="text-[11px] font-mono text-stone-500 bg-white p-2 border border-stone-200" data-i18n="qs_step1_tip">
-            * Tip: If sequence standard names (e.g. NBS-18_1) contain the anchor name (NBS-18), they are auto-detected by the engine.
+            * Tip: If sequence standard names contain the anchor name (e.g. NBS-18, USGS40), they are auto-detected by the engine.
           </div>
         </div>
 
-        <!-- Step 2 Card -->
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
             <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">Step 2. Paste Sequence Rows (Section 02)</span>
@@ -671,7 +672,6 @@
           </div>
         </div>
 
-        <!-- Step 3 Card -->
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
             <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">Step 3. Calibrate & Export (Section 03)</span>
@@ -700,7 +700,7 @@
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.3.0 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.3.1 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -716,13 +716,10 @@
       </div>
 
       <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
-        <div class="space-y-0.5">
-          <span class="block">Inquiries & Feedback Channels:</span>
-          <div class="flex items-center gap-3">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5iGrGYK5UNSosEULELVSLTNxYG1t1MBBsWGiCF6aQxhhNYQ/viewform" target="_blank" rel="noopener noreferrer" class="text-emerald-800 underline font-semibold">Google Feedback Form (No Login)</a>
-            <span class="text-stone-300">·</span>
-            <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" target="_blank" rel="noopener noreferrer" class="text-stone-700 underline font-semibold">GitHub Issues</a>
-          </div>
+        <div>
+          <span class="block">Inquiries & Feedback:</span>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5iGrGYK5UNSosEULELVSLTNxYG1t1MBBsWGiCF6aQxhhNYQ/viewform" target="_blank" rel="noopener noreferrer" class="text-emerald-800 underline font-semibold mr-3">Google Form (No Login)</a>
+          <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" target="_blank" rel="noopener noreferrer" class="text-stone-900 underline font-semibold">GitHub Issues</a>
         </div>
         <button id="btn-modal-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
       </div>
@@ -829,7 +826,7 @@
         grouped_empty: "상단에서 검량을 실행하면 연속으로 반복 측정된 미지시료의 평균(Mean ± 1σ) 요약표가 여기에 생성됩니다.",
         sec4_tag: "Methodology & Standard Principles",
         sec4_heading: "통계적 회귀 원리 및 표준 분석 지침",
-        sec4_subheading: "IsoCalib에 적용된 계산식은 임의로 고안된 수식이 아니며, 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
+        sec4_subheading: "IsoCalib에 적용된 계산식은 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
         card1_title: "1. 가중 선형 회귀 (WLS)",
         card1_desc: "모든 측정값을 동일하게 대우하지 않고, <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\\sigma_i^2$)</strong>을 갖도록 계산합니다.",
         card1_quote: "측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.",
@@ -859,14 +856,14 @@
         ctx_clear_cells: "선택 셀 내용 지우기",
         ctx_insert_row: "아래에 빈 행 1줄 삽입",
         about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
-        about_p2: "탄소·산소, 질소·산소, 수소·산소 동시 분석뿐만 아니라 물 분석 전용 단일 수소(δD), 단일 산소(δ¹⁸O), 황(δ³⁴S) 체계를 모두 지원합니다.",
+        about_p2: "탄산염 및 가스벤치(C, O, N, H)뿐만 아니라 해양학 및 지질학 전용 EA-IRMS 유기물 체계(CN 동시분석, 산처리 퇴적물 C 단독, 무처리 퇴적물 N 단독, CH 동시분석), 물 단일 분석 및 황(S) 체계를 모두 지원합니다.",
         about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
         about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다.",
         qs_modal_title: "/ Quick Start Protocol (빠른 시작 가이드)",
         qs_modal_subtitle: "안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드",
         qs_step1_title: "Step 1. 표준물질 참값 및 옵션 확인 (Section 01)",
         qs_step1_desc: "사용 중인 검량 표준물질(Anchor 1, 2)과 품질관리 표준물질(QC)의 이름과 공인 참값을 입력합니다. 자주 사용하는 세트는 Save 버튼으로 브라우저에 영구 저장해 둘 수 있습니다.",
-        qs_step1_tip: "* 팁: 시퀀스 표의 표준물질 행 이름(예: NBS-18_1)에 상단 앵커 이름(NBS-18)이 포함되어 있으면 시스템이 자동으로 감지합니다.",
+        qs_step1_tip: "* 팁: 시퀀스 표의 표준물질 행 이름에 상단 앵커 이름(예: NBS-18, USGS40)이 포함되어 있으면 시스템이 자동으로 감지합니다.",
         qs_step2_title: "Step 2. 엑셀 런 시퀀스 복사 & 붙여넣기 (Section 02)",
         qs_step2_desc: "기기 소프트웨어(Isodat 등)나 엑셀 파일에서 분석 열을 복사한 후, 표의 첫 번째 셀을 클릭하고 Ctrl + V를 누르면 즉시 표에 채워집니다.",
         qs_step2_columns: "[열 순서] 시료 ID | Raw 1차 동위원소 | 1σ SD | Raw 2차 동위원소 | 1σ SD",
@@ -950,14 +947,14 @@
         ctx_clear_cells: "Clear Selected Cells",
         ctx_insert_row: "Insert 1 Blank Row Below",
         about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
-        about_p2: "It supports dual isotope systems as well as dedicated single-isotope water channels (δD only, δ¹⁸O only) and sulfur (δ³⁴S).",
+        about_p2: "It supports dual carbonate systems as well as dedicated EA-IRMS marine organic channels (Bulk CN, Acidified Sediments C-only, Untreated Sediments N-only, Bulk CH), single-element water channels, and sulfur.",
         about_protocols_title: "Core Analytical Protocols:",
         about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally.",
         qs_modal_title: "/ Quick Start Protocol",
         qs_modal_subtitle: "Essential 3-step guideline for fast and reproducible data reduction",
         qs_step1_title: "Step 1. Configure Reference Standards (Section 01)",
         qs_step1_desc: "Check and verify accepted values for Anchor 1, 2 and independent QC standards. Save persistent lab presets directly into local browser storage.",
-        qs_step1_tip: "* Tip: If sequence standard names (e.g. NBS-18_1) contain the anchor name (NBS-18), they are auto-detected by the engine.",
+        qs_step1_tip: "* Tip: If sequence standard names contain the anchor name (e.g. NBS-18, USGS40), they are auto-detected by the engine.",
         qs_step2_title: "Step 2. Paste Sequence Rows (Section 02)",
         qs_step2_desc: "Copy tabular sequence runs from your instrument file, select the starting cell, and press Ctrl + V to populate.",
         qs_step2_columns: "[Columns] Sample ID | Raw Isotope 1 | 1σ SD | Raw Isotope 2 | 1σ SD",
@@ -974,8 +971,29 @@
     let sequenceExportData = [];
     let lastQcSummaryReport = null;
 
-    // Fully preserved, non-abbreviated Changelog History
+    // Preserved and Expanded Changelog Data
     const CHANGELOG_DATA = [
+      {
+        version: "v1.3.1",
+        date: "2026-10",
+        badge: "EA-IRMS Marine Geochem Expansion",
+        title_ko: "EA-IRMS 해양·퇴적물 유기물 전용 채널 및 무로그인 피드백 채널 탑재",
+        title_en: "EA-IRMS Organic/Sediment Channels & Google Form Dual Feedback",
+        desc_ko: "해양학 및 지질학 연구실의 실제 전처리 프로토콜을 반영하여, 산 처리 퇴적물 탄소(δ¹³C) 단독, 무처리 퇴적물 질소(δ¹⁵N) 단독, 유기 탄소·질소(CN), 유기 탄소·수소(CH) 채널을 신설하였으며, 구글 폼 직행 피드백을 연동했습니다.",
+        desc_en: "Integrated dedicated EA-IRMS presets matching real marine geochemical pretreatments (Acidified Organic C-only, Untreated Total N-only, Bulk CN, and Bulk CH), alongside login-free Google Form feedback.",
+        changes_ko: [
+          "<strong>EA-IRMS 해양 퇴적물 전용 단일 모드 신설</strong>: 탈탄산 산 처리 시료 전용 유기 탄소(δ¹³C only) 및 산 처리 미실시 시료 전용 총질소(δ¹⁵N only) 채널 분리 제공.",
+          "<strong>EA 벌크 유기물 듀얼 체계(CN & CH) 완비</strong>: 동·식물 바이오매스 C/N 동시 분석 및 USGS40/USGS41a 기반 C/H 듀얼 분석 체계 완비.",
+          "<strong>원소별 스마트 QC 임계치 자동 매핑</strong>: 수소(δD, 1.50‰), 질소(δ¹⁵N, 0.15‰), 탄소(δ¹³C, 0.08‰) 고유 허용 한계선 자동 진단.",
+          "<strong>무로그인 구글 폼(Google Forms) 직행 연동</strong>: 깃허브 계정이 없는 연구자도 원클릭으로 간편하게 의견 및 제안 접수 가능."
+        ],
+        changes_en: [
+          "<strong>Dedicated EA-IRMS Sediment Modes</strong>: Standalone channels for Acidified Organic Carbon (δ¹³C only) and Untreated Total Nitrogen (δ¹⁵N only).",
+          "<strong>Bulk Organic Dual Presets (CN & CH)</strong>: USGS40, USGS41a, and USGS61 calibrated pipelines for both Carbon-Nitrogen and Carbon-Hydrogen lines.",
+          "<strong>Element-Specific QC Threshold Adaptation</strong>: Automatic tolerance mapping for δD (1.50‰), δ¹⁵N (0.15‰), and δ¹³C (0.08‰).",
+          "<strong>Login-Free Google Form Feedback Integration</strong>: Instant user feedback portal accessible without developer accounts."
+        ]
+      },
       {
         version: "v1.3.0",
         date: "2026-10",
@@ -985,10 +1003,10 @@
         desc_ko: "엑셀 다운로드 파일 내 세 번째 시트(Figures_and_QC)에 고해상도 검량선 피팅 차트 및 드리프트 진단 그래프를 직접 포함하여, 별도 캡처 없이 완전한 완성형 분석 보고서가 생성됩니다.",
         desc_en: "Integrated ExcelJS engine to directly embed high-resolution Plotly calibration fits and drift diagnostics into a dedicated third sheet (Figures_and_QC).",
         changes_ko: [
-          "<strong>ExcelJS 통합 엔진 도입</strong>: SheetJS의 한계를 극복하고 브라우저 로컬에서 실제 이미지 객체(`.addImage`)가 포함된 워크북 생성.",
+          "<strong>ExcelJS 통합 엔진 도입</strong>: 브라우저 로컬에서 실제 이미지 객체(.addImage)가 포함된 멀티 시트 워크북 생성.",
           "<strong>세 번째 탭 'Figures_and_QC' 신설</strong>: Sheet 1(시료 요약표), Sheet 2(런 시퀀스)에 이어 Sheet 3에 Figure 1~4 그래프와 QC 통계 지표가 자동으로 깔끔하게 배치.",
           "<strong>초보 사용자를 위한 빠른 시작(Quick Start) 가이드 탑재</strong>: 실무진이 10초 만에 3단계 워크플로우를 파악할 수 있는 직관적인 안내 모달 추가.",
-          "<strong>미니멀 내비게이션 바 정돈 및 듀얼 피드백 채널</strong>: 구글 설문지(로그인 불필요)와 GitHub Issues를 모두 지원하도록 상단 헤더 공간 최적화.",
+          "<strong>미니멀 내비게이션 바 정돈</strong>: 핵심 메뉴와 더보기(More ▾) 드롭다운으로 상단 헤더 공간 최적화.",
           "<strong>질량분석 듀얼 피크 파비콘 정식 적용</strong>: IRMS 분석 빔 피크를 형상화한 전용 고대비 SVG 파비콘 장착.",
           "<strong>글로벌 접속자 브라우저 언어 자동 감지</strong>: 해외 연구자 접속 시 자동으로 EN 모드로 전환되는 스마트 감지 로직 적용."
         ],
@@ -996,7 +1014,7 @@
           "<strong>ExcelJS Integration</strong>: Generates true binary Excel workbooks embedding vector-rendered raster figures without external servers.",
           "<strong>Dedicated 'Figures_and_QC' Sheet</strong>: Complete report containing Figure 1-4 calibration & drift diagnostic plots alongside QC performance metrics.",
           "<strong>Quick Start Onboarding Protocol</strong>: Interactive 3-step modal helping new researchers grasp data reduction in seconds.",
-          "<strong>Refined Navigation & Dual Feedback Channels</strong>: Added no-login Google Form along with GitHub Issues for broader practitioner engagement.",
+          "<strong>Refined Minimal Navigation Bar</strong>: Compact header layout with primary links and streamlined More dropdown menu.",
           "<strong>Mass Spec Dual Peaks Favicon</strong>: High-contrast academic SVG symbol tailored for mass spectrometry workflows.",
           "<strong>Smart Locale Detection</strong>: Automatically serves English UI to global users based on browser locale."
         ]
@@ -1010,13 +1028,13 @@
         desc_ko: "CERN/Zenodo를 통해 영구 DOI(10.5281/zenodo.23239186)를 공식 발급받아 학술적 우선권을 선점하였으며, GPL-3.0 법적 보호 및 브라우저 프리셋 저장소를 완비했습니다.",
         desc_en: "Formally secured academic priority via permanent Zenodo DOI (10.5281/zenodo.23239186), added GNU GPL v3.0 protection, and local standard persistence.",
         changes_ko: [
-          "<strong>CERN Zenodo 공식 영구 DOI 탑재</strong>: <code>10.5281/zenodo.23239186</code> 발급 및 플랫폼 내 원클릭 인용 블록 탑재.",
+          "<strong>CERN Zenodo 공식 영구 DOI 탑재</strong>: 10.5281/zenodo.23239186 발급 및 플랫폼 내 원클릭 인용 블록 탑재.",
           "<strong>GNU GPL-3.0 라이선스 법적 보호</strong>: 코드 사유화 방지 및 오픈 사이언스 원작자 권리 공식 확보.",
           "<strong>내 표준물질 프리셋 로컬 저장 (localStorage)</strong>: 연구실별 앵커/QC 표준물질 이름과 참값을 브라우저에 안전하게 영구 저장.",
-          "<strong>연구자 피드백 직행 링크 탑재</strong>: 실무진 의견 수렴을 위한 GitHub Issue 템플릿 직행 버튼 연결."
+          "<strong>연구자 피드백 직행 링크 탑재</strong>: 실무진 의견 수렴을 위한 이슈 템플릿 직행 버튼 연결."
         ],
         changes_en: [
-          "<strong>Permanent Zenodo DOI Integrated</strong>: Registered <code>10.5281/zenodo.23239186</code> for peer-review citations.",
+          "<strong>Permanent Zenodo DOI Integrated</strong>: Registered 10.5281/zenodo.23239186 for peer-review citations.",
           "<strong>GNU GPL-3.0 Legal Protection</strong>: Preserves open-source integrity and attribution rights.",
           "<strong>Named Local Standards Presets</strong>: Persistent client-side standard reference sets without server interactions.",
           "<strong>Direct Feedback Navigation</strong>: Instant issue reporting template for lab practitioners."
@@ -1047,16 +1065,16 @@
         badge: "Major Enhancement",
         title_ko: "산소 스케일(VPDB ↔ VSMOW) 전환 및 독립 드리프트 모니터 탑재",
         title_en: "Oxygen Scale Conversion (VPDB ↔ VSMOW) & Decoupled Drift Diagnostics",
-        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 탄소/산소의 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
+        desc_ko: "탄산염 산소 동위원소의 VSMOW 표기 연구에 대응하기 위해 IUPAC 공인 공식 기반 원클릭 스케일 전환이 지원되며, 독립 드리프트 진단 플롯(Fig 3 & 4)이 완비되었습니다.",
         desc_en: "Seamless two-way oxygen scale conversion between VPDB and VSMOW adhering to Coplen (1983), alongside decoupled dual-isotope time-series drift diagnostics.",
         changes_ko: [
-          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: 탄소-산소 모드에서 산소 단위를 VPDB 또는 VSMOW로 전환 시 Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, CSV/Excel 헤더가 실시간 연동.",
-          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 탄소(δ¹³C)와 산소(δ¹⁸O)의 기기 표류 양상이 분리되어 나타나는 현상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
-          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 미세 분말 표준물질(IAEA-603)을 사용자가 직접 드리프트 기준 앵커로 지정 가능."
+          "<strong>δ¹⁸O 스케일 선택기 탑재 (VPDB ↔ VSMOW)</strong>: Coplen (1983) 공식에 따라 표준물질 참값, 축 라벨, Excel 헤더가 실시간 연동.",
+          "<strong>Figure 3 & Figure 4 독립 진단 플롯</strong>: 동위원소별 기기 표류 양상을 각각 독립된 시계열 플롯으로 시각화 및 개별 SVG 내보내기 지원.",
+          "<strong>드리프트 모니터 표준물질 선택기</strong>: 균질도가 우수한 표준물질을 사용자가 직접 드리프트 기준 앵커로 지정 가능."
         ],
         changes_en: [
-          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values, plot axes, and exports via IUPAC Coplen (1983) equation.",
-          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary (e.g. δ¹³C) and secondary (e.g. δ¹⁸O) isotopes."
+          "<strong>δ¹⁸O Scale Selector (VPDB ↔ VSMOW)</strong>: Instant conversion of oxygen reference values via IUPAC Coplen (1983) equation.",
+          "<strong>Decoupled Drift Diagnostics (Fig 3 & 4)</strong>: Independent time-series plots for primary and secondary isotopes."
         ]
       },
       {
@@ -1068,7 +1086,7 @@
         desc_ko: "안정동위원소 지화학 전용으로 구축된 완전 무서버 클라이언트 데이터 리덕션 엔진입니다.",
         desc_en: "Client-side, zero-server data reduction engine tailored for stable isotope geochemistry.",
         changes_ko: [
-          "국제 표준 4대 동위원소 체계 지원 및 가중 선형 회귀(WLS York-Ludwig) 솔버 탑재.",
+          "국제 표준 동위원소 체계 지원 및 가중 선형 회귀(WLS York-Ludwig) 솔버 탑재.",
           "MSWD(축약 카이제곱) 산출 및 JCGM GUM 1차 편미분 오차 전파 도출."
         ],
         changes_en: [
@@ -1155,15 +1173,21 @@
       if (label.includes('³⁴S') || label.includes('34S')) {
         return { bias: 0.20, sd: 0.20 };
       }
-      if (label.includes('¹⁸O') || label.includes('18O') || label.includes('¹⁵N') || label.includes('15N')) {
+      if (label.includes('¹⁵N') || label.includes('15N')) {
+        return { bias: 0.15, sd: 0.15 };
+      }
+      if (label.includes('¹⁸O') || label.includes('18O')) {
         return { bias: 0.12, sd: 0.12 };
       }
-      return { bias: 0.06, sd: 0.06 };
+      return { bias: 0.08, sd: 0.08 }; // δ¹³C Default
     }
 
+    // -------------------------------------------------------------
+    // Expanded Presets: Carbonate + EA-IRMS (CN, EA_C, EA_N, CH) + Water + S
+    // -------------------------------------------------------------
     const PRESETS = {
       CO: {
-        name: "Carbon & Oxygen",
+        name: "Carbon & Oxygen (Carbonate / GasBench)",
         elements: [
           { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VPDB" }
@@ -1207,7 +1231,7 @@
         ]
       },
       NO: {
-        name: "Nitrogen & Oxygen",
+        name: "Nitrogen & Oxygen (Nitrate / Denitrifier)",
         elements: [
           { key: "iso1", label: "δ¹⁵N", unit: "‰ Air" },
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
@@ -1225,30 +1249,18 @@
           ["Nitrate-01_1", 3.250, 0.090, 15.400, 0.170],
           ["Nitrate-01_2", 3.270, 0.085, 15.420, 0.160],
           ["Nitrate-01_3", 3.240, 0.080, 15.390, 0.150],
-          ["Nitrate-02_1", 8.410, 0.075, 22.150, 0.140],
-          ["Nitrate-02_2", 8.390, 0.082, 22.120, 0.155],
-          ["Nitrate-02_3", 8.420, 0.078, 22.165, 0.148],
           ["IAEA-NO-3_2", 5.102, 0.075, 26.080, 0.145],
           ["USGS34_2", -1.468, 0.085, -27.350, 0.170],
           ["USGS35_QC2", 6.112, 0.080, 58.160, 0.190],
-          ["Nitrate-03_1", 12.650, 0.095, 8.740, 0.165],
-          ["Nitrate-03_2", 12.630, 0.088, 8.715, 0.160],
-          ["Nitrate-03_3", 12.665, 0.092, 8.755, 0.172],
-          ["Nitrate-04_1", 1.850, 0.070, 31.200, 0.180],
-          ["Nitrate-04_2", 1.865, 0.074, 31.230, 0.175],
-          ["Nitrate-04_3", 1.840, 0.068, 31.185, 0.168],
+          ["Nitrate-02_1", 8.410, 0.075, 22.150, 0.140],
+          ["Nitrate-02_2", 8.390, 0.082, 22.120, 0.155],
+          ["Nitrate-02_3", 8.420, 0.078, 22.165, 0.148],
           ["IAEA-NO-3_3", 5.085, 0.072, 26.050, 0.140],
-          ["USGS34_3", -1.482, 0.080, -27.380, 0.165],
-          ["Nitrate-05_1", 6.540, 0.085, 19.820, 0.150],
-          ["Nitrate-05_2", 6.555, 0.080, 19.845, 0.145],
-          ["Nitrate-05_3", 6.530, 0.083, 19.805, 0.155],
-          ["USGS35_QC3", 6.095, 0.078, 58.120, 0.185],
-          ["IAEA-NO-3_4", 5.070, 0.070, 26.020, 0.138],
-          ["USGS34_4", -1.495, 0.078, -27.410, 0.160]
+          ["USGS34_3", -1.482, 0.080, -27.380, 0.165]
         ]
       },
       HO: {
-        name: "Hydrogen & Oxygen (Dual)",
+        name: "Hydrogen & Oxygen (Water Dual)",
         elements: [
           { key: "iso1", label: "δD", unit: "‰ VSMOW" },
           { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
@@ -1266,26 +1278,135 @@
           ["Rain-01_1", -45.200, 0.520, -7.120, 0.055],
           ["Rain-01_2", -45.100, 0.480, -7.105, 0.052],
           ["Rain-01_3", -45.300, 0.510, -7.135, 0.058],
-          ["Ground-01_1", -65.400, 0.550, -9.210, 0.060],
-          ["Ground-01_2", -65.350, 0.520, -9.200, 0.058],
-          ["Ground-01_3", -65.450, 0.500, -9.230, 0.055],
           ["VSMOW2_2", 1.050, 0.480, 0.100, 0.048],
           ["SLAP2_2", -424.550, 0.750, -54.940, 0.075],
-          ["GISP_QC2", -188.050, 0.580, -24.480, 0.058],
-          ["River-01_1", -52.800, 0.490, -8.050, 0.050],
-          ["River-01_2", -52.720, 0.510, -8.035, 0.053],
-          ["River-01_3", -52.850, 0.470, -8.060, 0.049],
-          ["Glacier-01_1", -210.400, 0.650, -27.300, 0.070],
-          ["Glacier-01_2", -210.250, 0.620, -27.280, 0.065],
-          ["Glacier-01_3", -210.500, 0.680, -27.320, 0.072],
-          ["VSMOW2_3", 0.900, 0.450, 0.080, 0.045],
-          ["SLAP2_3", -424.800, 0.720, -54.980, 0.070],
-          ["Spring-01_1", -78.100, 0.530, -10.950, 0.056],
-          ["Spring-01_2", -78.020, 0.500, -10.935, 0.054],
-          ["Spring-01_3", -78.180, 0.540, -10.965, 0.059],
-          ["GISP_QC3", -188.200, 0.550, -24.510, 0.055],
-          ["VSMOW2_4", 0.780, 0.440, 0.060, 0.042],
-          ["SLAP2_4", -425.000, 0.700, -55.020, 0.068]
+          ["GISP_QC2", -188.050, 0.580, -24.480, 0.058]
+        ]
+      },
+      CN: {
+        name: "EA Organic Bulk C & N (Dual)",
+        elements: [
+          { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
+          { key: "iso2", label: "δ¹⁵N", unit: "‰ Air" }
+        ],
+        stds: [
+          { name: "USGS40", v1: -26.390, v2: -4.520 },
+          { name: "USGS41a", v1: 36.550, v2: 47.550 }
+        ],
+        defaultDriftAnchorIdx: 0,
+        qcStd: { name: "USGS61", v1: -35.050, v2: -2.870 },
+        demo: [
+          ["USGS40_1", -25.850, 0.080, -4.100, 0.120],
+          ["USGS41a_1", 37.150, 0.090, 48.050, 0.140],
+          ["USGS61_QC1", -34.520, 0.085, -2.420, 0.130],
+          ["Plankton-A_1", -21.400, 0.075, 7.850, 0.110],
+          ["Plankton-A_2", -21.380, 0.080, 7.860, 0.115],
+          ["Plankton-A_3", -21.420, 0.070, 7.840, 0.105],
+          ["Fish-Muscle-B_1", -18.600, 0.085, 12.450, 0.125],
+          ["Fish-Muscle-B_2", -18.580, 0.080, 12.430, 0.120],
+          ["Fish-Muscle-B_3", -18.620, 0.090, 12.470, 0.130],
+          ["USGS40_2", -25.900, 0.075, -4.150, 0.115],
+          ["USGS41a_2", 37.080, 0.085, 47.980, 0.135],
+          ["USGS61_QC2", -34.580, 0.080, -2.480, 0.125],
+          ["Macroalgae-C_1", -14.200, 0.090, 5.600, 0.110],
+          ["Macroalgae-C_2", -14.180, 0.085, 5.580, 0.115],
+          ["Macroalgae-C_3", -14.220, 0.095, 5.620, 0.120],
+          ["USGS40_3", -25.950, 0.070, -4.200, 0.110],
+          ["USGS41a_3", 37.020, 0.080, 47.920, 0.130]
+        ]
+      },
+      EA_C: {
+        name: "EA Organic Carbon only (Acidified Sediments)",
+        elements: [
+          { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" }
+        ],
+        stds: [
+          { name: "USGS40", v1: -26.390 },
+          { name: "USGS41a", v1: 36.550 }
+        ],
+        defaultDriftAnchorIdx: 0,
+        qcStd: { name: "IAEA-CH-6", v1: -10.450 },
+        demo: [
+          ["USGS40_1", -25.820, 0.075],
+          ["USGS41a_1", 37.180, 0.085],
+          ["IAEA-CH-6_QC1", -9.850, 0.080],
+          ["Core-Sed-01_1", -22.450, 0.090],
+          ["Core-Sed-01_2", -22.430, 0.085],
+          ["Core-Sed-01_3", -22.470, 0.080],
+          ["Core-Sed-02_1", -24.800, 0.075],
+          ["Core-Sed-02_2", -24.780, 0.080],
+          ["Core-Sed-02_3", -24.820, 0.070],
+          ["USGS40_2", -25.880, 0.070],
+          ["USGS41a_2", 37.120, 0.080],
+          ["IAEA-CH-6_QC2", -9.910, 0.075],
+          ["Core-Sed-03_1", -21.150, 0.085],
+          ["Core-Sed-03_2", -21.130, 0.080],
+          ["Core-Sed-03_3", -21.170, 0.090],
+          ["USGS40_3", -25.930, 0.072],
+          ["USGS41a_3", 37.060, 0.078]
+        ]
+      },
+      EA_N: {
+        name: "EA Total Nitrogen only (Untreated Sediments)",
+        elements: [
+          { key: "iso1", label: "δ¹⁵N", unit: "‰ Air" }
+        ],
+        stds: [
+          { name: "USGS40", v1: -4.520 },
+          { name: "USGS41a", v1: 47.550 }
+        ],
+        defaultDriftAnchorIdx: 0,
+        qcStd: { name: "IAEA-N-1", v1: 0.400 },
+        demo: [
+          ["USGS40_1", -4.080, 0.110],
+          ["USGS41a_1", 48.100, 0.130],
+          ["IAEA-N-1_QC1", 0.920, 0.120],
+          ["Raw-Sed-01_1", 5.400, 0.115],
+          ["Raw-Sed-01_2", 5.380, 0.110],
+          ["Raw-Sed-01_3", 5.420, 0.120],
+          ["Raw-Sed-02_1", 6.850, 0.105],
+          ["Raw-Sed-02_2", 6.830, 0.110],
+          ["Raw-Sed-02_3", 6.870, 0.115],
+          ["USGS40_2", -4.130, 0.105],
+          ["USGS41a_2", 48.040, 0.125],
+          ["IAEA-N-1_QC2", 0.860, 0.115],
+          ["Raw-Sed-03_1", 4.100, 0.120],
+          ["Raw-Sed-03_2", 4.080, 0.115],
+          ["Raw-Sed-03_3", 4.120, 0.125],
+          ["USGS40_3", -4.180, 0.100],
+          ["USGS41a_3", 47.980, 0.120]
+        ]
+      },
+      CH: {
+        name: "EA Organic Bulk C & H (Dual)",
+        elements: [
+          { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
+          { key: "iso2", label: "δD", unit: "‰ VSMOW" }
+        ],
+        stds: [
+          { name: "USGS40", v1: -26.390, v2: -9.200 },
+          { name: "USGS41a", v1: 36.550, v2: -4.300 }
+        ],
+        defaultDriftAnchorIdx: 0,
+        qcStd: { name: "USGS61", v1: -35.050, v2: -7.500 },
+        demo: [
+          ["USGS40_1", -25.800, 0.080, -8.100, 1.200],
+          ["USGS41a_1", 37.200, 0.090, -3.200, 1.400],
+          ["USGS61_QC1", -34.450, 0.085, -6.350, 1.300],
+          ["Wax-Sample-A_1", -28.400, 0.080, -145.200, 1.350],
+          ["Wax-Sample-A_2", -28.380, 0.075, -145.050, 1.280],
+          ["Wax-Sample-A_3", -28.420, 0.085, -145.350, 1.420],
+          ["Oil-Sample-B_1", -29.700, 0.090, -112.400, 1.300],
+          ["Oil-Sample-B_2", -29.680, 0.085, -112.300, 1.250],
+          ["Oil-Sample-B_3", -29.720, 0.095, -112.550, 1.350],
+          ["USGS40_2", -25.860, 0.075, -8.250, 1.150],
+          ["USGS41a_2", 37.120, 0.085, -3.350, 1.350],
+          ["USGS61_QC2", -34.520, 0.080, -6.500, 1.250],
+          ["Lipid-C_1", -24.100, 0.080, -88.500, 1.400],
+          ["Lipid-C_2", -24.080, 0.075, -88.350, 1.320],
+          ["Lipid-C_3", -24.120, 0.085, -88.650, 1.450],
+          ["USGS40_3", -25.920, 0.070, -8.400, 1.100],
+          ["USGS41a_3", 37.050, 0.080, -3.500, 1.300]
         ]
       },
       WATER_H: {
@@ -1306,26 +1427,9 @@
           ["Well-Water-A_1", -72.400, 0.550],
           ["Well-Water-A_2", -72.350, 0.520],
           ["Well-Water-A_3", -72.480, 0.500],
-          ["Lake-Water-B_1", -54.100, 0.500],
-          ["Lake-Water-B_2", -54.050, 0.480],
-          ["Lake-Water-B_3", -54.200, 0.510],
           ["VSMOW2_2", 1.080, 0.470],
           ["SLAP2_2", -424.450, 0.760],
-          ["GISP_QC2", -187.980, 0.580],
-          ["Stream-C_1", -61.200, 0.490],
-          ["Stream-C_2", -61.120, 0.510],
-          ["Stream-C_3", -61.280, 0.480],
-          ["Snow-Core-D_1", -145.600, 0.620],
-          ["Snow-Core-D_2", -145.480, 0.590],
-          ["Snow-Core-D_3", -145.710, 0.640],
-          ["VSMOW2_3", 0.920, 0.450],
-          ["SLAP2_3", -424.750, 0.740],
-          ["Pore-Water-E_1", -38.900, 0.460],
-          ["Pore-Water-E_2", -38.820, 0.440],
-          ["Pore-Water-E_3", -38.950, 0.470],
-          ["GISP_QC3", -188.150, 0.560],
-          ["VSMOW2_4", 0.790, 0.430],
-          ["SLAP2_4", -425.050, 0.710]
+          ["GISP_QC2", -187.980, 0.580]
         ]
       },
       WATER_O: {
@@ -1346,30 +1450,13 @@
           ["Well-Water-A_1", -9.850, 0.055],
           ["Well-Water-A_2", -9.840, 0.052],
           ["Well-Water-A_3", -9.860, 0.050],
-          ["Lake-Water-B_1", -7.150, 0.050],
-          ["Lake-Water-B_2", -7.140, 0.048],
-          ["Lake-Water-B_3", -7.170, 0.051],
           ["VSMOW2_2", 0.115, 0.045],
           ["SLAP2_2", -54.910, 0.075],
-          ["GISP_QC2", -24.440, 0.055],
-          ["Stream-C_1", -8.420, 0.048],
-          ["Stream-C_2", -8.410, 0.051],
-          ["Stream-C_3", -8.435, 0.049],
-          ["Snow-Core-D_1", -19.250, 0.062],
-          ["Snow-Core-D_2", -19.235, 0.058],
-          ["Snow-Core-D_3", -19.265, 0.060],
-          ["VSMOW2_3", 0.080, 0.042],
-          ["SLAP2_3", -54.970, 0.072],
-          ["Pore-Water-E_1", -5.620, 0.046],
-          ["Pore-Water-E_2", -5.608, 0.044],
-          ["Pore-Water-E_3", -5.630, 0.047],
-          ["GISP_QC3", -24.480, 0.052],
-          ["VSMOW2_4", 0.050, 0.040],
-          ["SLAP2_4", -55.020, 0.070]
+          ["GISP_QC2", -24.440, 0.055]
         ]
       },
       S: {
-        name: "Sulfur Isotope",
+        name: "Sulfur Isotope (δ³⁴S)",
         elements: [
           { key: "iso1", label: "δ³⁴S", unit: "‰ VCDT" }
         ],
@@ -1386,26 +1473,9 @@
           ["Pyrite-01_1", 12.450, 0.130],
           ["Pyrite-01_2", 12.470, 0.120],
           ["Pyrite-01_3", 12.440, 0.110],
-          ["Galena-02_1", 4.820, 0.115],
-          ["Galena-02_2", 4.805, 0.125],
-          ["Galena-02_3", 4.835, 0.118],
           ["IAEA-S-1_2", -0.168, 0.110],
           ["IAEA-S-2_2", 23.115, 0.140],
-          ["NBS-127_QC2", 21.450, 0.125],
-          ["Sphalerite-03_1", 8.910, 0.135],
-          ["Sphalerite-03_2", 8.930, 0.128],
-          ["Sphalerite-03_3", 8.895, 0.132],
-          ["Barite-04_1", 18.650, 0.145],
-          ["Barite-04_2", 18.620, 0.138],
-          ["Barite-04_3", 18.670, 0.142],
-          ["IAEA-S-1_3", -0.185, 0.105],
-          ["IAEA-S-2_3", 23.080, 0.135],
-          ["Gypsum-05_1", 15.210, 0.122],
-          ["Gypsum-05_2", 15.230, 0.118],
-          ["Gypsum-05_3", 15.195, 0.125],
-          ["NBS-127_QC3", 21.420, 0.120],
-          ["IAEA-S-1_4", -0.200, 0.100],
-          ["IAEA-S-2_4", 23.050, 0.130]
+          ["NBS-127_QC2", 21.450, 0.125]
         ]
       }
     };
@@ -1414,14 +1484,7 @@
     let oxygenScale = "VPDB";
     let gridData = [];
 
-    let userCustomStandardsByMode = {
-      CO: null,
-      NO: null,
-      HO: null,
-      WATER_H: null,
-      WATER_O: null,
-      S: null
-    };
+    let userCustomStandardsByMode = {};
 
     let isMouseDown = false;
     let isSelectingRows = false;
@@ -1551,7 +1614,6 @@
     document.getElementById('btn-load-preset').addEventListener('click', () => {
       const select = document.getElementById('user-presets-select');
       const name = select.value;
-      const isEn = currentLang === 'en';
 
       if (!name) {
         userCustomStandardsByMode[currentMode] = null;
@@ -1717,7 +1779,7 @@
             <th class="w-12 px-3 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
             <th class="px-3.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준물질 ID'}</th>
             <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-            <th class="px-3.5 py-2 text-stone-900">1σ SD</th>
+            <th class="px-3 py-2 text-stone-900">1σ SD</th>
           </tr>
         `;
       }
@@ -1771,9 +1833,9 @@
         rHead.innerHTML = `
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
+            <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${p.elements[0].unit})</th>
+            <th class="px-4 py-2.5 text-stone-600">± 1σ</th>
           </tr>
         `;
       }
@@ -1787,16 +1849,16 @@
             <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
             <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">Rep. 1σ SD</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[1].label} (${oUnit})</th>
-            <th class="px-3.5 py-2.5 text-stone-600">Rep. 1σ SD</th>
+            <th class="px-3.5 py-2.5 text-stone-700">Rep. 1σ SD</th>
           </tr>
         `;
       } else {
         gSummaryHead.innerHTML = `
           <tr>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
-            <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
+            <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
             <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${p.elements[0].unit})</th>
-            <th class="px-3.5 py-2.5 text-stone-600">Rep. 1σ SD</th>
+            <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
           </tr>
         `;
       }
@@ -1888,21 +1950,20 @@
       const listEl = document.getElementById('about-protocols-list');
       if (lang === 'ko') {
         listEl.innerHTML = `
-          <li>새로운 커스텀 표준물질 입력 시에도 작동하는 지능형 QC 경고 및 자동 진단 가이드</li>
+          <li>EA-IRMS 해양 퇴적물 전용(산처리 유기 C 단독 / 무처리 총 N 단독 / 벌크 CN / 벌크 CH) 리덕션 파이프라인</li>
+          <li>수소(δD), 탄소(δ¹³C), 질소(δ¹⁵N), 산소(δ¹⁸O) 원소별 지화학적 허용오차 자동 연동 스마트 QC 진단 엔진</li>
           <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
-          <li>사용자 커스텀 표준물질 프리셋 로컬 저장소(localStorage) 보존 시스템</li>
-          <li>멀티 시트 엑셀(.xlsx) 워크북 내보내기를 통한 그림 및 서식 영구 보존</li>
-          <li>물 분석 전용 단일 수소(δD) 및 단일 산소(δ¹⁸O) 개별 런 정산 지원</li>
+          <li>사용자 커스텀 표준물질 프리셋 로컬 저장소(localStorage) 영구 보존 시스템</li>
           <li>연속 인접 런 시료(Triplicate 등)에 대한 스마트 평균 및 표준편차 요약 산출</li>
           <li>IUPAC Coplen (1983) 공식 기반 산소 동위원소 스케일(VPDB ↔ VSMOW) 정밀 연동</li>
           <li>시퀀스 런 순서 기반 선형 및 앵커 간 브래케팅 기기 표류(Drift) 1차 보정</li>
         `;
       } else {
         listEl.innerHTML = `
-          <li>Robust QC diagnostic alerts supporting user-defined custom standards</li>
+          <li>Dedicated EA-IRMS marine organic reduction pipelines (Bulk CN, Acidified C-only, Untreated N-only, Bulk CH)</li>
+          <li>Element-specific smart QC diagnostic engine adapting to δD, δ¹³C, δ¹⁵N, and δ¹⁸O tolerances</li>
           <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
           <li>Local browser standard reference preset persistence (Zero-Server)</li>
-          <li>Dedicated single-element water channels for independent δD and δ¹⁸O reduction</li>
           <li>Adjacent replicate sample chunk grouping for automated Mean ± 1σ summaries</li>
           <li>IUPAC Coplen (1983) compliant Oxygen Isotope Scale Alignment (VPDB ↔ VSMOW)</li>
           <li>Sequence-based Linear and Anchor-to-Anchor Bracketing Drift Correction</li>
@@ -1922,7 +1983,7 @@
     document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
     document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
 
-    // Modals Handling (QuickStart, About, Changelog)
+    // Modals
     const quickstartModal = document.getElementById('quickstart-modal');
     const aboutModal = document.getElementById('about-modal');
     const changelogModal = document.getElementById('changelog-modal');
@@ -2328,7 +2389,7 @@
     document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
 
     // -------------------------------------------------------------
-    // WLS & MSWD 통계 연산 엔진
+    // Statistical Engine (WLS & MSWD)
     // -------------------------------------------------------------
     function calcWLS(xArr, yArr, sdArr) {
       const n = xArr.length;
@@ -2647,7 +2708,7 @@
         resBody.appendChild(tr);
       });
 
-      // Grouped Sample Summary (Adjacent Chunk)
+      // Grouped Sample Summary
       groupedSummaryData = [];
       const groupedBody = document.getElementById('grouped-body');
       groupedBody.innerHTML = '';
@@ -2727,9 +2788,7 @@
         });
       }
 
-      // -------------------------------------------------------------
-      // Smart QC Validation Summary Banner & Actionable Diagnostics
-      // -------------------------------------------------------------
+      // Smart QC Validation Banner
       const qcBanner = document.getElementById('qc-summary-banner');
       if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
         const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
@@ -2850,8 +2909,8 @@
                 </div>
                 <p class="text-[11px] leading-relaxed text-amber-900">
                   ${isEn
-                    ? `One or more QC metrics exceed analytical tolerance. Verify that the accepted true values and isotope scale (VPDB/VSMOW) match your laboratory standards, or inspect Figure 3 & 4 for anomalous outlier runs.`
-                    : `QC 표준물질의 정확도 편차(Bias) 또는 반복 정밀도가 허용 기준을 초과했습니다. 01 섹션에 입력된 QC 공인값 및 산소 스케일(VPDB/VSMOW)이 맞는지 확인하거나, 특정 런에 이상치(Outlier)가 있는지 점검하세요.`}
+                    ? `One or more QC metrics exceed analytical tolerance. Verify that the accepted true values match your laboratory standards, or inspect Figure 3 & 4 for anomalous outlier runs.`
+                    : `QC 표준물질의 정확도 편차(Bias) 또는 반복 정밀도가 허용 기준을 초과했습니다. 01 섹션에 입력된 QC 공인값이 맞는지 확인하거나, 특정 런에 이상치(Outlier)가 있는지 점검하세요.`}
                 </p>
               </div>
             `;
@@ -3032,7 +3091,7 @@
           format: 'svg',
           width: 800,
           height: 600,
-          filename: `IsoCalib_${p.elements[1].label}_Fit_${oxygenScale}`
+          filename: `IsoCalib_${p.elements[1].label}_Fit`
         });
       }
     });
@@ -3202,7 +3261,7 @@
           sequenceExportData.forEach(r => wsSeq.addRow(r));
         }
 
-        // 3. Figures & QC Diagnostics Sheet (Embedding High-res Images)
+        // 3. Figures & QC Diagnostics Sheet
         const wsFig = workbook.addWorksheet('Figures_and_QC');
         wsFig.columns = [
           { width: 4 }, { width: 30 }, { width: 30 }, { width: 30 }
