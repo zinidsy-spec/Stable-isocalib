@@ -1,0 +1,77 @@
+:root {
+  --bg-warm: #fbfaf8;
+  --surface: #ffffff;
+  --border-main: #d1cfc7;
+  --border-subtle: #e5e3dc;
+  --text-main: #111827;
+  --text-sub: #374151;
+  --text-muted: #4b5563;
+}
+
+body {
+  background-color: var(--bg-warm);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.font-serif-title { font-family: 'Newsreader', Georgia, serif; }
+.font-brand { font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
+.font-data { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+
+/* Excel-style Selection & Editing */
+.grid-cell {
+  outline: none;
+  user-select: none;
+  position: relative;
+  cursor: cell;
+  height: 28px;
+}
+.grid-cell.cell-selected {
+  background-color: #e0f2fe !important;
+}
+.grid-cell.cell-primary {
+  box-shadow: inset 0 0 0 2px #0284c7 !important;
+  background-color: #ffffff !important;
+}
+.grid-cell.cell-editing {
+  user-select: text !important;
+  cursor: text !important;
+  background-color: #ffffff !important;
+  box-shadow: inset 0 0 0 2px #111827 !important;
+}
+.row-header.row-selected {
+  background-color: #bae6fd !important;
+  color: #0369a1 !important;
+  font-weight: 700;
+}
+
+/* Outlier Excluded Row Visuals */
+tr.row-excluded td.grid-cell {
+  text-decoration: line-through;
+  color: #9ca3af !important;
+  background-color: #f3f4f6 !important;
+}
+
+.plot-container {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  background: #ffffff;
+}
+
+#paste-target {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+details summary::-webkit-details-marker { display: none; }
+details summary { list-style: none; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #fbfaf8; }
+::-webkit-scrollbar-thumb { background: #c7c5bc; border-radius: 3px; }
