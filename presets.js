@@ -1,4 +1,4 @@
-/* presets.js - IsoCalib v1.4.0 Translations, Changelog & Reference Presets */
+/* presets.js - IsoCalib v1.4.0 Extended Reference Presets & Multilingual Dictionary */
 
 const TRANSLATIONS = {
   ko: {
@@ -241,55 +241,6 @@ const CHANGELOG_DATA = [
       "<strong>Preserves Drift Time-Series Integrity</strong>: Keeps original sequence run numbers (#) intact.",
       "<strong>Transparent Audit Trail in Excel</strong>: Excluded runs are clearly flagged as <code>[EXCLUDED]</code>."
     ]
-  },
-  {
-    version: "v1.3.2",
-    date: "2026-11",
-    badge: "Multi-Point Calibration",
-    title_ko: "3점 이상 다중 앵커(Multi-Point Calibration) 동적 추가·삭제 기능 탑재",
-    title_en: "Dynamic 3+ Multi-Point Anchor Calibration Support",
-    desc_ko: "동위원소 스펙트럼 범위가 넓은 유기물 및 환경 시료의 선형성 검증을 위해 3개 이상의 앵커 표준물질을 무제한으로 추가하여 WLS 회귀선을 도출할 수 있도록 업그레이드했습니다.",
-    desc_en: "Enabled dynamic addition and removal of 3 or more anchor standards for multi-point WLS regression.",
-    changes_ko: [
-      "<strong>'+ 앵커 추가 (+ Add Anchor)' 동적 UI 신설</strong>: 클릭 한 번으로 Anchor 03, 04 등 다중 표준물질 카드 확장 및 개별 삭제(×) 가능.",
-      "<strong>다중 앵커 로컬 프리셋(localStorage) 완벽 호환</strong>: 3점 또는 4점 앵커 세트를 그대로 브라우저에 저장 및 불러오기 지원."
-    ],
-    changes_en: [
-      "<strong>Dynamic '+ Add Anchor' Control</strong>: Seamlessly add or remove 3rd, 4th, or Nth anchor standards in Section 01.",
-      "<strong>Multi-Anchor Preset Persistence</strong>: Saves and restores variable anchor counts in browser localStorage."
-    ]
-  },
-  {
-    version: "v1.3.1",
-    date: "2026-10",
-    badge: "EA-IRMS Marine Geochem Expansion",
-    title_ko: "EA-IRMS 해양·퇴적물 유기물 전용 채널 및 무로그인 피드백 채널 탑재",
-    title_en: "EA-IRMS Organic/Sediment Channels & Google Form Dual Feedback",
-    desc_ko: "해양학 및 지질학 연구실의 실제 전처리 프로토콜을 반영하여 EA-IRMS 전용 채널 4종과 구글 폼 피드백을 연동했습니다.",
-    desc_en: "Integrated dedicated EA-IRMS presets matching real marine geochemical pretreatments alongside login-free Google Form feedback.",
-    changes_ko: [
-      "<strong>EA-IRMS 해양 퇴적물 전용 모드 신설</strong>: 산 처리 유기 탄소(δ¹³C only), 무처리 총질소(δ¹⁵N only), 벌크 CN 및 CH 듀얼 체계 완비.",
-      "<strong>원소별 스마트 QC 임계치 자동 매핑</strong>: 수소(1.50‰), 질소(0.15‰), 탄소(0.08‰) 고유 허용 한계선 자동 진단."
-    ],
-    changes_en: [
-      "<strong>Dedicated EA-IRMS Sediment Modes</strong>: Standalone and dual channels for C, N, and H.",
-      "<strong>Element-Specific QC Threshold Adaptation</strong>: Automatic tolerance mapping for δD, δ¹⁵N, and δ¹³C."
-    ]
-  },
-  {
-    version: "v1.3.0",
-    date: "2026-10",
-    badge: "Excel Graphics Upgrade",
-    title_ko: "ExcelJS 엔진 전환: 엑셀 내 검량선 및 드리프트 그래프 자동 삽입 탑재",
-    title_en: "ExcelJS Engine Upgrade: Embedded Figures & Publication Plots in Excel",
-    desc_ko: "엑셀 다운로드 파일 내 세 번째 시트(Figures_and_QC)에 고해상도 검량선 피팅 차트 및 진단 그래프를 직접 포함합니다.",
-    desc_en: "Integrated ExcelJS engine to directly embed high-resolution Plotly calibration fits and diagnostics into Excel.",
-    changes_ko: [
-      "<strong>ExcelJS 통합 엔진 도입</strong>: 브라우저 로컬에서 실제 이미지 객체(.addImage)가 포함된 멀티 시트 워크북 생성."
-    ],
-    changes_en: [
-      "<strong>ExcelJS Integration</strong>: Generates binary Excel workbooks embedding publication figures without external servers."
-    ]
   }
 ];
 
@@ -341,9 +292,7 @@ const PRESETS = {
       { name: "IAEA-NO-3", v1: 4.700, v2: 25.600 },
       { name: "USGS34", v1: -1.800, v2: -27.900 }
     ],
-    extraStds: [
-      { name: "USGS32", v1: 180.000, v2: 25.700 }
-    ],
+    extraStds: [{ name: "USGS32", v1: 180.000, v2: 25.700 }],
     defaultDriftAnchorIdx: 0,
     qcStd: { name: "USGS35", v1: 5.700, v2: 57.500 },
     demo: [
@@ -368,9 +317,7 @@ const PRESETS = {
       { name: "VSMOW2", v1: 0.000, v2: 0.000 },
       { name: "SLAP2", v1: -427.500, v2: -55.500 }
     ],
-    extraStds: [
-      { name: "USGS45", v1: -10.300, v2: -2.238 }
-    ],
+    extraStds: [{ name: "USGS45", v1: -10.300, v2: -2.238 }],
     defaultDriftAnchorIdx: 0,
     qcStd: { name: "GISP", v1: -189.500, v2: -24.760 },
     demo: [
@@ -415,7 +362,7 @@ const PRESETS = {
       ["USGS41a_2", 37.080, 0.085, 47.980, 0.135],
       ["USGS61_QC2", -34.580, 0.080, -2.480, 0.125]
     ],
-    // Area Mode Demo: [ID, Area1(Vs), Raw1, SD1, Area2(Vs), Raw2, SD2]
+    // Extended 21-run Real-world Sequence: [ID, Area1(Vs), Raw1, SD1, Area2(Vs), Raw2, SD2]
     demoArea: [
       ["Tin-Blank_1", 0.35, -28.500, 0.250, 0.18, -1.200, 0.350],
       ["Tin-Blank_2", 0.33, -28.300, 0.240, 0.16, -1.100, 0.320],
@@ -427,16 +374,22 @@ const PRESETS = {
       ["Plankton-A_1", 18.20, -21.460, 0.075, 6.40, 7.780, 0.110],
       ["Plankton-A_2", 32.50, -21.310, 0.080, 11.20, 7.910, 0.115],
       ["Plankton-A_3", 46.80, -21.160, 0.070, 16.10, 8.040, 0.105],
-      ["USGS40_Check", 29.00, -25.840, 0.075, 10.00, -4.090, 0.110],
-      ["USGS41a_2", 28.50, 37.140, 0.085, 9.90, 48.040, 0.135],
-      ["USGS61_QC2", 16.50, -34.640, 0.085, 5.80, -2.530, 0.125]
+      ["Fish-Muscle-B_1", 22.40, -18.650, 0.085, 7.90, 12.390, 0.125],
+      ["Fish-Muscle-B_2", 36.10, -18.520, 0.080, 12.60, 12.510, 0.120],
+      ["Fish-Muscle-B_3", 51.00, -18.380, 0.090, 17.80, 12.640, 0.130],
+      ["USGS40_Bracket", 28.60, -25.840, 0.075, 9.90, -4.090, 0.110],
+      ["USGS41a_2", 28.80, 37.140, 0.085, 10.00, 48.040, 0.135],
+      ["USGS61_QC2", 16.50, -34.640, 0.085, 5.80, -2.530, 0.125],
+      ["Macroalgae-C_1", 24.30, -14.240, 0.090, 8.40, 5.560, 0.110],
+      ["Macroalgae-C_2", 38.00, -14.120, 0.085, 13.20, 5.670, 0.115],
+      ["Macroalgae-C_3", 52.50, -13.980, 0.095, 18.20, 5.790, 0.120],
+      ["USGS40_End", 28.80, -25.820, 0.070, 10.00, -4.080, 0.110],
+      ["USGS41a_End", 29.20, 37.160, 0.080, 10.20, 48.060, 0.130]
     ]
   },
   EA_C: {
     name: "EA Organic Carbon only (Acidified Sediments)",
-    elements: [
-      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" }
-    ],
+    elements: [{ key: "iso1", label: "δ¹³C", unit: "‰ VPDB" }],
     stds: [
       { name: "USGS40", v1: -26.390 },
       { name: "USGS41a", v1: 36.550 }
@@ -458,7 +411,7 @@ const PRESETS = {
       ["USGS41a_2", 37.120, 0.080],
       ["IAEA-CH-6_QC2", -9.910, 0.075]
     ],
-    // Area Mode Demo: [ID, Area1(Vs), Raw1, SD1]
+    // Extended 19-run Marine Sediment Sequence: [ID, Area1(Vs), Raw1, SD1]
     demoArea: [
       ["Tin-Blank_1", 0.40, -28.600, 0.200],
       ["Tin-Blank_2", 0.36, -28.400, 0.220],
@@ -470,15 +423,20 @@ const PRESETS = {
       ["Core-Sed-01_1", 14.50, -22.620, 0.090],
       ["Core-Sed-01_2", 31.20, -22.430, 0.085],
       ["Core-Sed-01_3", 48.00, -22.240, 0.080],
-      ["USGS41a_2", 30.20, 37.170, 0.080],
-      ["IAEA-CH-6_QC2", 15.40, -10.010, 0.075]
+      ["Core-Sed-02_1", 12.00, -24.980, 0.075],
+      ["Core-Sed-02_2", 28.50, -24.780, 0.080],
+      ["Core-Sed-02_3", 44.00, -24.590, 0.070],
+      ["USGS40_MidCheck", 30.80, -25.810, 0.070],
+      ["IAEA-CH-6_QC2", 15.40, -10.010, 0.075],
+      ["Core-Sed-03_1", 16.20, -21.320, 0.085],
+      ["Core-Sed-03_2", 33.40, -21.130, 0.080],
+      ["Core-Sed-03_3", 51.00, -20.930, 0.090],
+      ["USGS41a_End", 31.50, 37.190, 0.080]
     ]
   },
   EA_N: {
     name: "EA Total Nitrogen only (Untreated Sediments)",
-    elements: [
-      { key: "iso1", label: "δ¹⁵N", unit: "‰ Air" }
-    ],
+    elements: [{ key: "iso1", label: "δ¹⁵N", unit: "‰ Air" }],
     stds: [
       { name: "USGS40", v1: -4.520 },
       { name: "USGS41a", v1: 47.550 }
@@ -544,16 +502,12 @@ const PRESETS = {
   },
   WATER_H: {
     name: "Water Hydrogen (δD only)",
-    elements: [
-      { key: "iso1", label: "δD", unit: "‰ VSMOW" }
-    ],
+    elements: [{ key: "iso1", label: "δD", unit: "‰ VSMOW" }],
     stds: [
       { name: "VSMOW2", v1: 0.000 },
       { name: "SLAP2", v1: -427.500 }
     ],
-    extraStds: [
-      { name: "USGS46", v1: -235.800 }
-    ],
+    extraStds: [{ name: "USGS46", v1: -235.800 }],
     defaultDriftAnchorIdx: 0,
     qcStd: { name: "GISP", v1: -189.500 },
     demo: [
@@ -570,9 +524,7 @@ const PRESETS = {
   },
   WATER_O: {
     name: "Water / Solid Oxygen (δ¹⁸O only)",
-    elements: [
-      { key: "iso1", label: "δ¹⁸O", unit: "‰ VSMOW" }
-    ],
+    elements: [{ key: "iso1", label: "δ¹⁸O", unit: "‰ VSMOW" }],
     stds: [
       { name: "VSMOW2", v1: 0.000 },
       { name: "SLAP2", v1: -55.500 }
@@ -597,16 +549,12 @@ const PRESETS = {
   },
   S: {
     name: "Sulfur Isotope (δ³⁴S)",
-    elements: [
-      { key: "iso1", label: "δ³⁴S", unit: "‰ VCDT" }
-    ],
+    elements: [{ key: "iso1", label: "δ³⁴S", unit: "‰ VCDT" }],
     stds: [
       { name: "IAEA-S-1", v1: -0.300 },
       { name: "IAEA-S-2", v1: 22.700 }
     ],
-    extraStds: [
-      { name: "IAEA-S-3", v1: -32.300 }
-    ],
+    extraStds: [{ name: "IAEA-S-3", v1: -32.300 }],
     defaultDriftAnchorIdx: 0,
     qcStd: { name: "NBS-127", v1: 21.100 },
     demo: [
