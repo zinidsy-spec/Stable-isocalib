@@ -1,4 +1,4 @@
-/* engine.js - IsoCalib v1.4.0 Core Data Reduction, Area Linearity, Blank & WLS Engine */
+/* engine.js - IsoCalib v1.4.1 Core Data Reduction, Area Linearity (Auto/Manual), Blank & WLS Engine */
 
 let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentTab = 'sequence';
@@ -146,7 +146,13 @@ function captureCurrentStandardsSnapshot(mode = currentMode) {
   };
   const elAnchorSelect = document.getElementById('drift-anchor-select');
   const selectedDriftAnchor = elAnchorSelect ? parseInt(elAnchorSelect.value) : p.defaultDriftAnchorIdx;
-  return { stds, qcStd, selectedDriftAnchor, oxygenScale };
+
+  const linCalcModeEl = document.getElementById('lin-calc-mode');
+  const linCalcMode = linCalcModeEl ? linCalcModeEl.value : 'auto';
+  const manualK1 = document.getElementById('manual-k1') ? document.getElementById('manual-k1').value : '';
+  const manualK2 = document.getElementById('manual-k2') ? document.getElementById('manual-k2').value : '';
+
+  return { stds, qcStd, selectedDriftAnchor, oxygenScale, linCalcMode, manualK1, manualK2 };
 }
 
 function saveCurrentModeStandards() {
@@ -180,6 +186,34 @@ function syncDriftAnchorDropdown() {
     select.value = prevVal;
   } else {
     select.value = Math.min(p.defaultDriftAnchorIdx, currentAnchorCount - 1);
+  }
+}
+
+function syncLinearityControls() {
+  const p = PRESETS[currentMode];
+  const isDual = p.elements.length === 2;
+  const useLin = (areaMode === 'linearity' || areaMode === 'blank_lin');
+  const container = document.getElementById('manual-linearity-container');
+  const calcModeSelect = document.getElementById('lin-calc-mode');
+  const manualInputs = document.getElementById('manual-k-inputs');
+  const k2Wrapper = document.getElementById('manual-k2-wrapper');
+
+  if (!container || !calcModeSelect || !manualInputs) return;
+
+  if (useLin) {
+    container.classList.remove('hidden');
+    const isManual = calcModeSelect.value === 'manual';
+    manualInputs.classList.toggle('hidden', !isManual);
+
+    document.getElementById('lbl-k1').innerText = `k(${p.elements[0].label}):`;
+    if (isDual) {
+      k2Wrapper.classList.remove('hidden');
+      document.getElementById('lbl-k2').innerText = `k(${p.elements[1].label}):`;
+    } else {
+      k2Wrapper.classList.add('hidden');
+    }
+  } else {
+    container.classList.add('hidden');
   }
 }
 
@@ -274,6 +308,15 @@ document.getElementById('btn-load-preset').addEventListener('click', () => {
   if (presets[name]) {
     userCustomStandardsByMode[currentMode] = JSON.parse(JSON.stringify(presets[name]));
     if (presets[name].oxygenScale) oxygenScale = presets[name].oxygenScale;
+    if (presets[name].linCalcMode && document.getElementById('lin-calc-mode')) {
+      document.getElementById('lin-calc-mode').value = presets[name].linCalcMode;
+    }
+    if (presets[name].manualK1 !== undefined && document.getElementById('manual-k1')) {
+      document.getElementById('manual-k1').value = presets[name].manualK1;
+    }
+    if (presets[name].manualK2 !== undefined && document.getElementById('manual-k2')) {
+      document.getElementById('manual-k2').value = presets[name].manualK2;
+    }
     updateLayoutForMode(false);
   }
 });
@@ -331,6 +374,26 @@ document.getElementById('area-mode').addEventListener('change', (e) => {
   updateLayoutForMode(false);
   if (hasCalibratedOnce) runCalibration();
 });
+
+if (document.getElementById('lin-calc-mode')) {
+  document.getElementById('lin-calc-mode').addEventListener('change', () => {
+    syncLinearityControls();
+    saveCurrentModeStandards();
+    if (hasCalibratedOnce) runCalibration();
+  });
+}
+if (document.getElementById('manual-k1')) {
+  document.getElementById('manual-k1').addEventListener('input', () => {
+    saveCurrentModeStandards();
+    if (hasCalibratedOnce) runCalibration();
+  });
+}
+if (document.getElementById('manual-k2')) {
+  document.getElementById('manual-k2').addEventListener('input', () => {
+    saveCurrentModeStandards();
+    if (hasCalibratedOnce) runCalibration();
+  });
+}
 
 function updateLayoutForMode(forcePresetDefault = false) {
   const p = PRESETS[currentMode];
@@ -436,6 +499,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
   stdContainer.appendChild(qcDiv);
 
   syncDriftAnchorDropdown();
+  syncLinearityControls();
   renderPresetDropdown();
 
   stdContainer.querySelectorAll('input').forEach(input => {
@@ -644,7 +708,7 @@ function setLanguage(lang) {
   const listEl = document.getElementById('about-protocols-list');
   if (lang === 'ko') {
     listEl.innerHTML = `
-      <li>EA-IRMS 피크 면적 선형성(Size Linearity) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
+      <li>EA-IRMS 피크 면적 선형성(Auto 및 Manual slope) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
       <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
       <li>2점(Two-Point) 및 3점 이상 다중 앵커(Multi-Point) 가중 선형 회귀(WLS) 동적 확장</li>
       <li>수소(δD), 탄소(δ¹³C), 질소(δ¹⁵N), 산소(δ¹⁸O) 원소별 스마트 QC 진단 엔진</li>
@@ -652,7 +716,7 @@ function setLanguage(lang) {
     `;
   } else {
     listEl.innerHTML = `
-      <li>EA-IRMS Peak Area size-linearity normalization & mass-balance Tin Capsule Blank subtraction</li>
+      <li>EA-IRMS Peak Area size-linearity normalization (Auto & Manual slope) & mass-balance Tin Capsule Blank subtraction</li>
       <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
       <li>Dynamic 2-point and 3+ multi-point Weighted Least Squares (WLS) anchor calibration</li>
       <li>Element-specific smart QC diagnostic engine adapting to δD, δ¹³C, δ¹⁵N, and δ¹⁸O tolerances</li>
@@ -1212,11 +1276,13 @@ function runCalibration() {
     return raw;
   }
 
-  // Step B: Size Linearity Slope
+  // Step B: Size Linearity Slope (Auto vs Manual)
   const monitorAnchor = refStds[chosenDriftAnchorIdx] || refStds[0];
   const linMonitorPts = { a1: [], d1: [], a2: [], d2: [] };
   let linSlope1 = 0, meanAnchorArea1 = 0;
   let linSlope2 = 0, meanAnchorArea2 = 0;
+
+  const linCalcMode = document.getElementById('lin-calc-mode') ? document.getElementById('lin-calc-mode').value : 'auto';
 
   gridData.forEach((row, rIdx) => {
     if (excludedRows[rIdx]) return;
@@ -1235,13 +1301,29 @@ function runCalibration() {
     }
   });
 
-  if (useLin && linMonitorPts.a1.length >= 2) {
-    linSlope1 = calcOLS(linMonitorPts.a1, linMonitorPts.d1).slope;
+  if (linMonitorPts.a1.length > 0) {
     meanAnchorArea1 = linMonitorPts.a1.reduce((a, b) => a + b, 0) / linMonitorPts.a1.length;
   }
-  if (useLin && isDual && linMonitorPts.a2.length >= 2) {
-    linSlope2 = calcOLS(linMonitorPts.a2, linMonitorPts.d2).slope;
+  if (isDual && linMonitorPts.a2.length > 0) {
     meanAnchorArea2 = linMonitorPts.a2.reduce((a, b) => a + b, 0) / linMonitorPts.a2.length;
+  }
+
+  if (useLin) {
+    if (linCalcMode === 'manual') {
+      const inputK1 = parseFloat(document.getElementById('manual-k1').value);
+      linSlope1 = !isNaN(inputK1) ? inputK1 : 0;
+      if (isDual) {
+        const inputK2 = parseFloat(document.getElementById('manual-k2').value);
+        linSlope2 = !isNaN(inputK2) ? inputK2 : 0;
+      }
+    } else {
+      if (linMonitorPts.a1.length >= 2) {
+        linSlope1 = calcOLS(linMonitorPts.a1, linMonitorPts.d1).slope;
+      }
+      if (isDual && linMonitorPts.a2.length >= 2) {
+        linSlope2 = calcOLS(linMonitorPts.a2, linMonitorPts.d2).slope;
+      }
+    }
   }
 
   function applyBlankAndLin(area, raw, isoIdx) {
@@ -1362,9 +1444,32 @@ function runCalibration() {
   }
 
   // Diagnostic Plots (Figure 3 & 4)
-  if (useLin && linMonitorPts.a1.length >= 2) {
-    drawLinearityPlot('plot-drift-1', linMonitorPts.a1, linMonitorPts.d1, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope1, meanAnchorArea1, p.elements[0].label);
-    if (isDual) drawLinearityPlot('plot-drift-2', linMonitorPts.a2, linMonitorPts.d2, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope2, meanAnchorArea2, p.elements[1].label);
+  const isManualLin = (useLin && linCalcMode === 'manual');
+
+  if (useLin && linMonitorPts.a1.length >= 1) {
+    drawLinearityPlot(
+      'plot-drift-1',
+      linMonitorPts.a1,
+      linMonitorPts.d1,
+      monitorAnchor ? monitorAnchor.name : 'Anchor',
+      linSlope1,
+      meanAnchorArea1,
+      p.elements[0].label,
+      isManualLin
+    );
+
+    if (isDual) {
+      drawLinearityPlot(
+        'plot-drift-2',
+        linMonitorPts.a2,
+        linMonitorPts.d2,
+        monitorAnchor ? monitorAnchor.name : 'Anchor',
+        linSlope2,
+        meanAnchorArea2,
+        p.elements[1].label,
+        isManualLin
+      );
+    }
   } else {
     drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
     if (isDual) drawDriftPlot('plot-drift-2', rawMonitorRuns.seq, rawMonitorRuns.v2, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope2, monitorRuns2, gridData.length, p.elements[1].label);
@@ -1510,7 +1615,7 @@ function runCalibration() {
     });
   }
 
-  // Step G: Smart QC Validation Banner & Actionable Diagnostics (Restored & Enhanced)
+  // Step G: Smart QC Validation Banner & Actionable Diagnostics
   const qcBanner = document.getElementById('qc-summary-banner');
   if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
     const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
@@ -1574,7 +1679,6 @@ function runCalibration() {
     }
     qcHtml += `</div>`;
 
-    // Actionable Diagnostic Guide Box
     if (!isOverallPass) {
       qcHtml += `
         <div class="bg-amber-100/70 border-l-4 border-amber-600 p-3 text-xs text-amber-950 font-sans space-y-1">
@@ -1599,7 +1703,10 @@ function runCalibration() {
 
     const metaNotes = [];
     if (useBlank && blkCount1 > 0) metaNotes.push(`Blank subtracted (${blkCount1} runs: Area₁=${meanBlkA1.toFixed(2)}, δ₁=${meanBlkD1.toFixed(2)}‰)`);
-    if (useLin && meanAnchorArea1 > 0) metaNotes.push(`Size Linearity slope (${monitorAnchor.name}): k₁=${linSlope1.toExponential(2)} ‰/Area`);
+    if (useLin && meanAnchorArea1 > 0) {
+      const methodTag = linCalcMode === 'manual' ? '[Manual]' : '[Auto]';
+      metaNotes.push(`Size Linearity ${methodTag} (${monitorAnchor.name}): k₁=${linSlope1 >= 0 ? '+' : ''}${linSlope1.toFixed(4)} ‰/Area (Ref Area=${meanAnchorArea1.toFixed(1)})`);
+    }
     if (driftMode === 'linear') metaNotes.push(`Time Drift slope: ${(driftSlope1).toExponential(2)} ‰/run`);
 
     if (metaNotes.length > 0) {
@@ -1615,7 +1722,7 @@ function runCalibration() {
 }
 
 // -------------------------------------------------------------
-// Plotly Chart Renderers
+// Plotly Chart Renderers (With Manual Slope Line Visualization)
 // -------------------------------------------------------------
 function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   const container = document.getElementById(elemId);
@@ -1651,40 +1758,100 @@ function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanArea, isoLabel) {
+function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanArea, isoLabel, isManual = false) {
   const container = document.getElementById(elemId);
   container.innerHTML = '';
   const isEn = currentLang === 'en';
-  if (!areaArr || areaArr.length < 2) {
-    container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Insufficient Peak Area points for Linearity Plot.' : '피크 면적 선형성 진단을 위한 데이터가 부족합니다.'}</span>`;
+
+  if (!areaArr || areaArr.length === 0) {
+    container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'No Peak Area runs available for Linearity Plot.' : '피크 면적 선형성 진단을 위한 데이터가 없습니다.'}</span>`;
     return;
   }
-  const minA = Math.min(...areaArr), maxA = Math.max(...areaArr);
-  const ols = calcOLS(areaArr, valArr);
-  const lx = [minA, maxA];
-  const ly = [ols.slope * minA + ols.intercept, ols.slope * maxA + ols.intercept];
+
+  const minA = Math.min(...areaArr);
+  const maxA = Math.max(...areaArr);
+  const padA = (maxA - minA) * 0.1 || (minA * 0.2) || 2;
+  const lx = [Math.max(0, minA - padA), maxA + padA];
 
   const traces = [
     {
-      x: areaArr, y: valArr, mode: 'markers', type: 'scatter',
+      x: areaArr,
+      y: valArr,
+      mode: 'markers',
+      type: 'scatter',
       name: `${anchorName} (Blank-corr Raw)`,
       marker: { size: 8, color: '#0369a1' }
-    },
-    {
-      x: lx, y: ly, mode: 'lines', type: 'scatter',
-      name: `Linearity Slope k = ${slopeVal.toExponential(2)} ‰/Area (Ref=${meanArea.toFixed(1)})`,
-      line: { color: '#b45309', width: 2, dash: 'dash' }
     }
   ];
 
+  const meanY = valArr.reduce((a, b) => a + b, 0) / valArr.length;
+
+  if (isManual) {
+    const lyManual = lx.map(x => meanY + slopeVal * (x - meanArea));
+    traces.push({
+      x: lx,
+      y: lyManual,
+      mode: 'lines',
+      type: 'scatter',
+      name: `Manual Slope: k = ${slopeVal >= 0 ? '+' : ''}${slopeVal.toFixed(4)} ‰/Area (Ref=${meanArea.toFixed(1)})`,
+      line: { color: '#dc2626', width: 2.2, dash: 'dash' }
+    });
+
+    if (areaArr.length >= 2) {
+      const ols = calcOLS(areaArr, valArr);
+      const lyObs = [ols.slope * lx[0] + ols.intercept, ols.slope * lx[1] + ols.intercept];
+      traces.push({
+        x: lx,
+        y: lyObs,
+        mode: 'lines',
+        type: 'scatter',
+        name: `Observed Fit: k = ${ols.slope >= 0 ? '+' : ''}${ols.slope.toFixed(4)} ‰/Area`,
+        line: { color: '#9ca3af', width: 1.2, dash: 'dot' }
+      });
+    }
+  } else {
+    if (areaArr.length >= 2) {
+      const ols = calcOLS(areaArr, valArr);
+      const ly = [ols.slope * lx[0] + ols.intercept, ols.slope * lx[1] + ols.intercept];
+      traces.push({
+        x: lx,
+        y: ly,
+        mode: 'lines',
+        type: 'scatter',
+        name: `Auto Linearity: k = ${slopeVal >= 0 ? '+' : ''}${slopeVal.toExponential(2)} ‰/Area (Ref=${meanArea.toFixed(1)})`,
+        line: { color: '#b45309', width: 2, dash: 'dash' }
+      });
+    }
+  }
+
+  const titlePrefix = isManual ? `[Manual k] ` : ``;
   const layout = {
-    title: { text: `${isoLabel} Size Linearity (Peak Area vs δ · ${anchorName})`, font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, x: 0.05 },
-    paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff',
+    title: { 
+      text: `${titlePrefix}${isoLabel} Size Linearity (${anchorName})`, 
+      font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, 
+      x: 0.05 
+    },
+    paper_bgcolor: '#ffffff',
+    plot_bgcolor: '#ffffff',
     margin: { l: 55, r: 25, t: 40, b: 45 },
-    xaxis: { title: { text: 'Peak Area (Vs / Amplitude mV)', font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    yaxis: { title: { text: `Raw ${isoLabel} (‰)`, font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    showlegend: true, legend: { orientation: 'h', y: -0.28, x: 0.05, font: { size: 10 } }
+    xaxis: { 
+      title: { text: isEn ? 'Peak Area (Vs / Amplitude mV)' : '피크 면적 (Vs / Amplitude mV)', font: { size: 11, color: '#374151' } }, 
+      showgrid: true, 
+      gridcolor: '#f0ede6', 
+      linecolor: '#c7c5bc',
+      tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' }
+    },
+    yaxis: { 
+      title: { text: `Raw ${isoLabel} (‰)`, font: { size: 11, color: '#374151' } }, 
+      showgrid: true, 
+      gridcolor: '#f0ede6', 
+      linecolor: '#c7c5bc',
+      tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' }
+    },
+    showlegend: true,
+    legend: { orientation: 'h', y: -0.28, x: 0.05, font: { family: 'Inter, sans-serif', size: 10, color: '#374151' } }
   };
+
   Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
@@ -1814,7 +1981,7 @@ document.getElementById('btn-export').addEventListener('click', async () => {
     exportBtn.innerHTML = `<span>Exporting (.xlsx)...</span>`;
     exportBtn.style.opacity = '0.6';
     const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'IsoCalib v1.4.0';
+    workbook.creator = 'IsoCalib v1.4.1';
 
     const wsGrouped = workbook.addWorksheet('Grouped_Summary');
     wsGrouped.columns = isDual ? [
@@ -1860,7 +2027,7 @@ document.getElementById('btn-export').addEventListener('click', async () => {
     sequenceExportData.forEach(r => wsSeq.addRow(r));
 
     const wsFig = workbook.addWorksheet('Figures_and_QC');
-    wsFig.getCell('B2').value = `IsoCalib v1.4.0 Report (${currentMode} · AreaMode: ${areaMode})`;
+    wsFig.getCell('B2').value = `IsoCalib v1.4.1 Report (${currentMode} · AreaMode: ${areaMode})`;
     wsFig.getCell('B2').font = { size: 14, bold: true };
 
     let imgRow = 6;
@@ -1878,7 +2045,7 @@ document.getElementById('btn-export').addEventListener('click', async () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `IsoCalib_v1.4.0_${currentMode}_Report.xlsx`;
+    a.download = `IsoCalib_v1.4.1_${currentMode}_Report.xlsx`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
