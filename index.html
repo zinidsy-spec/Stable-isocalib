@@ -83,7 +83,7 @@
                 </button>
                 <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_changelog">
                   <span>Changelog</span>
-                  <span class="font-mono text-[10px] text-stone-400">v1.4.0</span>
+                  <span class="font-mono text-[10px] text-stone-400">v1.4.1</span>
                 </button>
               </div>
               <div class="py-1">
@@ -133,13 +133,13 @@
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
           <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.4.0</span>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.4.1</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light" data-i18n="hero_desc">
-          Performs sequence drift correction, EA-IRMS peak area linearity & blank subtraction, multi-point WLS regression, outlier exclusion, and uncertainty propagation.
+          Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, multi-point WLS regression, outlier exclusion, and uncertainty propagation.
         </p>
       </div>
 
@@ -177,7 +177,7 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards</h2>
         </div>
         
-        <!-- Controls: Add Anchor, Oxygen Scale, Area/Blank Mode & Drift Correction -->
+        <!-- Controls: Add Anchor, Oxygen Scale, Area/Blank Mode, Manual Linearity, Drift Correction -->
         <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
           
           <!-- Multi-Point Calibration: Add Anchor Button -->
@@ -203,6 +203,25 @@
               <option value="blank" data-i18n="area_opt_blk">Blank Subtraction Only</option>
               <option value="blank_lin" data-i18n="area_opt_blk_lin">Blank + Size Linearity</option>
             </select>
+          </div>
+
+          <!-- Manual Linearity Factor Controls (v1.4.1) -->
+          <div id="manual-linearity-container" class="hidden flex items-center space-x-1.5 bg-[#fbfaf8] px-2.5 py-1.5 border border-[#c7c5bc]">
+            <label for="lin-calc-mode" class="font-bold text-stone-800">Slope Method:</label>
+            <select id="lin-calc-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
+              <option value="auto" selected>Auto-Fit (Monitor Std)</option>
+              <option value="manual">Manual Input (‰/Vs)</option>
+            </select>
+            <div id="manual-k-inputs" class="hidden flex items-center space-x-2 pl-1 border-l border-stone-300">
+              <div class="flex items-center space-x-1">
+                <span id="lbl-k1" class="text-[10px] font-mono text-stone-600 font-bold">k₁:</span>
+                <input type="number" step="0.0001" id="manual-k1" placeholder="0.0000" class="w-20 bg-white border border-stone-300 px-1.5 py-0.5 text-xs font-mono text-stone-900 focus:outline-none">
+              </div>
+              <div id="manual-k2-wrapper" class="flex items-center space-x-1">
+                <span id="lbl-k2" class="text-[10px] font-mono text-stone-600 font-bold">k₂:</span>
+                <input type="number" step="0.0001" id="manual-k2" placeholder="0.0000" class="w-20 bg-white border border-stone-300 px-1.5 py-0.5 text-xs font-mono text-stone-900 focus:outline-none">
+              </div>
+            </div>
           </div>
 
           <!-- Drift Monitor Standard Selector -->
@@ -244,7 +263,7 @@
       <!-- Editorial Guide Note -->
       <div class="border-l-2 border-stone-400 pl-3.5 py-1 text-xs text-stone-600 space-y-0.5">
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
-          * Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').
+          * Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity (Auto/Manual slope)</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').
         </p>
       </div>
 
@@ -563,7 +582,7 @@
         </p>
         
         <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed space-y-2 shadow-xs">
-          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.4.0). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
+          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.4.1). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
           <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-500 font-sans">
             <span>Licensed under GNU General Public License v3.0 (GPL-3.0)</span>
             <span class="font-mono text-stone-400">Click text to select all</span>
@@ -631,7 +650,7 @@
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.4.0 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.4.1 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
