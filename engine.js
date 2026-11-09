@@ -1,1859 +1,572 @@
-/* engine.js - IsoCalib v1.4.0 Core Data Reduction, Area Linearity, Blank & WLS Engine */
+/* presets.js - IsoCalib v1.4.0 Extended Reference Presets & Multilingual Dictionary */
 
-let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
-let currentTab = 'sequence';
-let groupedSummaryData = [];
-let sequenceExportData = [];
-let lastQcSummaryReport = null;
-let hasCalibratedOnce = false;
-
-let currentMode = "CO";
-let oxygenScale = "VPDB";
-let areaMode = "off"; // 'off', 'linearity', 'blank', 'blank_lin'
-let gridData = [];
-let excludedRows = [];
-let currentAnchorCount = 2;
-let userCustomStandardsByMode = {};
-
-let isMouseDown = false;
-let isSelectingRows = false;
-let dragStart = { r: 0, c: 0 };
-let dragEnd = { r: 0, c: 0 };
-let selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
-let activeEditingCell = null;
-
-function isAreaActive() {
-  return areaMode !== 'off';
-}
-
-function getNumDataCols() {
-  const isDual = PRESETS[currentMode].elements.length === 2;
-  if (isAreaActive()) {
-    return isDual ? 7 : 4; // [ID, Area1, Raw1, SD1, (Area2, Raw2, SD2)]
+const TRANSLATIONS = {
+  ko: {
+    tagline: "/ 오픈 지화학 분석 플랫폼",
+    nav_quickstart: "사용법 (Quick Start)",
+    nav_methodology: "통계 방법론",
+    nav_more: "더보기",
+    nav_about: "IsoCalib 소개",
+    nav_changelog: "업데이트 로그",
+    nav_citation: "인용 정보 & DOI",
+    nav_feedback_form: "빠른 피드백 (로그인 불필요)",
+    nav_feedback_github: "개발자 버그 제보 (GitHub)",
+    hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
+    hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
+    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Size Linearity) 및 캡슐 블랭크(Blank) 차감, 다중 앵커(Multi-Point) WLS 회귀, 이상치 제외 및 불확도 전파를 수행합니다.",
+    system_label: "분석 동위원소 체계 (Isotope System)",
+    sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
+    btn_add_anchor: "+ 앵커 추가 (3+ Multi-Point)",
+    o_scale_label: "δ¹⁸O Scale:",
+    area_mode_label: "Area / Blank:",
+    area_opt_off: "Off (기본 열 구조)",
+    area_opt_lin: "Linearity (피크 면적 선형성 보정)",
+    area_opt_blk: "Blank Only (캡슐 블랭크 차감만)",
+    area_opt_blk_lin: "Blank + Linearity (블랭크 + 선형성 통합)",
+    drift_anchor_label: "Monitor:",
+    drift_label: "Drift:",
+    drift_opt_none: "None (Off)",
+    drift_opt_linear: "Linear (단일 선형 표류)",
+    drift_opt_piecewise: "Anchor Bracketing (구간 보간)",
+    preset_manage_label: "Reference Presets:",
+    preset_select_default: "-- 기본 프리셋 (Default) --",
+    btn_preset_load: "Load",
+    btn_preset_delete: "Delete",
+    btn_preset_save: "Save",
+    drift_guide_desc: "* <strong>2점 및 3점+ 다중 앵커 WLS 검량선</strong>, <strong>피크 면적 선형성(Size Linearity)</strong> 및 <strong>주석 캡슐 블랭크(ID에 'BLANK' 또는 'BLK' 포함 행) 자동 차감</strong>을 지원합니다.",
+    sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
+    sec2_desc: "셀 클릭 후 <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd>로 엑셀 데이터를 붙여넣으세요. 특정 런이 튄 경우 <strong>Use(✓) 체크를 해제</strong>하면 런 순서(#)는 유지한 채 계산에서만 제외됩니다.",
+    btn_delete_rows: "선택 행 삭제",
+    btn_clear: "Clear All",
+    btn_demo: "Load Demo",
+    demo_guide_tag: "시연 데이터",
+    btn_add_rows: "+ 30 Rows",
+    btn_calc: "Run Calibration & QC",
+    grid_hint: "* 'Use' 체크 해제 시 시퀀스 번호(#) 왜곡 없이 해당 이상치(Outlier) 런만 검량·평균에서 제외됩니다",
+    btn_export_svg: "Export Publication SVG",
+    sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
+    btn_export_excel: "엑셀 보고서 내보내기 (.xlsx)",
+    tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
+    tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
+    result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
+    grouped_empty: "상단에서 검량을 실행하면 연속으로 반복 측정된 미지시료의 평균(Mean ± 1σ) 요약표가 여기에 생성됩니다.",
+    sec4_tag: "Methodology & Standard Principles",
+    sec4_heading: "통계적 회귀 원리 및 표준 분석 지침",
+    sec4_subheading: "IsoCalib에 적용된 계산식은 국제측정학위원회(JCGM/BIPM)와 동위원소 지질학계 표준 문헌(GUM & Ludwig Isoplot)에 부합하도록 엄격히 수립된 정석 프로토콜입니다.",
+    card1_title: "1. 다중 가중 선형 회귀 (WLS)",
+    card1_desc: "2점 또는 3점 이상의 다중 앵커 표준물질에 대해 <strong>기기 측정 편차(1σ SD)가 작고 안정적인 측정일수록 검량선에 더 큰 영향력(가중치 $w_i = 1/\\sigma_i^2$)</strong>을 갖도록 계산합니다.",
+    card1_quote: "측정 편차가 2배 큰 불안정한 런은, 안정적인 런보다 검량선 결정 영향력을 1/4로 줄여 반영합니다.",
+    card1_basis: "기준: York (1968) / Ludwig (2003)",
+    card2_title: "2. 적합도 검증 (MSWD)",
+    card2_desc: "지화학 및 연대학 논문의 핵심 지표인 <strong>축약 카이제곱(Reduced $\\chi^2$)</strong>을 통해, 다중 앵커의 오차가 통계적으로 직선 회귀선에 완벽히 부합하는지 진단합니다.",
+    card2_quote: "MSWD가 1에 가까우면 최적이며, 1보다 지나치게 크면 기기 드리프트나 비선형성이 존재한다는 신호입니다.",
+    card2_basis: "기준: McIntyre et al. (1966) / IsoplotR",
+    card3_title: "3. 합성 불확도 전파",
+    card3_desc: "시료 자체의 기기 반복 분석 오차뿐만 아니라, <strong>\"표준물질 검량선 자체가 흔들릴 수 있는 통계적 오차\"까지 함께 합성</strong>하여 최종 보고용 오차를 산출합니다.",
+    card3_quote: "논문 리뷰어가 \"검량선 불확도를 오차에 반영했는가?\"라고 질문할 때 완벽하게 방어할 수 있는 표준식입니다.",
+    card3_basis: "기준: JCGM 100:2008 (GUM Guide)",
+    acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
+    acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
+    acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
+    acc_b_title: "B. EA-IRMS 블랭크 질량 보존 차감 및 피크 면적 선형성(Size Linearity) 보정",
+    acc_b_desc: "빈 캡슐(Blank)의 기여분을 질량 보존식으로 먼저 차감한 후, 모니터 표준물질의 피크 면적 대비 $\\delta$ 기울기($k_{\\text{area}}$)로 정규화합니다:",
+    acc_c_title: "C. 1차 편미분 가우스 오차 전파 유도식 (GUM 5.1.2)",
+    acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
+    privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
+    privacy_desc: "연구자의 미발표 데이터 및 실험실 기밀을 보호하기 위해, 붙여넣은 모든 원시 데이터와 회귀 계산은 <strong>접속한 브라우저 내부(JavaScript Engine)에서만 100% 실행</strong>됩니다.",
+    cite_title: "공식 인용 정보 및 영구 아카이브 (Citation & Permanent Archive)",
+    cite_desc: "본 플랫폼의 정산 알고리즘 및 데이터를 학술 논문에 인용하실 경우, 방법론(Analytical Methods) 섹션에 아래 공식 영구 DOI 식별자를 표기해 주시기 바랍니다:",
+    changelog_title: "/ 버전별 업데이트 이력 (Release Notes)",
+    changelog_subtitle: "안정동위원소 랩 실무진의 피드백을 반영한 지속적 알고리즘 및 UX 업데이트 내역입니다.",
+    ctx_toggle_exclude: "선택 행 이상치 제외/포함 토글 (✓)",
+    ctx_del_row: "선택 행 완전 삭제",
+    ctx_clear_cells: "선택 셀 내용 지우기",
+    ctx_insert_row: "아래에 빈 행 1줄 삽입",
+    about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
+    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Size Linearity) 보정, 주석 캡슐 블랭크(Blank) 차감, 3점 이상 다중 앵커(Multi-Point) 검량선, 이상치(Outlier) 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
+    about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
+    about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다.",
+    qs_modal_title: "/ Quick Start Protocol (빠른 시작 가이드)",
+    qs_modal_subtitle: "안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드",
+    qs_step1_title: "Step 1. 표준물질 및 면적/블랭크 보정 설정 (Section 01)",
+    qs_step1_desc: "검량 표준물질(Anchor 1, 2, 3+)과 품질관리 표준물질(QC)의 참값을 확인합니다. EA-IRMS 분석 시 'Area / Blank' 옵션을 켜면 피크 면적(Area) 열이 활성화되어 크기 선형성 및 캡슐 블랭크 차감이 자동 수행됩니다.",
+    qs_step1_tip: "* 팁: 블랭크 보정 시 시료 이름에 'BLANK' 또는 'BLK'가 들어간 행들의 평균 면적과 δ 값을 자동으로 감지하여 차감합니다.",
+    qs_step2_title: "Step 2. 엑셀 런 시퀀스 붙여넣기 & 이상치 제외 (Section 02)",
+    qs_step2_desc: "엑셀에서 분석 열을 복사해 첫 번째 셀에 Ctrl + V로 붙여넣습니다. 값이 튄 런은 좌측 Use(✓) 체크박스를 해제하여 런 순서(#) 왜곡 없이 제외하세요.",
+    qs_step2_columns: "[일반 열] Sample ID | Raw δ | 1σ SD  //  [Area 활성 열] Sample ID | Area | Raw δ | 1σ SD",
+    qs_step3_title: "Step 3. 보정 실행 및 엑셀 다운로드 (Section 03)",
+    qs_step3_desc: "Run Calibration & QC를 클릭하면 블랭크 차감 → 면적 선형성 보정 → 시간 드리프트 보정 → 다중 WLS 검량선이 순차 계산됩니다.",
+    qs_step3_desc2: "완료 후 상단의 Export Excel Report (.xlsx) 버튼을 누르면 고해상도 그래프(Figure 1~4)가 포함된 최종 분석 성적서 엑셀 파일이 다운로드됩니다.",
+    qs_footer_tip: "* Load Demo 버튼을 누르면 현재 설정된 모드(Area 포함)에 맞는 시연 데이터로 즉시 테스트할 수 있습니다."
+  },
+  en: {
+    tagline: "/ Open Geochemistry Tool",
+    nav_quickstart: "Quick Start",
+    nav_methodology: "Methodology",
+    nav_more: "More",
+    nav_about: "About IsoCalib",
+    nav_changelog: "Changelog",
+    nav_citation: "Citation & DOI",
+    nav_feedback_form: "Quick Feedback (No Login)",
+    nav_feedback_github: "Developer Issues (GitHub)",
+    hero_badge: "Precision Data Reduction & QC Protocol",
+    hero_title: "Stable Isotope Calibration",
+    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity & blank subtraction, multi-point WLS regression, outlier exclusion, and uncertainty propagation.",
+    system_label: "Isotope System",
+    sec1_title: "Reference & QC Standards",
+    btn_add_anchor: "+ Add Anchor (3+ Multi-Point)",
+    o_scale_label: "δ¹⁸O Scale:",
+    area_mode_label: "Area / Blank:",
+    area_opt_off: "Off (Standard columns)",
+    area_opt_lin: "Size Linearity (Area vs δ)",
+    area_opt_blk: "Blank Subtraction Only",
+    area_opt_blk_lin: "Blank + Size Linearity",
+    drift_anchor_label: "Monitor:",
+    drift_label: "Drift:",
+    drift_opt_none: "None (Off)",
+    drift_opt_linear: "Linear (Single slope)",
+    drift_opt_piecewise: "Anchor Bracketing",
+    preset_manage_label: "Reference Presets:",
+    preset_select_default: "-- Default Presets --",
+    btn_preset_load: "Load",
+    btn_preset_delete: "Delete",
+    btn_preset_save: "Save",
+    drift_guide_desc: "* Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').",
+    sec2_title: "Measurement Sequence Data",
+    sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste from Excel. Uncheck <strong>Use (✓)</strong> to exclude outlier runs while preserving sequence order (#).",
+    btn_delete_rows: "Delete Row(s)",
+    btn_clear: "Clear All",
+    btn_demo: "Load Demo",
+    demo_guide_tag: "Sample Runs",
+    btn_add_rows: "+ 30 Rows",
+    btn_calc: "Run Calibration & QC",
+    grid_hint: "* Unchecking 'Use' excludes outliers without shifting sequence run numbers (#)",
+    btn_export_svg: "Export Publication SVG",
+    sec3_title: "Calibrated Results & Quality Control Report",
+    btn_export_excel: "Export Excel Report (.xlsx)",
+    tab_sequence: "Run-by-Run Sequence",
+    tab_grouped: "Grouped Sample Summary",
+    result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
+    grouped_empty: "Execute calibration above to generate grouped adjacent sample replicate summaries (Mean ± 1σ).",
+    sec4_tag: "Methodology & Standard Principles",
+    sec4_heading: "Statistical Principles & Analytical Guidelines",
+    sec4_subheading: "All calibrations adhere strictly to international metrological frameworks (JCGM 100:2008 GUM) and geochronological standards (Ludwig Isoplot).",
+    card1_title: "1. Multi-Point WLS Regression",
+    card1_desc: "Measurements with higher precision (smaller 1σ SD) are assigned greater statistical weight ($w_i = 1/\\sigma_i^2$) across 2 or more anchor standards.",
+    card1_quote: "A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.",
+    card1_basis: "Basis: York (1968) / Ludwig (2003)",
+    card2_title: "2. Goodness-of-Fit (MSWD)",
+    card2_desc: "Evaluates the reduced chi-squared ($\\chi^2/\\nu$) to objectively determine whether multi-point residuals reflect pure analytical precision.",
+    card2_quote: "An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-linearity.",
+    card2_basis: "Basis: McIntyre et al. (1966) / IsoplotR",
+    card3_title: "3. Combined Uncertainty",
+    card3_desc: "Propagates sample repeatability together with the standard errors of the regression parameters.",
+    card3_quote: "Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.",
+    card3_basis: "Basis: JCGM 100:2008 (GUM Guide)",
+    acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
+    acc_a_title: "A. Weighted Least Squares Normal Equations",
+    acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
+    acc_b_title: "B. EA-IRMS Blank Mass Balance & Size Linearity Correction",
+    acc_b_desc: "Mass-balance blank subtraction and peak-area linearity normalization prior to WLS scale calibration:",
+    acc_c_title: "C. First-Order Gaussian Error Propagation (GUM 5.1.2)",
+    acc_c_desc: "Partial differential expansion for the linear calibration function $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$:",
+    privacy_title: "Zero-Server Client Computation (Total Privacy)",
+    privacy_desc: "All calculations execute 100% locally within your browser's JavaScript engine. Zero data is transmitted externally.",
+    cite_title: "Citation & Permanent Archive",
+    cite_desc: "To cite this software and its algorithms in your Analytical Methods section, please refer to the permanent Zenodo DOI below:",
+    changelog_title: "/ Version Evolution & Changelog",
+    changelog_subtitle: "Continuous methodological and UX advancements tailored to real isotope lab requirements.",
+    ctx_toggle_exclude: "Toggle Outlier Exclude (✓)",
+    ctx_del_row: "Delete Selected Rows",
+    ctx_clear_cells: "Clear Selected Cells",
+    ctx_insert_row: "Insert 1 Blank Row Below",
+    about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
+    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction, tin capsule blank subtraction, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
+    about_protocols_title: "Core Analytical Protocols:",
+    about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally.",
+    qs_modal_title: "/ Quick Start Protocol",
+    qs_modal_subtitle: "Essential 3-step guideline for fast and reproducible data reduction",
+    qs_step1_title: "Step 1. Configure Standards & Area/Blank Mode (Section 01)",
+    qs_step1_desc: "Verify accepted values for Anchor 1, 2, 3+ and QC standards. Enable 'Area / Blank' for EA-IRMS runs to activate Peak Area columns for automatic size-linearity and capsule blank corrections.",
+    qs_step1_tip: "* Tip: Rows containing 'BLANK' or 'BLK' are automatically averaged and subtracted via mass balance when Blank mode is active.",
+    qs_step2_title: "Step 2. Paste Sequence Rows & Filter Outliers (Section 02)",
+    qs_step2_desc: "Copy sequence runs from Excel, click the first cell, and press Ctrl + V. Uncheck 'Use' on any anomalous run to exclude it without altering sequence run indices (#).",
+    qs_step2_columns: "[Standard] Sample ID | Raw δ | 1σ SD  //  [Area Mode] Sample ID | Area | Raw δ | 1σ SD",
+    qs_step3_title: "Step 3. Calibrate & Export (Section 03)",
+    qs_step3_desc: "Click Run Calibration & QC to execute Blank subtraction → Area Linearity → Sequence Drift → Multi-point WLS regression.",
+    qs_step3_desc2: "Export complete Excel (.xlsx) workbooks embedding high-resolution figures (Figure 1-4) with one click.",
+    qs_footer_tip: "* Click 'Load Demo' to inspect an active calculation with realistic peak area & blank runs immediately."
   }
-  return isDual ? 5 : 3; // [ID, Raw1, SD1, (Raw2, SD2)]
-}
+};
 
-function vpdbToVsmow(vpdb) {
-  return isNaN(vpdb) ? vpdb : (1.03092 * vpdb + 30.92);
-}
-
-function vsmowToVpdb(vsmow) {
-  return isNaN(vsmow) ? vsmow : ((vsmow - 30.92) / 1.03092);
-}
-
-function extractBaseId(rawId) {
-  if (!rawId) return '';
-  return rawId.trim().replace(/[-_.#\s]+(0?[1-9]|[a-zA-Z])$/, '').trim();
-}
-
-function isBlankRowId(idStr) {
-  if (!idStr) return false;
-  const u = idStr.toString().trim().toUpperCase();
-  return u.includes('BLANK') || u.includes('BLK') || u.includes('TIN');
-}
-
-function getElementThreshold(label) {
-  if (label.includes('δD') || label.includes('2H')) return { bias: 1.50, sd: 1.50 };
-  if (label.includes('³⁴S') || label.includes('34S')) return { bias: 0.20, sd: 0.20 };
-  if (label.includes('¹⁵N') || label.includes('15N')) return { bias: 0.15, sd: 0.15 };
-  if (label.includes('¹⁸O') || label.includes('18O')) return { bias: 0.12, sd: 0.12 };
-  return { bias: 0.08, sd: 0.08 };
-}
-
-function getElementUnit(elemIdx) {
-  const p = PRESETS[currentMode];
-  if (!p.elements[elemIdx]) return "";
-  if ((currentMode === "CO" && elemIdx === 1) || (currentMode === "WATER_O" && elemIdx === 0)) {
-    return oxygenScale === "VSMOW" ? "‰ VSMOW" : "‰ VPDB";
+const CHANGELOG_DATA = [
+  {
+    version: "v1.4.0",
+    date: "2026-11",
+    badge: "EA-IRMS Area Linearity & Blank Suite",
+    title_ko: "피크 면적 기반 시료량 선형성(Size Linearity) & 주석 캡슐 블랭크(Blank) 보정 및 모듈화 아키텍처 탑재",
+    title_en: "Peak Area Size Linearity & Tin Capsule Blank Correction Suite + Modular Architecture",
+    desc_ko: "시료 무게와 유기물 함량이 불균일한 EA-IRMS 분석 특성을 완벽히 해결하기 위해, 피크 면적(Peak Area / Amplitude) 열을 동적으로 활성화하여 캡슐 블랭크 질량 보존 차감과 신호 크기 선형성(Size Effect) 보정을 동시에 수행하며, 전체 소스 코드를 4개 모듈로 분리했습니다.",
+    desc_en: "Added dynamic Peak Area columns for mass-balance tin capsule blank subtraction and automated size-effect linearity correction, while refactoring the platform into a clean modular file architecture.",
+    changes_ko: [
+      "<strong>'Area / Blank' 4단계 전처리 셀렉터 탑재</strong>: <code>Off</code>, <code>Linearity (피크 면적 선형성)</code>, <code>Blank Only (캡슐 블랭크 차감)</code>, <code>Blank + Linearity 통합</code> 모드 지원.",
+      "<strong>주석 캡슐 블랭크(Blank) 자동 감지 및 질량 보존 차감</strong>: 시퀀스 내 <code>BLANK</code> 또는 <code>BLK</code>가 포함된 행의 피크 면적($A_{\\text{blk}}$)과 동위원소 값($\\delta_{\\text{blk}}$)을 자동 추출하여 미지 시료 및 표준물질에서 백그라운드 기여분 제거.",
+      "<strong>피크 면적 선형성(Size Effect) 자동 회귀 보정</strong>: 모니터 표준물질의 피크 면적 대비 원시 $\\delta$ 값 기울기($k_{\\text{area}}$)를 도출하여 시료량 차이에 따른 이온원 비선형성 편차 교정 및 Figure 3·4 진단 플롯 시각화.",
+      "<strong>단일 산소 모드(WATER_O) VPDB ↔ VSMOW 스케일 전환 연동</strong>: 탄산염 듀얼 모드뿐만 아니라 단일 산소 채널에서도 Coplen (1983) 스케일 즉시 변환 지원.",
+      "<strong>4-파일 모듈형 아키텍처 전환</strong>: <code>index.html</code>, <code>style.css</code>, <code>presets.js</code>, <code>engine.js</code>로 분리하여 유지보수성 극대화."
+    ],
+    changes_en: [
+      "<strong>4-Way 'Area / Blank' Preprocessing Selector</strong>: Switch seamlessly between <code>Off</code>, <code>Size Linearity</code>, <code>Blank Subtraction Only</code>, and <code>Blank + Size Linearity</code>.",
+      "<strong>Automated Mass-Balance Blank Subtraction</strong>: Detects rows labeled <code>BLANK</code> or <code>BLK</code> and subtracts capsule background contamination prior to regression.",
+      "<strong>Peak-Area Linearity Normalization & Diagnostics</strong>: Computes $\\delta$ vs. Area slope ($k_{\\text{area}}$) from monitor standards and visualizes size-linearity trends in Figures 3 & 4.",
+      "<strong>Single Oxygen (WATER_O) VPDB ↔ VSMOW Toggle</strong>: Extended IUPAC scale conversion to single-channel oxygen workflows.",
+      "<strong>Modular Codebase Architecture</strong>: Separated HTML, CSS, Presets, and JS Engine into standalone files."
+    ]
+  },
+  {
+    version: "v1.3.3",
+    date: "2026-11",
+    badge: "Outlier Exclusion Toggle",
+    title_ko: "시퀀스 런 순서(#) 보존형 이상치(Outlier) 개별 제외 체크박스 탑재",
+    title_en: "Non-Destructive Outlier Exclusion Checkbox (Sequence-Preserving)",
+    desc_ko: "표준물질이나 미지 시료 반복 측정 중 특정 런이 튀었을 때, 행을 삭제하여 시퀀스 시간축(Run #)을 왜곡시키는 대신 체크박스 하나로 해당 런만 검량선·드리프트·평균 계산에서 깔끔하게 제외하고 즉시 재검량하는 기능을 탑재했습니다.",
+    desc_en: "Added a per-row 'Use (✓)' checkbox and right-click context toggle that excludes anomalous runs from WLS regression, drift modeling, QC, and replicate averaging while strictly preserving sequence acquisition indices (#).",
+    changes_ko: [
+      "<strong>시퀀스 그리드 'Use (✓)' 체크박스 열 신설</strong>: 체크 해제 시 해당 행에 취소선(Strike-through)이 표시되며 즉시 자동 재검량 실행.",
+      "<strong>시계열 드리프트(Run #) 무결성 보존</strong>: 행을 물리적으로 삭제하지 않으므로 앞뒤 런 사이의 측정 시간 간격이 그대로 유지됨.",
+      "<strong>최종 결과표 및 엑셀(.xlsx) 내역 투명성 확보</strong>: 제외된 런은 <code>[EXCLUDED]</code> 태그로 명시되어 데이터 투명성 보장."
+    ],
+    changes_en: [
+      "<strong>Interactive 'Use (✓)' Column</strong>: One-click toggle to exclude/include individual runs with instant live recalibration.",
+      "<strong>Preserves Drift Time-Series Integrity</strong>: Keeps original sequence run numbers (#) intact.",
+      "<strong>Transparent Audit Trail in Excel</strong>: Excluded runs are clearly flagged as <code>[EXCLUDED]</code>."
+    ]
   }
-  return p.elements[elemIdx].unit;
-}
+];
 
-// Navigation Dropdown & Modals
-const btnToggleMore = document.getElementById('btn-toggle-more');
-const moreMenuDropdown = document.getElementById('more-menu-dropdown');
-const moreMenuArrow = document.getElementById('more-menu-arrow');
-const moreMenuContainer = document.getElementById('more-menu-container');
-
-function closeMoreDropdown() {
-  if (moreMenuDropdown && !moreMenuDropdown.classList.contains('hidden')) {
-    moreMenuDropdown.classList.add('hidden');
-    moreMenuArrow.classList.remove('rotate-180');
+const PRESETS = {
+  CO: {
+    name: "Carbon & Oxygen (Carbonate / GasBench)",
+    elements: [
+      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
+      { key: "iso2", label: "δ¹⁸O", unit: "‰ VPDB" }
+    ],
+    stds: [
+      { name: "NBS-18", v1: -5.012, v2: -23.200 },
+      { name: "IAEA-603", v1: 2.460, v2: -2.370 }
+    ],
+    extraStds: [
+      { name: "IAEA-CO-8", v1: -5.764, v2: -22.700 },
+      { name: "NBS-19", v1: 1.950, v2: -2.200 }
+    ],
+    defaultDriftAnchorIdx: 1,
+    qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
+    demo: [
+      ["NBS-18_1", 21.745, 0.032, -0.775, 0.055],
+      ["IAEA-603_1", 29.325, 0.028, 20.055, 0.052],
+      ["KDO_QC1", 25.562, 0.030, 7.655, 0.054],
+      ["Sample-A_1", 26.815, 0.031, 11.810, 0.056],
+      ["Sample-A_2", 26.802, 0.029, 11.795, 0.053],
+      ["Sample-A_3", 26.788, 0.030, 11.780, 0.055],
+      ["Sample-B_1", 24.085, 0.028, 15.290, 0.051],
+      ["Sample-B_2", 24.072, 0.030, 15.275, 0.054],
+      ["Sample-B_3", 24.058, 0.027, 15.260, 0.050],
+      ["NBS-18_2", 21.635, 0.033, -0.955, 0.058],
+      ["IAEA-603_2", 29.215, 0.026, 19.875, 0.050],
+      ["KDO_QC2", 25.442, 0.029, 7.460, 0.052],
+      ["Sample-C_1", 18.330, 0.034, 13.710, 0.060],
+      ["Sample-C_2", 18.318, 0.031, 13.695, 0.058],
+      ["Sample-C_3", 18.305, 0.032, 13.680, 0.059],
+      ["NBS-18_3", 21.525, 0.031, -1.115, 0.056],
+      ["IAEA-603_3", 29.105, 0.025, 19.715, 0.049],
+      ["KDO_QC3", 25.245, 0.028, 7.175, 0.051]
+    ]
+  },
+  NO: {
+    name: "Nitrogen & Oxygen (Nitrate / Denitrifier)",
+    elements: [
+      { key: "iso1", label: "δ¹⁵N", unit: "‰ Air" },
+      { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
+    ],
+    stds: [
+      { name: "IAEA-NO-3", v1: 4.700, v2: 25.600 },
+      { name: "USGS34", v1: -1.800, v2: -27.900 }
+    ],
+    extraStds: [{ name: "USGS32", v1: 180.000, v2: 25.700 }],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "USGS35", v1: 5.700, v2: 57.500 },
+    demo: [
+      ["IAEA-NO-3_1", 5.120, 0.080, 26.110, 0.150],
+      ["USGS34_1", -1.450, 0.090, -27.320, 0.180],
+      ["USGS35_QC1", 6.130, 0.085, 58.200, 0.200],
+      ["Nitrate-01_1", 3.250, 0.090, 15.400, 0.170],
+      ["Nitrate-01_2", 3.270, 0.085, 15.420, 0.160],
+      ["Nitrate-01_3", 3.240, 0.080, 15.390, 0.150],
+      ["IAEA-NO-3_2", 5.102, 0.075, 26.080, 0.145],
+      ["USGS34_2", -1.468, 0.085, -27.350, 0.170],
+      ["USGS35_QC2", 6.112, 0.080, 58.160, 0.190]
+    ]
+  },
+  HO: {
+    name: "Hydrogen & Oxygen (Water Dual)",
+    elements: [
+      { key: "iso1", label: "δD", unit: "‰ VSMOW" },
+      { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
+    ],
+    stds: [
+      { name: "VSMOW2", v1: 0.000, v2: 0.000 },
+      { name: "SLAP2", v1: -427.500, v2: -55.500 }
+    ],
+    extraStds: [{ name: "USGS45", v1: -10.300, v2: -2.238 }],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "GISP", v1: -189.500, v2: -24.760 },
+    demo: [
+      ["VSMOW2_1", 1.200, 0.500, 0.120, 0.050],
+      ["SLAP2_1", -424.300, 0.800, -54.900, 0.080],
+      ["GISP_QC1", -187.900, 0.600, -24.450, 0.060],
+      ["Rain-01_1", -45.200, 0.520, -7.120, 0.055],
+      ["Rain-01_2", -45.100, 0.480, -7.105, 0.052],
+      ["Rain-01_3", -45.300, 0.510, -7.135, 0.058],
+      ["VSMOW2_2", 1.050, 0.480, 0.100, 0.048],
+      ["SLAP2_2", -424.550, 0.750, -54.940, 0.075],
+      ["GISP_QC2", -188.050, 0.580, -24.480, 0.058]
+    ]
+  },
+  CN: {
+    name: "EA Organic Bulk C & N (Dual)",
+    elements: [
+      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
+      { key: "iso2", label: "δ¹⁵N", unit: "‰ Air" }
+    ],
+    stds: [
+      { name: "USGS40", v1: -26.390, v2: -4.520 },
+      { name: "USGS41a", v1: 36.550, v2: 47.550 }
+    ],
+    extraStds: [
+      { name: "USGS62", v1: -14.790, v2: 20.170 },
+      { name: "IAEA-600", v1: -27.771, v2: 1.000 }
+    ],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "USGS61", v1: -35.050, v2: -2.870 },
+    demo: [
+      ["USGS40_1", -25.850, 0.080, -4.100, 0.120],
+      ["USGS41a_1", 37.150, 0.090, 48.050, 0.140],
+      ["USGS61_QC1", -34.520, 0.085, -2.420, 0.130],
+      ["Plankton-A_1", -21.400, 0.075, 7.850, 0.110],
+      ["Plankton-A_2", -21.380, 0.080, 7.860, 0.115],
+      ["Plankton-A_3", -21.420, 0.070, 7.840, 0.105],
+      ["Fish-Muscle-B_1", -18.600, 0.085, 12.450, 0.125],
+      ["Fish-Muscle-B_2", -18.580, 0.080, 12.430, 0.120],
+      ["Fish-Muscle-B_3", -18.620, 0.090, 12.470, 0.130],
+      ["USGS40_2", -25.900, 0.075, -4.150, 0.115],
+      ["USGS41a_2", 37.080, 0.085, 47.980, 0.135],
+      ["USGS61_QC2", -34.580, 0.080, -2.480, 0.125]
+    ],
+    // Extended 21-run Real-world Sequence: [ID, Area1(Vs), Raw1, SD1, Area2(Vs), Raw2, SD2]
+    demoArea: [
+      ["Tin-Blank_1", 0.35, -28.500, 0.250, 0.18, -1.200, 0.350],
+      ["Tin-Blank_2", 0.33, -28.300, 0.240, 0.16, -1.100, 0.320],
+      ["USGS40_Low_0.2mg", 12.50, -26.020, 0.080, 4.20, -4.250, 0.120],
+      ["USGS40_Mid_0.5mg", 28.40, -25.850, 0.070, 9.80, -4.100, 0.110],
+      ["USGS40_High_1.0mg", 54.20, -25.580, 0.075, 18.60, -3.860, 0.115],
+      ["USGS41a_1", 29.10, 37.150, 0.085, 10.10, 48.050, 0.130],
+      ["USGS61_QC1", 27.80, -34.520, 0.080, 9.50, -2.420, 0.120],
+      ["Plankton-A_1", 18.20, -21.460, 0.075, 6.40, 7.780, 0.110],
+      ["Plankton-A_2", 32.50, -21.310, 0.080, 11.20, 7.910, 0.115],
+      ["Plankton-A_3", 46.80, -21.160, 0.070, 16.10, 8.040, 0.105],
+      ["Fish-Muscle-B_1", 22.40, -18.650, 0.085, 7.90, 12.390, 0.125],
+      ["Fish-Muscle-B_2", 36.10, -18.520, 0.080, 12.60, 12.510, 0.120],
+      ["Fish-Muscle-B_3", 51.00, -18.380, 0.090, 17.80, 12.640, 0.130],
+      ["USGS40_Bracket", 28.60, -25.840, 0.075, 9.90, -4.090, 0.110],
+      ["USGS41a_2", 28.80, 37.140, 0.085, 10.00, 48.040, 0.135],
+      ["USGS61_QC2", 16.50, -34.640, 0.085, 5.80, -2.530, 0.125],
+      ["Macroalgae-C_1", 24.30, -14.240, 0.090, 8.40, 5.560, 0.110],
+      ["Macroalgae-C_2", 38.00, -14.120, 0.085, 13.20, 5.670, 0.115],
+      ["Macroalgae-C_3", 52.50, -13.980, 0.095, 18.20, 5.790, 0.120],
+      ["USGS40_End", 28.80, -25.820, 0.070, 10.00, -4.080, 0.110],
+      ["USGS41a_End", 29.20, 37.160, 0.080, 10.20, 48.060, 0.130]
+    ]
+  },
+  EA_C: {
+    name: "EA Organic Carbon only (Acidified Sediments)",
+    elements: [{ key: "iso1", label: "δ¹³C", unit: "‰ VPDB" }],
+    stds: [
+      { name: "USGS40", v1: -26.390 },
+      { name: "USGS41a", v1: 36.550 }
+    ],
+    extraStds: [
+      { name: "IAEA-CH-7", v1: -32.151 },
+      { name: "USGS62", v1: -14.790 }
+    ],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "IAEA-CH-6", v1: -10.450 },
+    demo: [
+      ["USGS40_1", -25.820, 0.075],
+      ["USGS41a_1", 37.180, 0.085],
+      ["IAEA-CH-6_QC1", -9.850, 0.080],
+      ["Core-Sed-01_1", -22.450, 0.090],
+      ["Core-Sed-01_2", -22.430, 0.085],
+      ["Core-Sed-01_3", -22.470, 0.080],
+      ["USGS40_2", -25.880, 0.070],
+      ["USGS41a_2", 37.120, 0.080],
+      ["IAEA-CH-6_QC2", -9.910, 0.075]
+    ],
+    // Extended 19-run Marine Sediment Sequence: [ID, Area1(Vs), Raw1, SD1]
+    demoArea: [
+      ["Tin-Blank_1", 0.40, -28.600, 0.200],
+      ["Tin-Blank_2", 0.36, -28.400, 0.220],
+      ["USGS40_0.15mg", 10.20, -26.050, 0.080],
+      ["USGS40_0.50mg", 30.50, -25.820, 0.070],
+      ["USGS40_1.20mg", 62.00, -25.470, 0.075],
+      ["USGS41a_1", 31.00, 37.180, 0.085],
+      ["IAEA-CH-6_QC1", 29.80, -9.850, 0.080],
+      ["Core-Sed-01_1", 14.50, -22.620, 0.090],
+      ["Core-Sed-01_2", 31.20, -22.430, 0.085],
+      ["Core-Sed-01_3", 48.00, -22.240, 0.080],
+      ["Core-Sed-02_1", 12.00, -24.980, 0.075],
+      ["Core-Sed-02_2", 28.50, -24.780, 0.080],
+      ["Core-Sed-02_3", 44.00, -24.590, 0.070],
+      ["USGS40_MidCheck", 30.80, -25.810, 0.070],
+      ["IAEA-CH-6_QC2", 15.40, -10.010, 0.075],
+      ["Core-Sed-03_1", 16.20, -21.320, 0.085],
+      ["Core-Sed-03_2", 33.40, -21.130, 0.080],
+      ["Core-Sed-03_3", 51.00, -20.930, 0.090],
+      ["USGS41a_End", 31.50, 37.190, 0.080]
+    ]
+  },
+  EA_N: {
+    name: "EA Total Nitrogen only (Untreated Sediments)",
+    elements: [{ key: "iso1", label: "δ¹⁵N", unit: "‰ Air" }],
+    stds: [
+      { name: "USGS40", v1: -4.520 },
+      { name: "USGS41a", v1: 47.550 }
+    ],
+    extraStds: [
+      { name: "IAEA-N-2", v1: 20.300 },
+      { name: "USGS25", v1: -30.400 }
+    ],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "IAEA-N-1", v1: 0.400 },
+    demo: [
+      ["USGS40_1", -4.080, 0.110],
+      ["USGS41a_1", 48.100, 0.130],
+      ["IAEA-N-1_QC1", 0.920, 0.120],
+      ["Raw-Sed-01_1", 5.400, 0.115],
+      ["Raw-Sed-01_2", 5.380, 0.110],
+      ["Raw-Sed-01_3", 5.420, 0.120],
+      ["USGS40_2", -4.130, 0.105],
+      ["USGS41a_2", 48.040, 0.125],
+      ["IAEA-N-1_QC2", 0.860, 0.115]
+    ],
+    demoArea: [
+      ["Tin-Blank_1", 0.22, -1.500, 0.300],
+      ["USGS40_Small", 5.10, -4.240, 0.115],
+      ["USGS40_Mid", 12.40, -4.080, 0.105],
+      ["USGS40_Large", 24.80, -3.810, 0.110],
+      ["USGS41a_1", 12.80, 48.100, 0.130],
+      ["IAEA-N-1_QC1", 12.10, 0.920, 0.120],
+      ["Raw-Sed-01_1", 6.20, 5.260, 0.115],
+      ["Raw-Sed-01_2", 12.50, 5.400, 0.110],
+      ["Raw-Sed-01_3", 21.00, 5.580, 0.120],
+      ["USGS41a_2", 12.50, 48.090, 0.125],
+      ["IAEA-N-1_QC2", 7.40, 0.810, 0.115]
+    ]
+  },
+  CH: {
+    name: "EA Organic Bulk C & H (Dual)",
+    elements: [
+      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
+      { key: "iso2", label: "δD", unit: "‰ VSMOW" }
+    ],
+    stds: [
+      { name: "USGS40", v1: -26.390, v2: -9.200 },
+      { name: "USGS41a", v1: 36.550, v2: -4.300 }
+    ],
+    extraStds: [
+      { name: "IAEA-CH-7", v1: -32.151, v2: -100.300 },
+      { name: "USGS62", v1: -14.790, v2: -156.100 }
+    ],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "USGS61", v1: -35.050, v2: -7.500 },
+    demo: [
+      ["USGS40_1", -25.800, 0.080, -8.100, 1.200],
+      ["USGS41a_1", 37.200, 0.090, -3.200, 1.400],
+      ["USGS61_QC1", -34.450, 0.085, -6.350, 1.300],
+      ["Wax-Sample-A_1", -28.400, 0.080, -145.200, 1.350],
+      ["Wax-Sample-A_2", -28.380, 0.075, -145.050, 1.280],
+      ["Wax-Sample-A_3", -28.420, 0.085, -145.350, 1.420],
+      ["USGS40_2", -25.860, 0.075, -8.250, 1.150],
+      ["USGS41a_2", 37.120, 0.085, -3.350, 1.350],
+      ["USGS61_QC2", -34.520, 0.080, -6.500, 1.250]
+    ]
+  },
+  WATER_H: {
+    name: "Water Hydrogen (δD only)",
+    elements: [{ key: "iso1", label: "δD", unit: "‰ VSMOW" }],
+    stds: [
+      { name: "VSMOW2", v1: 0.000 },
+      { name: "SLAP2", v1: -427.500 }
+    ],
+    extraStds: [{ name: "USGS46", v1: -235.800 }],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "GISP", v1: -189.500 },
+    demo: [
+      ["VSMOW2_1", 1.250, 0.500],
+      ["SLAP2_1", -424.100, 0.800],
+      ["GISP_QC1", -187.800, 0.600],
+      ["Well-Water-A_1", -72.400, 0.550],
+      ["Well-Water-A_2", -72.350, 0.520],
+      ["Well-Water-A_3", -72.480, 0.500],
+      ["VSMOW2_2", 1.080, 0.470],
+      ["SLAP2_2", -424.450, 0.760],
+      ["GISP_QC2", -187.980, 0.580]
+    ]
+  },
+  WATER_O: {
+    name: "Water / Solid Oxygen (δ¹⁸O only)",
+    elements: [{ key: "iso1", label: "δ¹⁸O", unit: "‰ VSMOW" }],
+    stds: [
+      { name: "VSMOW2", v1: 0.000 },
+      { name: "SLAP2", v1: -55.500 }
+    ],
+    extraStds: [
+      { name: "USGS46", v1: -29.800 },
+      { name: "IAEA-601", v1: 28.900 }
+    ],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "GISP", v1: -24.760 },
+    demo: [
+      ["VSMOW2_1", 0.150, 0.050],
+      ["SLAP2_1", -54.850, 0.080],
+      ["GISP_QC1", -24.400, 0.060],
+      ["Well-Water-A_1", -9.850, 0.055],
+      ["Well-Water-A_2", -9.840, 0.052],
+      ["Well-Water-A_3", -9.860, 0.050],
+      ["VSMOW2_2", 0.115, 0.045],
+      ["SLAP2_2", -54.910, 0.075],
+      ["GISP_QC2", -24.440, 0.055]
+    ]
+  },
+  S: {
+    name: "Sulfur Isotope (δ³⁴S)",
+    elements: [{ key: "iso1", label: "δ³⁴S", unit: "‰ VCDT" }],
+    stds: [
+      { name: "IAEA-S-1", v1: -0.300 },
+      { name: "IAEA-S-2", v1: 22.700 }
+    ],
+    extraStds: [{ name: "IAEA-S-3", v1: -32.300 }],
+    defaultDriftAnchorIdx: 0,
+    qcStd: { name: "NBS-127", v1: 21.100 },
+    demo: [
+      ["IAEA-S-1_1", -0.150, 0.120],
+      ["IAEA-S-2_1", 23.150, 0.150],
+      ["NBS-127_QC1", 21.480, 0.130],
+      ["Pyrite-01_1", 12.450, 0.130],
+      ["Pyrite-01_2", 12.470, 0.120],
+      ["Pyrite-01_3", 12.440, 0.110],
+      ["IAEA-S-1_2", -0.168, 0.110],
+      ["IAEA-S-2_2", 23.115, 0.140],
+      ["NBS-127_QC2", 21.450, 0.125]
+    ]
   }
-}
-
-if (btnToggleMore) {
-  btnToggleMore.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isHidden = moreMenuDropdown.classList.toggle('hidden');
-    moreMenuArrow.classList.toggle('rotate-180', !isHidden);
-  });
-}
-
-document.addEventListener('click', (e) => {
-  if (moreMenuContainer && !moreMenuContainer.contains(e.target)) closeMoreDropdown();
-});
-
-function renderChangelog() {
-  const container = document.getElementById('changelog-content');
-  if (!container) return;
-  const isEn = currentLang === 'en';
-  container.innerHTML = CHANGELOG_DATA.map((rel, idx) => `
-    <div class="border-l-2 ${idx === 0 ? 'border-stone-900' : 'border-stone-300'} pl-4 space-y-2 relative">
-      <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full ${idx === 0 ? 'bg-stone-900 ring-4 ring-stone-100' : 'bg-stone-400'}"></div>
-      <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-stone-100 pb-1">
-        <div class="flex items-center space-x-2">
-          <span class="font-mono font-bold text-stone-900 text-sm">${rel.version}</span>
-          <span class="px-1.5 py-0.5 bg-stone-100 border border-stone-300 text-[10px] font-mono font-bold text-stone-700">${rel.badge}</span>
-        </div>
-        <span class="text-[11px] font-mono text-stone-400">${rel.date}</span>
-      </div>
-      <div>
-        <h4 class="font-serif-title text-base font-semibold text-stone-900">${isEn ? rel.title_en : rel.title_ko}</h4>
-        <p class="text-stone-600 font-light text-[11px] leading-relaxed">${isEn ? rel.desc_en : rel.desc_ko}</p>
-      </div>
-      <ul class="list-disc list-inside space-y-1.5 text-[11px] text-stone-700 font-light leading-relaxed pt-1">
-        ${(isEn ? rel.changes_en : rel.changes_ko).map(c => `<li>${c}</li>`).join('')}
-      </ul>
-    </div>
-  `).join('');
-}
-
-function captureCurrentStandardsSnapshot(mode = currentMode) {
-  const p = PRESETS[mode];
-  const isDual = p.elements.length === 2;
-  const stds = [];
-  for (let idx = 0; idx < currentAnchorCount; idx++) {
-    const elName = document.getElementById(`ref-std${idx}-name`);
-    const elV1 = document.getElementById(`ref-std${idx}-v1`);
-    const elV2 = document.getElementById(`ref-std${idx}-v2`);
-    if (elName) {
-      stds.push({
-        name: elName.value.trim(),
-        v1: (elV1 && elV1.value !== '') ? parseFloat(elV1.value) : 0,
-        v2: (isDual && elV2 && elV2.value !== '') ? parseFloat(elV2.value) : 0
-      });
-    }
-  }
-  const elQcName = document.getElementById('qc-std-name');
-  const elQcV1 = document.getElementById('qc-std-v1');
-  const elQcV2 = document.getElementById('qc-std-v2');
-  const qcStd = {
-    name: elQcName ? elQcName.value.trim() : null,
-    v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elQcV1.value) : null,
-    v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null
-  };
-  const elAnchorSelect = document.getElementById('drift-anchor-select');
-  const selectedDriftAnchor = elAnchorSelect ? parseInt(elAnchorSelect.value) : p.defaultDriftAnchorIdx;
-  return { stds, qcStd, selectedDriftAnchor, oxygenScale };
-}
-
-function saveCurrentModeStandards() {
-  const snap = captureCurrentStandardsSnapshot(currentMode);
-  if (snap && snap.stds && snap.stds.length >= 2) {
-    userCustomStandardsByMode[currentMode] = snap;
-  }
-}
-
-function syncDriftAnchorDropdown() {
-  const p = PRESETS[currentMode];
-  const select = document.getElementById('drift-anchor-select');
-  if (!select) return;
-  const prevVal = select.value !== "" ? parseInt(select.value) : null;
-  select.innerHTML = '';
-
-  for (let idx = 0; idx < currentAnchorCount; idx++) {
-    const nameInput = document.getElementById(`ref-std${idx}-name`);
-    const fallbackStd = p.stds[idx] || { name: `Std-${idx + 1}` };
-    const displayName = nameInput && nameInput.value.trim() !== '' ? nameInput.value.trim() : fallbackStd.name;
-    const opt = document.createElement('option');
-    opt.value = idx;
-    opt.innerText = `Anchor 0${idx + 1} (${displayName})`;
-    select.appendChild(opt);
-  }
-
-  const snap = userCustomStandardsByMode[currentMode];
-  if (snap && snap.selectedDriftAnchor !== undefined && snap.selectedDriftAnchor < currentAnchorCount) {
-    select.value = snap.selectedDriftAnchor;
-  } else if (prevVal !== null && prevVal < currentAnchorCount) {
-    select.value = prevVal;
-  } else {
-    select.value = Math.min(p.defaultDriftAnchorIdx, currentAnchorCount - 1);
-  }
-}
-
-document.getElementById('btn-add-anchor').addEventListener('click', () => {
-  saveCurrentModeStandards();
-  const p = PRESETS[currentMode];
-  const isDual = p.elements.length === 2;
-  const snap = userCustomStandardsByMode[currentMode] || captureCurrentStandardsSnapshot(currentMode);
-  const newIdx = snap.stds.length;
-  const extraCandidate = (p.extraStds && p.extraStds[newIdx - 2]) ? p.extraStds[newIdx - 2] : null;
-
-  let defaultV1 = extraCandidate ? extraCandidate.v1 : 0.000;
-  let defaultV2 = extraCandidate && extraCandidate.v2 !== undefined ? extraCandidate.v2 : 0.000;
-  if (currentMode === 'CO' && oxygenScale === 'VSMOW' && extraCandidate) {
-    defaultV2 = parseFloat(vpdbToVsmow(defaultV2).toFixed(3));
-  } else if (currentMode === 'WATER_O' && oxygenScale === 'VPDB' && extraCandidate) {
-    defaultV1 = parseFloat(vsmowToVpdb(defaultV1).toFixed(3));
-  }
-
-  snap.stds.push({
-    name: extraCandidate ? extraCandidate.name : `STD-0${newIdx + 1}`,
-    v1: defaultV1,
-    v2: isDual ? defaultV2 : null
-  });
-  userCustomStandardsByMode[currentMode] = snap;
-  updateLayoutForMode(false);
-});
-
-function removeAnchorAtIndex(idxToRemove) {
-  if (currentAnchorCount <= 2) return;
-  saveCurrentModeStandards();
-  const snap = userCustomStandardsByMode[currentMode];
-  if (snap && snap.stds && snap.stds.length > 2) {
-    snap.stds.splice(idxToRemove, 1);
-    if (snap.selectedDriftAnchor >= snap.stds.length) snap.selectedDriftAnchor = 0;
-    userCustomStandardsByMode[currentMode] = snap;
-    updateLayoutForMode(false);
-  }
-}
-
-function getStoredPresetsKey() {
-  return `isocalib_custom_presets_${currentMode}`;
-}
-
-function getStoredPresets() {
-  try {
-    const raw = localStorage.getItem(getStoredPresetsKey());
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) { return {}; }
-}
-
-function renderPresetDropdown() {
-  const select = document.getElementById('user-presets-select');
-  if (!select) return;
-  const presets = getStoredPresets();
-  select.innerHTML = `<option value="">${TRANSLATIONS[currentLang].preset_select_default}</option>`;
-  Object.keys(presets).forEach(name => {
-    const opt = document.createElement('option');
-    opt.value = name;
-    opt.innerText = name;
-    select.appendChild(opt);
-  });
-}
-
-document.getElementById('btn-save-preset').addEventListener('click', () => {
-  const nameInput = document.getElementById('preset-save-name');
-  const name = nameInput.value.trim();
-  const isEn = currentLang === 'en';
-  if (!name) {
-    alert(isEn ? "Please enter a preset name." : "프리셋 이름을 입력해 주세요.");
-    return;
-  }
-  const snap = captureCurrentStandardsSnapshot(currentMode);
-  const presets = getStoredPresets();
-  presets[name] = snap;
-  localStorage.setItem(getStoredPresetsKey(), JSON.stringify(presets));
-  nameInput.value = '';
-  renderPresetDropdown();
-  document.getElementById('user-presets-select').value = name;
-  alert(isEn ? `Preset '${name}' (${snap.stds.length} anchors) saved.` : `프리셋 '${name}' (${snap.stds.length}점 앵커)이 저장되었습니다.`);
-});
-
-document.getElementById('btn-load-preset').addEventListener('click', () => {
-  const select = document.getElementById('user-presets-select');
-  const name = select.value;
-  if (!name) {
-    userCustomStandardsByMode[currentMode] = null;
-    updateLayoutForMode(true);
-    return;
-  }
-  const presets = getStoredPresets();
-  if (presets[name]) {
-    userCustomStandardsByMode[currentMode] = JSON.parse(JSON.stringify(presets[name]));
-    if (presets[name].oxygenScale) oxygenScale = presets[name].oxygenScale;
-    updateLayoutForMode(false);
-  }
-});
-
-document.getElementById('btn-delete-preset').addEventListener('click', () => {
-  const select = document.getElementById('user-presets-select');
-  const name = select.value;
-  const isEn = currentLang === 'en';
-  if (!name) {
-    alert(isEn ? "Please select a custom preset to delete." : "삭제할 커스텀 프리셋을 선택해 주세요.");
-    return;
-  }
-  if (confirm(isEn ? `Delete preset '${name}'?` : `정말 '${name}' 프리셋을 삭제하시겠습니까?`)) {
-    const presets = getStoredPresets();
-    delete presets[name];
-    localStorage.setItem(getStoredPresetsKey(), JSON.stringify(presets));
-    renderPresetDropdown();
-  }
-});
-
-function convertGridRowsForAreaToggle(oldAreaActive, newAreaActive) {
-  if (oldAreaActive === newAreaActive || gridData.length === 0) return;
-  const isDual = PRESETS[currentMode].elements.length === 2;
-
-  gridData = gridData.map(row => {
-    const id = row[0] !== undefined ? row[0] : '';
-    if (!oldAreaActive && newAreaActive) {
-      // Standard -> Area: Insert blank area columns
-      if (isDual) return [id, '', row[1] ?? '', row[2] ?? '', '', row[3] ?? '', row[4] ?? ''];
-      return [id, '', row[1] ?? '', row[2] ?? ''];
-    } else {
-      // Area -> Standard: Strip area columns
-      if (isDual) return [id, row[2] ?? '', row[3] ?? '', row[5] ?? '', row[6] ?? ''];
-      return [id, row[2] ?? '', row[3] ?? ''];
-    }
-  });
-}
-
-document.getElementById('area-mode').addEventListener('change', (e) => {
-  closeEditingCell();
-  const prevActive = isAreaActive();
-  areaMode = e.target.value;
-  const nextActive = isAreaActive();
-
-  const p = PRESETS[currentMode];
-  const hasAnyInput = gridData.some(r => r[0] && r[0].toString().trim() !== '');
-  if (nextActive && p.demoArea && (!hasAnyInput || gridData[0][0] === p.demo[0][0])) {
-    gridData = JSON.parse(JSON.stringify(p.demoArea));
-    excludedRows = Array(gridData.length).fill(false);
-  } else if (!nextActive && p.demoArea && hasAnyInput && gridData[0][0] === p.demoArea[0][0]) {
-    gridData = JSON.parse(JSON.stringify(p.demo));
-    excludedRows = Array(gridData.length).fill(false);
-  } else {
-    convertGridRowsForAreaToggle(prevActive, nextActive);
-  }
-
-  updateLayoutForMode(false);
-  if (hasCalibratedOnce) runCalibration();
-});
-
-function updateLayoutForMode(forcePresetDefault = false) {
-  const p = PRESETS[currentMode];
-  const isDual = p.elements.length === 2;
-  const isEn = currentLang === 'en';
-  const areaOn = isAreaActive();
-
-  const oScaleWrapper = document.getElementById('oxygen-scale-wrapper');
-  if (currentMode === 'CO' || currentMode === 'WATER_O') {
-    oScaleWrapper.classList.remove('hidden');
-    document.getElementById('oxygen-scale-select').value = oxygenScale;
-  } else {
-    oScaleWrapper.classList.add('hidden');
-  }
-
-  let snapshot = (!forcePresetDefault && userCustomStandardsByMode[currentMode]) ? userCustomStandardsByMode[currentMode] : null;
-  const activeStdsList = (snapshot && snapshot.stds && snapshot.stds.length >= 2) ? snapshot.stds : p.stds;
-  currentAnchorCount = activeStdsList.length;
-
-  const u1 = getElementUnit(0);
-  const u2 = getElementUnit(1);
-  const stdContainer = document.getElementById('std-input-container');
-  stdContainer.innerHTML = '';
-
-  activeStdsList.forEach((std, idx) => {
-    const valName = std.name ?? `STD-0${idx + 1}`;
-    let valV1 = (std.v1 !== null && !isNaN(std.v1)) ? std.v1 : 0;
-    let valV2 = (std.v2 !== null && !isNaN(std.v2)) ? std.v2 : 0;
-
-    if (!snapshot) {
-      if (currentMode === 'CO' && oxygenScale === 'VSMOW') valV2 = parseFloat(vpdbToVsmow(valV2).toFixed(3));
-      if (currentMode === 'WATER_O' && oxygenScale === 'VPDB') valV1 = parseFloat(vsmowToVpdb(valV1).toFixed(3));
-    }
-
-    const canRemove = idx >= 2;
-    const div = document.createElement('div');
-    div.className = 'bg-white p-4 border border-[#d1cfc7] flex flex-col space-y-3 shadow-sm relative';
-    div.innerHTML = `
-      <div class="flex items-center justify-between border-b border-stone-200 pb-1.5">
-        <div class="flex items-center space-x-1.5">
-          <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-stone-500">${isEn ? 'Anchor Standard' : '앵커 표준물질'} 0${idx+1}</span>
-          ${canRemove ? `<button type="button" data-remove-anchor="${idx}" class="text-rose-600 hover:text-rose-800 font-mono text-xs font-bold px-1 cursor-pointer">&times;</button>` : ''}
-        </div>
-        <input type="text" id="ref-std${idx}-name" value="${valName}" class="w-32 text-xs font-bold text-stone-900 border-b border-stone-400 focus:border-stone-900 outline-none text-right font-mono bg-transparent">
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="flex-1 space-y-1">
-          <div class="flex justify-between text-[11px] text-stone-600 font-medium">
-            <span>${p.elements[0].label} ${isEn ? 'True' : '참값'}</span>
-            <span class="text-stone-400 font-mono text-[10px]">${u1}</span>
-          </div>
-          <input type="number" step="0.001" id="ref-std${idx}-v1" value="${valV1}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
-        </div>
-        ${isDual ? `
-        <div class="flex-1 space-y-1">
-          <div class="flex justify-between text-[11px] text-stone-600 font-medium">
-            <span>${p.elements[1].label} ${isEn ? 'True' : '참값'}</span>
-            <span class="text-stone-400 font-mono text-[10px]">${u2}</span>
-          </div>
-          <input type="number" step="0.001" id="ref-std${idx}-v2" value="${valV2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
-        </div>` : ''}
-      </div>
-    `;
-    stdContainer.appendChild(div);
-  });
-
-  const snapQc = snapshot && snapshot.qcStd;
-  const qcName = (snapQc && snapQc.name) ? snapQc.name : (p.qcStd ? p.qcStd.name : 'QC');
-  let qcV1 = (snapQc && snapQc.v1 !== null && !isNaN(snapQc.v1)) ? snapQc.v1 : (p.qcStd ? p.qcStd.v1 : 0);
-  let qcV2 = (snapQc && snapQc.v2 !== null && !isNaN(snapQc.v2)) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
-  if (!snapQc) {
-    if (currentMode === 'CO' && oxygenScale === 'VSMOW') qcV2 = parseFloat(vpdbToVsmow(qcV2).toFixed(3));
-    if (currentMode === 'WATER_O' && oxygenScale === 'VPDB') qcV1 = parseFloat(vsmowToVpdb(qcV1).toFixed(3));
-  }
-
-  const qcDiv = document.createElement('div');
-  qcDiv.className = 'bg-[#fcfdfc] p-4 border border-emerald-300 flex flex-col space-y-3 shadow-sm';
-  qcDiv.innerHTML = `
-    <div class="flex items-center justify-between border-b border-emerald-200 pb-1.5">
-      <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> ${isEn ? 'QC Check Standard' : '품질관리(QC) 검증 표준'}
-      </span>
-      <input type="text" id="qc-std-name" value="${qcName}" class="w-28 text-xs font-bold text-emerald-950 border-b border-emerald-400 focus:border-emerald-800 outline-none text-right font-mono bg-transparent">
-    </div>
-    <div class="flex items-center gap-4">
-      <div class="flex-1 space-y-1">
-        <div class="flex justify-between text-[11px] text-stone-600 font-medium">
-          <span>${p.elements[0].label} ${isEn ? 'Accepted' : '공인값'}</span>
-          <span class="text-stone-400 font-mono text-[10px]">${u1}</span>
-        </div>
-        <input type="number" step="0.001" id="qc-std-v1" value="${qcV1}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
-      </div>
-      ${isDual ? `
-      <div class="flex-1 space-y-1">
-        <div class="flex justify-between text-[11px] text-stone-600 font-medium">
-          <span>${p.elements[1].label} ${isEn ? 'Accepted' : '공인값'}</span>
-          <span class="text-stone-400 font-mono text-[10px]">${u2}</span>
-        </div>
-        <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
-      </div>` : ''}
-    </div>
-  `;
-  stdContainer.appendChild(qcDiv);
-
-  syncDriftAnchorDropdown();
-  renderPresetDropdown();
-
-  stdContainer.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', () => {
-      saveCurrentModeStandards();
-      syncDriftAnchorDropdown();
-    });
-  });
-
-  stdContainer.querySelectorAll('[data-remove-anchor]').forEach(btn => {
-    btn.addEventListener('click', (e) => removeAnchorAtIndex(parseInt(e.currentTarget.getAttribute('data-remove-anchor'))));
-  });
-
-  document.getElementById('drift-anchor-select').addEventListener('change', saveCurrentModeStandards);
-
-  // Grid Header
-  const gHead = document.getElementById('grid-head');
-  if (isDual) {
-    gHead.innerHTML = `
-      <tr>
-        <th class="w-9 px-1.5 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
-        <th class="w-9 px-1 py-2 text-center text-stone-700 border-r border-[#d1cfc7] font-mono">Use</th>
-        <th class="px-2.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준 ID'}</th>
-        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[0].label}</th>` : ''}
-        <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-2 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
-        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[1].label}</th>` : ''}
-        <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-        <th class="px-2 py-2 text-stone-900">1σ SD</th>
-      </tr>
-    `;
-  } else {
-    gHead.innerHTML = `
-      <tr>
-        <th class="w-10 px-2 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
-        <th class="w-10 px-1.5 py-2 text-center text-stone-700 border-r border-[#d1cfc7] font-mono">Use</th>
-        <th class="px-3.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준물질 ID'}</th>
-        ${areaOn ? `<th class="px-3 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area (Vs/mV)</th>` : ''}
-        <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-3 py-2 text-stone-900">1σ SD</th>
-      </tr>
-    `;
-  }
-
-  // Regression Cards
-  const pContainer = document.getElementById('param-cards-container');
-  const cardHtml = (elem, idx, unitLabel) => `
-    <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
-      <div class="flex justify-between items-baseline">
-        <span class="text-xs font-mono font-bold uppercase tracking-wider text-stone-600 block">${elem.label} ${isEn ? 'Geostat Model' : '지화학 모델 통계'}</span>
-        <span class="text-[10px] font-mono text-stone-400">${unitLabel}</span>
-      </div>
-      <div class="space-y-1.5 text-xs font-data">
-        <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope (a)' : '기울기 (a)'}</span> <strong id="p${idx}-slope" class="text-stone-900 font-semibold">-</strong></div>
-        <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Intercept (b)' : '절편 (b)'}</span> <strong id="p${idx}-intercept" class="text-stone-900 font-semibold">-</strong></div>
-        <div class="flex justify-between border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">${isEn ? 'Slope SE (1σ)' : '기울기 표준오차'}</span> <span id="p${idx}-se" class="text-stone-700 font-medium">-</span></div>
-        <div class="flex justify-between items-center border-b border-stone-100 pb-1"><span class="text-stone-500 font-sans">MSWD (Reduced χ²)</span> <strong id="p${idx}-mswd" class="text-cyan-900 font-bold">-</strong></div>
-        <div class="flex justify-between pt-0.5"><span class="text-stone-500 font-sans">${isEn ? 'Weighted R²' : '가중 결정계수 R²'}</span> <strong id="p${idx}-r2" class="text-emerald-800 font-bold">-</strong></div>
-      </div>
-    </div>
-  `;
-
-  const diagTitle = (areaMode === 'linearity' || areaMode === 'blank_lin') ? 'Size Linearity Diagnostics' : 'Drift Diagnostics';
-  if (isDual) {
-    pContainer.className = "grid grid-cols-2 gap-4";
-    pContainer.innerHTML = cardHtml(p.elements[0], 1, u1) + cardHtml(p.elements[1], 2, u2);
-    document.getElementById('plot-2-box').style.display = 'block';
-    document.getElementById('plot-drift-box-2').style.display = 'block';
-    document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} ${diagTitle}`;
-    document.getElementById('plot-drift-2-tag').innerText = `Figure 4 · ${p.elements[1].label} ${diagTitle}`;
-  } else {
-    pContainer.className = "grid grid-cols-1 gap-4";
-    pContainer.innerHTML = cardHtml(p.elements[0], 1, u1);
-    document.getElementById('plot-2-box').style.display = 'none';
-    document.getElementById('plot-drift-box-2').style.display = 'none';
-    document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} ${diagTitle}`;
-  }
-
-  const rHead = document.getElementById('result-head');
-  if (isDual) {
-    rHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${u1})</th>
-        <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${u2})</th>
-        <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
-      </tr>
-    `;
-  } else {
-    rHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${u1})</th>
-        <th class="px-4 py-2.5 text-stone-600">± 1σ</th>
-      </tr>
-    `;
-  }
-
-  const gSummaryHead = document.getElementById('grouped-head');
-  if (isDual) {
-    gSummaryHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
-        <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">Rep. 1σ SD</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[1].label} (${u2})</th>
-        <th class="px-3.5 py-2.5 text-stone-700">Rep. 1σ SD</th>
-      </tr>
-    `;
-  } else {
-    gSummaryHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
-        <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
-        <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
-      </tr>
-    `;
-  }
-
-  const numCols = getNumDataCols();
-  if (gridData.length === 0) {
-    gridData = Array.from({ length: 30 }, () => Array(numCols).fill(''));
-    excludedRows = Array(30).fill(false);
-  }
-  renderGrid();
-  resetOutputs();
-}
-
-function switchTab(target) {
-  currentTab = target;
-  const btnSeq = document.getElementById('tab-btn-sequence');
-  const btnGrp = document.getElementById('tab-btn-grouped');
-  const contentSeq = document.getElementById('tab-content-sequence');
-  const contentGrp = document.getElementById('tab-content-grouped');
-  if (target === 'sequence') {
-    btnSeq.className = 'px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer';
-    btnGrp.className = 'px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer';
-    contentSeq.classList.remove('hidden');
-    contentGrp.classList.add('hidden');
-  } else {
-    btnGrp.className = 'px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer';
-    btnSeq.className = 'px-4 py-2 font-semibold text-stone-500 hover:text-stone-900 border-t-2 border-transparent transition cursor-pointer';
-    contentGrp.classList.remove('hidden');
-    contentSeq.classList.add('hidden');
-  }
-}
-
-document.getElementById('tab-btn-sequence').addEventListener('click', () => switchTab('sequence'));
-document.getElementById('tab-btn-grouped').addEventListener('click', () => switchTab('grouped'));
-
-document.getElementById('oxygen-scale-select').addEventListener('change', (e) => {
-  const newScale = e.target.value;
-  if (newScale === oxygenScale || (currentMode !== "CO" && currentMode !== "WATER_O")) return;
-  const targetProp = currentMode === "CO" ? "v2" : "v1";
-
-  for (let idx = 0; idx < currentAnchorCount; idx++) {
-    const elV = document.getElementById(`ref-std${idx}-${targetProp}`);
-    if (elV && elV.value !== '') {
-      const curVal = parseFloat(elV.value);
-      const converted = newScale === 'VSMOW' ? vpdbToVsmow(curVal) : vsmowToVpdb(curVal);
-      elV.value = converted.toFixed(3);
-    }
-  }
-  const elQcV = document.getElementById(`qc-std-${targetProp}`);
-  if (elQcV && elQcV.value !== '') {
-    const curVal = parseFloat(elQcV.value);
-    const converted = newScale === 'VSMOW' ? vpdbToVsmow(curVal) : vsmowToVpdb(curVal);
-    elQcV.value = converted.toFixed(3);
-  }
-  oxygenScale = newScale;
-  saveCurrentModeStandards();
-  updateLayoutForMode(false);
-  if (hasCalibratedOnce) runCalibration();
-});
-
-function setLanguage(lang) {
-  currentLang = lang;
-  localStorage.setItem('isocalib_lang', lang);
-  const btnKo = document.getElementById('lang-ko');
-  const btnEn = document.getElementById('lang-en');
-  if (lang === 'ko') {
-    btnKo.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
-    btnEn.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
-  } else {
-    btnEn.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
-    btnKo.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
-  }
-
-  const dict = TRANSLATIONS[lang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key]) el.innerHTML = dict[key];
-  });
-
-  document.getElementById('about-p1').innerHTML = dict.about_p1;
-  document.getElementById('about-p2').innerHTML = dict.about_p2;
-  document.getElementById('about-p3').innerHTML = dict.about_p3;
-  document.getElementById('about-protocols-title').innerText = dict.about_protocols_title;
-
-  const listEl = document.getElementById('about-protocols-list');
-  if (lang === 'ko') {
-    listEl.innerHTML = `
-      <li>EA-IRMS 피크 면적 선형성(Size Linearity) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
-      <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
-      <li>2점(Two-Point) 및 3점 이상 다중 앵커(Multi-Point) 가중 선형 회귀(WLS) 동적 확장</li>
-      <li>수소(δD), 탄소(δ¹³C), 질소(δ¹⁵N), 산소(δ¹⁸O) 원소별 스마트 QC 진단 엔진</li>
-      <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
-    `;
-  } else {
-    listEl.innerHTML = `
-      <li>EA-IRMS Peak Area size-linearity normalization & mass-balance Tin Capsule Blank subtraction</li>
-      <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
-      <li>Dynamic 2-point and 3+ multi-point Weighted Least Squares (WLS) anchor calibration</li>
-      <li>Element-specific smart QC diagnostic engine adapting to δD, δ¹³C, δ¹⁵N, and δ¹⁸O tolerances</li>
-      <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
-    `;
-  }
-
-  renderChangelog();
-  saveCurrentModeStandards();
-  updateLayoutForMode(false);
-  switchTab(currentTab);
-  if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise();
-}
-
-document.getElementById('lang-ko').addEventListener('click', () => setLanguage('ko'));
-document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
-
-// Modals
-const quickstartModal = document.getElementById('quickstart-modal');
-const aboutModal = document.getElementById('about-modal');
-const changelogModal = document.getElementById('changelog-modal');
-
-document.getElementById('btn-open-quickstart').addEventListener('click', () => { closeMoreDropdown(); quickstartModal.classList.remove('hidden'); });
-document.getElementById('btn-close-quickstart').addEventListener('click', () => quickstartModal.classList.add('hidden'));
-document.getElementById('btn-quickstart-close-bottom').addEventListener('click', () => quickstartModal.classList.add('hidden'));
-
-document.getElementById('btn-open-about').addEventListener('click', () => { closeMoreDropdown(); aboutModal.classList.remove('hidden'); });
-document.getElementById('btn-close-about').addEventListener('click', () => aboutModal.classList.add('hidden'));
-document.getElementById('btn-modal-close-bottom').addEventListener('click', () => aboutModal.classList.add('hidden'));
-
-document.getElementById('btn-open-changelog').addEventListener('click', () => { closeMoreDropdown(); renderChangelog(); changelogModal.classList.remove('hidden'); });
-document.getElementById('btn-close-changelog').addEventListener('click', () => changelogModal.classList.add('hidden'));
-document.getElementById('btn-changelog-close-bottom').addEventListener('click', () => changelogModal.classList.add('hidden'));
-
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    closeMoreDropdown();
-    quickstartModal.classList.add('hidden');
-    aboutModal.classList.add('hidden');
-    changelogModal.classList.add('hidden');
-  }
-});
-
-function resetOutputs() {
-  const isEn = currentLang === 'en';
-  const waitMsg = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Awaiting data computation...' : '데이터 계산 대기 중...'}</span>`;
-  document.getElementById('plot-1').innerHTML = waitMsg;
-  document.getElementById('plot-2').innerHTML = waitMsg;
-  document.getElementById('plot-drift-1').innerHTML = waitMsg;
-  document.getElementById('plot-drift-2').innerHTML = waitMsg;
-  document.getElementById('result-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
-  document.getElementById('grouped-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].grouped_empty}</td></tr>`;
-  document.getElementById('qc-summary-banner').classList.add('hidden');
-  groupedSummaryData = [];
-  sequenceExportData = [];
-  lastQcSummaryReport = null;
-  hasCalibratedOnce = false;
-}
-
-function renderGrid() {
-  const gridBody = document.getElementById('grid-body');
-  gridBody.innerHTML = '';
-  const numCols = getNumDataCols();
-
-  while (excludedRows.length < gridData.length) excludedRows.push(false);
-
-  gridData.forEach((row, rIdx) => {
-    const isExcl = !!excludedRows[rIdx];
-    const tr = document.createElement('tr');
-    tr.className = `hover:bg-stone-50/60 transition-colors ${isExcl ? 'row-excluded' : ''}`;
-    tr.dataset.r = rIdx;
-
-    const tdIdx = document.createElement('td');
-    tdIdx.className = 'row-header px-1.5 py-1.5 text-center text-stone-400 border-r border-[#e5e3dc] select-none bg-[#fbfaf8] text-xs font-mono font-medium cursor-pointer hover:bg-stone-200';
-    tdIdx.innerText = String(rIdx + 1).padStart(2, '0');
-    tdIdx.dataset.r = rIdx;
-
-    tdIdx.addEventListener('mousedown', (e) => {
-      if (e.button !== 0 && e.button !== 2) return;
-      closeEditingCell();
-      isMouseDown = true;
-      isSelectingRows = true;
-      dragStart = { r: rIdx, c: 0 };
-      dragEnd = { r: rIdx, c: numCols - 1 };
-      updateSelectionRange();
-      syncPasteTarget();
-      e.preventDefault();
-    });
-    tr.appendChild(tdIdx);
-
-    const tdUse = document.createElement('td');
-    tdUse.className = 'px-1 py-1.5 text-center border-r border-[#e5e3dc] bg-[#fbfaf8] select-none';
-    const chk = document.createElement('input');
-    chk.type = 'checkbox';
-    chk.checked = !isExcl;
-    chk.className = 'w-3.5 h-3.5 accent-stone-900 cursor-pointer rounded-none align-middle';
-    chk.addEventListener('change', (e) => {
-      excludedRows[rIdx] = !e.target.checked;
-      tr.classList.toggle('row-excluded', excludedRows[rIdx]);
-      updateRowCountLabel();
-      if (hasCalibratedOnce) runCalibration();
-    });
-    tdUse.appendChild(chk);
-    tr.appendChild(tdUse);
-
-    for (let cIdx = 0; cIdx < numCols; cIdx++) {
-      const val = row[cIdx];
-      const td = document.createElement('td');
-      td.className = 'px-2.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data';
-      td.dataset.r = rIdx;
-      td.dataset.c = cIdx;
-      td.innerText = val !== null && val !== undefined ? val : '';
-
-      td.addEventListener('mousedown', (e) => {
-        if (e.button !== 0 && e.button !== 2) return;
-        if (td === activeEditingCell) return;
-        closeEditingCell();
-        isMouseDown = true;
-        isSelectingRows = false;
-        dragStart = { r: rIdx, c: cIdx };
-        dragEnd = { r: rIdx, c: cIdx };
-        updateSelectionRange();
-        syncPasteTarget();
-      });
-
-      td.addEventListener('dblclick', () => openEditingCell(td));
-      tr.appendChild(td);
-    }
-    gridBody.appendChild(tr);
-  });
-
-  updateRowCountLabel();
-  applySelectionVisuals();
-}
-
-function updateRowCountLabel() {
-  const exCount = excludedRows.filter(Boolean).length;
-  const labelEl = document.getElementById('row-count');
-  if (!labelEl) return;
-  labelEl.innerText = exCount > 0 ? `${gridData.length} rows (${exCount} excluded)` : `${gridData.length} samples loaded`;
-}
-
-function syncPasteTarget() {
-  const active = document.activeElement;
-  if (active && (active.tagName === 'SELECT' || active.tagName === 'INPUT' || active.tagName === 'BUTTON')) return;
-  const pt = document.getElementById('paste-target');
-  pt.value = '';
-  pt.focus({ preventScroll: true });
-}
-
-function openEditingCell(td) {
-  activeEditingCell = td;
-  td.contentEditable = 'true';
-  td.classList.add('cell-editing');
-  td.focus();
-  const range = document.createRange();
-  range.selectNodeContents(td);
-  range.collapse(false);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-  const blurHandler = () => {
-    closeEditingCell();
-    td.removeEventListener('blur', blurHandler);
-  };
-  td.addEventListener('blur', blurHandler);
-}
-
-function closeEditingCell() {
-  if (!activeEditingCell) return;
-  activeEditingCell.contentEditable = 'false';
-  activeEditingCell.classList.remove('cell-editing');
-  const r = parseInt(activeEditingCell.dataset.r);
-  const c = parseInt(activeEditingCell.dataset.c);
-  const rawText = activeEditingCell.innerText.trim();
-  gridData[r][c] = c === 0 ? rawText : (rawText === '' ? '' : (isNaN(Number(rawText)) ? rawText : Number(rawText)));
-  activeEditingCell = null;
-}
-
-window.addEventListener('mousemove', (e) => {
-  if (!isMouseDown) return;
-  const target = document.elementFromPoint(e.clientX, e.clientY);
-  if (!target) return;
-  const numCols = getNumDataCols();
-  if (isSelectingRows) {
-    const rowEl = target.closest('tr');
-    if (rowEl && rowEl.dataset.r !== undefined) {
-      dragEnd = { r: parseInt(rowEl.dataset.r), c: numCols - 1 };
-      updateSelectionRange();
-    }
-  } else {
-    const cellEl = target.closest('.grid-cell');
-    if (cellEl && cellEl.dataset.r !== undefined && cellEl.dataset.c !== undefined) {
-      dragEnd = { r: parseInt(cellEl.dataset.r), c: parseInt(cellEl.dataset.c) };
-      updateSelectionRange();
-    }
-  }
-});
-
-window.addEventListener('mouseup', (e) => {
-  isMouseDown = false;
-  const t = e.target;
-  if (t && (t.tagName === 'SELECT' || t.tagName === 'INPUT' || t.tagName === 'BUTTON' || t.closest('select') || t.closest('input'))) return;
-  if (!activeEditingCell) syncPasteTarget();
-});
-
-function updateSelectionRange() {
-  selectedCellRange = {
-    minR: Math.min(dragStart.r, dragEnd.r),
-    maxR: Math.max(dragStart.r, dragEnd.r),
-    minC: Math.min(dragStart.c, dragEnd.c),
-    maxC: Math.max(dragStart.c, dragEnd.c)
-  };
-  applySelectionVisuals();
-}
-
-function applySelectionVisuals() {
-  document.querySelectorAll('.grid-cell').forEach(cell => cell.classList.remove('cell-selected', 'cell-primary'));
-  document.querySelectorAll('.row-header').forEach(rh => rh.classList.remove('row-selected'));
-  if (!selectedCellRange) return;
-  const { minR, maxR, minC, maxC } = selectedCellRange;
-
-  document.querySelectorAll('.row-header').forEach(rh => {
-    const r = parseInt(rh.dataset.r);
-    if (r >= minR && r <= maxR) rh.classList.add('row-selected');
-  });
-
-  document.querySelectorAll('.grid-cell').forEach(cell => {
-    const r = parseInt(cell.dataset.r);
-    const c = parseInt(cell.dataset.c);
-    if (r >= minR && r <= maxR && c >= minC && c <= maxC) cell.classList.add('cell-selected');
-    if (r === dragStart.r && c === dragStart.c) cell.classList.add('cell-primary');
-  });
-}
-
-window.addEventListener('paste', (e) => {
-  const active = document.activeElement;
-  if (active && (active.tagName === 'INPUT' || (active.tagName === 'TEXTAREA' && active.id !== 'paste-target'))) return;
-  if (activeEditingCell) return;
-  e.preventDefault();
-  const clipboardText = (e.clipboardData || window.clipboardData).getData('text');
-  if (!clipboardText) return;
-  handlePaste(clipboardText, selectedCellRange ? selectedCellRange.minR : 0, selectedCellRange ? selectedCellRange.minC : 0);
-});
-
-function handlePaste(text, startR, startC) {
-  const numCols = getNumDataCols();
-  const rows = text.trim().split(/\r\n|\n|\r/);
-  while (gridData.length < startR + rows.length) {
-    gridData.push(Array(numCols).fill(''));
-    excludedRows.push(false);
-  }
-  rows.forEach((rText, i) => {
-    const trIdx = startR + i;
-    if (!gridData[trIdx]) {
-      gridData[trIdx] = Array(numCols).fill('');
-      excludedRows[trIdx] = false;
-    }
-    const cols = rText.split('\t');
-    cols.forEach((cText, j) => {
-      const tcIdx = startC + j;
-      if (tcIdx < numCols) {
-        const v = cText.trim();
-        gridData[trIdx][tcIdx] = tcIdx === 0 ? v : (v === '' ? '' : (isNaN(Number(v)) ? v : Number(v)));
-      }
-    });
-  });
-
-  dragStart = { r: startR, c: startC };
-  dragEnd = {
-    r: Math.min(startR + rows.length - 1, gridData.length - 1),
-    c: Math.min(startC + rows[0].split('\t').length - 1, numCols - 1)
-  };
-  updateSelectionRange();
-  renderGrid();
-  syncPasteTarget();
-}
-
-window.addEventListener('keydown', (e) => {
-  const active = document.activeElement;
-  if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT')) return;
-  if (activeEditingCell) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const nextR = Math.min(parseInt(activeEditingCell.dataset.r) + 1, gridData.length - 1);
-      const c = parseInt(activeEditingCell.dataset.c);
-      closeEditingCell();
-      dragStart = { r: nextR, c };
-      dragEnd = { r: nextR, c };
-      updateSelectionRange();
-      syncPasteTarget();
-    }
-    return;
-  }
-  if (!selectedCellRange) return;
-  const { minR, maxR, minC, maxC } = selectedCellRange;
-  const numCols = getNumDataCols();
-
-  if (e.key === 'Delete' || e.key === 'Backspace') {
-    e.preventDefault();
-    for (let r = minR; r <= maxR; r++) {
-      for (let c = minC; c <= maxC; c++) gridData[r][c] = '';
-    }
-    renderGrid();
-    syncPasteTarget();
-    return;
-  }
-
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
-    e.preventDefault();
-    let curR = dragStart.r, curC = dragStart.c;
-    if (e.key === 'ArrowUp') curR = Math.max(0, curR - 1);
-    else if (e.key === 'ArrowDown') curR = Math.min(gridData.length - 1, curR + 1);
-    else if (e.key === 'ArrowLeft') curC = Math.max(0, curC - 1);
-    else if (e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)) curC = Math.min(numCols - 1, curC + 1);
-    else if (e.key === 'Tab' && e.shiftKey) curC = Math.max(0, curC - 1);
-    dragStart = { r: curR, c: curC };
-    dragEnd = { r: curR, c: curC };
-    updateSelectionRange();
-    syncPasteTarget();
-    return;
-  }
-
-  if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-    const targetTd = document.querySelector(`.grid-cell[data-r="${dragStart.r}"][data-c="${dragStart.c}"]`);
-    if (targetTd) {
-      targetTd.innerText = '';
-      openEditingCell(targetTd);
-    }
-  }
-});
-
-function deleteSelectedRows() {
-  if (!selectedCellRange) return;
-  const { minR, maxR } = selectedCellRange;
-  gridData.splice(minR, maxR - minR + 1);
-  excludedRows.splice(minR, maxR - minR + 1);
-  const numCols = getNumDataCols();
-  while (gridData.length < 10) {
-    gridData.push(Array(numCols).fill(''));
-    excludedRows.push(false);
-  }
-  dragStart = { r: Math.min(minR, gridData.length - 1), c: 0 };
-  dragEnd = { r: dragStart.r, c: numCols - 1 };
-  updateSelectionRange();
-  renderGrid();
-  syncPasteTarget();
-}
-
-const contextMenu = document.getElementById('grid-context-menu');
-document.getElementById('interactive-grid').addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-  if (!selectedCellRange) return;
-  contextMenu.style.left = `${e.clientX}px`;
-  contextMenu.style.top = `${e.clientY}px`;
-  contextMenu.classList.remove('hidden');
-});
-window.addEventListener('click', () => contextMenu.classList.add('hidden'));
-
-document.getElementById('ctx-toggle-exclude').addEventListener('click', () => {
-  if (!selectedCellRange) return;
-  const { minR, maxR } = selectedCellRange;
-  const shouldExclude = !excludedRows[minR];
-  for (let r = minR; r <= maxR; r++) excludedRows[r] = shouldExclude;
-  renderGrid();
-  if (hasCalibratedOnce) runCalibration();
-  contextMenu.classList.add('hidden');
-});
-document.getElementById('ctx-del-rows').addEventListener('click', () => { deleteSelectedRows(); contextMenu.classList.add('hidden'); });
-document.getElementById('ctx-clear-values').addEventListener('click', () => {
-  if (!selectedCellRange) return;
-  const { minR, maxR, minC, maxC } = selectedCellRange;
-  for (let r = minR; r <= maxR; r++) for (let c = minC; c <= maxC; c++) gridData[r][c] = '';
-  renderGrid();
-  syncPasteTarget();
-  contextMenu.classList.add('hidden');
-});
-document.getElementById('ctx-insert-below').addEventListener('click', () => {
-  if (!selectedCellRange) return;
-  const insertAt = selectedCellRange.maxR + 1;
-  gridData.splice(insertAt, 0, Array(getNumDataCols()).fill(''));
-  excludedRows.splice(insertAt, 0, false);
-  renderGrid();
-  syncPasteTarget();
-  contextMenu.classList.add('hidden');
-});
-document.getElementById('btn-delete-selected').addEventListener('click', deleteSelectedRows);
-
-// -------------------------------------------------------------
-// Statistical Solvers (WLS, OLS & Interpolated Drift)
-// -------------------------------------------------------------
-function calcWLS(xArr, yArr, sdArr) {
-  const n = xArr.length;
-  if (n < 2) return { slope: 0, intercept: 0, r2: 0, seSlope: 0, seIntercept: 0, mswd: 0, chi2: 0 };
-  let sumW = 0, sumWX = 0, sumWY = 0, sumWXY = 0, sumWX2 = 0;
-  for (let i = 0; i < n; i++) {
-    const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03;
-    const w = 1 / (sd * sd);
-    sumW += w; sumWX += w * xArr[i]; sumWY += w * yArr[i];
-    sumWXY += w * xArr[i] * yArr[i]; sumWX2 += w * xArr[i] * xArr[i];
-  }
-  const delta = sumW * sumWX2 - sumWX * sumWX;
-  const slope = (sumW * sumWXY - sumWX * sumWY) / delta;
-  const intercept = (sumWX2 * sumWY - sumWX * sumWXY) / delta;
-
-  let chi2 = 0;
-  for (let i = 0; i < n; i++) {
-    const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03;
-    const w = 1 / (sd * sd);
-    const diff = yArr[i] - (slope * xArr[i] + intercept);
-    chi2 += w * diff * diff;
-  }
-  const df = n - 2;
-  const mswd = (df > 0) ? (chi2 / df) : 1;
-  const s2 = (df > 0) ? (chi2 / df) : 1;
-  const seSlope = Math.sqrt(s2 * (sumW / delta));
-  const seIntercept = Math.sqrt(s2 * (sumWX2 / delta));
-
-  const meanY = sumWY / sumW;
-  let ssTot = 0, ssRes = 0;
-  for (let i = 0; i < n; i++) {
-    const sd = (sdArr[i] && sdArr[i] > 0) ? sdArr[i] : 0.03;
-    const w = 1 / (sd * sd);
-    ssTot += w * Math.pow(yArr[i] - meanY, 2);
-    ssRes += w * Math.pow(yArr[i] - (slope * xArr[i] + intercept), 2);
-  }
-  const r2 = ssTot !== 0 ? Math.max(0, 1 - (ssRes / ssTot)) : 0;
-  return { slope, intercept, r2, seSlope, seIntercept, mswd, chi2 };
-}
-
-function calcOLS(xArr, yArr) {
-  const n = xArr.length;
-  if (n < 2) return { slope: 0, intercept: yArr[0] || 0 };
-  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-  for (let i = 0; i < n; i++) {
-    sumX += xArr[i]; sumY += yArr[i]; sumXY += xArr[i] * yArr[i]; sumX2 += xArr[i] * xArr[i];
-  }
-  const denom = (n * sumX2 - sumX * sumX);
-  if (Math.abs(denom) < 1e-12) return { slope: 0, intercept: sumY / n };
-  const slope = (n * sumXY - sumX * sumY) / denom;
-  const intercept = (sumY - slope * sumX) / n;
-  return { slope, intercept };
-}
-
-function getInterpolatedDriftOffset(rIdx, anchorRuns) {
-  if (!anchorRuns || anchorRuns.length === 0) return 0;
-  if (anchorRuns.length === 1 || rIdx <= anchorRuns[0].idx) return anchorRuns[0].diff;
-  if (rIdx >= anchorRuns[anchorRuns.length - 1].idx) return anchorRuns[anchorRuns.length - 1].diff;
-  for (let i = 0; i < anchorRuns.length - 1; i++) {
-    const p1 = anchorRuns[i], p2 = anchorRuns[i + 1];
-    if (rIdx >= p1.idx && rIdx <= p2.idx) {
-      return p1.diff + ((rIdx - p1.idx) / (p2.idx - p1.idx)) * (p2.diff - p1.diff);
-    }
-  }
-  return 0;
-}
-
-function formatMswdWithStatus(mswd, isEn) {
-  if (mswd > 2.5) {
-    return `<span class="text-amber-700 font-bold">${mswd.toFixed(3)}</span> <span class="px-1.5 py-0.5 text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-sans font-semibold ml-1">${isEn ? 'High Scatter' : '분산 큼'}</span>`;
-  }
-  return `<span class="text-cyan-900 font-bold">${mswd.toFixed(3)}</span> <span class="px-1.5 py-0.5 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 font-sans font-semibold ml-1">${isEn ? 'Optimal' : '양호'}</span>`;
-}
-
-// Helper to parse row columns regardless of whether Area mode is active
-function extractRowFields(row, isDual, areaOn) {
-  const id = (row[0] || '').toString().trim();
-  if (areaOn) {
-    return {
-      id,
-      area1: parseFloat(row[1]),
-      raw1: parseFloat(row[2]),
-      sd1: parseFloat(row[3]) || 0.03,
-      area2: isDual ? parseFloat(row[4]) : NaN,
-      raw2: isDual ? parseFloat(row[5]) : NaN,
-      sd2: isDual ? (parseFloat(row[6]) || 0.05) : 0
-    };
-  }
-  return {
-    id,
-    area1: NaN,
-    raw1: parseFloat(row[1]),
-    sd1: parseFloat(row[2]) || 0.03,
-    area2: NaN,
-    raw2: isDual ? parseFloat(row[3]) : NaN,
-    sd2: isDual ? (parseFloat(row[4]) || 0.05) : 0
-  };
-}
-
-// -------------------------------------------------------------
-// Main Calibration Pipeline (Blank -> Area Linearity -> Drift -> WLS)
-// -------------------------------------------------------------
-function runCalibration() {
-  closeEditingCell();
-  saveCurrentModeStandards();
-
-  const p = PRESETS[currentMode];
-  const isDual = p.elements.length === 2;
-  const isEn = currentLang === 'en';
-  const areaOn = isAreaActive();
-  const useBlank = (areaMode === 'blank' || areaMode === 'blank_lin');
-  const useLin = (areaMode === 'linearity' || areaMode === 'blank_lin');
-  const driftMode = document.getElementById('drift-mode').value;
-  const chosenDriftAnchorIdx = parseInt(document.getElementById('drift-anchor-select').value) || 0;
-  const u1 = getElementUnit(0);
-  const u2 = getElementUnit(1);
-
-  const refStds = [];
-  for (let idx = 0; idx < currentAnchorCount; idx++) {
-    const elName = document.getElementById(`ref-std${idx}-name`);
-    if (!elName) continue;
-    const nameInput = elName.value.trim();
-    refStds.push({
-      name: nameInput,
-      keyMatch: nameInput.toUpperCase().replace(/[^A-Z0-9]/g, ''),
-      v1: parseFloat(document.getElementById(`ref-std${idx}-v1`).value),
-      v2: isDual ? parseFloat(document.getElementById(`ref-std${idx}-v2`).value) : null
-    });
-  }
-
-  const qcNameInput = document.getElementById('qc-std-name').value.trim();
-  const qcStd = {
-    name: qcNameInput,
-    keyMatch: qcNameInput.toUpperCase().replace(/[^A-Z0-9]/g, ''),
-    v1: parseFloat(document.getElementById('qc-std-v1').value),
-    v2: isDual ? parseFloat(document.getElementById('qc-std-v2').value) : null
-  };
-
-  // Step A: Blank Averages (from active rows labeled BLANK / BLK / TIN)
-  let meanBlkA1 = 0, meanBlkD1 = 0, blkCount1 = 0;
-  let meanBlkA2 = 0, meanBlkD2 = 0, blkCount2 = 0;
-
-  if (useBlank) {
-    gridData.forEach((row, rIdx) => {
-      if (excludedRows[rIdx]) return;
-      const f = extractRowFields(row, isDual, areaOn);
-      if (isBlankRowId(f.id)) {
-        if (!isNaN(f.area1) && f.area1 > 0 && !isNaN(f.raw1)) {
-          meanBlkA1 += f.area1; meanBlkD1 += f.raw1; blkCount1++;
-        }
-        if (isDual && !isNaN(f.area2) && f.area2 > 0 && !isNaN(f.raw2)) {
-          meanBlkA2 += f.area2; meanBlkD2 += f.raw2; blkCount2++;
-        }
-      }
-    });
-    if (blkCount1 > 0) { meanBlkA1 /= blkCount1; meanBlkD1 /= blkCount1; }
-    if (blkCount2 > 0) { meanBlkA2 /= blkCount2; meanBlkD2 /= blkCount2; }
-  }
-
-  function applyBlankCorr(area, raw, isoIdx) {
-    if (!useBlank) return raw;
-    const bA = isoIdx === 1 ? meanBlkA1 : meanBlkA2;
-    const bD = isoIdx === 1 ? meanBlkD1 : meanBlkD2;
-    const bCnt = isoIdx === 1 ? blkCount1 : blkCount2;
-    if (bCnt > 0 && !isNaN(area) && area > bA * 1.05) {
-      return (area * raw - bA * bD) / (area - bA);
-    }
-    return raw;
-  }
-
-  // Step B: Size Linearity Slope (Area vs Blank-corrected Raw on Monitor Standard)
-  const monitorAnchor = refStds[chosenDriftAnchorIdx] || refStds[0];
-  const linMonitorPts = { a1: [], d1: [], a2: [], d2: [] };
-  let linSlope1 = 0, meanAnchorArea1 = 0;
-  let linSlope2 = 0, meanAnchorArea2 = 0;
-
-  gridData.forEach((row, rIdx) => {
-    if (excludedRows[rIdx]) return;
-    const f = extractRowFields(row, isDual, areaOn);
-    if (!f.id || isBlankRowId(f.id)) return;
-    const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (monitorAnchor && monitorAnchor.keyMatch && clean.includes(monitorAnchor.keyMatch)) {
-      if (!isNaN(f.area1) && !isNaN(f.raw1)) {
-        linMonitorPts.a1.push(f.area1);
-        linMonitorPts.d1.push(applyBlankCorr(f.area1, f.raw1, 1));
-      }
-      if (isDual && !isNaN(f.area2) && !isNaN(f.raw2)) {
-        linMonitorPts.a2.push(f.area2);
-        linMonitorPts.d2.push(applyBlankCorr(f.area2, f.raw2, 2));
-      }
-    }
-  });
-
-  if (useLin && linMonitorPts.a1.length >= 2) {
-    linSlope1 = calcOLS(linMonitorPts.a1, linMonitorPts.d1).slope;
-    meanAnchorArea1 = linMonitorPts.a1.reduce((a, b) => a + b, 0) / linMonitorPts.a1.length;
-  }
-  if (useLin && isDual && linMonitorPts.a2.length >= 2) {
-    linSlope2 = calcOLS(linMonitorPts.a2, linMonitorPts.d2).slope;
-    meanAnchorArea2 = linMonitorPts.a2.reduce((a, b) => a + b, 0) / linMonitorPts.a2.length;
-  }
-
-  function applyBlankAndLin(area, raw, isoIdx) {
-    let val = applyBlankCorr(area, raw, isoIdx);
-    if (useLin && !isNaN(area)) {
-      if (isoIdx === 1 && meanAnchorArea1 > 0) val -= linSlope1 * (area - meanAnchorArea1);
-      if (isoIdx === 2 && meanAnchorArea2 > 0) val -= linSlope2 * (area - meanAnchorArea2);
-    }
-    return val;
-  }
-
-  // Step C: Sequence Drift Model (after Blank + Linearity)
-  let driftSlope1 = 0, driftSlope2 = 0;
-  let monitorRuns1 = [], monitorRuns2 = [];
-  const rawMonitorRuns = { seq: [], v1: [], v2: [] };
-
-  gridData.forEach((row, rIdx) => {
-    if (excludedRows[rIdx]) return;
-    const f = extractRowFields(row, isDual, areaOn);
-    if (!f.id || isBlankRowId(f.id)) return;
-    const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (monitorAnchor && monitorAnchor.keyMatch && clean.includes(monitorAnchor.keyMatch)) {
-      if (!isNaN(f.raw1)) {
-        rawMonitorRuns.seq.push(rIdx + 1);
-        rawMonitorRuns.v1.push(applyBlankAndLin(f.area1, f.raw1, 1));
-        if (isDual && !isNaN(f.raw2)) {
-          rawMonitorRuns.v2.push(applyBlankAndLin(f.area2, f.raw2, 2));
-        }
-      }
-    }
-  });
-
-  if (driftMode === 'linear' && rawMonitorRuns.seq.length >= 2) {
-    driftSlope1 = calcOLS(rawMonitorRuns.seq, rawMonitorRuns.v1).slope;
-    if (isDual && rawMonitorRuns.v2.length >= 2) driftSlope2 = calcOLS(rawMonitorRuns.seq, rawMonitorRuns.v2).slope;
-  } else if (driftMode === 'piecewise') {
-    let base1 = null, base2 = null;
-    gridData.forEach((row, rIdx) => {
-      if (excludedRows[rIdx]) return;
-      const f = extractRowFields(row, isDual, areaOn);
-      if (!f.id || isBlankRowId(f.id)) return;
-      const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      if (monitorAnchor && monitorAnchor.keyMatch && clean.includes(monitorAnchor.keyMatch)) {
-        if (!isNaN(f.raw1)) {
-          const v1 = applyBlankAndLin(f.area1, f.raw1, 1);
-          if (base1 === null) base1 = v1;
-          monitorRuns1.push({ idx: rIdx, diff: v1 - base1 });
-          if (isDual && !isNaN(f.raw2)) {
-            const v2 = applyBlankAndLin(f.area2, f.raw2, 2);
-            if (base2 === null) base2 = v2;
-            monitorRuns2.push({ idx: rIdx, diff: v2 - base2 });
-          }
-        }
-      }
-    });
-  }
-
-  function getFullyPreprocessedRaw(rIdx, area, raw, isoIdx) {
-    let val = applyBlankAndLin(area, raw, isoIdx);
-    if (driftMode === 'linear') {
-      return isoIdx === 1 ? (val - driftSlope1 * rIdx) : (val - driftSlope2 * rIdx);
-    } else if (driftMode === 'piecewise') {
-      const offset = isoIdx === 1 ? getInterpolatedDriftOffset(rIdx, monitorRuns1) : getInterpolatedDriftOffset(rIdx, monitorRuns2);
-      return val - offset;
-    }
-    return val;
-  }
-
-  // Step D: Collect Anchor Standards for WLS Fit
-  const pts1 = { x: [], y: [], sd: [], names: [] };
-  const pts2 = { x: [], y: [], sd: [], names: [] };
-
-  gridData.forEach((row, rIdx) => {
-    if (excludedRows[rIdx]) return;
-    const f = extractRowFields(row, isDual, areaOn);
-    if (!f.id || isBlankRowId(f.id)) return;
-    const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-
-    refStds.forEach(std => {
-      if (std.keyMatch && clean.includes(std.keyMatch)) {
-        if (!isNaN(f.raw1) && !isNaN(std.v1)) {
-          const adj1 = getFullyPreprocessedRaw(rIdx, f.area1, f.raw1, 1);
-          pts1.x.push(adj1); pts1.y.push(std.v1); pts1.sd.push(f.sd1); pts1.names.push(f.id);
-        }
-        if (isDual && !isNaN(f.raw2) && !isNaN(std.v2)) {
-          const adj2 = getFullyPreprocessedRaw(rIdx, f.area2, f.raw2, 2);
-          pts2.x.push(adj2); pts2.y.push(std.v2); pts2.sd.push(f.sd2); pts2.names.push(f.id);
-        }
-      }
-    });
-  });
-
-  if (pts1.x.length < 2) {
-    alert(isEn ? "At least 2 active anchor standard runs are required." : "최소 2개 이상의 활성화된 앵커 표준물질 데이터가 필요합니다.");
-    return;
-  }
-
-  hasCalibratedOnce = true;
-
-  const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
-  document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
-  document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
-  document.getElementById('p1-se').innerText = `± ${reg1.seSlope.toFixed(6)}`;
-  document.getElementById('p1-mswd').innerHTML = formatMswdWithStatus(reg1.mswd, isEn);
-  document.getElementById('p1-r2').innerText = reg1.r2.toFixed(5);
-
-  drawPlot('plot-1', `${p.elements[0].label} Calibration Fit`, pts1, reg1, `Corrected Raw ${p.elements[0].label} (‰)`, `True ${p.elements[0].label} (${u1})`);
-
-  let reg2 = null;
-  if (isDual) {
-    reg2 = calcWLS(pts2.x, pts2.y, pts2.sd);
-    document.getElementById('p2-slope').innerText = reg2.slope.toFixed(6);
-    document.getElementById('p2-intercept').innerText = reg2.intercept.toFixed(6);
-    document.getElementById('p2-se').innerText = `± ${reg2.seSlope.toFixed(6)}`;
-    document.getElementById('p2-mswd').innerHTML = formatMswdWithStatus(reg2.mswd, isEn);
-    document.getElementById('p2-r2').innerText = reg2.r2.toFixed(5);
-    drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Corrected Raw ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${u2})`);
-  }
-
-  // Diagnostic Plots (Figure 3 & 4: Size Linearity if active, else Time Drift)
-  if (useLin && linMonitorPts.a1.length >= 2) {
-    drawLinearityPlot('plot-drift-1', linMonitorPts.a1, linMonitorPts.d1, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope1, meanAnchorArea1, p.elements[0].label);
-    if (isDual) drawLinearityPlot('plot-drift-2', linMonitorPts.a2, linMonitorPts.d2, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope2, meanAnchorArea2, p.elements[1].label);
-  } else {
-    drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
-    if (isDual) drawDriftPlot('plot-drift-2', rawMonitorRuns.seq, rawMonitorRuns.v2, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope2, monitorRuns2, gridData.length, p.elements[1].label);
-  }
-
-  // Step E: Compute All Rows & Populate Sequence Table
-  const resBody = document.getElementById('result-body');
-  resBody.innerHTML = '';
-  const qcResults = { cals1: [], cals2: [] };
-  const computedRows = [];
-  sequenceExportData = [];
-
-  gridData.forEach((row, rIdx) => {
-    const f = extractRowFields(row, isDual, areaOn);
-    if (!f.id) return;
-    const isExcl = !!excludedRows[rIdx];
-    const isBlk = isBlankRowId(f.id);
-    const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    const isAnchor = refStds.some(s => s.keyMatch && clean.includes(s.keyMatch));
-    const isQC = (qcStd.keyMatch && clean.includes(qcStd.keyMatch)) || (clean.includes('QC') && !isAnchor);
-
-    let cal1 = null, propSd1 = null;
-    if (!isBlk && !isNaN(f.raw1) && reg1.slope !== 0) {
-      const adjRaw1 = getFullyPreprocessedRaw(rIdx, f.area1, f.raw1, 1);
-      cal1 = adjRaw1 * reg1.slope + reg1.intercept;
-      propSd1 = Math.sqrt(Math.pow(reg1.slope * f.sd1, 2) + Math.pow(adjRaw1 * reg1.seSlope, 2) + Math.pow(reg1.seIntercept, 2));
-      if (isQC && !isExcl) qcResults.cals1.push(cal1);
-    }
-
-    let cal2 = null, propSd2 = null;
-    if (!isBlk && isDual && !isNaN(f.raw2) && reg2 && reg2.slope !== 0) {
-      const adjRaw2 = getFullyPreprocessedRaw(rIdx, f.area2, f.raw2, 2);
-      cal2 = adjRaw2 * reg2.slope + reg2.intercept;
-      propSd2 = Math.sqrt(Math.pow(reg2.slope * f.sd2, 2) + Math.pow(adjRaw2 * reg2.seSlope, 2) + Math.pow(reg2.seIntercept, 2));
-      if (isQC && !isExcl) qcResults.cals2.push(cal2);
-    }
-
-    computedRows.push({ rIdx, id: f.id, clean, isAnchor, isQC, isBlk, isExcl, raw1: f.raw1, sd1: f.sd1, cal1, propSd1, raw2: f.raw2, sd2: f.sd2, cal2, propSd2 });
-
-    sequenceExportData.push({
-      runNumber: rIdx + 1,
-      status: isExcl ? 'EXCLUDED' : (isBlk ? 'BLANK' : 'INCLUDED'),
-      id: f.id,
-      area1: (areaOn && !isNaN(f.area1)) ? f.area1 : null,
-      raw1: !isNaN(f.raw1) ? parseFloat(f.raw1.toFixed(3)) : null,
-      sd1: f.sd1 > 0 ? parseFloat(f.sd1.toFixed(3)) : null,
-      cal1: (!isExcl && !isBlk && cal1 !== null) ? parseFloat(cal1.toFixed(3)) : null,
-      propSd1: (!isExcl && !isBlk && propSd1 !== null) ? parseFloat(propSd1.toFixed(3)) : null,
-      area2: (areaOn && isDual && !isNaN(f.area2)) ? f.area2 : null,
-      raw2: (isDual && !isNaN(f.raw2)) ? parseFloat(f.raw2.toFixed(3)) : null,
-      sd2: (isDual && f.sd2 > 0) ? parseFloat(f.sd2.toFixed(3)) : null,
-      cal2: (!isExcl && !isBlk && isDual && cal2 !== null) ? parseFloat(cal2.toFixed(3)) : null,
-      propSd2: (!isExcl && !isBlk && isDual && propSd2 !== null) ? parseFloat(propSd2.toFixed(3)) : null
-    });
-
-    const tr = document.createElement('tr');
-    tr.className = isExcl ? 'bg-stone-100/80 text-stone-400 line-through' : (isAnchor || isBlk ? 'bg-[#fcfbf9] text-stone-500' : 'hover:bg-stone-50');
-    const idBadge = isExcl
-      ? `${f.id} <span class="no-underline inline-block ml-1 px-1 py-0.2 bg-stone-200 text-stone-600 font-mono text-[9px] uppercase">Excluded</span>`
-      : (isBlk ? `${f.id} <span class="inline-block ml-1 px-1 py-0.2 bg-sky-100 text-sky-800 font-mono text-[9px] uppercase">Blank</span>` : f.id);
-
-    if (isDual) {
-      tr.innerHTML = `
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw1) ? f.raw1.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw2) ? f.raw2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-        <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal2 !== null ? cal2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 text-stone-600 font-medium">${!isExcl && !isBlk && propSd2 !== null ? '±' + propSd2.toFixed(3) : '-'}</td>
-      `;
-    } else {
-      tr.innerHTML = `
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>
-        <td class="px-4 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw1) ? f.raw1.toFixed(3) : '-'}</td>
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-        <td class="px-4 py-2 text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
-      `;
-    }
-    resBody.appendChild(tr);
-  });
-
-  // Step F: Grouped Sample Summary
-  groupedSummaryData = [];
-  const groupedBody = document.getElementById('grouped-body');
-  groupedBody.innerHTML = '';
-  let currentGroup = null;
-
-  function finishGroup() {
-    if (!currentGroup || currentGroup.items.length === 0) return;
-    const n = currentGroup.items.length;
-    const c1List = currentGroup.items.map(x => x.cal1).filter(v => v !== null && !isNaN(v));
-    const c2List = currentGroup.items.map(x => x.cal2).filter(v => v !== null && !isNaN(v));
-    const mean1 = c1List.length > 0 ? (c1List.reduce((a, b) => a + b, 0) / c1List.length) : null;
-    const sd1 = c1List.length > 1 ? Math.sqrt(c1List.map(v => Math.pow(v - mean1, 2)).reduce((a, b) => a + b) / (c1List.length - 1)) : (c1List.length === 1 ? currentGroup.items[0].propSd1 : 0);
-    const mean2 = (isDual && c2List.length > 0) ? (c2List.reduce((a, b) => a + b, 0) / c2List.length) : null;
-    const sd2 = (isDual && c2List.length > 1) ? Math.sqrt(c2List.map(v => Math.pow(v - mean2, 2)).reduce((a, b) => a + b) / (c2List.length - 1)) : (isDual && c2List.length === 1 ? currentGroup.items[0].propSd2 : 0);
-
-    groupedSummaryData.push({
-      baseId: currentGroup.baseId, n,
-      mean1: mean1 !== null ? parseFloat(mean1.toFixed(3)) : null,
-      sd1: sd1 !== null ? parseFloat(sd1.toFixed(3)) : null,
-      mean2: mean2 !== null ? parseFloat(mean2.toFixed(3)) : null,
-      sd2: sd2 !== null ? parseFloat(sd2.toFixed(3)) : null
-    });
-    currentGroup = null;
-  }
-
-  computedRows.forEach(row => {
-    if (row.isAnchor || row.isQC || row.isBlk) { finishGroup(); return; }
-    if (row.isExcl) return;
-    const bId = extractBaseId(row.id);
-    if (!currentGroup) currentGroup = { baseId: bId, items: [row] };
-    else if (currentGroup.baseId === bId) currentGroup.items.push(row);
-    else { finishGroup(); currentGroup = { baseId: bId, items: [row] }; }
-  });
-  finishGroup();
-
-  if (groupedSummaryData.length === 0) {
-    groupedBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${isEn ? 'No active unknown sample replicates found.' : '그룹화 가능한 미지 시료가 없습니다.'}</td></tr>`;
-  } else {
-    groupedSummaryData.forEach(g => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-stone-50';
-      if (isDual) {
-        tr.innerHTML = `
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
-          <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
-        `;
-      } else {
-        tr.innerHTML = `
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
-          <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
-        `;
-      }
-      groupedBody.appendChild(tr);
-    });
-  }
-
-  // Step G: QC Banner
-  const qcBanner = document.getElementById('qc-summary-banner');
-  if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
-    const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
-    const bias1 = mean1 - qcStd.v1;
-    const sdQc1 = qcResults.cals1.length > 1 ? Math.sqrt(qcResults.cals1.map(x => Math.pow(x - mean1, 2)).reduce((a, b) => a + b) / (qcResults.cals1.length - 1)) : 0;
-    const thresh1 = getElementThreshold(p.elements[0].label);
-    const failBias1 = Math.abs(bias1) > thresh1.bias, failSd1 = sdQc1 > thresh1.sd;
-
-    let mean2 = null, bias2 = null, sdQc2 = null, thresh2 = null, failBias2 = false, failSd2 = false;
-    if (isDual && qcResults.cals2.length > 0 && !isNaN(qcStd.v2)) {
-      mean2 = qcResults.cals2.reduce((a, b) => a + b, 0) / qcResults.cals2.length;
-      bias2 = mean2 - qcStd.v2;
-      sdQc2 = qcResults.cals2.length > 1 ? Math.sqrt(qcResults.cals2.map(x => Math.pow(x - mean2, 2)).reduce((a, b) => a + b) / (qcResults.cals2.length - 1)) : 0;
-      thresh2 = getElementThreshold(p.elements[1].label);
-      failBias2 = Math.abs(bias2) > thresh2.bias; failSd2 = sdQc2 > thresh2.sd;
-    }
-
-    const highMswd = reg1.mswd > 2.5 || (isDual && reg2 && reg2.mswd > 2.5);
-    const isOverallPass = !failBias1 && !failSd1 && !failBias2 && !failSd2 && !highMswd;
-
-    lastQcSummaryReport = { qcName: qcStd.name, count: qcResults.cals1.length, status: isOverallPass ? 'PASS' : 'WARNING', mean1, bias1, sdQc1, mean2, bias2, sdQc2 };
-    qcBanner.className = isOverallPass ? 'bg-[#f8fdf9] border-2 border-emerald-400 p-4 space-y-3 shadow-xs' : 'bg-[#fffcf5] border-2 border-amber-400 p-4 space-y-3 shadow-xs';
-
-    const statusBadgeHtml = isOverallPass
-      ? `<span class="px-2.5 py-0.5 bg-emerald-700 text-white font-mono text-[11px] font-bold uppercase">● ${isEn ? 'QC PASS · Ready for Publication' : 'QC PASS · 학술 보고 기준 만족'}</span>`
-      : `<span class="px-2.5 py-0.5 bg-amber-600 text-white font-mono text-[11px] font-bold uppercase">▲ ${isEn ? 'QC WARNING · Action Required' : 'QC WARNING · 데이터 점검 및 보정 필요'}</span>`;
-
-    let qcHtml = `
-      <div class="flex flex-wrap items-center justify-between border-b ${isOverallPass ? 'border-emerald-200' : 'border-amber-200'} pb-2.5 gap-2">
-        <div class="flex items-center flex-wrap gap-2.5">${statusBadgeHtml}</div>
-        <span class="text-[11px] font-mono text-stone-500">${qcResults.cals1.length} active runs of [${qcStd.name}]</span>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-0.5">
-        <div class="flex justify-between bg-white p-2.5 border border-stone-200">
-          <span>${p.elements[0].label} Mean: <strong>${mean1.toFixed(3)} ${u1}</strong></span>
-          <span>Bias: <strong class="${!failBias1 ? 'text-emerald-700' : 'text-amber-700'}">${bias1 >= 0 ? '+' : ''}${bias1.toFixed(3)} ‰</strong></span>
-          <span>Rep(1σ): <strong class="${!failSd1 ? 'text-emerald-700' : 'text-amber-700'}">±${sdQc1.toFixed(3)} ‰</strong></span>
-        </div>
-        ${isDual && mean2 !== null ? `
-        <div class="flex justify-between bg-white p-2.5 border border-stone-200">
-          <span>${p.elements[1].label} Mean: <strong>${mean2.toFixed(3)} ${u2}</strong></span>
-          <span>Bias: <strong class="${!failBias2 ? 'text-emerald-700' : 'text-amber-700'}">${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
-          <span>Rep(1σ): <strong class="${!failSd2 ? 'text-emerald-700' : 'text-amber-700'}">±${sdQc2.toFixed(3)} ‰</strong></span>
-        </div>` : ''}
-      </div>
-    `;
-
-    const metaNotes = [];
-    if (useBlank && blkCount1 > 0) metaNotes.push(`Blank subtracted (${blkCount1} runs: Area₁=${meanBlkA1.toFixed(2)}, δ₁=${meanBlkD1.toFixed(2)}‰)`);
-    if (useLin && meanAnchorArea1 > 0) metaNotes.push(`Size Linearity slope (${monitorAnchor.name}): k₁=${linSlope1.toExponential(2)} ‰/Area (Ref Area=${meanAnchorArea1.toFixed(1)})`);
-    if (driftMode === 'linear') metaNotes.push(`Time Drift slope: ${(driftSlope1).toExponential(2)} ‰/run`);
-
-    if (metaNotes.length > 0) {
-      qcHtml += `<div class="text-[11px] font-mono text-stone-600 pt-1 border-t border-stone-200">* ${metaNotes.join('  |  ')}</div>`;
-    }
-
-    qcBanner.innerHTML = qcHtml;
-    qcBanner.classList.remove('hidden');
-  } else {
-    qcBanner.classList.add('hidden');
-    lastQcSummaryReport = null;
-  }
-}
-
-// -------------------------------------------------------------
-// Plotly Chart Renderers
-// -------------------------------------------------------------
-function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
-  const container = document.getElementById(elemId);
-  container.innerHTML = '';
-  if (pts.x.length === 0) return;
-  const minX = Math.min(...pts.x), maxX = Math.max(...pts.x);
-  const pad = (maxX - minX) * 0.1 || 1;
-  const lx = [minX - pad, maxX + pad];
-  const ly = [lx[0] * reg.slope + reg.intercept, lx[1] * reg.slope + reg.intercept];
-
-  const traces = [
-    {
-      x: pts.x, y: pts.y, text: pts.names, mode: 'markers', type: 'scatter',
-      name: currentLang === 'en' ? 'Active Anchors' : '유효 앵커 표준물질',
-      marker: { size: 7, color: '#111827', line: { color: '#000000', width: 1 } },
-      error_x: { type: 'data', array: pts.sd, visible: true, color: '#4b5563', thickness: 1.2, width: 4 }
-    },
-    {
-      x: lx, y: ly, mode: 'lines', type: 'scatter',
-      name: `WLS: y = ${reg.slope.toFixed(4)}x + ${reg.intercept.toFixed(4)} (MSWD = ${reg.mswd.toFixed(2)})`,
-      line: { dash: 'solid', width: 1.5, color: '#6b7280' }
-    }
-  ];
-
-  const layout = {
-    title: { text: title, font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, x: 0.05 },
-    paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff',
-    margin: { l: 55, r: 25, t: 40, b: 45 },
-    xaxis: { title: { text: xTitle, font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    yaxis: { title: { text: yTitle, font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    showlegend: true, legend: { orientation: 'h', y: -0.28, x: 0.05, font: { size: 10 } }
-  };
-  Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
-}
-
-function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanArea, isoLabel) {
-  const container = document.getElementById(elemId);
-  container.innerHTML = '';
-  const isEn = currentLang === 'en';
-  if (!areaArr || areaArr.length < 2) {
-    container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? 'Insufficient Peak Area points for Linearity Plot.' : '피크 면적 선형성 진단을 위한 데이터가 부족합니다.'}</span>`;
-    return;
-  }
-  const minA = Math.min(...areaArr), maxA = Math.max(...areaArr);
-  const ols = calcOLS(areaArr, valArr);
-  const lx = [minA, maxA];
-  const ly = [ols.slope * minA + ols.intercept, ols.slope * maxA + ols.intercept];
-
-  const traces = [
-    {
-      x: areaArr, y: valArr, mode: 'markers', type: 'scatter',
-      name: `${anchorName} (Blank-corr Raw)`,
-      marker: { size: 8, color: '#0369a1' }
-    },
-    {
-      x: lx, y: ly, mode: 'lines', type: 'scatter',
-      name: `Linearity Slope k = ${slopeVal.toExponential(2)} ‰/Area (Ref=${meanArea.toFixed(1)})`,
-      line: { color: '#b45309', width: 2, dash: 'dash' }
-    }
-  ];
-
-  const layout = {
-    title: { text: `${isoLabel} Size Linearity (Peak Area vs δ · ${anchorName})`, font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, x: 0.05 },
-    paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff',
-    margin: { l: 55, r: 25, t: 40, b: 45 },
-    xaxis: { title: { text: 'Peak Area (Vs / Amplitude mV)', font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    yaxis: { title: { text: `Raw ${isoLabel} (‰)`, font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    showlegend: true, legend: { orientation: 'h', y: -0.28, x: 0.05, font: { size: 10 } }
-  };
-  Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
-}
-
-function drawDriftPlot(elemId, seqArr, valArr, anchorName, mode, slopeVal, anchorRuns, maxRun, isoLabel) {
-  const container = document.getElementById(elemId);
-  container.innerHTML = '';
-  const isEn = currentLang === 'en';
-  if (!seqArr || seqArr.length === 0) {
-    container.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">${isEn ? `No active anchor runs for ${isoLabel} drift.` : `${isoLabel} 드리프트 진단을 위한 유효 측정값이 없습니다.`}</span>`;
-    return;
-  }
-  const traces = [{
-    x: seqArr, y: valArr, mode: 'markers+lines', type: 'scatter',
-    name: `${anchorName} Raw Runs`,
-    marker: { size: 7, color: '#0369a1' }, line: { dash: 'dot', color: '#93c5fd', width: 1.2 }
-  }];
-
-  if (mode === 'linear') {
-    const firstSeq = seqArr[0], baseVal = valArr[0];
-    traces.push({
-      x: [firstSeq, maxRun], y: [baseVal, baseVal + slopeVal * (maxRun - firstSeq)],
-      mode: 'lines', type: 'scatter',
-      name: `Linear Drift (${(slopeVal).toExponential(2)} ‰/run)`,
-      line: { color: '#b91c1c', width: 2 }
-    });
-  } else if (mode === 'piecewise' && anchorRuns && anchorRuns.length >= 2) {
-    const baseVal = valArr[0];
-    traces.push({
-      x: anchorRuns.map(i => i.idx + 1), y: anchorRuns.map(i => baseVal + i.diff),
-      mode: 'lines', type: 'scatter', name: 'Bracketing Spline', line: { color: '#047857', width: 2 }
-    });
-  }
-
-  const layout = {
-    title: { text: `${isoLabel} Sequence Drift Diagnostics (${anchorName})`, font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, x: 0.05 },
-    paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff',
-    margin: { l: 55, r: 25, t: 40, b: 45 },
-    xaxis: { title: { text: 'Run Sequence Order (Run #)', font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    yaxis: { title: { text: `Raw ${isoLabel} (‰)`, font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc' },
-    showlegend: true, legend: { orientation: 'h', y: -0.28, x: 0.05, font: { size: 10 } }
-  };
-  Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
-}
-
-// SVG Exports
-['1', '2', 'drift-1', 'drift-2'].forEach(suffix => {
-  const btn = document.getElementById(`btn-export-svg-${suffix}`);
-  if (btn) {
-    btn.addEventListener('click', () => {
-      Plotly.downloadImage(`plot-${suffix}`, { format: 'svg', width: 800, height: 600, filename: `IsoCalib_${currentMode}_Plot_${suffix}` });
-    });
-  }
-});
-
-document.getElementById('isotope-preset').addEventListener('change', (e) => {
-  saveCurrentModeStandards();
-  currentMode = e.target.value;
-  if (currentMode === 'WATER_O') oxygenScale = 'VSMOW';
-  else if (currentMode === 'CO') oxygenScale = 'VPDB';
-  const p = PRESETS[currentMode];
-  const sourceDemo = (isAreaActive() && p.demoArea) ? p.demoArea : p.demo;
-  gridData = JSON.parse(JSON.stringify(sourceDemo));
-  excludedRows = Array(gridData.length).fill(false);
-  updateLayoutForMode(false);
-});
-
-document.getElementById('btn-calc').addEventListener('click', runCalibration);
-
-document.getElementById('btn-demo').addEventListener('click', () => {
-  userCustomStandardsByMode[currentMode] = null;
-  oxygenScale = currentMode === 'WATER_O' ? 'VSMOW' : 'VPDB';
-  const p = PRESETS[currentMode];
-  const sourceDemo = (isAreaActive() && p.demoArea) ? p.demoArea : p.demo;
-  gridData = JSON.parse(JSON.stringify(sourceDemo));
-  excludedRows = Array(gridData.length).fill(false);
-  selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
-  updateLayoutForMode(true);
-  renderGrid();
-  runCalibration();
-  syncPasteTarget();
-});
-
-document.getElementById('btn-clear').addEventListener('click', () => {
-  const numCols = getNumDataCols();
-  gridData = Array.from({ length: 30 }, () => Array(numCols).fill(''));
-  excludedRows = Array(30).fill(false);
-  selectedCellRange = { minR: 0, maxR: 0, minC: 0, maxC: 0 };
-  renderGrid();
-  resetOutputs();
-  syncPasteTarget();
-});
-
-document.getElementById('btn-add-row').addEventListener('click', () => {
-  const numCols = getNumDataCols();
-  for (let i = 0; i < 30; i++) {
-    gridData.push(Array(numCols).fill(''));
-    excludedRows.push(false);
-  }
-  renderGrid();
-  syncPasteTarget();
-});
-
-// -------------------------------------------------------------
-// ExcelJS Multi-Sheet + Embedded Figures Export
-// -------------------------------------------------------------
-async function capturePlotAsBase64Png(elemId) {
-  const el = document.getElementById(elemId);
-  if (!el || !el.data || el.data.length === 0) return null;
-  try {
-    const dataUrl = await Plotly.toImage(el, { format: 'png', width: 750, height: 480 });
-    return dataUrl.split(',')[1];
-  } catch (err) { return null; }
-}
-
-document.getElementById('btn-export').addEventListener('click', async () => {
-  if (!sequenceExportData || sequenceExportData.length === 0) {
-    alert(currentLang === 'en' ? "Please run calibration first." : "먼저 상단에서 검량을 실행해 주세요.");
-    return;
-  }
-  const p = PRESETS[currentMode];
-  const isDual = p.elements.length === 2;
-  const u1 = getElementUnit(0), u2 = getElementUnit(1);
-  const exportBtn = document.getElementById('btn-export');
-  const originalBtnText = exportBtn.innerHTML;
-
-  try {
-    exportBtn.innerHTML = `<span>Exporting (.xlsx)...</span>`;
-    exportBtn.style.opacity = '0.6';
-    const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'IsoCalib v1.4.0';
-
-    const wsGrouped = workbook.addWorksheet('Grouped_Summary');
-    wsGrouped.columns = isDual ? [
-      { header: 'Sample_Base_ID', key: 'baseId', width: 22 },
-      { header: 'Active_Replicates (n)', key: 'n', width: 20 },
-      { header: `Mean_${p.elements[0].label} (${u1})`, key: 'mean1', width: 24 },
-      { header: 'Rep_1SD', key: 'sd1', width: 14 },
-      { header: `Mean_${p.elements[1].label} (${u2})`, key: 'mean2', width: 24 },
-      { header: 'Rep_1SD', key: 'sd2', width: 14 }
-    ] : [
-      { header: 'Sample_Base_ID', key: 'baseId', width: 22 },
-      { header: 'Active_Replicates (n)', key: 'n', width: 20 },
-      { header: `Mean_${p.elements[0].label} (${u1})`, key: 'mean1', width: 24 },
-      { header: 'Rep_1SD', key: 'sd1', width: 14 }
-    ];
-    groupedSummaryData.forEach(g => wsGrouped.addRow(g));
-
-    const wsSeq = workbook.addWorksheet('Sequence_Runs');
-    wsSeq.columns = isDual ? [
-      { header: 'Run_Order', key: 'runNumber', width: 12 },
-      { header: 'Status', key: 'status', width: 14 },
-      { header: 'Sample_ID', key: 'id', width: 22 },
-      { header: `Area_${p.elements[0].label}`, key: 'area1', width: 14 },
-      { header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 },
-      { header: '1SD', key: 'sd1', width: 12 },
-      { header: `Area_${p.elements[1].label}`, key: 'area2', width: 14 },
-      { header: `Raw_${p.elements[1].label}`, key: 'raw2', width: 16 },
-      { header: '1SD', key: 'sd2', width: 12 },
-      { header: `Calibrated_${p.elements[0].label} (${u1})`, key: 'cal1', width: 22 },
-      { header: 'Combined_1SD', key: 'propSd1', width: 16 },
-      { header: `Calibrated_${p.elements[1].label} (${u2})`, key: 'cal2', width: 22 },
-      { header: 'Combined_1SD', key: 'propSd2', width: 16 }
-    ] : [
-      { header: 'Run_Order', key: 'runNumber', width: 12 },
-      { header: 'Status', key: 'status', width: 14 },
-      { header: 'Sample_ID', key: 'id', width: 22 },
-      { header: `Area_${p.elements[0].label}`, key: 'area1', width: 14 },
-      { header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 },
-      { header: '1SD', key: 'sd1', width: 12 },
-      { header: `Calibrated_${p.elements[0].label} (${u1})`, key: 'cal1', width: 22 },
-      { header: 'Combined_1SD', key: 'propSd1', width: 16 }
-    ];
-    sequenceExportData.forEach(r => wsSeq.addRow(r));
-
-    const wsFig = workbook.addWorksheet('Figures_and_QC');
-    wsFig.getCell('B2').value = `IsoCalib v1.4.0 Report (${currentMode} · AreaMode: ${areaMode})`;
-    wsFig.getCell('B2').font = { size: 14, bold: true };
-
-    let imgRow = 6;
-    for (const pid of ['plot-1', ...(isDual ? ['plot-2'] : []), 'plot-drift-1', ...(isDual ? ['plot-drift-2'] : [])]) {
-      const b64 = await capturePlotAsBase64Png(pid);
-      if (b64) {
-        const imgId = workbook.addImage({ base64: b64, extension: 'png' });
-        wsFig.addImage(imgId, { tl: { col: 1, row: imgRow }, ext: { width: 580, height: 360 } });
-        imgRow += 20;
-      }
-    }
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `IsoCalib_v1.4.0_${currentMode}_Report.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  } finally {
-    exportBtn.innerHTML = originalBtnText;
-    exportBtn.style.opacity = '1';
-  }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  updateLayoutForMode(false);
-  setLanguage(currentLang);
-});
+};
