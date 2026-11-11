@@ -1,4 +1,4 @@
-/* presets.js - IsoCalib v1.4.0 Extended Reference Presets & Multilingual Dictionary */
+/* presets.js - IsoCalib v1.4.1 Extended Presets, Rich Demos & Multilingual Protocol */
 
 const TRANSLATIONS = {
   ko: {
@@ -13,7 +13,7 @@ const TRANSLATIONS = {
     nav_feedback_github: "개발자 버그 제보 (GitHub)",
     hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
     hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
-    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Size Linearity) 및 캡슐 블랭크(Blank) 차감, 다중 앵커(Multi-Point) WLS 회귀, 이상치 제외 및 불확도 전파를 수행합니다.",
+    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Auto/Manual) 및 캡슐 블랭크 차감, 다중 앵커 WLS 회귀, 이상치 제외 및 불확도 전파를 수행합니다.",
     system_label: "분석 동위원소 체계 (Isotope System)",
     sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
     btn_add_anchor: "+ 앵커 추가 (3+ Multi-Point)",
@@ -33,7 +33,7 @@ const TRANSLATIONS = {
     btn_preset_load: "Load",
     btn_preset_delete: "Delete",
     btn_preset_save: "Save",
-    drift_guide_desc: "* <strong>2점 및 3점+ 다중 앵커 WLS 검량선</strong>, <strong>피크 면적 선형성(Size Linearity)</strong> 및 <strong>주석 캡슐 블랭크(ID에 'BLANK' 또는 'BLK' 포함 행) 자동 차감</strong>을 지원합니다.",
+    drift_guide_desc: "* <strong>2점 및 3점+ 다중 앵커 WLS 검량선</strong>, <strong>피크 면적 선형성(Auto/Manual)</strong> 및 <strong>주석 캡슐 블랭크(ID에 'BLANK' 또는 'BLK' 포함 행) 자동 차감</strong>을 지원합니다.",
     sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
     sec2_desc: "셀 클릭 후 <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd>로 엑셀 데이터를 붙여넣으세요. 특정 런이 튄 경우 <strong>Use(✓) 체크를 해제</strong>하면 런 순서(#)는 유지한 채 계산에서만 제외됩니다.",
     btn_delete_rows: "선택 행 삭제",
@@ -83,21 +83,30 @@ const TRANSLATIONS = {
     ctx_clear_cells: "선택 셀 내용 지우기",
     ctx_insert_row: "아래에 빈 행 1줄 삽입",
     about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
-    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Size Linearity) 보정, 주석 캡슐 블랭크(Blank) 차감, 3점 이상 다중 앵커(Multi-Point) 검량선, 이상치(Outlier) 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
+    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Size Linearity, Auto/Manual) 보정, 주석 캡슐 블랭크(Blank) 차감, 3점 이상 다중 앵커(Multi-Point) 검량선, 이상치(Outlier) 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
     about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
     about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다.",
-    qs_modal_title: "/ Quick Start Protocol (빠른 시작 가이드)",
-    qs_modal_subtitle: "안정동위원소 분석 데이터 정산을 위한 초간단 3단계 가이드",
-    qs_step1_title: "Step 1. 표준물질 및 면적/블랭크 보정 설정 (Section 01)",
-    qs_step1_desc: "검량 표준물질(Anchor 1, 2, 3+)과 품질관리 표준물질(QC)의 참값을 확인합니다. EA-IRMS 분석 시 'Area / Blank' 옵션을 켜면 피크 면적(Area) 열이 활성화되어 크기 선형성 및 캡슐 블랭크 차감이 자동 수행됩니다.",
-    qs_step1_tip: "* 팁: 블랭크 보정 시 시료 이름에 'BLANK' 또는 'BLK'가 들어간 행들의 평균 면적과 δ 값을 자동으로 감지하여 차감합니다.",
-    qs_step2_title: "Step 2. 엑셀 런 시퀀스 붙여넣기 & 이상치 제외 (Section 02)",
-    qs_step2_desc: "엑셀에서 분석 열을 복사해 첫 번째 셀에 Ctrl + V로 붙여넣습니다. 값이 튄 런은 좌측 Use(✓) 체크박스를 해제하여 런 순서(#) 왜곡 없이 제외하세요.",
-    qs_step2_columns: "[일반 열] Sample ID | Raw δ | 1σ SD  //  [Area 활성 열] Sample ID | Area | Raw δ | 1σ SD",
-    qs_step3_title: "Step 3. 보정 실행 및 엑셀 다운로드 (Section 03)",
-    qs_step3_desc: "Run Calibration & QC를 클릭하면 블랭크 차감 → 면적 선형성 보정 → 시간 드리프트 보정 → 다중 WLS 검량선이 순차 계산됩니다.",
-    qs_step3_desc2: "완료 후 상단의 Export Excel Report (.xlsx) 버튼을 누르면 고해상도 그래프(Figure 1~4)가 포함된 최종 분석 성적서 엑셀 파일이 다운로드됩니다.",
-    qs_footer_tip: "* Load Demo 버튼을 누르면 현재 설정된 모드(Area 포함)에 맞는 시연 데이터로 즉시 테스트할 수 있습니다."
+    qs_modal_title: "/ 분석 실무 종합 매뉴얼 (User Protocol)",
+    qs_modal_subtitle: "실험 전처리 계통별 최적 설정, 엑셀 열 매핑, 이상치 처리 및 QC 진단 가이드",
+    qs_recipe_title: "1. 30초 실험 계통별 세팅 레시피 (Quick Presets)",
+    qs_recipe_desc: "분석 중인 시료와 전처리 계통에 맞추어 상단 컨트롤을 아래와 같이 설정하세요:",
+    qs_recipe_1: "• <strong>탄산염/가스벤치 (CO₂/Dual):</strong> <code>CO 모드</code> → <code>Area: Off</code> → <code>Drift: Linear 또는 Anchor Bracketing</code>",
+    qs_recipe_2: "• <strong>EA-IRMS 생체·퇴적물 유기물 (벌크 C/N):</strong> <code>CN 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_3: "• <strong>산처리 퇴적물 유기탄소 단독:</strong> <code>EA_C 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_4: "• <strong>물/액체 안정동위원소:</strong> <code>WATER_O</code> 또는 <code>WATER_H</code> → <code>δ¹⁸O Scale: VSMOW</code> → <code>Area: Off</code>",
+    qs_step1_title: "2. 검량 앵커 및 전처리 옵션 설정 (Section 01)",
+    qs_step1_desc: "검량선 수립에 사용할 표준물질(Anchor 1, 2, 3+)과 품질관리 표준물질(QC)의 공인 참값을 입력합니다. 3개 이상의 앵커가 필요한 경우 '+ 앵커 추가' 버튼을 클릭하세요.",
+    qs_step1_area_rules: "<strong>[Area / Blank 모드 선택 기준]</strong><br>• <strong>Off</strong>: 피크 면적 보정이 불필요한 표준 분석 (탄산염, 물, 가스벤치 등).<br>• <strong>Linearity</strong>: 블랭크 영향이 적고 시료 투입량 편차에 따른 이온원 비선형성만 교정할 때.<br>• <strong>Blank Only</strong>: 저온 연소나 주석 캡슐 바탕값(Blank) 오염 차감이 핵심일 때.<br>• <strong>Blank + Linearity</strong>: 극미량 시료나 퇴적물 분석 등 블랭크와 크기 효과가 복합 작용할 때 (권장).",
+    qs_step1_slope_rules: "<strong>[Slope Method (선형성 기울기 방식)]</strong><br>• <strong>Auto-Fit</strong>: 시퀀스 내 모니터 표준물질(예: USGS40)의 크기별(0.2, 0.5, 1.0mg) 런들로부터 기울기를 자동 회귀 계산.<br>• <strong>Manual Input</strong>: 랩 밸리데이션으로 미리 확보한 공인 선형성 계수(‰/Vs)를 직접 고정 입력.",
+    qs_step2_title: "3. 엑셀 데이터 복사 & 열 구조 (Section 02)",
+    qs_step2_desc: "분석 소프트웨어(Isodat, IonVantage 등)의 결과 엑셀에서 필요한 열을 드래그 복사한 뒤, 시퀀스 표의 첫 번째 데이터 셀을 클릭하고 Ctrl + V를 누릅니다.",
+    qs_step2_col_std: "• <strong>기본 모드 (Area: Off) 열 구조:</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
+    qs_step2_col_area: "• <strong>면적 활성화 모드 (Area: On) 열 구조:</strong><br><code>Sample ID</code> | <code>Area (Vs)</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area (Vs)</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
+    qs_step2_naming: "<strong>[필수 ID 네이밍 룰]</strong><br>• <strong>블랭크 런</strong>: 시료명에 반드시 <code>BLANK</code>, <code>BLK</code>, 또는 <code>TIN</code>이 포함되어야 엔진이 캡슐 블랭크로 자동 감지합니다.<br>• <strong>미지 시료 반복 측정</strong>: 연속 반복 시료는 <code>SampleA_1</code>, <code>SampleA_2</code> 형태로 기재 시 'SampleA'로 자동 그룹화되어 평균(Mean ± 1σ) 요약표가 생성됩니다.",
+    qs_step3_title: "4. 이상치 선별 및 검량 실행 (Section 02 & 03)",
+    qs_step3_desc: "주입 불량, 리크, 피크 찌그러짐 등으로 튄 런은 행을 삭제하지 말고 <strong>Use(✓) 체크박스를 해제</strong>하세요. 시퀀스 런 순서(#)와 시간축 간격이 보존된 상태로 검량선·드리프트·시료 평균 계산에서만 제외됩니다.",
+    qs_step3_desc2: "<strong>Run Calibration & QC</strong>를 누르면 블랭크 차감 → 선형성 보정 → 시간 표류 보정 → WLS 회귀선 도출이 순차 진행되며, 하단에 종합 진단 배너가 표시됩니다. 이후 상단의 Export Excel Report를 통해 고해상도 그래프가 내장된 보고서를 다운로드하세요.",
+    qs_footer_tip: "* 팁: 'Load Demo'를 누르면 현재 선택된 분석 체계와 Area 옵션에 최적화된 표준 런 예시 데이터가 즉시 채워집니다."
   },
   en: {
     tagline: "/ Open Geochemistry Tool",
@@ -111,7 +120,7 @@ const TRANSLATIONS = {
     nav_feedback_github: "Developer Issues (GitHub)",
     hero_badge: "Precision Data Reduction & QC Protocol",
     hero_title: "Stable Isotope Calibration",
-    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity & blank subtraction, multi-point WLS regression, outlier exclusion, and uncertainty propagation.",
+    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, multi-point WLS regression, outlier exclusion, and uncertainty propagation.",
     system_label: "Isotope System",
     sec1_title: "Reference & QC Standards",
     btn_add_anchor: "+ Add Anchor (3+ Multi-Point)",
@@ -131,7 +140,7 @@ const TRANSLATIONS = {
     btn_preset_load: "Load",
     btn_preset_delete: "Delete",
     btn_preset_save: "Save",
-    drift_guide_desc: "* Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').",
+    drift_guide_desc: "* Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity (Auto/Manual slope)</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').",
     sec2_title: "Measurement Sequence Data",
     sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste from Excel. Uncheck <strong>Use (✓)</strong> to exclude outlier runs while preserving sequence order (#).",
     btn_delete_rows: "Delete Row(s)",
@@ -181,46 +190,70 @@ const TRANSLATIONS = {
     ctx_clear_cells: "Clear Selected Cells",
     ctx_insert_row: "Insert 1 Blank Row Below",
     about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
-    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction, tin capsule blank subtraction, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
+    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction (Auto/Manual), tin capsule blank subtraction, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
     about_protocols_title: "Core Analytical Protocols:",
     about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally.",
-    qs_modal_title: "/ Quick Start Protocol",
-    qs_modal_subtitle: "Essential 3-step guideline for fast and reproducible data reduction",
-    qs_step1_title: "Step 1. Configure Standards & Area/Blank Mode (Section 01)",
-    qs_step1_desc: "Verify accepted values for Anchor 1, 2, 3+ and QC standards. Enable 'Area / Blank' for EA-IRMS runs to activate Peak Area columns for automatic size-linearity and capsule blank corrections.",
-    qs_step1_tip: "* Tip: Rows containing 'BLANK' or 'BLK' are automatically averaged and subtracted via mass balance when Blank mode is active.",
-    qs_step2_title: "Step 2. Paste Sequence Rows & Filter Outliers (Section 02)",
-    qs_step2_desc: "Copy sequence runs from Excel, click the first cell, and press Ctrl + V. Uncheck 'Use' on any anomalous run to exclude it without altering sequence run indices (#).",
-    qs_step2_columns: "[Standard] Sample ID | Raw δ | 1σ SD  //  [Area Mode] Sample ID | Area | Raw δ | 1σ SD",
-    qs_step3_title: "Step 3. Calibrate & Export (Section 03)",
-    qs_step3_desc: "Click Run Calibration & QC to execute Blank subtraction → Area Linearity → Sequence Drift → Multi-point WLS regression.",
-    qs_step3_desc2: "Export complete Excel (.xlsx) workbooks embedding high-resolution figures (Figure 1-4) with one click.",
-    qs_footer_tip: "* Click 'Load Demo' to inspect an active calculation with realistic peak area & blank runs immediately."
+    qs_modal_title: "/ Comprehensive User Protocol & SOP",
+    qs_modal_subtitle: "Application presets, column mapping, outlier handling, and analytical QC guidelines",
+    qs_recipe_title: "1. 30-Second Quick Application Recipes",
+    qs_recipe_desc: "Configure the top toolbar controls based on your sample matrix and preparation protocol:",
+    qs_recipe_1: "• <strong>Carbonates / GasBench (CO₂ Dual):</strong> <code>CO mode</code> → <code>Area: Off</code> → <code>Drift: Linear or Bracketing</code>",
+    qs_recipe_2: "• <strong>EA-IRMS Bulk Organic (C/N Dual):</strong> <code>CN mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_3: "• <strong>Acidified Marine Sediments (C only):</strong> <code>EA_C mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_4: "• <strong>Water Hydrogen / Oxygen:</strong> <code>WATER_O</code> or <code>WATER_H</code> → <code>Scale: VSMOW</code> → <code>Area: Off</code>",
+    qs_step1_title: "2. Standards & Preprocessing Configuration (Section 01)",
+    qs_step1_desc: "Enter accepted reference values for Anchors (1, 2, 3+) and QC standards. Click '+ Add Anchor' if calibrating against 3 or more reference points.",
+    qs_step1_area_rules: "<strong>[Area / Blank Decision Criteria]</strong><br>• <strong>Off</strong>: Standard sequences where peak sizes are uniform (carbonates, water lines).<br>• <strong>Linearity</strong>: When sample sizes vary and ion source size effects need correction without blank interference.<br>• <strong>Blank Only</strong>: Subtraction of tin capsule background contamination is the primary concern.<br>• <strong>Blank + Linearity</strong>: Recommended for trace organic and sediment EA-IRMS workflows.",
+    qs_step1_slope_rules: "<strong>[Slope Method Options]</strong><br>• <strong>Auto-Fit</strong>: Regresses δ vs. Area slope automatically using size-series runs (0.2, 0.5, 1.0 mg) of the monitor standard.<br>• <strong>Manual Input</strong>: Directly enter a verified laboratory linearity factor (‰/Vs).",
+    qs_step2_title: "3. Excel Data Pasting & Column Formats (Section 02)",
+    qs_step2_desc: "Copy the relevant columns from your instrument spreadsheet software (e.g., Isodat), click the top-left target cell in Section 02, and press Ctrl + V.",
+    qs_step2_col_std: "• <strong>Standard Columns (Area: Off):</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
+    qs_step2_col_area: "• <strong>Peak Area Columns (Area: On):</strong><br><code>Sample ID</code> | <code>Area (Vs)</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area (Vs)</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
+    qs_step2_naming: "<strong>[Mandatory Naming Rules]</strong><br>• <strong>Blank Subtraction</strong>: Row ID must include <code>BLANK</code>, <code>BLK</code>, or <code>TIN</code> for automatic background detection.<br>• <strong>Replicate Grouping</strong>: Consecutive replicates like <code>SampleA_1</code>, <code>SampleA_2</code> are automatically aggregated into 'SampleA' in the Grouped Summary tab.",
+    qs_step3_title: "4. Outlier Handling & Calibration Pipeline (Section 02 & 03)",
+    qs_step3_desc: "For incomplete combustion, leaks, or distorted peaks, uncheck 'Use (✓)' rather than deleting the row. This excludes the run from WLS and drift regressions while preserving sequence time-series (#) integrity.",
+    qs_step3_desc2: "Click Run Calibration & QC to sequentially execute Blank subtraction → Linearity normalization → Time drift correction → Multi-point WLS regression. Then export a publication-ready workbook via Export Excel Report.",
+    qs_footer_tip: "* Tip: Click 'Load Demo' anytime to populate realistic sample and standard sequences matching your active mode."
   }
 };
 
 const CHANGELOG_DATA = [
   {
+    version: "v1.4.1",
+    date: "2026-11",
+    badge: "Manual Linearity & Modular Architecture",
+    title_ko: "수동 선형성 계수(Manual Factor) 입력, 붉은색 수동 기울기 시각화 및 모듈형 아키텍처 개편",
+    title_en: "Manual Size-Linearity Factor Input, Diagnostic Visualizations & 4-Module Refactoring",
+    desc_ko: "모니터 표준물질의 자동 OLS 피팅뿐만 아니라 기기 점검으로 도출한 고정 선형성 계수(‰/Vs)를 직접 입력할 수 있는 Manual Input 모드를 추가하고, 전체 엔진을 math-core, plot-export, app-ui로 모듈 분할했습니다.",
+    desc_en: "Introduced Manual Linearity Factor inputs with dual-line diagnostic visualization alongside modular separation into math-core, plot-export, and app-ui scripts.",
+    changes_ko: [
+      "<strong>Slope Method 선택 UI 탑재</strong>: <code>Auto-Fit (모니터 표준물질)</code> 및 <code>Manual Input (‰/Vs 고정 계수)</code> 전환 지원.",
+      "<strong>Figure 3·4 수동 기울기 라인 시각화</strong>: 수동 계수 설정 시 붉은색 파선(Manual Slope)과 실제 런 관측 회귀선(Observed Fit) 동시 표기.",
+      "<strong>코어 엔진 3단 모듈 분할</strong>: <code>math-core.js</code>, <code>plot-export.js</code>, <code>app-ui.js</code>로 분리하여 유지보수성 및 확장성 극대화.",
+      "<strong>실무 종합 매뉴얼(User Protocol) 개편</strong>: 4개 실험 계통별 30초 레시피 및 열 배치 가이드 통합."
+    ],
+    changes_en: [
+      "<strong>Slope Method Toggle</strong>: Seamlessly switch between Auto-Fit and Manual Factor inputs.",
+      "<strong>Diagnostic Plot Overhaul</strong>: Displays red manual slope lines alongside observed regression benchmarks.",
+      "<strong>3-Way Modular Engine Split</strong>: Decoupled into math-core, plot-export, and app-ui modules.",
+      "<strong>Comprehensive SOP Manual</strong>: Integrated 30-second recipes and exact column mapping guides."
+    ]
+  },
+  {
     version: "v1.4.0",
     date: "2026-11",
     badge: "EA-IRMS Area Linearity & Blank Suite",
-    title_ko: "피크 면적 기반 시료량 선형성(Size Linearity) & 주석 캡슐 블랭크(Blank) 보정 및 모듈화 아키텍처 탑재",
-    title_en: "Peak Area Size Linearity & Tin Capsule Blank Correction Suite + Modular Architecture",
-    desc_ko: "시료 무게와 유기물 함량이 불균일한 EA-IRMS 분석 특성을 완벽히 해결하기 위해, 피크 면적(Peak Area / Amplitude) 열을 동적으로 활성화하여 캡슐 블랭크 질량 보존 차감과 신호 크기 선형성(Size Effect) 보정을 동시에 수행하며, 전체 소스 코드를 4개 모듈로 분리했습니다.",
-    desc_en: "Added dynamic Peak Area columns for mass-balance tin capsule blank subtraction and automated size-effect linearity correction, while refactoring the platform into a clean modular file architecture.",
+    title_ko: "피크 면적 기반 시료량 선형성(Size Linearity) & 주석 캡슐 블랭크(Blank) 질량 보존 차감 탑재",
+    title_en: "Peak Area Size Linearity & Tin Capsule Blank Correction Suite",
+    desc_ko: "피크 면적(Area) 열을 동적으로 활성화하여 주석 캡슐 블랭크 질량 보존 차감과 신호 크기 선형성 보정을 동시에 수행합니다.",
+    desc_en: "Integrated dynamic Peak Area columns for mass-balance tin capsule blank subtraction and automated size-effect linearity correction.",
     changes_ko: [
-      "<strong>'Area / Blank' 4단계 전처리 셀렉터 탑재</strong>: <code>Off</code>, <code>Linearity (피크 면적 선형성)</code>, <code>Blank Only (캡슐 블랭크 차감)</code>, <code>Blank + Linearity 통합</code> 모드 지원.",
-      "<strong>주석 캡슐 블랭크(Blank) 자동 감지 및 질량 보존 차감</strong>: 시퀀스 내 <code>BLANK</code> 또는 <code>BLK</code>가 포함된 행의 피크 면적($A_{\\text{blk}}$)과 동위원소 값($\\delta_{\\text{blk}}$)을 자동 추출하여 미지 시료 및 표준물질에서 백그라운드 기여분 제거.",
-      "<strong>피크 면적 선형성(Size Effect) 자동 회귀 보정</strong>: 모니터 표준물질의 피크 면적 대비 원시 $\\delta$ 값 기울기($k_{\\text{area}}$)를 도출하여 시료량 차이에 따른 이온원 비선형성 편차 교정 및 Figure 3·4 진단 플롯 시각화.",
-      "<strong>단일 산소 모드(WATER_O) VPDB ↔ VSMOW 스케일 전환 연동</strong>: 탄산염 듀얼 모드뿐만 아니라 단일 산소 채널에서도 Coplen (1983) 스케일 즉시 변환 지원.",
-      "<strong>4-파일 모듈형 아키텍처 전환</strong>: <code>index.html</code>, <code>style.css</code>, <code>presets.js</code>, <code>engine.js</code>로 분리하여 유지보수성 극대화."
+      "<strong>'Area / Blank' 4단계 전처리 셀렉터 탑재</strong>: Off, Linearity, Blank Only, Blank + Linearity 모드 지원.",
+      "<strong>주석 캡슐 블랭크 자동 감지</strong>: ID 내 <code>BLANK</code> 또는 <code>BLK</code>가 포함된 행의 평균 면적과 δ 값을 자동 질량 보존 차감."
     ],
     changes_en: [
-      "<strong>4-Way 'Area / Blank' Preprocessing Selector</strong>: Switch seamlessly between <code>Off</code>, <code>Size Linearity</code>, <code>Blank Subtraction Only</code>, and <code>Blank + Size Linearity</code>.",
-      "<strong>Automated Mass-Balance Blank Subtraction</strong>: Detects rows labeled <code>BLANK</code> or <code>BLK</code> and subtracts capsule background contamination prior to regression.",
-      "<strong>Peak-Area Linearity Normalization & Diagnostics</strong>: Computes $\\delta$ vs. Area slope ($k_{\\text{area}}$) from monitor standards and visualizes size-linearity trends in Figures 3 & 4.",
-      "<strong>Single Oxygen (WATER_O) VPDB ↔ VSMOW Toggle</strong>: Extended IUPAC scale conversion to single-channel oxygen workflows.",
-      "<strong>Modular Codebase Architecture</strong>: Separated HTML, CSS, Presets, and JS Engine into standalone files."
+      "<strong>4-Way Area/Blank Selector</strong>: Support for Off, Size Linearity, Blank Only, and Combined Blank + Linearity.",
+      "<strong>Automated Mass-Balance Blank Subtraction</strong>: Auto-detects and subtracts capsule background contamination."
     ]
   },
   {
@@ -229,17 +262,13 @@ const CHANGELOG_DATA = [
     badge: "Outlier Exclusion Toggle",
     title_ko: "시퀀스 런 순서(#) 보존형 이상치(Outlier) 개별 제외 체크박스 탑재",
     title_en: "Non-Destructive Outlier Exclusion Checkbox (Sequence-Preserving)",
-    desc_ko: "표준물질이나 미지 시료 반복 측정 중 특정 런이 튀었을 때, 행을 삭제하여 시퀀스 시간축(Run #)을 왜곡시키는 대신 체크박스 하나로 해당 런만 검량선·드리프트·평균 계산에서 깔끔하게 제외하고 즉시 재검량하는 기능을 탑재했습니다.",
-    desc_en: "Added a per-row 'Use (✓)' checkbox and right-click context toggle that excludes anomalous runs from WLS regression, drift modeling, QC, and replicate averaging while strictly preserving sequence acquisition indices (#).",
+    desc_ko: "행을 물리적으로 삭제하지 않고 체크박스 해제만으로 이상치를 검량선과 평균 계산에서 깔끔하게 제외합니다.",
+    desc_en: "Added a per-row 'Use (✓)' checkbox that excludes anomalous runs while strictly preserving sequence run numbers (#).",
     changes_ko: [
-      "<strong>시퀀스 그리드 'Use (✓)' 체크박스 열 신설</strong>: 체크 해제 시 해당 행에 취소선(Strike-through)이 표시되며 즉시 자동 재검량 실행.",
-      "<strong>시계열 드리프트(Run #) 무결성 보존</strong>: 행을 물리적으로 삭제하지 않으므로 앞뒤 런 사이의 측정 시간 간격이 그대로 유지됨.",
-      "<strong>최종 결과표 및 엑셀(.xlsx) 내역 투명성 확보</strong>: 제외된 런은 <code>[EXCLUDED]</code> 태그로 명시되어 데이터 투명성 보장."
+      "<strong>시퀀스 그리드 'Use (✓)' 체크박스 열 신설</strong>: 체크 해제 시 취소선 표시 및 실시간 재검량 실행."
     ],
     changes_en: [
-      "<strong>Interactive 'Use (✓)' Column</strong>: One-click toggle to exclude/include individual runs with instant live recalibration.",
-      "<strong>Preserves Drift Time-Series Integrity</strong>: Keeps original sequence run numbers (#) intact.",
-      "<strong>Transparent Audit Trail in Excel</strong>: Excluded runs are clearly flagged as <code>[EXCLUDED]</code>."
+      "<strong>Interactive 'Use (✓)' Column</strong>: Instant live recalibration without altering sequence indices."
     ]
   }
 ];
@@ -261,75 +290,29 @@ const PRESETS = {
     ],
     defaultDriftAnchorIdx: 1,
     qcStd: { name: "KDO", v1: -1.250, v2: -14.800 },
+    // 21-run sequence
     demo: [
       ["NBS-18_1", 21.745, 0.032, -0.775, 0.055],
       ["IAEA-603_1", 29.325, 0.028, 20.055, 0.052],
       ["KDO_QC1", 25.562, 0.030, 7.655, 0.054],
-      ["Sample-A_1", 26.815, 0.031, 11.810, 0.056],
-      ["Sample-A_2", 26.802, 0.029, 11.795, 0.053],
-      ["Sample-A_3", 26.788, 0.030, 11.780, 0.055],
-      ["Sample-B_1", 24.085, 0.028, 15.290, 0.051],
-      ["Sample-B_2", 24.072, 0.030, 15.275, 0.054],
-      ["Sample-B_3", 24.058, 0.027, 15.260, 0.050],
+      ["Stalagmite-A_1", 26.815, 0.031, 11.810, 0.056],
+      ["Stalagmite-A_2", 26.802, 0.029, 11.795, 0.053],
+      ["Stalagmite-A_3", 26.788, 0.030, 11.780, 0.055],
+      ["Stalagmite-B_1", 24.085, 0.028, 15.290, 0.051],
+      ["Stalagmite-B_2", 24.072, 0.030, 15.275, 0.054],
+      ["Stalagmite-B_3", 24.058, 0.027, 15.260, 0.050],
       ["NBS-18_2", 21.635, 0.033, -0.955, 0.058],
       ["IAEA-603_2", 29.215, 0.026, 19.875, 0.050],
       ["KDO_QC2", 25.442, 0.029, 7.460, 0.052],
-      ["Sample-C_1", 18.330, 0.034, 13.710, 0.060],
-      ["Sample-C_2", 18.318, 0.031, 13.695, 0.058],
-      ["Sample-C_3", 18.305, 0.032, 13.680, 0.059],
+      ["Marine-Carb-C_1", 18.330, 0.034, 13.710, 0.060],
+      ["Marine-Carb-C_2", 18.318, 0.031, 13.695, 0.058],
+      ["Marine-Carb-C_3", 18.305, 0.032, 13.680, 0.059],
+      ["Coral-D_1", 22.450, 0.029, 17.550, 0.052],
+      ["Coral-D_2", 22.438, 0.031, 17.535, 0.050],
+      ["Coral-D_3", 22.425, 0.028, 17.520, 0.053],
       ["NBS-18_3", 21.525, 0.031, -1.115, 0.056],
       ["IAEA-603_3", 29.105, 0.025, 19.715, 0.049],
       ["KDO_QC3", 25.245, 0.028, 7.175, 0.051]
-    ]
-  },
-  NO: {
-    name: "Nitrogen & Oxygen (Nitrate / Denitrifier)",
-    elements: [
-      { key: "iso1", label: "δ¹⁵N", unit: "‰ Air" },
-      { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
-    ],
-    stds: [
-      { name: "IAEA-NO-3", v1: 4.700, v2: 25.600 },
-      { name: "USGS34", v1: -1.800, v2: -27.900 }
-    ],
-    extraStds: [{ name: "USGS32", v1: 180.000, v2: 25.700 }],
-    defaultDriftAnchorIdx: 0,
-    qcStd: { name: "USGS35", v1: 5.700, v2: 57.500 },
-    demo: [
-      ["IAEA-NO-3_1", 5.120, 0.080, 26.110, 0.150],
-      ["USGS34_1", -1.450, 0.090, -27.320, 0.180],
-      ["USGS35_QC1", 6.130, 0.085, 58.200, 0.200],
-      ["Nitrate-01_1", 3.250, 0.090, 15.400, 0.170],
-      ["Nitrate-01_2", 3.270, 0.085, 15.420, 0.160],
-      ["Nitrate-01_3", 3.240, 0.080, 15.390, 0.150],
-      ["IAEA-NO-3_2", 5.102, 0.075, 26.080, 0.145],
-      ["USGS34_2", -1.468, 0.085, -27.350, 0.170],
-      ["USGS35_QC2", 6.112, 0.080, 58.160, 0.190]
-    ]
-  },
-  HO: {
-    name: "Hydrogen & Oxygen (Water Dual)",
-    elements: [
-      { key: "iso1", label: "δD", unit: "‰ VSMOW" },
-      { key: "iso2", label: "δ¹⁸O", unit: "‰ VSMOW" }
-    ],
-    stds: [
-      { name: "VSMOW2", v1: 0.000, v2: 0.000 },
-      { name: "SLAP2", v1: -427.500, v2: -55.500 }
-    ],
-    extraStds: [{ name: "USGS45", v1: -10.300, v2: -2.238 }],
-    defaultDriftAnchorIdx: 0,
-    qcStd: { name: "GISP", v1: -189.500, v2: -24.760 },
-    demo: [
-      ["VSMOW2_1", 1.200, 0.500, 0.120, 0.050],
-      ["SLAP2_1", -424.300, 0.800, -54.900, 0.080],
-      ["GISP_QC1", -187.900, 0.600, -24.450, 0.060],
-      ["Rain-01_1", -45.200, 0.520, -7.120, 0.055],
-      ["Rain-01_2", -45.100, 0.480, -7.105, 0.052],
-      ["Rain-01_3", -45.300, 0.510, -7.135, 0.058],
-      ["VSMOW2_2", 1.050, 0.480, 0.100, 0.048],
-      ["SLAP2_2", -424.550, 0.750, -54.940, 0.075],
-      ["GISP_QC2", -188.050, 0.580, -24.480, 0.058]
     ]
   },
   CN: {
@@ -362,7 +345,7 @@ const PRESETS = {
       ["USGS41a_2", 37.080, 0.085, 47.980, 0.135],
       ["USGS61_QC2", -34.580, 0.080, -2.480, 0.125]
     ],
-    // Extended 21-run Real-world Sequence: [ID, Area1(Vs), Raw1, SD1, Area2(Vs), Raw2, SD2]
+    // 21-run EA Sequence with Blanks, Size-series Standards and Unknowns
     demoArea: [
       ["Tin-Blank_1", 0.35, -28.500, 0.250, 0.18, -1.200, 0.350],
       ["Tin-Blank_2", 0.33, -28.300, 0.240, 0.16, -1.100, 0.320],
@@ -411,7 +394,6 @@ const PRESETS = {
       ["USGS41a_2", 37.120, 0.080],
       ["IAEA-CH-6_QC2", -9.910, 0.075]
     ],
-    // Extended 19-run Marine Sediment Sequence: [ID, Area1(Vs), Raw1, SD1]
     demoArea: [
       ["Tin-Blank_1", 0.40, -28.600, 0.200],
       ["Tin-Blank_2", 0.36, -28.400, 0.220],
