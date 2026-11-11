@@ -7,7 +7,7 @@
   <meta name="google-site-verification" content="5leUfUP0Pldumsv4A1GGExW5MbB-HVvHlOjuUsnlYKQ" />
   <meta name="description" content="IsoCalib: Open-source web platform for stable isotope calibration, EA-IRMS size linearity & blank correction, multi-point WLS regression, and uncertainty propagation.">
 
-  <!-- IsoCalib Custom Academic Favicon (Mass Spec Dual Peaks) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23111827'/><path d='M6 24 L10 24 L14 8 L18 24 L21 24 L23 15 L25 24 L26 24' fill='none' stroke='%2338bdf8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/><circle cx='14' cy='8' r='2' fill='%23fbfaf8'/><circle cx='23' cy='15' r='1.6' fill='%23fbfaf8'/></svg>">
 
   <!-- Google Fonts -->
@@ -20,7 +20,7 @@
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
-  <!-- MathJax for Scientific Formula Rendering -->
+  <!-- MathJax -->
   <script>
     window.MathJax = {
       tex: {
@@ -32,24 +32,21 @@
   </script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <!-- Modular Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-stone-200">
 
   <textarea id="paste-target" tabindex="-1"></textarea>
 
-  <!-- Editorial Top Navigation -->
+  <!-- Navigation -->
   <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       
-      <!-- Brand Logo & Sub-badge -->
       <div class="flex items-center space-x-3 whitespace-nowrap">
         <a href="#" class="font-brand text-xl font-bold tracking-wider text-stone-900 hover:text-stone-700 transition">ISOCALIB</a>
         <span class="hidden sm:inline-block text-[11px] uppercase tracking-wider text-stone-400 font-mono">/ Geochemistry</span>
       </div>
 
-      <!-- Action Navigation Links -->
       <div class="flex items-center space-x-5 whitespace-nowrap">
         <nav class="flex items-center space-x-4 sm:space-x-5 text-xs text-stone-600 font-sans">
           
@@ -65,7 +62,7 @@
 
           <span class="text-stone-300">·</span>
 
-          <!-- Grouped Dropdown Menu: More -->
+          <!-- More Dropdown -->
           <div class="relative inline-block text-left" id="more-menu-container">
             <button id="btn-toggle-more" type="button" class="inline-flex items-center gap-1 text-stone-600 hover:text-stone-900 transition cursor-pointer font-medium py-1">
               <span data-i18n="nav_more">More</span>
@@ -74,7 +71,6 @@
               </svg>
             </button>
 
-            <!-- Dropdown Menu Box -->
             <div id="more-menu-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-[#c7c5bc] shadow-lg rounded-none py-1.5 z-50 text-xs font-sans text-stone-800 divide-y divide-stone-100">
               <div class="py-1">
                 <button id="btn-open-about" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_about">
@@ -92,7 +88,6 @@
                   <span class="font-mono text-[10px] text-stone-400">Cite</span>
                 </a>
                 
-                <!-- Google Form Link (No Login) -->
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5iGrGYK5UNSosEULELVSLTNxYG1t1MBBsWGiCF6aQxhhNYQ/viewform" 
                    id="nav-feedback-form"
                    target="_blank" 
@@ -102,7 +97,6 @@
                   <span class="font-mono text-[10px] text-emerald-700 bg-emerald-100 px-1 py-0.2">No Login</span>
                 </a>
 
-                <!-- GitHub Issues Link -->
                 <a href="https://github.com/zinidsy-spec/Stable-isocalib/issues/new?template=feedback.md" 
                    target="_blank" 
                    rel="noopener noreferrer" 
@@ -115,7 +109,7 @@
           </div>
         </nav>
         
-        <!-- Language Switcher Toggle -->
+        <!-- Language Switcher -->
         <div class="inline-flex items-center border border-stone-300 p-0.5 bg-stone-100 font-mono text-[11px] font-bold">
           <button id="lang-ko" class="px-2 py-0.5 transition cursor-pointer">KO</button>
           <button id="lang-en" class="px-2 py-0.5 transition cursor-pointer">EN</button>
@@ -128,7 +122,7 @@
   <!-- Main Work Area -->
   <main class="max-w-6xl mx-auto px-6 py-10 space-y-12 flex-grow w-full">
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <div class="border-b border-[#e5e3dc] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
@@ -169,7 +163,7 @@
       </div>
     </div>
 
-    <!-- Section 1: Reference & QC Standards -->
+    <!-- Section 1: Standards -->
     <section class="space-y-4">
       <div class="flex flex-wrap items-center justify-between border-b border-stone-200 pb-2.5 gap-3">
         <div class="flex items-center space-x-3">
@@ -177,15 +171,13 @@
           <h2 class="text-sm sm:text-base uppercase tracking-wider font-bold text-stone-900" data-i18n="sec1_title">Reference & QC Standards</h2>
         </div>
         
-        <!-- Controls: Add Anchor, Oxygen Scale, Area/Blank Mode, Manual Linearity, Drift Correction -->
+        <!-- Controls -->
         <div class="flex items-center flex-wrap gap-2 text-xs font-mono">
-          
-          <!-- Multi-Point Calibration: Add Anchor Button -->
           <button id="btn-add-anchor" type="button" class="px-2.5 py-1.5 bg-stone-900 text-white hover:bg-stone-800 transition font-semibold cursor-pointer flex items-center gap-1 shadow-xs" data-i18n="btn_add_anchor">
             <span>+ Add Anchor</span>
           </button>
 
-          <!-- Oxygen Scale Selector (CO & WATER_O) -->
+          <!-- Oxygen Scale -->
           <div id="oxygen-scale-wrapper" class="flex items-center space-x-1.5 bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1.5">
             <label for="oxygen-scale-select" class="font-bold text-stone-800" data-i18n="o_scale_label">δ¹⁸O Scale:</label>
             <select id="oxygen-scale-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
@@ -194,7 +186,7 @@
             </select>
           </div>
 
-          <!-- Peak Area & Blank Correction Mode Selector (v1.4.0) -->
+          <!-- Area / Blank Mode -->
           <div class="flex items-center space-x-1.5 bg-[#fbfaf8] px-2.5 py-1.5 border border-[#c7c5bc]">
             <label for="area-mode" class="font-bold text-stone-800" data-i18n="area_mode_label">Area / Blank:</label>
             <select id="area-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
@@ -205,7 +197,7 @@
             </select>
           </div>
 
-          <!-- Manual Linearity Factor Controls (v1.4.1) -->
+          <!-- Manual Linearity Factor -->
           <div id="manual-linearity-container" class="hidden flex items-center space-x-1.5 bg-[#fbfaf8] px-2.5 py-1.5 border border-[#c7c5bc]">
             <label for="lin-calc-mode" class="font-bold text-stone-800">Slope Method:</label>
             <select id="lin-calc-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
@@ -224,14 +216,14 @@
             </div>
           </div>
 
-          <!-- Drift Monitor Standard Selector -->
+          <!-- Drift Monitor -->
           <div class="flex items-center space-x-1.5 bg-[#fbfaf8] px-2.5 py-1.5 border border-[#c7c5bc]">
             <label for="drift-anchor-select" class="font-bold text-stone-800" data-i18n="drift_anchor_label">Monitor:</label>
             <select id="drift-anchor-select" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
             </select>
           </div>
 
-          <!-- Drift Model Selector -->
+          <!-- Drift Model -->
           <div class="flex items-center space-x-1.5 bg-[#fbfaf8] px-2.5 py-1.5 border border-[#c7c5bc]">
             <label for="drift-mode" class="font-bold text-stone-800" data-i18n="drift_label">Drift:</label>
             <select id="drift-mode" class="bg-white border border-stone-300 text-stone-900 px-1.5 py-0.5 font-sans text-xs focus:outline-none focus:border-stone-900 cursor-pointer">
@@ -243,7 +235,7 @@
         </div>
       </div>
 
-      <!-- Standards Preset Bar -->
+      <!-- Presets Bar -->
       <div class="bg-white border border-[#c7c5bc] p-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-xs">
         <div class="flex items-center flex-wrap gap-2.5">
           <span class="font-bold text-stone-800 uppercase tracking-wider text-[11px]" data-i18n="preset_manage_label">Reference Presets:</span>
@@ -260,7 +252,6 @@
         </div>
       </div>
 
-      <!-- Editorial Guide Note -->
       <div class="border-l-2 border-stone-400 pl-3.5 py-1 text-xs text-stone-600 space-y-0.5">
         <p class="leading-relaxed" data-i18n="drift_guide_desc">
           * Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity (Auto/Manual slope)</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').
@@ -270,7 +261,7 @@
       <div id="std-input-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
     </section>
 
-    <!-- Section 2: SpreadSheet & Controls -->
+    <!-- Section 2: SpreadSheet -->
     <section class="space-y-4">
       <div class="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-3">
         <div class="space-y-1">
@@ -311,7 +302,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left: Spreadsheet Grid -->
+        <!-- Left: Grid -->
         <div class="lg:col-span-6 space-y-2">
           <div class="border border-[#c7c5bc] bg-white overflow-hidden shadow-sm relative">
             <div class="max-h-[640px] overflow-auto select-none" id="grid-scroll-container">
@@ -327,13 +318,11 @@
           </div>
         </div>
 
-        <!-- Right: Regression Cards with MSWD & Plots -->
+        <!-- Right: Cards & Plots -->
         <div class="lg:col-span-6 space-y-5">
           <div id="param-cards-container" class="grid grid-cols-2 gap-4"></div>
 
           <div class="space-y-4">
-            
-            <!-- Figure 1: 1st Isotope Fit -->
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-1-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 1</span>
@@ -344,7 +333,6 @@
               </div>
             </div>
 
-            <!-- Figure 2: 2nd Isotope Fit (Dual mode only) -->
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-2-box">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-2-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 2</span>
@@ -355,7 +343,6 @@
               </div>
             </div>
 
-            <!-- Figure 3: 1st Isotope Drift / Linearity Diagnostics Plot -->
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-drift-box-1">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-drift-1-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 3 · Diagnostics</span>
@@ -366,7 +353,6 @@
               </div>
             </div>
 
-            <!-- Figure 4: 2nd Isotope Drift / Linearity Diagnostics Plot (Dual mode only) -->
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-sm space-y-2" id="plot-drift-box-2">
               <div class="flex justify-between items-center px-1">
                 <span id="plot-drift-2-tag" class="font-mono text-[10px] uppercase font-bold text-stone-400">Figure 4 · Diagnostics</span>
@@ -376,14 +362,13 @@
                 Awaiting data computation...
               </div>
             </div>
-
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Section 3: Final Results & QC Report -->
+    <!-- Section 3: Results -->
     <section class="space-y-4 pt-2">
       <div class="flex items-baseline justify-between border-b border-stone-200 pb-3">
         <div class="flex items-center space-x-3">
@@ -396,10 +381,8 @@
         </button>
       </div>
 
-      <!-- Dynamic QC Banner with Actionable Diagnostics -->
       <div id="qc-summary-banner" class="hidden p-4 rounded-none space-y-3 transition-colors"></div>
 
-      <!-- View Switcher Tabs -->
       <div class="flex items-center space-x-1 border-b border-stone-300 pt-2 font-mono text-xs">
         <button id="tab-btn-sequence" class="px-4 py-2 font-bold bg-white border-t-2 border-stone-900 text-stone-900 border-x border-[#d1cfc7] -mb-px transition cursor-pointer" data-i18n="tab_sequence">
           Run-by-Run Sequence
@@ -409,7 +392,6 @@
         </button>
       </div>
 
-      <!-- Tab Content 1: Sequence Raw Calibrated Runs -->
       <div id="tab-content-sequence" class="border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
         <table class="w-full text-left text-xs font-data text-stone-900">
           <thead id="result-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
@@ -423,7 +405,6 @@
         </table>
       </div>
 
-      <!-- Tab Content 2: Adjacent Grouped Sample Summary -->
       <div id="tab-content-grouped" class="hidden border border-[#c7c5bc] bg-white overflow-x-auto shadow-sm">
         <table class="w-full text-left text-xs font-data text-stone-900">
           <thead id="grouped-head" class="bg-[#f0ede6] text-stone-800 uppercase font-sans text-[11px] font-bold tracking-wider border-b border-[#d1cfc7]"></thead>
@@ -438,7 +419,7 @@
       </div>
     </section>
 
-    <!-- Section 4: Academic Rigor & Methodology -->
+    <!-- Section 4: Methodology -->
     <section id="methodology" class="border-t-2 border-stone-900 pt-10 space-y-8">
       <div class="max-w-3xl space-y-2">
         <div class="flex items-center space-x-3">
@@ -451,9 +432,7 @@
         </p>
       </div>
 
-      <!-- 3 Principles -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-stone-700">
-        
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
@@ -467,9 +446,7 @@
               * <span data-i18n="card1_quote">A run with 2x higher uncertainty exerts only 1/4 the statistical leverage on the calibration slope.</span>
             </div>
           </div>
-          <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card1_basis">
-            Basis: York (1968) / Ludwig (2003)
-          </div>
+          <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card1_basis">Basis: York (1968) / Ludwig (2003)</div>
         </div>
 
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
@@ -485,9 +462,7 @@
               * <span data-i18n="card2_quote">An MSWD close to 1 indicates an ideal fit; values >> 1 indicate unmodeled instrumental drift or non-analytical variance.</span>
             </div>
           </div>
-          <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card2_basis">
-            Basis: McIntyre et al. (1966) / IsoplotR
-          </div>
+          <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card2_basis">Basis: McIntyre et al. (1966) / IsoplotR</div>
         </div>
 
         <div class="bg-white border border-[#d1cfc7] p-5 space-y-3 shadow-sm flex flex-col justify-between">
@@ -503,14 +478,11 @@
               * <span data-i18n="card3_quote">Provides peer-review-proof uncertainty budgets that satisfy editorial requirements of major journals.</span>
             </div>
           </div>
-          <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">
-            Basis: JCGM 100:2008 (GUM Guide)
-          </div>
+          <div class="text-[10px] font-mono text-stone-400 pt-2 border-t border-stone-100" data-i18n="card3_basis">Basis: JCGM 100:2008 (GUM Guide)</div>
         </div>
-
       </div>
 
-      <!-- Accordion Mathematical Derivations -->
+      <!-- Accordion -->
       <details class="group bg-white border border-[#d1cfc7] shadow-sm transition-all">
         <summary class="flex justify-between items-center p-4 cursor-pointer select-none bg-[#fcfbf9] hover:bg-stone-100 transition">
           <div class="flex items-center space-x-2">
@@ -521,9 +493,7 @@
         <div class="p-6 border-t border-[#d1cfc7] space-y-6 text-xs text-stone-700 font-light leading-relaxed">
           <div class="space-y-2">
             <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_a_title">A. Weighted Least Squares Normal Equations</h5>
-            <p data-i18n="acc_a_desc">
-              Exact analytical solution minimizing the sum of weighted squared residuals $\sum w_i (y_i - ax_i - b)^2$:
-            </p>
+            <p data-i18n="acc_a_desc">Exact analytical solution minimizing the sum of weighted squared residuals $\sum w_i (y_i - ax_i - b)^2$:</p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$w_i = \frac{1}{\sigma_{x,i}^2}, \quad \Delta = \sum w_i \sum w_i x_i^2 - \left(\sum w_i x_i\right)^2$$
               $$\text{Slope }(a) = \frac{\sum w_i \sum w_i x_i y_i - \sum w_i x_i \sum w_i y_i}{\Delta}, \quad \text{Intercept }(b) = \frac{\sum w_i x_i^2 \sum w_i y_i - \sum w_i x_i \sum w_i x_i y_i}{\Delta}$$
@@ -532,9 +502,7 @@
 
           <div class="space-y-2">
             <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_b_title">B. EA-IRMS Blank Mass Balance & Size Linearity Correction</h5>
-            <p data-i18n="acc_b_desc">
-              Mass-balance blank subtraction and peak-area linearity normalization prior to WLS scale calibration:
-            </p>
+            <p data-i18n="acc_b_desc">Mass-balance blank subtraction and peak-area linearity normalization prior to WLS scale calibration:</p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\delta_{\text{blk-corr}} = \frac{A_{\text{samp}} \cdot \delta_{\text{samp}} - \bar{A}_{\text{blk}} \cdot \bar{\delta}_{\text{blk}}}{A_{\text{samp}} - \bar{A}_{\text{blk}}}, \quad \delta_{\text{lin-corr}} = \delta_{\text{blk-corr}} - k_{\text{area}} \cdot \left(A_{\text{samp}} - \bar{A}_{\text{anchor}}\right)$$
             </div>
@@ -542,9 +510,7 @@
 
           <div class="space-y-2">
             <h5 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-[11px]" data-i18n="acc_c_title">C. First-Order Gaussian Error Propagation (GUM 5.1.2)</h5>
-            <p data-i18n="acc_c_desc">
-              Partial differential expansion for the linear calibration function $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$:
-            </p>
+            <p data-i18n="acc_c_desc">Partial differential expansion for the linear calibration function $y_{\text{cal}} = a \cdot x_{\text{raw}} + b$:</p>
             <div class="bg-[#fbfaf8] border border-stone-200 p-3 font-mono text-stone-900 text-xs overflow-x-auto">
               $$\sigma_{\text{cal}} = \sqrt{ \left(\frac{\partial y}{\partial x_{\text{raw}}} \sigma_{\text{raw}}\right)^2 + \left(\frac{\partial y}{\partial a} \text{SE}_a\right)^2 + \left(\frac{\partial y}{\partial b} \text{SE}_b\right)^2 } = \sqrt{ (a \cdot \sigma_{\text{raw}})^2 + (x_{\text{raw}} \cdot \text{SE}_a)^2 + \text{SE}_b^2 }$$
             </div>
@@ -552,7 +518,6 @@
         </div>
       </details>
 
-      <!-- Zero-Server Privacy Statement -->
       <div class="bg-stone-100/60 border border-stone-200 p-6 flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
         <div class="space-y-1.5 max-w-2xl">
           <div class="flex items-center space-x-2">
@@ -569,7 +534,7 @@
         </div>
       </div>
 
-      <!-- Citation & Permanent DOI Section -->
+      <!-- Citation -->
       <div id="citation" class="space-y-3 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
           <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Permanent Archive</h4>
@@ -594,42 +559,62 @@
 
   </main>
 
-  <!-- Quick Start Guide Modal -->
+  <!-- Quick Start SOP Modal -->
   <div id="quickstart-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
+    <div class="bg-white border border-[#c7c5bc] max-w-3xl w-full max-h-[88vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
+      
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <div class="flex items-center space-x-2">
-            <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
-            <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="qs_modal_title">/ Quick Start Protocol</span>
+            <span class="font-brand text-xl font-bold text-stone-900">ISOCALIB</span>
+            <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="qs_modal_title">/ User Protocol</span>
           </div>
-          <p class="text-xs text-stone-500 pt-1" data-i18n="qs_modal_subtitle">Essential 3-step guideline for fast and reproducible data reduction</p>
+          <p class="text-xs text-stone-500 pt-1" data-i18n="qs_modal_subtitle">Standard Operating Procedure for Precision Isotope Reduction</p>
         </div>
         <button id="btn-close-quickstart" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
 
-      <div class="space-y-4 text-xs text-stone-700 leading-relaxed font-light">
+      <div class="space-y-5 text-xs text-stone-700 leading-relaxed font-light">
+        <div class="bg-[#fcfbf9] border border-stone-300 p-4 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_recipe_title">1. Quick Presets</span>
+            <span class="font-mono text-[10px] text-stone-400">30s Setup</span>
+          </div>
+          <p class="text-[11px] text-stone-600" data-i18n="qs_recipe_desc"></p>
+          <div class="space-y-1.5 font-sans text-[11px] text-stone-800 bg-white p-3 border border-stone-200">
+            <div data-i18n="qs_recipe_1"></div>
+            <div data-i18n="qs_recipe_2"></div>
+            <div data-i18n="qs_recipe_3"></div>
+            <div data-i18n="qs_recipe_4"></div>
+          </div>
+        </div>
+
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">Step 1. Configure Reference Standards (Section 01)</span>
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">2. Standards & Preprocessing</span>
             <span class="font-mono text-[10px] text-stone-400">01 SETUP</span>
           </div>
           <p data-i18n="qs_step1_desc"></p>
-          <div class="text-[11px] font-mono text-stone-500 bg-white p-2 border border-stone-200" data-i18n="qs_step1_tip"></div>
+          <div class="text-[11px] font-sans text-stone-700 bg-white p-2.5 border border-stone-200 space-y-1" data-i18n="qs_step1_area_rules"></div>
+          <div class="text-[11px] font-sans text-stone-700 bg-white p-2.5 border border-stone-200 space-y-1" data-i18n="qs_step1_slope_rules"></div>
         </div>
 
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">Step 2. Paste Sequence Rows & Filter Outliers (Section 02)</span>
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">3. Data Pasting & Columns</span>
             <span class="font-mono text-[10px] text-stone-400">02 INPUT</span>
           </div>
           <p data-i18n="qs_step2_desc"></p>
-          <div class="text-[11px] font-mono text-stone-600 bg-white p-2 border border-stone-200 overflow-x-auto" data-i18n="qs_step2_columns"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] font-mono">
+            <div class="bg-white p-2.5 border border-stone-200" data-i18n="qs_step2_col_std"></div>
+            <div class="bg-white p-2.5 border border-stone-200" data-i18n="qs_step2_col_area"></div>
+          </div>
+          <div class="text-[11px] font-sans text-stone-700 bg-white p-2.5 border border-stone-200" data-i18n="qs_step2_naming"></div>
         </div>
 
         <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
           <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">Step 3. Calibrate & Export (Section 03)</span>
+            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">4. Outliers & Execution</span>
             <span class="font-mono text-[10px] text-stone-400">03 REDUCE</span>
           </div>
           <p data-i18n="qs_step3_desc"></p>
@@ -638,9 +623,10 @@
       </div>
 
       <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
-        <span data-i18n="qs_footer_tip">* Click 'Load Demo' on the spreadsheet to inspect an active calculation immediately.</span>
+        <span data-i18n="qs_footer_tip">* Tip: Click 'Load Demo' to test an active sequence immediately.</span>
         <button id="btn-quickstart-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
       </div>
+
     </div>
   </div>
 
@@ -676,7 +662,7 @@
     </div>
   </div>
 
-  <!-- Changelog & Release Notes Modal -->
+  <!-- Changelog Modal -->
   <div id="changelog-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
@@ -720,7 +706,7 @@
     </button>
   </div>
 
-  <!-- Footer with GPL-3.0 License & DOI Badge -->
+  <!-- Footer -->
   <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="space-y-0.5 text-center sm:text-left">
@@ -734,7 +720,7 @@
     </div>
   </footer>
 
-<!-- 순서 중요: 데이터 -> 계산 엔진 -> 시각화 -> 메인 UI 오케스트레이터 -->
+  <!-- Scripts: presets -> math-core -> plot-export -> app-ui -->
   <script src="presets.js"></script>
   <script src="math-core.js"></script>
   <script src="plot-export.js"></script>
