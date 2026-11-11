@@ -7,7 +7,7 @@
   <meta name="google-site-verification" content="5leUfUP0Pldumsv4A1GGExW5MbB-HVvHlOjuUsnlYKQ" />
   <meta name="description" content="IsoCalib: Open-source web platform for stable isotope calibration, EA-IRMS size linearity & blank correction, multi-point WLS regression, and uncertainty propagation.">
 
-  <!-- Favicon -->
+  <!-- Academic Mass Spec Dual-Peak Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23111827'/><path d='M6 24 L10 24 L14 8 L18 24 L21 24 L23 15 L25 24 L26 24' fill='none' stroke='%2338bdf8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/><circle cx='14' cy='8' r='2' fill='%23fbfaf8'/><circle cx='23' cy='15' r='1.6' fill='%23fbfaf8'/></svg>">
 
   <!-- Google Fonts -->
@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 
-  <!-- External Libraries -->
+  <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
@@ -50,8 +50,8 @@
       <div class="flex items-center space-x-5 whitespace-nowrap">
         <nav class="flex items-center space-x-4 sm:space-x-5 text-xs text-stone-600 font-sans">
           
-          <button id="btn-open-quickstart" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1" data-i18n="nav_quickstart">
-            Quick Start
+          <button id="btn-open-quickstart" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1">
+            <span data-i18n="nav_quickstart">Quick Start</span>
           </button>
           
           <span class="text-stone-300">·</span>
@@ -73,18 +73,18 @@
 
             <div id="more-menu-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-[#c7c5bc] shadow-lg rounded-none py-1.5 z-50 text-xs font-sans text-stone-800 divide-y divide-stone-100">
               <div class="py-1">
-                <button id="btn-open-about" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_about">
-                  <span>About IsoCalib</span>
+                <button id="btn-open-about" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center">
+                  <span data-i18n="nav_about">About IsoCalib</span>
                   <span class="font-mono text-[10px] text-stone-400">About</span>
                 </button>
-                <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_changelog">
-                  <span>Changelog</span>
+                <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center">
+                  <span data-i18n="nav_changelog">Changelog</span>
                   <span class="font-mono text-[10px] text-stone-400">v1.4.1</span>
                 </button>
               </div>
               <div class="py-1">
-                <a href="#citation" class="block px-3.5 py-1.5 hover:bg-stone-50 transition flex justify-between items-center" data-i18n="nav_citation">
-                  <span>Citation & DOI</span>
+                <a href="#citation" class="block px-3.5 py-1.5 hover:bg-stone-50 transition flex justify-between items-center">
+                  <span data-i18n="nav_citation">Citation & DOI</span>
                   <span class="font-mono text-[10px] text-stone-400">Cite</span>
                 </a>
                 
@@ -559,7 +559,7 @@
 
   </main>
 
-  <!-- Quick Start SOP Modal -->
+  <!-- Quick Start Modal -->
   <div id="quickstart-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-3xl w-full max-h-[88vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       
@@ -630,7 +630,7 @@
     </div>
   </div>
 
-  <!-- About IsoCalib Modal -->
+  <!-- About Modal -->
   <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
@@ -720,7 +720,7 @@
     </div>
   </footer>
 
-  <!-- Scripts: presets -> math-core -> plot-export -> app-ui -->
+  <!-- Scripts -->
   <script src="presets.js"></script>
   <script src="math-core.js"></script>
   <script src="plot-export.js"></script>
