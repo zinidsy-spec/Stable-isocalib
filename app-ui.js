@@ -1,4 +1,4 @@
-/* app-ui.js - IsoCalib v1.4.1 UI Interaction, Grid Controller & Execution Pipeline */
+/* app-ui.js - IsoCalib v1.4.1 Final Verified UI & Execution Pipeline */
 
 let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentTab = 'sequence';
@@ -144,7 +144,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 // -------------------------------------------------------------
-// 2. Standards Configuration & Presets Storage
+// 2. Standards Configuration & Presets Storage (Bug Fixed)
 // -------------------------------------------------------------
 function captureCurrentStandardsSnapshot(mode = currentMode) {
   const p = PRESETS[mode];
@@ -167,7 +167,7 @@ function captureCurrentStandardsSnapshot(mode = currentMode) {
   const elQcV2 = document.getElementById('qc-std-v2');
   const qcStd = {
     name: elQcName ? elQcName.value.trim() : null,
-    v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elV1.value) : null,
+    v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elQcV1.value) : null,
     v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null
   };
   const elAnchorSelect = document.getElementById('drift-anchor-select');
@@ -554,10 +554,10 @@ function updateLayoutForMode(forcePresetDefault = false) {
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준 ID'}</th>
         ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[0].label}</th>` : ''}
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-2 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
+        <th class="px-2.5 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
         ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[1].label}</th>` : ''}
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-        <th class="px-2 py-2 text-stone-900">1σ SD</th>
+        <th class="px-2.5 py-2 text-stone-900">1σ SD</th>
       </tr>
     `;
   } else {
@@ -649,7 +649,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
         <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
         <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
         <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
-        <th class="px-4 py-2.5 text-stone-700">Rep. 1σ SD</th>
+        <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
       </tr>
     `;
   }
@@ -710,7 +710,6 @@ document.getElementById('oxygen-scale-select').addEventListener('change', (e) =>
   if (hasCalibratedOnce) runCalibration();
 });
 
-// 안전한 언어 전환 함수
 function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('isocalib_lang', lang);
@@ -1138,7 +1137,7 @@ document.getElementById('isotope-preset').addEventListener('change', (e) => {
 
 document.getElementById('btn-calc').addEventListener('click', runCalibration);
 
-// 21개 전체 런 보존 로드
+// 30+ 전체 런 보존 로드
 document.getElementById('btn-demo').addEventListener('click', () => {
   userCustomStandardsByMode[currentMode] = null;
   oxygenScale = currentMode === 'WATER_O' ? 'VSMOW' : 'VPDB';
@@ -1418,34 +1417,58 @@ function runCalibration() {
 
   hasCalibratedOnce = true;
 
+  // WLS 계산 및 카드 갱신
   const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
-  document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
-  document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
-  document.getElementById('p1-se').innerText = `± ${reg1.seSlope.toFixed(6)}`;
-  document.getElementById('p1-mswd').innerHTML = formatMswdWithStatus(reg1.mswd, isEn);
-  document.getElementById('p1-r2').innerText = reg1.r2.toFixed(5);
+  const p1Slope = document.getElementById('p1-slope');
+  if (p1Slope) p1Slope.innerText = reg1.slope.toFixed(6);
+  const p1Intercept = document.getElementById('p1-intercept');
+  if (p1Intercept) p1Intercept.innerText = reg1.intercept.toFixed(6);
+  const p1Se = document.getElementById('p1-se');
+  if (p1Se) p1Se.innerText = `± ${reg1.seSlope.toFixed(6)}`;
+  const p1Mswd = document.getElementById('p1-mswd');
+  if (p1Mswd) p1Mswd.innerHTML = formatMswdWithStatus(reg1.mswd, isEn);
+  const p1R2 = document.getElementById('p1-r2');
+  if (p1R2) p1R2.innerText = reg1.r2.toFixed(5);
 
-  drawPlot('plot-1', `${p.elements[0].label} Calibration Fit`, pts1, reg1, `Corrected Raw ${p.elements[0].label} (‰)`, `True ${p.elements[0].label} (${u1})`);
+  if (typeof drawPlot === 'function') {
+    drawPlot('plot-1', `${p.elements[0].label} Calibration Fit`, pts1, reg1, `Corrected Raw ${p.elements[0].label} (‰)`, `True ${p.elements[0].label} (${u1})`);
+  }
 
   let reg2 = null;
   if (isDual) {
     reg2 = calcWLS(pts2.x, pts2.y, pts2.sd);
-    document.getElementById('p2-slope').innerText = reg2.slope.toFixed(6);
-    document.getElementById('p2-intercept').innerText = reg2.intercept.toFixed(6);
-    document.getElementById('p2-se').innerText = `± ${reg2.seSlope.toFixed(6)}`;
-    document.getElementById('p2-mswd').innerHTML = formatMswdWithStatus(reg2.mswd, isEn);
-    document.getElementById('p2-r2').innerText = reg2.r2.toFixed(5);
-    drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Corrected Raw ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${u2})`);
+    const p2Slope = document.getElementById('p2-slope');
+    if (p2Slope) p2Slope.innerText = reg2.slope.toFixed(6);
+    const p2Intercept = document.getElementById('p2-intercept');
+    if (p2Intercept) p2Intercept.innerText = reg2.intercept.toFixed(6);
+    const p2Se = document.getElementById('p2-se');
+    if (p2Se) p2Se.innerText = `± ${reg2.seSlope.toFixed(6)}`;
+    const p2Mswd = document.getElementById('p2-mswd');
+    if (p2Mswd) p2Mswd.innerHTML = formatMswdWithStatus(reg2.mswd, isEn);
+    const p2R2 = document.getElementById('p2-r2');
+    if (p2R2) p2R2.innerText = reg2.r2.toFixed(5);
+
+    if (typeof drawPlot === 'function') {
+      drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Corrected Raw ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${u2})`);
+    }
   }
 
   // Diagnostic Plots (Figure 3 & 4)
   const isManualLin = (useLin && linCalcMode === 'manual');
   if (useLin && linMonitorPts.a1.length >= 1) {
-    drawLinearityPlot('plot-drift-1', linMonitorPts.a1, linMonitorPts.d1, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope1, meanAnchorArea1, p.elements[0].label, isManualLin);
-    if (isDual) drawLinearityPlot('plot-drift-2', linMonitorPts.a2, linMonitorPts.d2, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope2, meanAnchorArea2, p.elements[1].label, isManualLin);
+    if (typeof drawLinearityPlot === 'function') {
+      drawLinearityPlot('plot-drift-1', linMonitorPts.a1, linMonitorPts.d1, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope1, meanAnchorArea1, p.elements[0].label, isManualLin);
+      if (isDual) {
+        drawLinearityPlot('plot-drift-2', linMonitorPts.a2, linMonitorPts.d2, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope2, meanAnchorArea2, p.elements[1].label, isManualLin);
+      }
+    }
   } else {
-    drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
-    if (isDual) drawDriftPlot('plot-drift-2', rawMonitorRuns.seq, rawMonitorRuns.v2, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope2, monitorRuns2, gridData.length, p.elements[1].label);
+    if (typeof drawDriftPlot === 'function') {
+      drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
+      if (isDual) {
+        drawDriftPlot('plot-drift-2', rawMonitorRuns.seq, rawMonitorRuns.v2, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope2, monitorRuns2, gridData.length, p.elements[1].label);
+      }
+    }
   }
 
   // Step E: Compute Sequence Table
