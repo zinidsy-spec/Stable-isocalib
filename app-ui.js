@@ -54,7 +54,7 @@ const moreMenuContainer = document.getElementById('more-menu-container');
 function closeMoreDropdown() {
   if (moreMenuDropdown && !moreMenuDropdown.classList.contains('hidden')) {
     moreMenuDropdown.classList.add('hidden');
-    moreMenuArrow.classList.remove('rotate-180');
+    if (moreMenuArrow) moreMenuArrow.classList.remove('rotate-180');
   }
 }
 
@@ -62,7 +62,7 @@ if (btnToggleMore) {
   btnToggleMore.addEventListener('click', (e) => {
     e.stopPropagation();
     const isHidden = moreMenuDropdown.classList.toggle('hidden');
-    moreMenuArrow.classList.toggle('rotate-180', !isHidden);
+    if (moreMenuArrow) moreMenuArrow.classList.toggle('rotate-180', !isHidden);
   });
 }
 
@@ -72,7 +72,7 @@ document.addEventListener('click', (e) => {
 
 function renderChangelog() {
   const container = document.getElementById('changelog-content');
-  if (!container) return;
+  if (!container || typeof CHANGELOG_DATA === 'undefined') return;
   const isEn = currentLang === 'en';
   container.innerHTML = CHANGELOG_DATA.map((rel, idx) => `
     <div class="border-l-2 ${idx === 0 ? 'border-stone-900' : 'border-stone-300'} pl-4 space-y-2 relative">
@@ -99,24 +99,52 @@ const quickstartModal = document.getElementById('quickstart-modal');
 const aboutModal = document.getElementById('about-modal');
 const changelogModal = document.getElementById('changelog-modal');
 
-document.getElementById('btn-open-quickstart').addEventListener('click', () => { closeMoreDropdown(); quickstartModal.classList.remove('hidden'); });
-document.getElementById('btn-close-quickstart').addEventListener('click', () => quickstartModal.classList.add('hidden'));
-document.getElementById('btn-quickstart-close-bottom').addEventListener('click', () => quickstartModal.classList.add('hidden'));
+const btnOpenQs = document.getElementById('btn-open-quickstart');
+if (btnOpenQs && quickstartModal) {
+  btnOpenQs.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeMoreDropdown();
+    quickstartModal.classList.remove('hidden');
+  });
+}
+const btnCloseQs = document.getElementById('btn-close-quickstart');
+if (btnCloseQs) btnCloseQs.addEventListener('click', () => quickstartModal.classList.add('hidden'));
+const btnQsBottom = document.getElementById('btn-quickstart-close-bottom');
+if (btnQsBottom) btnQsBottom.addEventListener('click', () => quickstartModal.classList.add('hidden'));
 
-document.getElementById('btn-open-about').addEventListener('click', () => { closeMoreDropdown(); aboutModal.classList.remove('hidden'); });
-document.getElementById('btn-close-about').addEventListener('click', () => aboutModal.classList.add('hidden'));
-document.getElementById('btn-modal-close-bottom').addEventListener('click', () => aboutModal.classList.add('hidden'));
+const btnOpenAbout = document.getElementById('btn-open-about');
+if (btnOpenAbout && aboutModal) {
+  btnOpenAbout.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeMoreDropdown();
+    aboutModal.classList.remove('hidden');
+  });
+}
+const btnCloseAbout = document.getElementById('btn-close-about');
+if (btnCloseAbout) btnCloseAbout.addEventListener('click', () => aboutModal.classList.add('hidden'));
+const btnAboutBottom = document.getElementById('btn-modal-close-bottom');
+if (btnAboutBottom) btnAboutBottom.addEventListener('click', () => aboutModal.classList.add('hidden'));
 
-document.getElementById('btn-open-changelog').addEventListener('click', () => { closeMoreDropdown(); renderChangelog(); changelogModal.classList.remove('hidden'); });
-document.getElementById('btn-close-changelog').addEventListener('click', () => changelogModal.classList.add('hidden'));
-document.getElementById('btn-changelog-close-bottom').addEventListener('click', () => changelogModal.classList.add('hidden'));
+const btnOpenChangelog = document.getElementById('btn-open-changelog');
+if (btnOpenChangelog && changelogModal) {
+  btnOpenChangelog.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeMoreDropdown();
+    renderChangelog();
+    changelogModal.classList.remove('hidden');
+  });
+}
+const btnCloseChangelog = document.getElementById('btn-close-changelog');
+if (btnCloseChangelog) btnCloseChangelog.addEventListener('click', () => changelogModal.classList.add('hidden'));
+const btnChangelogBottom = document.getElementById('btn-changelog-close-bottom');
+if (btnChangelogBottom) btnChangelogBottom.addEventListener('click', () => changelogModal.classList.add('hidden'));
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeMoreDropdown();
-    quickstartModal.classList.add('hidden');
-    aboutModal.classList.add('hidden');
-    changelogModal.classList.add('hidden');
+    if (quickstartModal) quickstartModal.classList.add('hidden');
+    if (aboutModal) aboutModal.classList.add('hidden');
+    if (changelogModal) changelogModal.classList.add('hidden');
   }
 });
 
@@ -363,16 +391,9 @@ document.getElementById('area-mode').addEventListener('change', (e) => {
   const nextActive = isAreaActive();
 
   const p = PRESETS[currentMode];
-  const hasAnyInput = gridData.some(r => r[0] && r[0].toString().trim() !== '');
-  if (nextActive && p.demoArea && (!hasAnyInput || gridData[0][0] === p.demo[0][0])) {
-    gridData = JSON.parse(JSON.stringify(p.demoArea));
-    excludedRows = Array(gridData.length).fill(false);
-  } else if (!nextActive && p.demoArea && hasAnyInput && gridData[0][0] === p.demoArea[0][0]) {
-    gridData = JSON.parse(JSON.stringify(p.demo));
-    excludedRows = Array(gridData.length).fill(false);
-  } else {
-    convertGridRowsForAreaToggle(prevActive, nextActive);
-  }
+  const sourceDemo = (nextActive && p.demoArea) ? p.demoArea : p.demo;
+  gridData = JSON.parse(JSON.stringify(sourceDemo));
+  excludedRows = Array(gridData.length).fill(false);
 
   updateLayoutForMode(false);
   if (hasCalibratedOnce) runCalibration();
@@ -521,7 +542,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
 
   document.getElementById('drift-anchor-select').addEventListener('change', saveCurrentModeStandards);
 
-  // Grid Header 렌더링
+  // Grid Header
   const gHead = document.getElementById('grid-head');
   if (isDual) {
     gHead.innerHTML = `
@@ -550,7 +571,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
     `;
   }
 
-  // Regression Cards 렌더링
+  // Regression Cards
   const pContainer = document.getElementById('param-cards-container');
   const cardHtml = (elem, idx, unitLabel) => `
     <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
@@ -631,11 +652,13 @@ function updateLayoutForMode(forcePresetDefault = false) {
     `;
   }
 
-  const numCols = getNumDataCols();
-  if (gridData.length === 0) {
-    gridData = Array.from({ length: 30 }, () => Array(numCols).fill(''));
-    excludedRows = Array(30).fill(false);
+  // 초기 로드 시 빈 행 대신 데모 데이터 전체를 로드
+  if (!gridData || gridData.length === 0) {
+    const sourceDemo = (areaOn && p.demoArea) ? p.demoArea : p.demo;
+    gridData = JSON.parse(JSON.stringify(sourceDemo));
+    excludedRows = Array(gridData.length).fill(false);
   }
+
   renderGrid();
   resetOutputs();
 }
@@ -1342,325 +1365,4 @@ function runCalibration() {
   function getFullyPreprocessedRaw(rIdx, area, raw, isoIdx) {
     let val = applyBlankAndLin(area, raw, isoIdx);
     if (driftMode === 'linear') {
-      return isoIdx === 1 ? (val - driftSlope1 * rIdx) : (val - driftSlope2 * rIdx);
-    } else if (driftMode === 'piecewise') {
-      const offset = isoIdx === 1 ? getInterpolatedDriftOffset(rIdx, monitorRuns1) : getInterpolatedDriftOffset(rIdx, monitorRuns2);
-      return val - offset;
-    }
-    return val;
-  }
-
-  // Step D: Anchor Fitting (WLS)
-  const pts1 = { x: [], y: [], sd: [], names: [] };
-  const pts2 = { x: [], y: [], sd: [], names: [] };
-
-  gridData.forEach((row, rIdx) => {
-    if (excludedRows[rIdx]) return;
-    const f = extractRowFields(row, isDual, areaOn);
-    if (!f.id || isBlankRowId(f.id)) return;
-    const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-
-    refStds.forEach(std => {
-      if (std.keyMatch && clean.includes(std.keyMatch)) {
-        if (!isNaN(f.raw1) && !isNaN(std.v1)) {
-          const adj1 = getFullyPreprocessedRaw(rIdx, f.area1, f.raw1, 1);
-          pts1.x.push(adj1); pts1.y.push(std.v1); pts1.sd.push(f.sd1); pts1.names.push(f.id);
-        }
-        if (isDual && !isNaN(f.raw2) && !isNaN(std.v2)) {
-          const adj2 = getFullyPreprocessedRaw(rIdx, f.area2, f.raw2, 2);
-          pts2.x.push(adj2); pts2.y.push(std.v2); pts2.sd.push(f.sd2); pts2.names.push(f.id);
-        }
-      }
-    });
-  });
-
-  if (pts1.x.length < 2) {
-    alert(isEn ? "At least 2 active anchor standard runs are required." : "최소 2개 이상의 활성화된 앵커 표준물질 데이터가 필요합니다.");
-    return;
-  }
-
-  hasCalibratedOnce = true;
-
-  const reg1 = calcWLS(pts1.x, pts1.y, pts1.sd);
-  document.getElementById('p1-slope').innerText = reg1.slope.toFixed(6);
-  document.getElementById('p1-intercept').innerText = reg1.intercept.toFixed(6);
-  document.getElementById('p1-se').innerText = `± ${reg1.seSlope.toFixed(6)}`;
-  document.getElementById('p1-mswd').innerHTML = formatMswdWithStatus(reg1.mswd, isEn);
-  document.getElementById('p1-r2').innerText = reg1.r2.toFixed(5);
-
-  drawPlot('plot-1', `${p.elements[0].label} Calibration Fit`, pts1, reg1, `Corrected Raw ${p.elements[0].label} (‰)`, `True ${p.elements[0].label} (${u1})`);
-
-  let reg2 = null;
-  if (isDual) {
-    reg2 = calcWLS(pts2.x, pts2.y, pts2.sd);
-    document.getElementById('p2-slope').innerText = reg2.slope.toFixed(6);
-    document.getElementById('p2-intercept').innerText = reg2.intercept.toFixed(6);
-    document.getElementById('p2-se').innerText = `± ${reg2.seSlope.toFixed(6)}`;
-    document.getElementById('p2-mswd').innerHTML = formatMswdWithStatus(reg2.mswd, isEn);
-    document.getElementById('p2-r2').innerText = reg2.r2.toFixed(5);
-    drawPlot('plot-2', `${p.elements[1].label} Calibration Fit`, pts2, reg2, `Corrected Raw ${p.elements[1].label} (‰)`, `True ${p.elements[1].label} (${u2})`);
-  }
-
-  // Diagnostic Plots (Figure 3 & 4)
-  const isManualLin = (useLin && linCalcMode === 'manual');
-  if (useLin && linMonitorPts.a1.length >= 1) {
-    drawLinearityPlot('plot-drift-1', linMonitorPts.a1, linMonitorPts.d1, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope1, meanAnchorArea1, p.elements[0].label, isManualLin);
-    if (isDual) drawLinearityPlot('plot-drift-2', linMonitorPts.a2, linMonitorPts.d2, monitorAnchor ? monitorAnchor.name : 'Anchor', linSlope2, meanAnchorArea2, p.elements[1].label, isManualLin);
-  } else {
-    drawDriftPlot('plot-drift-1', rawMonitorRuns.seq, rawMonitorRuns.v1, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope1, monitorRuns1, gridData.length, p.elements[0].label);
-    if (isDual) drawDriftPlot('plot-drift-2', rawMonitorRuns.seq, rawMonitorRuns.v2, monitorAnchor ? monitorAnchor.name : 'Anchor', driftMode, driftSlope2, monitorRuns2, gridData.length, p.elements[1].label);
-  }
-
-  // Step E: Compute Sequence Table
-  const resBody = document.getElementById('result-body');
-  resBody.innerHTML = '';
-  const qcResults = { cals1: [], cals2: [] };
-  const computedRows = [];
-  sequenceExportData = [];
-
-  gridData.forEach((row, rIdx) => {
-    const f = extractRowFields(row, isDual, areaOn);
-    if (!f.id) return;
-    const isExcl = !!excludedRows[rIdx];
-    const isBlk = isBlankRowId(f.id);
-    const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    const isAnchor = refStds.some(s => s.keyMatch && clean.includes(s.keyMatch));
-    const isQC = (qcStd.keyMatch && clean.includes(qcStd.keyMatch)) || (clean.includes('QC') && !isAnchor);
-
-    let cal1 = null, propSd1 = null;
-    if (!isBlk && !isNaN(f.raw1) && reg1.slope !== 0) {
-      const adjRaw1 = getFullyPreprocessedRaw(rIdx, f.area1, f.raw1, 1);
-      cal1 = adjRaw1 * reg1.slope + reg1.intercept;
-      propSd1 = computeCombinedUncertainty(f.sd1, reg1.slope, reg1.seSlope, reg1.seIntercept, adjRaw1);
-      if (isQC && !isExcl) qcResults.cals1.push(cal1);
-    }
-
-    let cal2 = null, propSd2 = null;
-    if (!isBlk && isDual && !isNaN(f.raw2) && reg2 && reg2.slope !== 0) {
-      const adjRaw2 = getFullyPreprocessedRaw(rIdx, f.area2, f.raw2, 2);
-      cal2 = adjRaw2 * reg2.slope + reg2.intercept;
-      propSd2 = computeCombinedUncertainty(f.sd2, reg2.slope, reg2.seSlope, reg2.seIntercept, adjRaw2);
-      if (isQC && !isExcl) qcResults.cals2.push(cal2);
-    }
-
-    computedRows.push({ rIdx, id: f.id, clean, isAnchor, isQC, isBlk, isExcl, raw1: f.raw1, sd1: f.sd1, cal1, propSd1, raw2: f.raw2, sd2: f.sd2, cal2, propSd2 });
-
-    sequenceExportData.push({
-      runNumber: rIdx + 1,
-      status: isExcl ? 'EXCLUDED' : (isBlk ? 'BLANK' : 'INCLUDED'),
-      id: f.id,
-      area1: (areaOn && !isNaN(f.area1)) ? f.area1 : null,
-      raw1: !isNaN(f.raw1) ? parseFloat(f.raw1.toFixed(3)) : null,
-      sd1: f.sd1 > 0 ? parseFloat(f.sd1.toFixed(3)) : null,
-      cal1: (!isExcl && !isBlk && cal1 !== null) ? parseFloat(cal1.toFixed(3)) : null,
-      propSd1: (!isExcl && !isBlk && propSd1 !== null) ? parseFloat(propSd1.toFixed(3)) : null,
-      area2: (areaOn && isDual && !isNaN(f.area2)) ? f.area2 : null,
-      raw2: (isDual && !isNaN(f.raw2)) ? parseFloat(f.raw2.toFixed(3)) : null,
-      sd2: (isDual && f.sd2 > 0) ? parseFloat(f.sd2.toFixed(3)) : null,
-      cal2: (!isExcl && !isBlk && isDual && cal2 !== null) ? parseFloat(cal2.toFixed(3)) : null,
-      propSd2: (!isExcl && !isBlk && isDual && propSd2 !== null) ? parseFloat(propSd2.toFixed(3)) : null
-    });
-
-    const tr = document.createElement('tr');
-    tr.className = isExcl ? 'bg-stone-100/80 text-stone-400 line-through' : (isAnchor || isBlk ? 'bg-[#fcfbf9] text-stone-500' : 'hover:bg-stone-50');
-    const idBadge = isExcl
-      ? `${f.id} <span class="no-underline inline-block ml-1 px-1 py-0.2 bg-stone-200 text-stone-600 font-mono text-[9px] uppercase">Excluded</span>`
-      : (isBlk ? `${f.id} <span class="inline-block ml-1 px-1 py-0.2 bg-sky-100 text-sky-800 font-mono text-[9px] uppercase">Blank</span>` : f.id);
-
-    if (isDual) {
-      tr.innerHTML = `
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw1) ? f.raw1.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw2) ? f.raw2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-        <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal2 !== null ? cal2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 text-stone-600 font-medium">${!isExcl && !isBlk && propSd2 !== null ? '±' + propSd2.toFixed(3) : '-'}</td>
-      `;
-    } else {
-      tr.innerHTML = `
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>
-        <td class="px-4 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw1) ? f.raw1.toFixed(3) : '-'}</td>
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-        <td class="px-4 py-2 text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
-      `;
-    }
-    resBody.appendChild(tr);
-  });
-
-  // Step F: Grouped Sample Summary
-  groupedSummaryData = [];
-  const groupedBody = document.getElementById('grouped-body');
-  groupedBody.innerHTML = '';
-  let currentGroup = null;
-
-  function finishGroup() {
-    if (!currentGroup || currentGroup.items.length === 0) return;
-    const n = currentGroup.items.length;
-    const c1List = currentGroup.items.map(x => x.cal1).filter(v => v !== null && !isNaN(v));
-    const c2List = currentGroup.items.map(x => x.cal2).filter(v => v !== null && !isNaN(v));
-    const mean1 = c1List.length > 0 ? (c1List.reduce((a, b) => a + b, 0) / c1List.length) : null;
-    const sd1 = c1List.length > 1 ? Math.sqrt(c1List.map(v => Math.pow(v - mean1, 2)).reduce((a, b) => a + b) / (c1List.length - 1)) : (c1List.length === 1 ? currentGroup.items[0].propSd1 : 0);
-    const mean2 = (isDual && c2List.length > 0) ? (c2List.reduce((a, b) => a + b, 0) / c2List.length) : null;
-    const sd2 = (isDual && c2List.length > 1) ? Math.sqrt(c2List.map(v => Math.pow(v - mean2, 2)).reduce((a, b) => a + b) / (c2List.length - 1)) : (isDual && c2List.length === 1 ? currentGroup.items[0].propSd2 : 0);
-
-    groupedSummaryData.push({
-      baseId: currentGroup.baseId, n,
-      mean1: mean1 !== null ? parseFloat(mean1.toFixed(3)) : null,
-      sd1: sd1 !== null ? parseFloat(sd1.toFixed(3)) : null,
-      mean2: mean2 !== null ? parseFloat(mean2.toFixed(3)) : null,
-      sd2: sd2 !== null ? parseFloat(sd2.toFixed(3)) : null
-    });
-    currentGroup = null;
-  }
-
-  computedRows.forEach(row => {
-    if (row.isAnchor || row.isQC || row.isBlk) { finishGroup(); return; }
-    if (row.isExcl) return;
-    const bId = extractBaseId(row.id);
-    if (!currentGroup) currentGroup = { baseId: bId, items: [row] };
-    else if (currentGroup.baseId === bId) currentGroup.items.push(row);
-    else { finishGroup(); currentGroup = { baseId: bId, items: [row] }; }
-  });
-  finishGroup();
-
-  if (groupedSummaryData.length === 0) {
-    groupedBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${isEn ? 'No active unknown sample replicates found.' : '그룹화 가능한 미지 시료가 없습니다.'}</td></tr>`;
-  } else {
-    groupedSummaryData.forEach(g => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-stone-50';
-      if (isDual) {
-        tr.innerHTML = `
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
-          <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
-        `;
-      } else {
-        tr.innerHTML = `
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
-          <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
-        `;
-      }
-      groupedBody.appendChild(tr);
-    });
-  }
-
-  // Step G: Smart QC Validation Banner & Actionable Diagnostics
-  const qcBanner = document.getElementById('qc-summary-banner');
-  if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
-    const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
-    const bias1 = mean1 - qcStd.v1;
-    const sdQc1 = qcResults.cals1.length > 1 ? Math.sqrt(qcResults.cals1.map(x => Math.pow(x - mean1, 2)).reduce((a, b) => a + b) / (qcResults.cals1.length - 1)) : 0;
-    const thresh1 = getElementThreshold(p.elements[0].label);
-    const failBias1 = Math.abs(bias1) > thresh1.bias, failSd1 = sdQc1 > thresh1.sd;
-
-    let mean2 = null, bias2 = null, sdQc2 = null, thresh2 = null, failBias2 = false, failSd2 = false;
-    if (isDual && qcResults.cals2.length > 0 && !isNaN(qcStd.v2)) {
-      mean2 = qcResults.cals2.reduce((a, b) => a + b, 0) / qcResults.cals2.length;
-      bias2 = mean2 - qcStd.v2;
-      sdQc2 = qcResults.cals2.length > 1 ? Math.sqrt(qcResults.cals2.map(x => Math.pow(x - mean2, 2)).reduce((a, b) => a + b) / (qcResults.cals2.length - 1)) : 0;
-      thresh2 = getElementThreshold(p.elements[1].label);
-      failBias2 = Math.abs(bias2) > thresh2.bias; failSd2 = sdQc2 > thresh2.sd;
-    }
-
-    const highMswd = reg1.mswd > 2.5 || (isDual && reg2 && reg2.mswd > 2.5);
-    const isOverallPass = !failBias1 && !failSd1 && !failBias2 && !failSd2 && !highMswd;
-
-    lastQcSummaryReport = { qcName: qcStd.name, count: qcResults.cals1.length, status: isOverallPass ? 'PASS' : 'WARNING', mean1, bias1, sdQc1, mean2, bias2, sdQc2 };
-    qcBanner.className = isOverallPass ? 'bg-[#f8fdf9] border-2 border-emerald-400 p-4 rounded-none space-y-3 shadow-xs' : 'bg-[#fffcf5] border-2 border-amber-400 p-4 rounded-none space-y-3 shadow-xs';
-
-    const statusBadgeHtml = isOverallPass
-      ? `<span class="px-2.5 py-0.5 bg-emerald-700 text-white font-mono text-[11px] font-bold uppercase flex items-center gap-1.5"><span>●</span> ${isEn ? 'QC PASS · Ready for Publication' : 'QC PASS · 학술 보고 기준 만족'}</span>`
-      : `<span class="px-2.5 py-0.5 bg-amber-600 text-white font-mono text-[11px] font-bold uppercase flex items-center gap-1.5"><span>▲</span> ${isEn ? 'QC WARNING · Action Required' : 'QC WARNING · 데이터 점검 및 보정 필요'}</span>`;
-
-    let qcHtml = `
-      <div class="flex flex-wrap items-center justify-between border-b ${isOverallPass ? 'border-emerald-200' : 'border-amber-200'} pb-2.5 gap-2">
-        <div class="flex items-center flex-wrap gap-2.5">${statusBadgeHtml}</div>
-        <span class="text-[11px] font-mono text-stone-500">${isEn ? 'Evaluated on' : '평가 대상:'} ${qcResults.cals1.length} ${isEn ? 'active runs of' : '회 유효 반복측정'} [${qcStd.name}]</span>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-0.5">
-        <div class="space-y-1">
-          <div class="flex justify-between text-stone-700 font-sans font-semibold">
-            <span>${p.elements[0].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}</span>
-            <span class="text-[10px] font-mono text-stone-400">${isEn ? 'Criterion' : '허용기준'}: ±${thresh1.bias.toFixed(2)} ‰</span>
-          </div>
-          <div class="flex justify-between bg-white p-2.5 border ${failBias1 || failSd1 ? 'border-amber-300 bg-amber-50/20' : 'border-stone-200'}">
-            <span>${isEn ? 'Mean' : '평균 보정값'}: <strong>${mean1.toFixed(3)} ${u1}</strong></span>
-            <span>${isEn ? 'Bias' : '정확도 편차'}: <strong class="${!failBias1 ? 'text-emerald-700' : 'text-amber-700'}">${bias1 >= 0 ? '+' : ''}${bias1.toFixed(3)} ‰</strong></span>
-            <span>${isEn ? 'Rep (1σ)' : '반복 정밀도'}: <strong class="${!failSd1 ? 'text-emerald-700' : 'text-amber-700'}">±${sdQc1.toFixed(3)} ‰</strong></span>
-          </div>
-        </div>
-    `;
-
-    if (isDual && mean2 !== null) {
-      qcHtml += `
-        <div class="space-y-1">
-          <div class="flex justify-between text-stone-700 font-sans font-semibold">
-            <span>${p.elements[1].label} ${isEn ? 'Performance' : '정밀도 및 정확도'}</span>
-            <span class="text-[10px] font-mono text-stone-400">${isEn ? 'Criterion' : '허용기준'}: ±${thresh2.bias.toFixed(2)} ‰</span>
-          </div>
-          <div class="flex justify-between bg-white p-2.5 border ${failBias2 || failSd2 ? 'border-amber-300 bg-amber-50/20' : 'border-stone-200'}">
-            <span>${isEn ? 'Mean' : '평균 보정값'}: <strong>${mean2.toFixed(3)} ${u2}</strong></span>
-            <span>${isEn ? 'Bias' : '정확도 편차'}: <strong class="${!failBias2 ? 'text-emerald-700' : 'text-amber-700'}">${bias2 >= 0 ? '+' : ''}${bias2.toFixed(3)} ‰</strong></span>
-            <span>${isEn ? 'Rep (1σ)' : '반복 정밀도'}: <strong class="${!failSd2 ? 'text-emerald-700' : 'text-amber-700'}">±${sdQc2.toFixed(3)} ‰</strong></span>
-          </div>
-        </div>
-      `;
-    }
-    qcHtml += `</div>`;
-
-    if (!isOverallPass) {
-      qcHtml += `
-        <div class="bg-amber-100/70 border-l-4 border-amber-600 p-3 text-xs text-amber-950 font-sans space-y-1">
-          <div class="font-bold flex items-center gap-1.5">
-            <span>💡</span>
-            <span>${isEn ? 'Diagnostic Action Guide: QC Offset or Outlier Detected' : '자동 진단 가이드: QC 표준물질 편차 또는 이상치 점검 필요'}</span>
-          </div>
-          <p class="text-[11px] leading-relaxed text-amber-900">
-            ${isEn
-              ? `One or more QC metrics exceed analytical tolerance. Verify accepted true values in Section 01, check size-linearity settings, or uncheck 'Use (✓)' on anomalous runs in Section 02.`
-              : `QC 표준물질의 정확도 편차(Bias) 또는 반복 정밀도가 허용 기준을 초과했습니다. 01 섹션의 공인값을 확인하거나, 02 섹션 표에서 면적 보정 모드 및 이상치 런의 체크박스(Use)를 점검해 보세요.`}
-          </p>
-        </div>
-      `;
-    } else {
-      qcHtml += `
-        <div class="bg-emerald-100/50 border-l-4 border-emerald-600 px-3 py-2 text-[11px] text-emerald-950 font-sans flex items-center justify-between">
-          <span><strong>✓ ${isEn ? 'Diagnostic Summary:' : '진단 요약:'}</strong> ${isEn ? 'Calibration linearity (MSWD), QC accuracy bias, and replicate reproducibility all satisfy international publication criteria.' : '검량선 적합도(MSWD), QC 정확도 편차 및 반복 정밀도가 모두 학술 보고 기준을 완벽히 충족합니다.'}</span>
-        </div>
-      `;
-    }
-
-    const metaNotes = [];
-    if (useBlank && blkCount1 > 0) metaNotes.push(`Blank subtracted (${blkCount1} runs: Area₁=${meanBlkA1.toFixed(2)}, δ₁=${meanBlkD1.toFixed(2)}‰)`);
-    if (useLin && meanAnchorArea1 > 0) {
-      const methodTag = linCalcMode === 'manual' ? '[Manual]' : '[Auto]';
-      metaNotes.push(`Size Linearity ${methodTag} (${monitorAnchor.name}): k₁=${linSlope1 >= 0 ? '+' : ''}${linSlope1.toFixed(4)} ‰/Area (Ref Area=${meanAnchorArea1.toFixed(1)})`);
-    }
-    if (driftMode === 'linear') metaNotes.push(`Time Drift slope: ${(driftSlope1).toExponential(2)} ‰/run`);
-
-    if (metaNotes.length > 0) {
-      qcHtml += `<div class="text-[11px] font-mono text-stone-600 pt-1 border-t border-stone-200">* ${metaNotes.join('  |  ')}</div>`;
-    }
-
-    qcBanner.innerHTML = qcHtml;
-    qcBanner.classList.remove('hidden');
-  } else {
-    qcBanner.classList.add('hidden');
-    lastQcSummaryReport = null;
-  }
-}
-
-// -------------------------------------------------------------
-// 6. Application Bootstrap
-// -------------------------------------------------------------
-window.addEventListener('DOMContentLoaded', () => {
-  updateLayoutForMode(false);
-  setLanguage(currentLang);
-});
+      return isoIdx === 1 ? (val - driftSlope1 * rIdx) : (val - drift
