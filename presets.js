@@ -229,7 +229,7 @@ const CHANGELOG_DATA = [
     changes_ko: [
       "<strong>Slope Method 선택 UI 탑재</strong>: <code>Auto-Fit (모니터 표준물질)</code> 및 <code>Manual Input (‰/Vs 고정 계수)</code> 전환 지원.",
       "<strong>Figure 3·4 수동 기울기 라인 시각화</strong>: 수동 계수 설정 시 붉은색 파선(Manual Slope)과 실제 런 관측 회귀선(Observed Fit) 동시 표기.",
-      "<strong>코어 엔진 3단 모듈 분할</strong>: <code>math-core.js</code>, <code>plot-export.js</code>, <code>app-ui.js</code>로 분리하여 유지보수성 및 확장성 극대화.",
+      "<strong>코어 엔진 3단 모듈 분할</strong>: <code>math-core.js</code>, <code>plot-export.js</code>, <code>app-ui.js</code>로 분리하여 유지보수성 및 연산 안정성 극대화.",
       "<strong>실무 종합 매뉴얼(User Protocol) 개편</strong>: 4개 실험 계통별 30초 레시피 및 열 배치 가이드 통합."
     ],
     changes_en: [
@@ -249,11 +249,104 @@ const CHANGELOG_DATA = [
     desc_en: "Integrated dynamic Peak Area columns for mass-balance tin capsule blank subtraction and automated size-effect linearity correction.",
     changes_ko: [
       "<strong>'Area / Blank' 4단계 전처리 셀렉터 탑재</strong>: Off, Linearity, Blank Only, Blank + Linearity 모드 지원.",
-      "<strong>주석 캡슐 블랭크 자동 감지</strong>: ID 내 <code>BLANK</code> 또는 <code>BLK</code>가 포함된 행의 평균 면적과 δ 값을 자동 질량 보존 차감."
+      "<strong>주석 캡슐 블랭크 자동 감지</strong>: ID 내 <code>BLANK</code> 또는 <code>BLK</code>가 포함된 행의 평균 면적과 δ 값을 자동 질량 보존 차감.",
+      "<strong>크기 효과 자동 회귀</strong>: 모니터 표준물질의 피크 면적 대비 δ 원시값의 기울기($k_{\\text{area}}$)를 자동 계산하여 보정."
     ],
     changes_en: [
       "<strong>4-Way Area/Blank Selector</strong>: Support for Off, Size Linearity, Blank Only, and Combined Blank + Linearity.",
-      "<strong>Automated Mass-Balance Blank Subtraction</strong>: Auto-detects and subtracts capsule background contamination."
+      "<strong>Automated Mass-Balance Blank Subtraction</strong>: Auto-detects and subtracts capsule background contamination.",
+      "<strong>Automated Size Effect Correction</strong>: Normalizes δ values against monitor standard peak area regression."
+    ]
+  },
+  {
+    version: "v1.3.3",
+    date: "2026-11",
+    badge: "Outlier Exclusion Toggle",
+    title_ko: "시퀀스 런 순서(#) 보존형 이상치(Outlier) 개별 제외 체크박스 탑재",
+    title_en: "Non-Destructive Outlier Exclusion Checkbox (Sequence-Preserving)",
+    desc_ko: "행을 물리적으로 삭제하지 않고 체크박스 해제만으로 이상치를 검량선과 평균 계산에서 깔끔하게 제외합니다.",
+    desc_en: "Added a per-row 'Use (✓)' checkbox that excludes anomalous runs while strictly preserving sequence run numbers (#).",
+    changes_ko: [
+      "<strong>시퀀스 그리드 'Use (✓)' 체크박스 열 신설</strong>: 체크 해제 시 취소선 표시 및 실시간 재검량 실행.",
+      "<strong>시퀀스 시간축 보존</strong>: 이상치를 제외해도 런 번호(#)와 시간 표류 간격이 왜곡되지 않는 비파괴적 아키텍처 확립."
+    ],
+    changes_en: [
+      "<strong>Interactive 'Use (✓)' Column</strong>: Instant live recalibration without altering sequence indices.",
+      "<strong>Time-Series Preservation</strong>: Excluded outliers retain their position to prevent distortion of drift models."
+    ]
+  },
+  {
+    version: "v1.3.0",
+    date: "2026-10",
+    badge: "Multi-Point WLS Expansion",
+    title_ko: "3점 이상 다중 앵커(Multi-Point) 가중 회귀(WLS) 및 MSWD 적합도 평가",
+    title_en: "Dynamic 3+ Multi-Point WLS Regression & Reduced Chi-Squared (MSWD)",
+    desc_ko: "전통적인 2점 앵커(Two-point) 교정뿐만 아니라 3개 이상의 다중 표준물질을 사용한 가중 선형 회귀를 지원합니다.",
+    desc_en: "Expanded from classic two-point anchoring to dynamic 3+ multi-point Weighted Least Squares with MSWD goodness-of-fit validation.",
+    changes_ko: [
+      "<strong>'+ 앵커 추가' 동적 UI</strong>: 최대 N점까지 앵커 표준물질 자유 추가 및 개별 삭제 기능.",
+      "<strong>York-Ludwig WLS 엔진</strong>: 측정 편차가 작은 정밀한 런에 더 큰 가중치($w_i = 1/\\sigma_i^2$) 부여.",
+      "<strong>MSWD (축약 카이제곱) 산출</strong>: 잔차 분산이 순수 분석 오차에 부합하는지 1.0 기준 자동 적합도 판정."
+    ],
+    changes_en: [
+      "<strong>'+ Add Anchor' Dynamic UI</strong>: Arbitrary multi-point standard expansion with per-anchor deletion.",
+      "<strong>York-Ludwig WLS Engine</strong>: Inverse-variance weighting ($w_i = 1/\\sigma_i^2$) across all anchors.",
+      "<strong>MSWD Goodness-of-Fit</strong>: Objective statistical assessment of analytical scatter against regression lines."
+    ]
+  },
+  {
+    version: "v1.2.0",
+    date: "2026-09",
+    badge: "Instrument Drift Suite",
+    title_ko: "시퀀스 시간축 기기 표류(Drift) 보정 모델군 탑재",
+    title_en: "Sequence Time-Series Drift Correction Engine",
+    desc_ko: "장시간 런 시퀀스에서 발생하는 분석기 베이스라인 및 소스 드리프트를 모니터 표준물질 기반으로 보정합니다.",
+    desc_en: "Introduced linear time drift and piecewise anchor-bracketing spline interpolation models.",
+    changes_ko: [
+      "<strong>단일 선형 표류(Linear Drift)</strong>: 시퀀스 런 순서(#) 대비 모니터 표준물질 추세 기울기 차감.",
+      "<strong>구간 브래케팅 보간(Anchor Bracketing)</strong>: 앵커 표준물질 사이를 선형 구간 스플라인으로 연속 보간 보정."
+    ],
+    changes_en: [
+      "<strong>Linear Drift Model</strong>: Slope-based background drift compensation across the batch.",
+      "<strong>Piecewise Anchor Bracketing</strong>: Piecewise linear spline interpolation between bracketing runs."
+    ]
+  },
+  {
+    version: "v1.1.0",
+    date: "2026-08",
+    badge: "ExcelJS & QC Automation",
+    title_ko: "ExcelJS 멀티 시트 보고서 내보내기 및 스마트 QC 진단 엔진",
+    title_en: "ExcelJS Embedded Report Generation & Smart QC Diagnostic Engine",
+    desc_ko: "엑셀 파일 내에 시료 요약표와 검량선 차트를 고해상도 이미지 객체로 직접 내장하고, 원소별 QC 허용 기준을 자동 진단합니다.",
+    desc_en: "Enabled multi-sheet Excel exports (.xlsx) with embedded publication figures and element-specific QC tolerances.",
+    changes_ko: [
+      "<strong>ExcelJS 통합 엔진</strong>: 개별 런 시퀀스, 그룹화 평균, Figure 1~4 차트 이미지가 포함된 완성형 엑셀 다운로드.",
+      "<strong>원소별 스마트 QC 배너</strong>: 탄소(±0.08‰), 질소(±0.15‰), 산소(±0.12‰), 수소(±1.50‰) 기준 PASS/WARNING 판정 및 권고사항 제공."
+    ],
+    changes_en: [
+      "<strong>ExcelJS Workbook Suite</strong>: Generates multi-sheet .xlsx files with auto-embedded high-resolution charts.",
+      "<strong>Element-Specific QC Engine</strong>: Auto-evaluates bias and precision against isotope-specific criteria."
+    ]
+  },
+  {
+    version: "v1.0.0",
+    date: "2026-06",
+    badge: "Initial Release",
+    title_ko: "IsoCalib 오픈소스 안정동위원소 지화학 정산 플랫폼 최초 릴리스",
+    title_en: "Initial Public Release of IsoCalib Platform",
+    desc_ko: "클라이언트 사이드 100% 무서버 환경에서 작동하는 탄산염 및 물 안정동위원소 검량 기본 엔진을 공개했습니다.",
+    desc_en: "Initial release featuring 100% zero-server client-side data reduction for stable isotope geochemistry.",
+    changes_ko: [
+      "<strong>클라이언트 100% 로컬 연산</strong>: 미발표 데이터 유출 위험이 없는 완전 무서버 브라우저 엔진 구축.",
+      "<strong>스프레드시트 그리드 인터페이스</strong>: 엑셀 복사/붙여넣기(Ctrl+V), 키보드 내비게이션, 인라인 셀 편집 지원.",
+      "<strong>기본 2점 앵커 스케일 교정</strong>: VPDB/VSMOW 스케일 정규화 및 GUM 1차 합성 표준불확도 전파.",
+      "<strong>Plotly 인터랙티브 시각화</strong>: 검량선 피팅 차트 및 고해상도 벡터 SVG 내보내기 지원."
+    ],
+    changes_en: [
+      "<strong>Zero-Server Architecture</strong>: Complete client-side security with zero external data transmission.",
+      "<strong>Interactive Grid UI</strong>: Full Excel copy/paste (Ctrl+V), keyboard navigation, and inline cell editing.",
+      "<strong>2-Point Anchor Normalization</strong>: Scale anchoring to VPDB/VSMOW with GUM first-order error propagation.",
+      "<strong>Interactive Plotly Visualizations</strong>: Dynamic calibration curve rendering with publication-quality SVG export."
     ]
   }
 ];
