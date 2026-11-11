@@ -44,7 +44,7 @@ function getElementUnit(elemIdx) {
 }
 
 // -------------------------------------------------------------
-// 1. Navigation & Modals Setup (Changelog / QuickStart / About)
+// 1. Navigation & Modals Setup
 // -------------------------------------------------------------
 const btnToggleMore = document.getElementById('btn-toggle-more');
 const moreMenuDropdown = document.getElementById('more-menu-dropdown');
@@ -99,54 +99,39 @@ const quickstartModal = document.getElementById('quickstart-modal');
 const aboutModal = document.getElementById('about-modal');
 const changelogModal = document.getElementById('changelog-modal');
 
-// Quick Start Modal
-const btnOpenQuickstart = document.getElementById('btn-open-quickstart');
-const btnCloseQuickstart = document.getElementById('btn-close-quickstart');
-const btnQuickstartCloseBottom = document.getElementById('btn-quickstart-close-bottom');
-
-if (btnOpenQuickstart && quickstartModal) {
-  btnOpenQuickstart.addEventListener('click', () => { closeMoreDropdown(); quickstartModal.classList.remove('hidden'); });
+if (document.getElementById('btn-open-quickstart') && quickstartModal) {
+  document.getElementById('btn-open-quickstart').addEventListener('click', () => { closeMoreDropdown(); quickstartModal.classList.remove('hidden'); });
 }
-if (btnCloseQuickstart && quickstartModal) {
-  btnCloseQuickstart.addEventListener('click', () => quickstartModal.classList.add('hidden'));
+if (document.getElementById('btn-close-quickstart') && quickstartModal) {
+  document.getElementById('btn-close-quickstart').addEventListener('click', () => quickstartModal.classList.add('hidden'));
 }
-if (btnQuickstartCloseBottom && quickstartModal) {
-  btnQuickstartCloseBottom.addEventListener('click', () => quickstartModal.classList.add('hidden'));
+if (document.getElementById('btn-quickstart-close-bottom') && quickstartModal) {
+  document.getElementById('btn-quickstart-close-bottom').addEventListener('click', () => quickstartModal.classList.add('hidden'));
 }
 
-// About Modal
-const btnOpenAbout = document.getElementById('btn-open-about');
-const btnCloseAbout = document.getElementById('btn-close-about');
-const btnModalCloseBottom = document.getElementById('btn-modal-close-bottom');
-
-if (btnOpenAbout && aboutModal) {
-  btnOpenAbout.addEventListener('click', () => { closeMoreDropdown(); aboutModal.classList.remove('hidden'); });
+if (document.getElementById('btn-open-about') && aboutModal) {
+  document.getElementById('btn-open-about').addEventListener('click', () => { closeMoreDropdown(); aboutModal.classList.remove('hidden'); });
 }
-if (btnCloseAbout && aboutModal) {
-  btnCloseAbout.addEventListener('click', () => aboutModal.classList.add('hidden'));
+if (document.getElementById('btn-close-about') && aboutModal) {
+  document.getElementById('btn-close-about').addEventListener('click', () => aboutModal.classList.add('hidden'));
 }
-if (btnModalCloseBottom && aboutModal) {
-  btnModalCloseBottom.addEventListener('click', () => aboutModal.classList.add('hidden'));
+if (document.getElementById('btn-modal-close-bottom') && aboutModal) {
+  document.getElementById('btn-modal-close-bottom').addEventListener('click', () => aboutModal.classList.add('hidden'));
 }
 
-// Changelog Modal
-const btnOpenChangelog = document.getElementById('btn-open-changelog');
-const btnCloseChangelog = document.getElementById('btn-close-changelog');
-const btnChangelogCloseBottom = document.getElementById('btn-changelog-close-bottom');
-
-if (btnOpenChangelog && changelogModal) {
-  btnOpenChangelog.addEventListener('click', (e) => {
+if (document.getElementById('btn-open-changelog') && changelogModal) {
+  document.getElementById('btn-open-changelog').addEventListener('click', (e) => {
     e.preventDefault();
     closeMoreDropdown();
     renderChangelog();
     changelogModal.classList.remove('hidden');
   });
 }
-if (btnCloseChangelog && changelogModal) {
-  btnCloseChangelog.addEventListener('click', () => changelogModal.classList.add('hidden'));
+if (document.getElementById('btn-close-changelog') && changelogModal) {
+  document.getElementById('btn-close-changelog').addEventListener('click', () => changelogModal.classList.add('hidden'));
 }
-if (btnChangelogCloseBottom && changelogModal) {
-  btnChangelogCloseBottom.addEventListener('click', () => changelogModal.classList.add('hidden'));
+if (document.getElementById('btn-changelog-close-bottom') && changelogModal) {
+  document.getElementById('btn-changelog-close-bottom').addEventListener('click', () => changelogModal.classList.add('hidden'));
 }
 
 window.addEventListener('keydown', (e) => {
@@ -182,7 +167,7 @@ function captureCurrentStandardsSnapshot(mode = currentMode) {
   const elQcV2 = document.getElementById('qc-std-v2');
   const qcStd = {
     name: elQcName ? elQcName.value.trim() : null,
-    v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elQcV1.value) : null,
+    v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elV1.value) : null,
     v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null
   };
   const elAnchorSelect = document.getElementById('drift-anchor-select');
@@ -559,7 +544,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
 
   document.getElementById('drift-anchor-select').addEventListener('change', saveCurrentModeStandards);
 
-  // Grid Header 렌더링
+  // Grid Header
   const gHead = document.getElementById('grid-head');
   if (isDual) {
     gHead.innerHTML = `
@@ -569,10 +554,10 @@ function updateLayoutForMode(forcePresetDefault = false) {
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준 ID'}</th>
         ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[0].label}</th>` : ''}
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-2.5 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
+        <th class="px-2 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
         ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[1].label}</th>` : ''}
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-        <th class="px-2.5 py-2 text-stone-900">1σ SD</th>
+        <th class="px-2 py-2 text-stone-900">1σ SD</th>
       </tr>
     `;
   } else {
@@ -588,7 +573,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
     `;
   }
 
-  // Regression Cards 렌더링
+  // Regression Cards
   const pContainer = document.getElementById('param-cards-container');
   const cardHtml = (elem, idx, unitLabel) => `
     <div class="border border-[#c7c5bc] bg-white p-4 space-y-3 shadow-sm">
@@ -664,7 +649,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
         <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
         <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
         <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
-        <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
+        <th class="px-4 py-2.5 text-stone-700">Rep. 1σ SD</th>
       </tr>
     `;
   }
@@ -725,47 +710,60 @@ document.getElementById('oxygen-scale-select').addEventListener('change', (e) =>
   if (hasCalibratedOnce) runCalibration();
 });
 
+// 안전한 언어 전환 함수
 function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('isocalib_lang', lang);
+  
   const btnKo = document.getElementById('lang-ko');
   const btnEn = document.getElementById('lang-en');
-  if (lang === 'ko') {
-    btnKo.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
-    btnEn.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
-  } else {
-    btnEn.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
-    btnKo.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+  if (btnKo && btnEn) {
+    if (lang === 'ko') {
+      btnKo.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
+      btnEn.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+    } else {
+      btnEn.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
+      btnKo.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+    }
   }
 
   const dict = TRANSLATIONS[lang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key]) el.innerHTML = dict[key];
-  });
+  if (dict) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) el.innerHTML = dict[key];
+    });
+  }
 
-  document.getElementById('about-p1').innerHTML = dict.about_p1;
-  document.getElementById('about-p2').innerHTML = dict.about_p2;
-  document.getElementById('about-p3').innerHTML = dict.about_p3;
-  document.getElementById('about-protocols-title').innerText = dict.about_protocols_title;
+  const p1 = document.getElementById('about-p1');
+  const p2 = document.getElementById('about-p2');
+  const p3 = document.getElementById('about-p3');
+  const pTitle = document.getElementById('about-protocols-title');
+  const pList = document.getElementById('about-protocols-list');
 
-  const listEl = document.getElementById('about-protocols-list');
-  if (lang === 'ko') {
-    listEl.innerHTML = `
-      <li>EA-IRMS 피크 면적 선형성(Auto 및 Manual slope) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
-      <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
-      <li>2점(Two-Point) 및 3점 이상 다중 앵커(Multi-Point) 가중 선형 회귀(WLS) 동적 확장</li>
-      <li>수소(δD), 탄소(δ¹³C), 질소(δ¹⁵N), 산소(δ¹⁸O) 원소별 스마트 QC 진단 엔진</li>
-      <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
-    `;
-  } else {
-    listEl.innerHTML = `
-      <li>EA-IRMS Peak Area size-linearity normalization (Auto & Manual slope) & mass-balance Tin Capsule Blank subtraction</li>
-      <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
-      <li>Dynamic 2-point and 3+ multi-point Weighted Least Squares (WLS) anchor calibration</li>
-      <li>Element-specific smart QC diagnostic engine adapting to δD, δ¹³C, δ¹⁵N, and δ¹⁸O tolerances</li>
-      <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
-    `;
+  if (p1 && dict) p1.innerHTML = dict.about_p1;
+  if (p2 && dict) p2.innerHTML = dict.about_p2;
+  if (p3 && dict) p3.innerHTML = dict.about_p3;
+  if (pTitle && dict) pTitle.innerText = dict.about_protocols_title;
+
+  if (pList) {
+    if (lang === 'ko') {
+      pList.innerHTML = `
+        <li>EA-IRMS 피크 면적 선형성(Auto 및 Manual slope) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
+        <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
+        <li>2점(Two-Point) 및 3점 이상 다중 앵커(Multi-Point) 가중 선형 회귀(WLS) 동적 확장</li>
+        <li>수소(δD), 탄소(δ¹³C), 질소(δ¹⁵N), 산소(δ¹⁸O) 원소별 스마트 QC 진단 엔진</li>
+        <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
+      `;
+    } else {
+      pList.innerHTML = `
+        <li>EA-IRMS Peak Area size-linearity normalization (Auto & Manual slope) & mass-balance Tin Capsule Blank subtraction</li>
+        <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
+        <li>Dynamic 2-point and 3+ multi-point Weighted Least Squares (WLS) anchor calibration</li>
+        <li>Element-specific smart QC diagnostic engine adapting to δD, δ¹³C, δ¹⁵N, and δ¹⁸O tolerances</li>
+        <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
+      `;
+    }
   }
 
   renderChangelog();
@@ -1140,7 +1138,7 @@ document.getElementById('isotope-preset').addEventListener('change', (e) => {
 
 document.getElementById('btn-calc').addEventListener('click', runCalibration);
 
-// Load Demo: 21개 전체 런 보존 로직
+// 21개 전체 런 보존 로드
 document.getElementById('btn-demo').addEventListener('click', () => {
   userCustomStandardsByMode[currentMode] = null;
   oxygenScale = currentMode === 'WATER_O' ? 'VSMOW' : 'VPDB';
