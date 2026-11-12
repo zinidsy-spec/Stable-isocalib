@@ -1,4 +1,4 @@
-/* math-core.js - IsoCalib v1.4.1 Pure Geochemical & Statistical Reduction Engine */
+/* math-core.js - IsoCalib v1.4.1 Pure Geochemical & Elemental Reduction Engine */
 
 /**
  * 1. 단위 및 스케일 변환 유틸리티
@@ -118,7 +118,6 @@ function getInterpolatedDriftOffset(rIdx, anchorRuns) {
  */
 function computeBlankSubtractedDelta(sampleArea, sampleRawDelta, blankMeanArea, blankMeanDelta) {
   if (!blankMeanArea || blankMeanArea <= 0 || isNaN(sampleArea)) return sampleRawDelta;
-  // 시료 피크 면적이 블랭크 평균의 1.05배 이상일 때 질량 보존식 적용
   if (sampleArea > blankMeanArea * 1.05) {
     return (sampleArea * sampleRawDelta - blankMeanArea * blankMeanDelta) / (sampleArea - blankMeanArea);
   }
@@ -141,4 +140,20 @@ function computeCombinedUncertainty(rawSd, calSlope, seSlope, seIntercept, prepr
   const term2 = Math.pow(preprocessedRaw * seSlope, 2);
   const term3 = Math.pow(seIntercept, 2);
   return Math.sqrt(term1 + term2 + term3);
+}
+
+/**
+ * 7. EA-IRMS 원소 함량(%) 및 원자비(Atomic C/N) 산출
+ */
+function computeElementalContent(corrArea, sampleWeightMg, responseFactor) {
+  if (!sampleWeightMg || sampleWeightMg <= 0 || !responseFactor || responseFactor <= 0 || isNaN(corrArea)) {
+    return null;
+  }
+  const wtPercent = (corrArea / (responseFactor * sampleWeightMg)) * 100;
+  return wtPercent > 0 ? wtPercent : 0;
+}
+
+function computeAtomicCNRatio(percentC, percentN) {
+  if (!percentC || !percentN || percentC <= 0 || percentN <= 0) return null;
+  return (percentC / 12.011) / (percentN / 14.007);
 }
