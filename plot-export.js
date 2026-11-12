@@ -1,8 +1,5 @@
 /* plot-export.js - IsoCalib v1.4.1 Interactive Plots & ExcelJS Publication Export Engine */
 
-/**
- * 1. Figure 1 & 2: WLS 선형 검량선 피팅 차트
- */
 function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   const container = document.getElementById(elemId);
   if (!container) return;
@@ -57,9 +54,6 @@ function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-/**
- * 2. Figure 3 & 4 (Linearity 모드): 피크 면적 대비 동위원소 선형성 진단 차트
- */
 function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanArea, isoLabel, isManual = false) {
   const container = document.getElementById(elemId);
   if (!container) return;
@@ -90,7 +84,6 @@ function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanAr
   const meanY = valArr.reduce((a, b) => a + b, 0) / valArr.length;
 
   if (isManual) {
-    // 수동 계수 라인: 기준 면적(meanArea) 및 중심 Y를 통과하는 붉은색 점선
     const lyManual = lx.map(x => meanY + slopeVal * (x - meanArea));
     traces.push({
       x: lx,
@@ -101,7 +94,6 @@ function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanAr
       line: { color: '#dc2626', width: 2.2, dash: 'dash' }
     });
 
-    // 2점 이상일 경우 실제 데이터 관측 회귀선을 회색 보조선으로 함께 표기
     if (areaArr.length >= 2) {
       const ols = calcOLS(areaArr, valArr);
       const lyObs = [ols.slope * lx[0] + ols.intercept, ols.slope * lx[1] + ols.intercept];
@@ -115,7 +107,6 @@ function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanAr
       });
     }
   } else {
-    // 자동 계산 OLS 회귀선
     if (areaArr.length >= 2) {
       const ols = calcOLS(areaArr, valArr);
       const ly = [ols.slope * lx[0] + ols.intercept, ols.slope * lx[1] + ols.intercept];
@@ -157,9 +148,6 @@ function drawLinearityPlot(elemId, areaArr, valArr, anchorName, slopeVal, meanAr
   Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-/**
- * 3. Figure 3 & 4 (Drift 모드): 시퀀스 시간축 기기 표류 진단 차트
- */
 function drawDriftPlot(elemId, seqArr, valArr, anchorName, mode, slopeVal, anchorRuns, maxRun, isoLabel) {
   const container = document.getElementById(elemId);
   if (!container) return;
@@ -206,9 +194,6 @@ function drawDriftPlot(elemId, seqArr, valArr, anchorName, mode, slopeVal, ancho
   Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-/**
- * 4. SVG 단독 내보내기 이벤트 바인딩
- */
 ['1', '2', 'drift-1', 'drift-2'].forEach(suffix => {
   const btn = document.getElementById(`btn-export-svg-${suffix}`);
   if (btn) {
@@ -220,9 +205,6 @@ function drawDriftPlot(elemId, seqArr, valArr, anchorName, mode, slopeVal, ancho
   }
 });
 
-/**
- * 5. Plotly DOM 이미지를 Base64 PNG로 캡처
- */
 async function capturePlotAsBase64Png(elemId) {
   const el = document.getElementById(elemId);
   if (!el || !el.data || el.data.length === 0) return null;
@@ -235,9 +217,6 @@ async function capturePlotAsBase64Png(elemId) {
   }
 }
 
-/**
- * 6. ExcelJS 멀티 시트 보고서 (.xlsx) 생성 및 차트 이미지 자동 삽입
- */
 const btnExportExcel = document.getElementById('btn-export');
 if (btnExportExcel) {
   btnExportExcel.addEventListener('click', async () => {
@@ -249,6 +228,7 @@ if (btnExportExcel) {
     const p = PRESETS[currentMode];
     const isDual = p.elements.length === 2;
     const u1 = getElementUnit(0), u2 = getElementUnit(1);
+    const hasWeight = isAreaActive();
     const originalBtnText = btnExportExcel.innerHTML;
 
     try {
@@ -262,47 +242,53 @@ if (btnExportExcel) {
 
       // Sheet 1: Grouped Summary
       const wsGrouped = workbook.addWorksheet('Grouped_Summary');
-      wsGrouped.columns = isDual ? [
+      const grpCols = [
         { header: 'Sample_Base_ID', key: 'baseId', width: 22 },
-        { header: 'Active_Replicates (n)', key: 'n', width: 20 },
-        { header: `Mean_${p.elements[0].label} (${u1})`, key: 'mean1', width: 24 },
-        { header: 'Rep_1SD', key: 'sd1', width: 14 },
-        { header: `Mean_${p.elements[1].label} (${u2})`, key: 'mean2', width: 24 },
-        { header: 'Rep_1SD', key: 'sd2', width: 14 }
-      ] : [
-        { header: 'Sample_Base_ID', key: 'baseId', width: 22 },
-        { header: 'Active_Replicates (n)', key: 'n', width: 20 },
-        { header: `Mean_${p.elements[0].label} (${u1})`, key: 'mean1', width: 24 },
-        { header: 'Rep_1SD', key: 'sd1', width: 14 }
+        { header: 'Active_Replicates (n)', key: 'n', width: 20 }
       ];
+      if (hasWeight) grpCols.push({ header: 'Mean_Weight_mg', key: 'meanWeight', width: 16 });
+      grpCols.push({ header: `Mean_${p.elements[0].label} (${u1})`, key: 'mean1', width: 22 });
+      grpCols.push({ header: 'Rep_1SD', key: 'sd1', width: 12 });
+      if (isDual) {
+        grpCols.push({ header: `Mean_${p.elements[1].label} (${u2})`, key: 'mean2', width: 22 });
+        grpCols.push({ header: 'Rep_1SD', key: 'sd2', width: 12 });
+      }
+      if (hasWeight && p.elements[0].element) {
+        grpCols.push({ header: `Mean_%${p.elements[0].element}`, key: 'meanWt1', width: 15 });
+        if (isDual && p.elements[1].element) grpCols.push({ header: `Mean_%${p.elements[1].element}`, key: 'meanWt2', width: 15 });
+        if (currentMode === 'CN') grpCols.push({ header: 'Mean_Atomic_CN', key: 'meanAtomicCN', width: 16 });
+      }
+      wsGrouped.columns = grpCols;
       groupedSummaryData.forEach(g => wsGrouped.addRow(g));
 
       // Sheet 2: Sequence Runs
       const wsSeq = workbook.addWorksheet('Sequence_Runs');
-      wsSeq.columns = isDual ? [
+      const seqCols = [
         { header: 'Run_Order', key: 'runNumber', width: 12 },
         { header: 'Status', key: 'status', width: 14 },
-        { header: 'Sample_ID', key: 'id', width: 22 },
-        { header: `Area_${p.elements[0].label}`, key: 'area1', width: 14 },
-        { header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 },
-        { header: '1SD', key: 'sd1', width: 12 },
-        { header: `Area_${p.elements[1].label}`, key: 'area2', width: 14 },
-        { header: `Raw_${p.elements[1].label}`, key: 'raw2', width: 16 },
-        { header: '1SD', key: 'sd2', width: 12 },
-        { header: `Calibrated_${p.elements[0].label} (${u1})`, key: 'cal1', width: 22 },
-        { header: 'Combined_1SD', key: 'propSd1', width: 16 },
-        { header: `Calibrated_${p.elements[1].label} (${u2})`, key: 'cal2', width: 22 },
-        { header: 'Combined_1SD', key: 'propSd2', width: 16 }
-      ] : [
-        { header: 'Run_Order', key: 'runNumber', width: 12 },
-        { header: 'Status', key: 'status', width: 14 },
-        { header: 'Sample_ID', key: 'id', width: 22 },
-        { header: `Area_${p.elements[0].label}`, key: 'area1', width: 14 },
-        { header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 },
-        { header: '1SD', key: 'sd1', width: 12 },
-        { header: `Calibrated_${p.elements[0].label} (${u1})`, key: 'cal1', width: 22 },
-        { header: 'Combined_1SD', key: 'propSd1', width: 16 }
+        { header: 'Sample_ID', key: 'id', width: 22 }
       ];
+      if (hasWeight) seqCols.push({ header: 'Weight_mg', key: 'weight', width: 14 });
+      seqCols.push({ header: `Area_${p.elements[0].label}`, key: 'area1', width: 14 });
+      seqCols.push({ header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 });
+      seqCols.push({ header: '1SD', key: 'sd1', width: 12 });
+      if (isDual) {
+        seqCols.push({ header: `Area_${p.elements[1].label}`, key: 'area2', width: 14 });
+        seqCols.push({ header: `Raw_${p.elements[1].label}`, key: 'raw2', width: 16 });
+        seqCols.push({ header: '1SD', key: 'sd2', width: 12 });
+      }
+      seqCols.push({ header: `Calibrated_${p.elements[0].label} (${u1})`, key: 'cal1', width: 22 });
+      seqCols.push({ header: 'Combined_1SD', key: 'propSd1', width: 16 });
+      if (isDual) {
+        seqCols.push({ header: `Calibrated_${p.elements[1].label} (${u2})`, key: 'cal2', width: 22 });
+        seqCols.push({ header: 'Combined_1SD', key: 'propSd2', width: 16 });
+      }
+      if (hasWeight && p.elements[0].element) {
+        seqCols.push({ header: `%${p.elements[0].element}`, key: 'wt1', width: 14 });
+        if (isDual && p.elements[1].element) seqCols.push({ header: `%${p.elements[1].element}`, key: 'wt2', width: 14 });
+        if (currentMode === 'CN') seqCols.push({ header: 'Atomic_CN', key: 'atomicCN', width: 14 });
+      }
+      wsSeq.columns = seqCols;
       sequenceExportData.forEach(r => wsSeq.addRow(r));
 
       // Sheet 3: Figures & QC Diagnostics
