@@ -1,4 +1,4 @@
-/* app-ui.js - IsoCalib v1.4.1 Final Verified UI & Execution Pipeline */
+/* app-ui.js - IsoCalib v1.4.1 UI Interaction & Elemental Pipeline */
 
 let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentTab = 'sequence';
@@ -29,7 +29,7 @@ function isAreaActive() {
 function getNumDataCols() {
   const isDual = PRESETS[currentMode].elements.length === 2;
   if (isAreaActive()) {
-    return isDual ? 7 : 4; // [ID, Area1, Raw1, SD1, (Area2, Raw2, SD2)]
+    return isDual ? 8 : 5; // [ID, Weight(mg), Area1, Raw1, SD1, (Area2, Raw2, SD2)]
   }
   return isDual ? 5 : 3; // [ID, Raw1, SD1, (Raw2, SD2)]
 }
@@ -144,7 +144,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 // -------------------------------------------------------------
-// 2. Standards Configuration & Presets Storage (Bug Fixed)
+// 2. Standards Configuration & Presets Storage
 // -------------------------------------------------------------
 function captureCurrentStandardsSnapshot(mode = currentMode) {
   const p = PRESETS[mode];
@@ -154,21 +154,29 @@ function captureCurrentStandardsSnapshot(mode = currentMode) {
     const elName = document.getElementById(`ref-std${idx}-name`);
     const elV1 = document.getElementById(`ref-std${idx}-v1`);
     const elV2 = document.getElementById(`ref-std${idx}-v2`);
+    const elWt1 = document.getElementById(`ref-std${idx}-wt1`);
+    const elWt2 = document.getElementById(`ref-std${idx}-wt2`);
     if (elName) {
       stds.push({
         name: elName.value.trim(),
         v1: (elV1 && elV1.value !== '') ? parseFloat(elV1.value) : 0,
-        v2: (isDual && elV2 && elV2.value !== '') ? parseFloat(elV2.value) : 0
+        v2: (isDual && elV2 && elV2.value !== '') ? parseFloat(elV2.value) : 0,
+        wt1: (elWt1 && elWt1.value !== '') ? parseFloat(elWt1.value) : null,
+        wt2: (isDual && elWt2 && elWt2.value !== '') ? parseFloat(elWt2.value) : null
       });
     }
   }
   const elQcName = document.getElementById('qc-std-name');
   const elQcV1 = document.getElementById('qc-std-v1');
   const elQcV2 = document.getElementById('qc-std-v2');
+  const elQcWt1 = document.getElementById('qc-std-wt1');
+  const elQcWt2 = document.getElementById('qc-std-wt2');
   const qcStd = {
     name: elQcName ? elQcName.value.trim() : null,
     v1: (elQcV1 && elQcV1.value !== '') ? parseFloat(elQcV1.value) : null,
-    v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null
+    v2: (isDual && elQcV2 && elQcV2.value !== '') ? parseFloat(elQcV2.value) : null,
+    wt1: (elQcWt1 && elQcWt1.value !== '') ? parseFloat(elQcWt1.value) : null,
+    wt2: (isDual && elQcWt2 && elQcWt2.value !== '') ? parseFloat(elQcWt2.value) : null
   };
   const elAnchorSelect = document.getElementById('drift-anchor-select');
   const selectedDriftAnchor = elAnchorSelect ? parseInt(elAnchorSelect.value) : p.defaultDriftAnchorIdx;
@@ -262,7 +270,9 @@ document.getElementById('btn-add-anchor').addEventListener('click', () => {
   snap.stds.push({
     name: extraCandidate ? extraCandidate.name : `STD-0${newIdx + 1}`,
     v1: defaultV1,
-    v2: isDual ? defaultV2 : null
+    v2: isDual ? defaultV2 : null,
+    wt1: extraCandidate ? extraCandidate.wt1 : null,
+    wt2: (isDual && extraCandidate) ? extraCandidate.wt2 : null
   });
   userCustomStandardsByMode[currentMode] = snap;
   updateLayoutForMode(false);
@@ -370,11 +380,11 @@ function convertGridRowsForAreaToggle(oldAreaActive, newAreaActive) {
   gridData = gridData.map(row => {
     const id = row[0] !== undefined ? row[0] : '';
     if (!oldAreaActive && newAreaActive) {
-      if (isDual) return [id, '', row[1] ?? '', row[2] ?? '', '', row[3] ?? '', row[4] ?? ''];
-      return [id, '', row[1] ?? '', row[2] ?? ''];
+      if (isDual) return [id, '', '', row[1] ?? '', row[2] ?? '', '', row[3] ?? '', row[4] ?? ''];
+      return [id, '', '', row[1] ?? '', row[2] ?? ''];
     } else {
-      if (isDual) return [id, row[2] ?? '', row[3] ?? '', row[5] ?? '', row[6] ?? ''];
-      return [id, row[2] ?? '', row[3] ?? ''];
+      if (isDual) return [id, row[3] ?? '', row[4] ?? '', row[6] ?? '', row[7] ?? ''];
+      return [id, row[3] ?? '', row[4] ?? ''];
     }
   });
 }
@@ -429,6 +439,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
   const isDual = p.elements.length === 2;
   const isEn = currentLang === 'en';
   const areaOn = isAreaActive();
+  const hasElemental = areaOn && (p.elements[0].element !== undefined);
 
   const oScaleWrapper = document.getElementById('oxygen-scale-wrapper');
   if (currentMode === 'CO' || currentMode === 'WATER_O') {
@@ -451,6 +462,8 @@ function updateLayoutForMode(forcePresetDefault = false) {
     const valName = std.name ?? `STD-0${idx + 1}`;
     let valV1 = (std.v1 !== null && !isNaN(std.v1)) ? std.v1 : 0;
     let valV2 = (std.v2 !== null && !isNaN(std.v2)) ? std.v2 : 0;
+    let valWt1 = std.wt1 !== undefined && std.wt1 !== null ? std.wt1 : '';
+    let valWt2 = std.wt2 !== undefined && std.wt2 !== null ? std.wt2 : '';
 
     if (!snapshot) {
       if (currentMode === 'CO' && oxygenScale === 'VSMOW') valV2 = parseFloat(vpdbToVsmow(valV2).toFixed(3));
@@ -468,13 +481,13 @@ function updateLayoutForMode(forcePresetDefault = false) {
         </div>
         <input type="text" id="ref-std${idx}-name" value="${valName}" class="w-32 text-xs font-bold text-stone-900 border-b border-stone-400 focus:border-stone-900 outline-none text-right font-mono bg-transparent">
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <div class="flex-1 space-y-1">
           <div class="flex justify-between text-[11px] text-stone-600 font-medium">
             <span>${p.elements[0].label} ${isEn ? 'True' : '참값'}</span>
             <span class="text-stone-400 font-mono text-[10px]">${u1}</span>
           </div>
-          <input type="number" step="0.001" id="ref-std${idx}-v1" value="${valV1}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
+          <input type="number" step="0.001" id="ref-std${idx}-v1" value="${valV1}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
         </div>
         ${isDual ? `
         <div class="flex-1 space-y-1">
@@ -482,9 +495,21 @@ function updateLayoutForMode(forcePresetDefault = false) {
             <span>${p.elements[1].label} ${isEn ? 'True' : '참값'}</span>
             <span class="text-stone-400 font-mono text-[10px]">${u2}</span>
           </div>
-          <input type="number" step="0.001" id="ref-std${idx}-v2" value="${valV2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
+          <input type="number" step="0.001" id="ref-std${idx}-v2" value="${valV2}" class="w-full bg-[#fbfaf8] border border-[#c7c5bc] px-2 py-1 text-xs font-data font-semibold text-stone-900 focus:border-stone-900 outline-none">
         </div>` : ''}
       </div>
+      ${hasElemental ? `
+      <div class="flex items-center gap-3 pt-1 border-t border-stone-100">
+        <div class="flex-1 space-y-0.5">
+          <span class="text-[10px] font-mono text-stone-500 font-semibold">%${p.elements[0].element} Content</span>
+          <input type="number" step="0.01" id="ref-std${idx}-wt1" value="${valWt1}" placeholder="%${p.elements[0].element}" class="w-full bg-stone-50 border border-stone-300 px-2 py-0.5 text-xs font-mono text-stone-800">
+        </div>
+        ${isDual ? `
+        <div class="flex-1 space-y-0.5">
+          <span class="text-[10px] font-mono text-stone-500 font-semibold">%${p.elements[1].element} Content</span>
+          <input type="number" step="0.01" id="ref-std${idx}-wt2" value="${valWt2}" placeholder="%${p.elements[1].element}" class="w-full bg-stone-50 border border-stone-300 px-2 py-0.5 text-xs font-mono text-stone-800">
+        </div>` : ''}
+      </div>` : ''}
     `;
     stdContainer.appendChild(div);
   });
@@ -493,6 +518,9 @@ function updateLayoutForMode(forcePresetDefault = false) {
   const qcName = (snapQc && snapQc.name) ? snapQc.name : (p.qcStd ? p.qcStd.name : 'QC');
   let qcV1 = (snapQc && snapQc.v1 !== null && !isNaN(snapQc.v1)) ? snapQc.v1 : (p.qcStd ? p.qcStd.v1 : 0);
   let qcV2 = (snapQc && snapQc.v2 !== null && !isNaN(snapQc.v2)) ? snapQc.v2 : (p.qcStd && p.qcStd.v2 !== undefined ? p.qcStd.v2 : 0);
+  let qcWt1 = snapQc && snapQc.wt1 !== undefined ? snapQc.wt1 : (p.qcStd && p.qcStd.wt1 ? p.qcStd.wt1 : '');
+  let qcWt2 = snapQc && snapQc.wt2 !== undefined ? snapQc.wt2 : (p.qcStd && p.qcStd.wt2 ? p.qcStd.wt2 : '');
+
   if (!snapQc) {
     if (currentMode === 'CO' && oxygenScale === 'VSMOW') qcV2 = parseFloat(vpdbToVsmow(qcV2).toFixed(3));
     if (currentMode === 'WATER_O' && oxygenScale === 'VPDB') qcV1 = parseFloat(vsmowToVpdb(qcV1).toFixed(3));
@@ -507,13 +535,13 @@ function updateLayoutForMode(forcePresetDefault = false) {
       </span>
       <input type="text" id="qc-std-name" value="${qcName}" class="w-28 text-xs font-bold text-emerald-950 border-b border-emerald-400 focus:border-emerald-800 outline-none text-right font-mono bg-transparent">
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
       <div class="flex-1 space-y-1">
         <div class="flex justify-between text-[11px] text-stone-600 font-medium">
           <span>${p.elements[0].label} ${isEn ? 'Accepted' : '공인값'}</span>
           <span class="text-stone-400 font-mono text-[10px]">${u1}</span>
         </div>
-        <input type="number" step="0.001" id="qc-std-v1" value="${qcV1}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
+        <input type="number" step="0.001" id="qc-std-v1" value="${qcV1}" class="w-full bg-white border border-emerald-300 px-2 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
       </div>
       ${isDual ? `
       <div class="flex-1 space-y-1">
@@ -521,9 +549,21 @@ function updateLayoutForMode(forcePresetDefault = false) {
           <span>${p.elements[1].label} ${isEn ? 'Accepted' : '공인값'}</span>
           <span class="text-stone-400 font-mono text-[10px]">${u2}</span>
         </div>
-        <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-emerald-300 px-2.5 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
+        <input type="number" step="0.001" id="qc-std-v2" value="${qcV2}" class="w-full bg-white border border-emerald-300 px-2 py-1 text-xs font-data font-semibold text-stone-900 focus:border-emerald-800 outline-none">
       </div>` : ''}
     </div>
+    ${hasElemental ? `
+    <div class="flex items-center gap-3 pt-1 border-t border-emerald-100">
+      <div class="flex-1 space-y-0.5">
+        <span class="text-[10px] font-mono text-emerald-800 font-semibold">%${p.elements[0].element} Content</span>
+        <input type="number" step="0.01" id="qc-std-wt1" value="${qcWt1}" placeholder="%${p.elements[0].element}" class="w-full bg-white border border-emerald-300 px-2 py-0.5 text-xs font-mono text-stone-800">
+      </div>
+      ${isDual ? `
+      <div class="flex-1 space-y-0.5">
+        <span class="text-[10px] font-mono text-emerald-800 font-semibold">%${p.elements[1].element} Content</span>
+        <input type="number" step="0.01" id="qc-std-wt2" value="${qcWt2}" placeholder="%${p.elements[1].element}" class="w-full bg-white border border-emerald-300 px-2 py-0.5 text-xs font-mono text-stone-800">
+      </div>` : ''}
+    </div>` : ''}
   `;
   stdContainer.appendChild(qcDiv);
 
@@ -552,10 +592,11 @@ function updateLayoutForMode(forcePresetDefault = false) {
         <th class="w-9 px-1.5 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
         <th class="w-9 px-1 py-2 text-center text-stone-700 border-r border-[#d1cfc7] font-mono">Use</th>
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준 ID'}</th>
-        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[0].label}</th>` : ''}
+        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-amber-900 bg-amber-50/70 font-mono">Weight (mg)</th>` : ''}
+        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60 font-mono">Area ${p.elements[0].label}</th>` : ''}
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
         <th class="px-2.5 py-2 border-r border-[#d1cfc7] text-stone-900">1σ SD</th>
-        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area ${p.elements[1].label}</th>` : ''}
+        ${areaOn ? `<th class="px-2 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60 font-mono">Area ${p.elements[1].label}</th>` : ''}
         <th class="px-2.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
         <th class="px-2.5 py-2 text-stone-900">1σ SD</th>
       </tr>
@@ -565,8 +606,9 @@ function updateLayoutForMode(forcePresetDefault = false) {
       <tr>
         <th class="w-10 px-2 py-2 text-center text-stone-500 border-r border-[#d1cfc7] font-mono">#</th>
         <th class="w-10 px-1.5 py-2 text-center text-stone-700 border-r border-[#d1cfc7] font-mono">Use</th>
-        <th class="px-3.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준물질 ID'}</th>
-        ${areaOn ? `<th class="px-3 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60">Area (Vs/mV)</th>` : ''}
+        <th class="px-3.5 py-2 border-r border-[#d1cfc7]">${isEn ? 'Sample / Std ID' : '시료/표준 ID'}</th>
+        ${areaOn ? `<th class="px-2.5 py-2 border-r border-[#d1cfc7] text-amber-900 bg-amber-50/70 font-mono">Weight (mg)</th>` : ''}
+        ${areaOn ? `<th class="px-3 py-2 border-r border-[#d1cfc7] text-sky-900 bg-sky-50/60 font-mono">Area (Vs)</th>` : ''}
         <th class="px-3.5 py-2 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
         <th class="px-3 py-2 text-stone-900">1σ SD</th>
       </tr>
@@ -607,52 +649,50 @@ function updateLayoutForMode(forcePresetDefault = false) {
     document.getElementById('plot-drift-1-tag').innerText = `Figure 3 · ${p.elements[0].label} ${diagTitle}`;
   }
 
+  // Result Header
   const rHead = document.getElementById('result-head');
+  let rHeadCols = `<th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>`;
+  if (areaOn) rHeadCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-700 font-mono">Weight (mg)</th>`;
+  rHeadCols += `
+    <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${u1})</th>
+    <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
+  `;
   if (isDual) {
-    rHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[1].label}</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${u1})</th>
-        <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${u2})</th>
-        <th class="px-3.5 py-2.5 text-stone-600">± 1σ</th>
-      </tr>
-    `;
-  } else {
-    rHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample ID' : '시료 ID'}</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">Raw ${p.elements[0].label}</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${u1})</th>
-        <th class="px-4 py-2.5 text-stone-600">± 1σ</th>
-      </tr>
+    rHeadCols += `
+      <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${u2})</th>
+      <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
     `;
   }
+  if (hasElemental) {
+    rHeadCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] font-bold text-emerald-900 bg-emerald-50/50 font-mono">%${p.elements[0].element}</th>`;
+    if (isDual) rHeadCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] font-bold text-emerald-900 bg-emerald-50/50 font-mono">%${p.elements[1].element}</th>`;
+    if (currentMode === 'CN') rHeadCols += `<th class="px-3.5 py-2.5 font-bold text-indigo-950 bg-indigo-50/50 font-mono">Atomic C/N</th>`;
+  }
+  rHead.innerHTML = `<tr>${rHeadCols}</tr>`;
 
+  // Grouped Summary Header
   const gSummaryHead = document.getElementById('grouped-head');
+  let gCols = `
+    <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
+    <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
+  `;
+  if (areaOn) gCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] font-mono text-stone-600">Mean Weight</th>`;
+  gCols += `
+    <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
+    <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">Rep. 1σ SD</th>
+  `;
   if (isDual) {
-    gSummaryHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
-        <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
-        <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">Rep. 1σ SD</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[1].label} (${u2})</th>
-        <th class="px-3.5 py-2.5 text-stone-700">Rep. 1σ SD</th>
-      </tr>
-    `;
-  } else {
-    gSummaryHead.innerHTML = `
-      <tr>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7]">${isEn ? 'Sample Base ID' : '시료명 (Base ID)'}</th>
-        <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-center font-mono">Rep. (n)</th>
-        <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[0].label} (${u1})</th>
-        <th class="px-4 py-2.5 text-stone-600">Rep. 1σ SD</th>
-      </tr>
+    gCols += `
+      <th class="px-4 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">Mean ${p.elements[1].label} (${u2})</th>
+      <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-700">Rep. 1σ SD</th>
     `;
   }
+  if (hasElemental) {
+    gCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] font-bold text-emerald-900 font-mono">Mean %${p.elements[0].element}</th>`;
+    if (isDual) gCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] font-bold text-emerald-900 font-mono">Mean %${p.elements[1].element}</th>`;
+    if (currentMode === 'CN') gCols += `<th class="px-3.5 py-2.5 font-bold text-indigo-950 font-mono">Mean Atomic C/N</th>`;
+  }
+  gSummaryHead.innerHTML = `<tr>${gCols}</tr>`;
 
   const numCols = getNumDataCols();
   if (gridData.length === 0) {
@@ -749,17 +789,17 @@ function setLanguage(lang) {
     if (lang === 'ko') {
       pList.innerHTML = `
         <li>EA-IRMS 피크 면적 선형성(Auto 및 Manual slope) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
+        <li>시료 계량 무게(mg) 기반 %C, %N 원소 함량 및 Atomic C/N 비 자동 산출</li>
         <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
         <li>2점(Two-Point) 및 3점 이상 다중 앵커(Multi-Point) 가중 선형 회귀(WLS) 동적 확장</li>
-        <li>수소(δD), 탄소(δ¹³C), 질소(δ¹⁵N), 산소(δ¹⁸O) 원소별 스마트 QC 진단 엔진</li>
         <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
       `;
     } else {
       pList.innerHTML = `
-        <li>EA-IRMS Peak Area size-linearity normalization (Auto & Manual slope) & mass-balance Tin Capsule Blank subtraction</li>
+        <li>EA-IRMS Peak Area size-linearity normalization & mass-balance Tin Capsule Blank subtraction</li>
+        <li>Sample weight (mg) based %C, %N elemental quantification and Atomic C/N ratios</li>
         <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
         <li>Dynamic 2-point and 3+ multi-point Weighted Least Squares (WLS) anchor calibration</li>
-        <li>Element-specific smart QC diagnostic engine adapting to δD, δ¹³C, δ¹⁵N, and δ¹⁸O tolerances</li>
         <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
       `;
     }
@@ -782,8 +822,8 @@ function resetOutputs() {
   document.getElementById('plot-2').innerHTML = waitMsg;
   document.getElementById('plot-drift-1').innerHTML = waitMsg;
   document.getElementById('plot-drift-2').innerHTML = waitMsg;
-  document.getElementById('result-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
-  document.getElementById('grouped-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].grouped_empty}</td></tr>`;
+  document.getElementById('result-body').innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].result_empty}</td></tr>`;
+  document.getElementById('grouped-body').innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${TRANSLATIONS[currentLang].grouped_empty}</td></tr>`;
   document.getElementById('qc-summary-banner').classList.add('hidden');
   groupedSummaryData = [];
   sequenceExportData = [];
@@ -1137,7 +1177,6 @@ document.getElementById('isotope-preset').addEventListener('change', (e) => {
 
 document.getElementById('btn-calc').addEventListener('click', runCalibration);
 
-// 30+ 전체 런 보존 로드
 document.getElementById('btn-demo').addEventListener('click', () => {
   userCustomStandardsByMode[currentMode] = null;
   oxygenScale = currentMode === 'WATER_O' ? 'VSMOW' : 'VPDB';
@@ -1177,16 +1216,18 @@ function extractRowFields(row, isDual, areaOn) {
   if (areaOn) {
     return {
       id,
-      area1: parseFloat(row[1]),
-      raw1: parseFloat(row[2]),
-      sd1: parseFloat(row[3]) || 0.03,
-      area2: isDual ? parseFloat(row[4]) : NaN,
-      raw2: isDual ? parseFloat(row[5]) : NaN,
-      sd2: isDual ? (parseFloat(row[6]) || 0.05) : 0
+      weight: parseFloat(row[1]) || 0,
+      area1: parseFloat(row[2]),
+      raw1: parseFloat(row[3]),
+      sd1: parseFloat(row[4]) || 0.03,
+      area2: isDual ? parseFloat(row[5]) : NaN,
+      raw2: isDual ? parseFloat(row[6]) : NaN,
+      sd2: isDual ? (parseFloat(row[7]) || 0.05) : 0
     };
   }
   return {
     id,
+    weight: 0,
     area1: NaN,
     raw1: parseFloat(row[1]),
     sd1: parseFloat(row[2]) || 0.03,
@@ -1214,6 +1255,7 @@ function runCalibration() {
   const isDual = p.elements.length === 2;
   const isEn = currentLang === 'en';
   const areaOn = isAreaActive();
+  const hasElemental = areaOn && (p.elements[0].element !== undefined);
   const useBlank = (areaMode === 'blank' || areaMode === 'blank_lin');
   const useLin = (areaMode === 'linearity' || areaMode === 'blank_lin');
   const driftMode = document.getElementById('drift-mode').value;
@@ -1226,20 +1268,28 @@ function runCalibration() {
     const elName = document.getElementById(`ref-std${idx}-name`);
     if (!elName) continue;
     const nameInput = elName.value.trim();
+    const elWt1 = document.getElementById(`ref-std${idx}-wt1`);
+    const elWt2 = document.getElementById(`ref-std${idx}-wt2`);
     refStds.push({
       name: nameInput,
       keyMatch: nameInput.toUpperCase().replace(/[^A-Z0-9]/g, ''),
       v1: parseFloat(document.getElementById(`ref-std${idx}-v1`).value),
-      v2: isDual ? parseFloat(document.getElementById(`ref-std${idx}-v2`).value) : null
+      v2: isDual ? parseFloat(document.getElementById(`ref-std${idx}-v2`).value) : null,
+      wt1: elWt1 && elWt1.value !== '' ? parseFloat(elWt1.value) : null,
+      wt2: isDual && elWt2 && elWt2.value !== '' ? parseFloat(elWt2.value) : null
     });
   }
 
   const qcNameInput = document.getElementById('qc-std-name').value.trim();
+  const elQcWt1 = document.getElementById('qc-std-wt1');
+  const elQcWt2 = document.getElementById('qc-std-wt2');
   const qcStd = {
     name: qcNameInput,
     keyMatch: qcNameInput.toUpperCase().replace(/[^A-Z0-9]/g, ''),
     v1: parseFloat(document.getElementById('qc-std-v1').value),
-    v2: isDual ? parseFloat(document.getElementById('qc-std-v2').value) : null
+    v2: isDual ? parseFloat(document.getElementById('qc-std-v2').value) : null,
+    wt1: elQcWt1 && elQcWt1.value !== '' ? parseFloat(elQcWt1.value) : null,
+    wt2: isDual && elQcWt2 && elQcWt2.value !== '' ? parseFloat(elQcWt2.value) : null
   };
 
   // Step A: Blank Averages
@@ -1471,6 +1521,35 @@ function runCalibration() {
     }
   }
 
+  // Step E-0: Elemental Response Factors (RF) 도출
+  let rf1 = null, rf2 = null;
+  if (hasElemental) {
+    const rfPts1 = [], rfPts2 = [];
+    gridData.forEach((row, rIdx) => {
+      if (excludedRows[rIdx]) return;
+      const f = extractRowFields(row, isDual, areaOn);
+      if (!f.id || isBlankRowId(f.id) || f.weight <= 0) return;
+      const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+      refStds.forEach(std => {
+        if (std.keyMatch && clean.includes(std.keyMatch)) {
+          if (std.wt1 && !isNaN(f.area1)) {
+            const netA1 = Math.max(0, f.area1 - (useBlank ? meanBlkA1 : 0));
+            const pureMass1 = f.weight * (std.wt1 / 100);
+            if (pureMass1 > 0) rfPts1.push(netA1 / pureMass1);
+          }
+          if (isDual && std.wt2 && !isNaN(f.area2)) {
+            const netA2 = Math.max(0, f.area2 - (useBlank ? meanBlkA2 : 0));
+            const pureMass2 = f.weight * (std.wt2 / 100);
+            if (pureMass2 > 0) rfPts2.push(netA2 / pureMass2);
+          }
+        }
+      });
+    });
+    if (rfPts1.length > 0) rf1 = rfPts1.reduce((a, b) => a + b, 0) / rfPts1.length;
+    if (rfPts2.length > 0) rf2 = rfPts2.reduce((a, b) => a + b, 0) / rfPts2.length;
+  }
+
   // Step E: Compute Sequence Table
   const resBody = document.getElementById('result-body');
   resBody.innerHTML = '';
@@ -1503,12 +1582,33 @@ function runCalibration() {
       if (isQC && !isExcl) qcResults.cals2.push(cal2);
     }
 
-    computedRows.push({ rIdx, id: f.id, clean, isAnchor, isQC, isBlk, isExcl, raw1: f.raw1, sd1: f.sd1, cal1, propSd1, raw2: f.raw2, sd2: f.sd2, cal2, propSd2 });
+    let wt1 = null, wt2 = null, atomicCN = null;
+    if (!isBlk && hasElemental && f.weight > 0) {
+      if (rf1 && !isNaN(f.area1)) {
+        const netA1 = Math.max(0, f.area1 - (useBlank ? meanBlkA1 : 0));
+        wt1 = computeElementalContent(netA1, f.weight, rf1);
+      }
+      if (isDual && rf2 && !isNaN(f.area2)) {
+        const netA2 = Math.max(0, f.area2 - (useBlank ? meanBlkA2 : 0));
+        wt2 = computeElementalContent(netA2, f.weight, rf2);
+      }
+      if (currentMode === 'CN' && wt1 !== null && wt2 !== null) {
+        atomicCN = computeAtomicCNRatio(wt1, wt2);
+      }
+    }
+
+    computedRows.push({
+      rIdx, id: f.id, weight: f.weight, clean, isAnchor, isQC, isBlk, isExcl,
+      raw1: f.raw1, sd1: f.sd1, cal1, propSd1,
+      raw2: f.raw2, sd2: f.sd2, cal2, propSd2,
+      wt1, wt2, atomicCN
+    });
 
     sequenceExportData.push({
       runNumber: rIdx + 1,
       status: isExcl ? 'EXCLUDED' : (isBlk ? 'BLANK' : 'INCLUDED'),
       id: f.id,
+      weight: (areaOn && f.weight > 0) ? f.weight : null,
       area1: (areaOn && !isNaN(f.area1)) ? f.area1 : null,
       raw1: !isNaN(f.raw1) ? parseFloat(f.raw1.toFixed(3)) : null,
       sd1: f.sd1 > 0 ? parseFloat(f.sd1.toFixed(3)) : null,
@@ -1518,7 +1618,10 @@ function runCalibration() {
       raw2: (isDual && !isNaN(f.raw2)) ? parseFloat(f.raw2.toFixed(3)) : null,
       sd2: (isDual && f.sd2 > 0) ? parseFloat(f.sd2.toFixed(3)) : null,
       cal2: (!isExcl && !isBlk && isDual && cal2 !== null) ? parseFloat(cal2.toFixed(3)) : null,
-      propSd2: (!isExcl && !isBlk && isDual && propSd2 !== null) ? parseFloat(propSd2.toFixed(3)) : null
+      propSd2: (!isExcl && !isBlk && isDual && propSd2 !== null) ? parseFloat(propSd2.toFixed(3)) : null,
+      wt1: (!isExcl && !isBlk && wt1 !== null) ? parseFloat(wt1.toFixed(2)) : null,
+      wt2: (!isExcl && !isBlk && isDual && wt2 !== null) ? parseFloat(wt2.toFixed(2)) : null,
+      atomicCN: (!isExcl && !isBlk && atomicCN !== null) ? parseFloat(atomicCN.toFixed(2)) : null
     });
 
     const tr = document.createElement('tr');
@@ -1527,24 +1630,25 @@ function runCalibration() {
       ? `${f.id} <span class="no-underline inline-block ml-1 px-1 py-0.2 bg-stone-200 text-stone-600 font-mono text-[9px] uppercase">Excluded</span>`
       : (isBlk ? `${f.id} <span class="inline-block ml-1 px-1 py-0.2 bg-sky-100 text-sky-800 font-mono text-[9px] uppercase">Blank</span>` : f.id);
 
+    let rowHtml = `<td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>`;
+    if (areaOn) rowHtml += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono text-stone-700">${f.weight > 0 ? f.weight.toFixed(3) : '-'}</td>`;
+    rowHtml += `
+      <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
+      <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
+    `;
     if (isDual) {
-      tr.innerHTML = `
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw1) ? f.raw1.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw2) ? f.raw2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-        <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
+      rowHtml += `
         <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal2 !== null ? cal2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 text-stone-600 font-medium">${!isExcl && !isBlk && propSd2 !== null ? '±' + propSd2.toFixed(3) : '-'}</td>
-      `;
-    } else {
-      tr.innerHTML = `
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>
-        <td class="px-4 py-2 border-r border-[#e5e3dc] text-stone-700">${!isNaN(f.raw1) ? f.raw1.toFixed(3) : '-'}</td>
-        <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-        <td class="px-4 py-2 text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
+        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd2 !== null ? '±' + propSd2.toFixed(3) : '-'}</td>
       `;
     }
+    if (hasElemental) {
+      rowHtml += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono font-semibold text-emerald-900">${!isExcl && !isBlk && wt1 !== null ? wt1.toFixed(2) + '%' : '-'}</td>`;
+      if (isDual) rowHtml += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono font-semibold text-emerald-900">${!isExcl && !isBlk && wt2 !== null ? wt2.toFixed(2) + '%' : '-'}</td>`;
+      if (currentMode === 'CN') rowHtml += `<td class="px-3.5 py-2 font-mono font-bold text-indigo-950 bg-indigo-50/30">${!isExcl && !isBlk && atomicCN !== null ? atomicCN.toFixed(2) : '-'}</td>`;
+    }
+
+    tr.innerHTML = rowHtml;
     resBody.appendChild(tr);
   });
 
@@ -1557,6 +1661,9 @@ function runCalibration() {
   function finishGroup() {
     if (!currentGroup || currentGroup.items.length === 0) return;
     const n = currentGroup.items.length;
+    const wList = currentGroup.items.map(x => x.weight).filter(v => v > 0);
+    const meanWeight = wList.length > 0 ? (wList.reduce((a, b) => a + b, 0) / wList.length) : null;
+
     const c1List = currentGroup.items.map(x => x.cal1).filter(v => v !== null && !isNaN(v));
     const c2List = currentGroup.items.map(x => x.cal2).filter(v => v !== null && !isNaN(v));
     const mean1 = c1List.length > 0 ? (c1List.reduce((a, b) => a + b, 0) / c1List.length) : null;
@@ -1564,12 +1671,22 @@ function runCalibration() {
     const mean2 = (isDual && c2List.length > 0) ? (c2List.reduce((a, b) => a + b, 0) / c2List.length) : null;
     const sd2 = (isDual && c2List.length > 1) ? Math.sqrt(c2List.map(v => Math.pow(v - mean2, 2)).reduce((a, b) => a + b) / (c2List.length - 1)) : (isDual && c2List.length === 1 ? currentGroup.items[0].propSd2 : 0);
 
+    const wt1List = currentGroup.items.map(x => x.wt1).filter(v => v !== null && !isNaN(v));
+    const wt2List = currentGroup.items.map(x => x.wt2).filter(v => v !== null && !isNaN(v));
+    const meanWt1 = wt1List.length > 0 ? (wt1List.reduce((a, b) => a + b, 0) / wt1List.length) : null;
+    const meanWt2 = (isDual && wt2List.length > 0) ? (wt2List.reduce((a, b) => a + b, 0) / wt2List.length) : null;
+    const meanAtomicCN = (currentMode === 'CN' && meanWt1 !== null && meanWt2 !== null) ? computeAtomicCNRatio(meanWt1, meanWt2) : null;
+
     groupedSummaryData.push({
       baseId: currentGroup.baseId, n,
+      meanWeight: meanWeight !== null ? parseFloat(meanWeight.toFixed(3)) : null,
       mean1: mean1 !== null ? parseFloat(mean1.toFixed(3)) : null,
       sd1: sd1 !== null ? parseFloat(sd1.toFixed(3)) : null,
       mean2: mean2 !== null ? parseFloat(mean2.toFixed(3)) : null,
-      sd2: sd2 !== null ? parseFloat(sd2.toFixed(3)) : null
+      sd2: sd2 !== null ? parseFloat(sd2.toFixed(3)) : null,
+      meanWt1: meanWt1 !== null ? parseFloat(meanWt1.toFixed(2)) : null,
+      meanWt2: meanWt2 !== null ? parseFloat(meanWt2.toFixed(2)) : null,
+      meanAtomicCN: meanAtomicCN !== null ? parseFloat(meanAtomicCN.toFixed(2)) : null
     });
     currentGroup = null;
   }
@@ -1585,28 +1702,32 @@ function runCalibration() {
   finishGroup();
 
   if (groupedSummaryData.length === 0) {
-    groupedBody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${isEn ? 'No active unknown sample replicates found.' : '그룹화 가능한 미지 시료가 없습니다.'}</td></tr>`;
+    groupedBody.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-xs font-serif-title italic text-stone-400">${isEn ? 'No active unknown sample replicates found.' : '그룹화 가능한 미지 시료가 없습니다.'}</td></tr>`;
   } else {
     groupedSummaryData.forEach(g => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-stone-50';
+      let gRow = `
+        <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
+        <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
+      `;
+      if (areaOn) gRow += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono text-stone-700">${g.meanWeight !== null ? g.meanWeight.toFixed(3) : '-'}</td>`;
+      gRow += `
+        <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
+        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
+      `;
       if (isDual) {
-        tr.innerHTML = `
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
-          <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
+        gRow += `
           <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
-        `;
-      } else {
-        tr.innerHTML = `
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
-          <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
-          <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-          <td class="px-4 py-2 text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
+          <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
         `;
       }
+      if (hasElemental) {
+        gRow += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono font-semibold text-emerald-900">${g.meanWt1 !== null ? g.meanWt1.toFixed(2) + '%' : '-'}</td>`;
+        if (isDual) gRow += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono font-semibold text-emerald-900">${g.meanWt2 !== null ? g.meanWt2.toFixed(2) + '%' : '-'}</td>`;
+        if (currentMode === 'CN') gRow += `<td class="px-3.5 py-2 font-mono font-bold text-indigo-950 bg-indigo-50/30">${g.meanAtomicCN !== null ? g.meanAtomicCN.toFixed(2) : '-'}</td>`;
+      }
+      tr.innerHTML = gRow;
       groupedBody.appendChild(tr);
     });
   }
@@ -1702,6 +1823,9 @@ function runCalibration() {
     if (useLin && meanAnchorArea1 > 0) {
       const methodTag = linCalcMode === 'manual' ? '[Manual]' : '[Auto]';
       metaNotes.push(`Size Linearity ${methodTag} (${monitorAnchor.name}): k₁=${linSlope1 >= 0 ? '+' : ''}${linSlope1.toFixed(4)} ‰/Area (Ref Area=${meanAnchorArea1.toFixed(1)})`);
+    }
+    if (hasElemental && rf1) {
+      metaNotes.push(`Response Factor C=${rf1.toFixed(1)} Vs/mg${rf2 ? `, N=${rf2.toFixed(1)} Vs/mg` : ''}`);
     }
     if (driftMode === 'linear') metaNotes.push(`Time Drift slope: ${(driftSlope1).toExponential(2)} ‰/run`);
 
