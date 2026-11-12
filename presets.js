@@ -1,4 +1,4 @@
-/* presets.js - IsoCalib v1.4.1 Extended Presets with 30+ Batch Sequence Demos */
+/* presets.js - IsoCalib v1.4.1 Final Extended Presets, Elemental %C/%N Standards & 30+ Batch Demos */
 
 const TRANSLATIONS = {
   ko: {
@@ -13,7 +13,7 @@ const TRANSLATIONS = {
     nav_feedback_github: "개발자 버그 제보 (GitHub)",
     hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
     hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
-    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Auto/Manual) 및 캡슐 블랭크 차감, 다중 앵커 WLS 회귀, 이상치 제외 및 불확도 전파를 수행합니다.",
+    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Auto/Manual) 및 캡슐 블랭크 차감, 시료 무게(mg) 기반 %C/%N 및 Atomic C/N 정량, 다중 앵커 WLS 회귀와 불확도 전파를 수행합니다.",
     system_label: "분석 동위원소 체계 (Isotope System)",
     sec1_title: "Reference & QC Standards (검량 및 품질관리 표준)",
     btn_add_anchor: "+ 앵커 추가 (3+ Multi-Point)",
@@ -33,7 +33,7 @@ const TRANSLATIONS = {
     btn_preset_load: "Load",
     btn_preset_delete: "Delete",
     btn_preset_save: "Save",
-    drift_guide_desc: "* <strong>2점 및 3점+ 다중 앵커 WLS 검량선</strong>, <strong>피크 면적 선형성(Auto/Manual)</strong> 및 <strong>주석 캡슐 블랭크(ID에 'BLANK' 또는 'BLK' 포함 행) 자동 차감</strong>을 지원합니다.",
+    drift_guide_desc: "* <strong>2점 및 3점+ 다중 앵커 WLS 검량선</strong>, <strong>피크 면적 선형성(Auto/Manual)</strong>, <strong>캡슐 블랭크('BLANK'/'BLK') 자동 차감</strong> 및 <strong>시료 무게(mg) 기반 %C/%N, Atomic C/N 비 계산</strong>을 지원합니다.",
     sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
     sec2_desc: "셀 클릭 후 <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd>로 엑셀 데이터를 붙여넣으세요. 특정 런이 튄 경우 <strong>Use(✓) 체크를 해제</strong>하면 런 순서(#)는 유지한 채 계산에서만 제외됩니다.",
     btn_delete_rows: "선택 행 삭제",
@@ -48,7 +48,7 @@ const TRANSLATIONS = {
     btn_export_excel: "엑셀 보고서 내보내기 (.xlsx)",
     tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
     tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
-    result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값과 합성 불확도가 여기에 표시됩니다.",
+    result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값, 합성 불확도 및 원소 함량(%)이 여기에 표시됩니다.",
     grouped_empty: "상단에서 검량을 실행하면 연속으로 반복 측정된 미지시료의 평균(Mean ± 1σ) 요약표가 여기에 생성됩니다.",
     sec4_tag: "Methodology & Standard Principles",
     sec4_heading: "통계적 회귀 원리 및 표준 분석 지침",
@@ -68,8 +68,8 @@ const TRANSLATIONS = {
     acc_title: "[+] Detailed Mathematical Derivations & Formulas (세부 유도식 보기)",
     acc_a_title: "A. 가중 회귀 파라미터 행렬식 (WLS Normal Equations)",
     acc_a_desc: "$x_i$(원시 측정값)와 $y_i$(표준물질 참값)에 대해 가중 잔차 제곱합 $\\sum w_i (y_i - ax_i - b)^2$을 최소화하는 정규방정식 해입니다:",
-    acc_b_title: "B. EA-IRMS 블랭크 질량 보존 차감 및 피크 면적 선형성(Size Linearity) 보정",
-    acc_b_desc: "빈 캡슐(Blank)의 기여분을 질량 보존식으로 먼저 차감한 후, 모니터 표준물질의 피크 면적 대비 $\\delta$ 기울기($k_{\\text{area}}$)로 정규화합니다:",
+    acc_b_title: "B. EA-IRMS 블랭크 질량 보존 차감, 피크 면적 선형성 및 원소 함량(%C, %N) 정량식",
+    acc_b_desc: "빈 캡슐(Blank)의 기여분을 차감한 후 크기 기울기($k_{\\text{area}}$)로 정규화하고, 표준물질 응답 계수($RF$)와 시료 무게($W_{\\text{mg}}$)로 원소 함량 및 원자비를 산출합니다:",
     acc_c_title: "C. 1차 편미분 가우스 오차 전파 유도식 (GUM 5.1.2)",
     acc_c_desc: "선형 변환식 $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$에 대해 각 변수($x_{\\text{raw}}, a, b$)를 편미분하여 합성 표준불확도를 도출합니다:",
     privacy_title: "Zero-Server Client Computation (완전 무서버 보안)",
@@ -83,7 +83,7 @@ const TRANSLATIONS = {
     ctx_clear_cells: "선택 셀 내용 지우기",
     ctx_insert_row: "아래에 빈 행 1줄 삽입",
     about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
-    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Auto/Manual) 보정, 주석 캡슐 블랭크 차감, 3점 이상 다중 앵커 검량선, 이상치 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
+    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Auto/Manual) 보정, 주석 캡슐 블랭크 차감, 시료 무게(mg) 기반 %C/%N 원소 정량 및 Atomic C/N 비 계산, 3점 이상 다중 앵커 검량선, 이상치 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
     about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
     about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다.",
     qs_modal_title: "/ 분석 실무 종합 매뉴얼 (User Protocol)",
@@ -91,22 +91,22 @@ const TRANSLATIONS = {
     qs_recipe_title: "1. 30초 실험 계통별 세팅 레시피 (Quick Presets)",
     qs_recipe_desc: "분석 중인 시료와 전처리 계통에 맞추어 상단 컨트롤을 아래와 같이 설정하세요:",
     qs_recipe_1: "• <strong>탄산염/가스벤치 (CO₂/Dual):</strong> <code>CO 모드</code> → <code>Area: Off</code> → <code>Drift: Linear 또는 Anchor Bracketing</code>",
-    qs_recipe_2: "• <strong>EA-IRMS 생체·퇴적물 유기물 (벌크 C/N):</strong> <code>CN 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
-    qs_recipe_3: "• <strong>산처리 퇴적물 유기탄소 단독:</strong> <code>EA_C 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_2: "• <strong>EA-IRMS 생체·퇴적물 유기물 (벌크 C/N + %함량):</strong> <code>CN 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_3: "• <strong>산처리 퇴적물 유기탄소 단독 (%TOC):</strong> <code>EA_C 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
     qs_recipe_4: "• <strong>물/액체 안정동위원소:</strong> <code>WATER_O</code> 또는 <code>WATER_H</code> → <code>δ¹⁸O Scale: VSMOW</code> → <code>Area: Off</code>",
     qs_step1_title: "2. 검량 앵커 및 전처리 옵션 설정 (Section 01)",
-    qs_step1_desc: "검량선 수립에 사용할 표준물질(Anchor 1, 2, 3+)과 품질관리 표준물질(QC)의 공인 참값을 입력합니다. 3개 이상의 앵커가 필요한 경우 '+ 앵커 추가' 버튼을 클릭하세요.",
-    qs_step1_area_rules: "<strong>[Area / Blank 모드 선택 기준]</strong><br>• <strong>Off</strong>: 피크 면적 보정이 불필요한 표준 분석 (탄산염, 물, 가스벤치 등).<br>• <strong>Linearity</strong>: 블랭크 영향이 적고 시료 투입량 편차에 따른 이온원 비선형성만 교정할 때.<br>• <strong>Blank Only</strong>: 저온 연소나 주석 캡슐 바탕값(Blank) 오염 차감이 핵심일 때.<br>• <strong>Blank + Linearity</strong>: 극미량 시료나 퇴적물 분석 등 블랭크와 크기 효과가 복합 작용할 때 (권장).",
+    qs_step1_desc: "검량선 수립에 사용할 표준물질(Anchor 1, 2, 3+)과 품질관리 표준물질(QC)의 공인 참값을 입력합니다. Area 모드가 켜져 있으면 표준물질의 공인 원소 함량(%C, %N)도 함께 입력해 시료 정량에 활용할 수 있습니다.",
+    qs_step1_area_rules: "<strong>[Area / Blank 모드 선택 기준]</strong><br>• <strong>Off</strong>: 피크 면적과 무게 정량이 불필요한 표준 분석 (탄산염, 물, 가스벤치 등).<br>• <strong>Linearity</strong>: 블랭크 영향이 적고 시료 투입량 편차에 따른 이온원 비선형성만 교정할 때.<br>• <strong>Blank Only</strong>: 저온 연소나 주석 캡슐 바탕값(Blank) 오염 차감이 핵심일 때.<br>• <strong>Blank + Linearity</strong>: 극미량 시료나 퇴적물 분석 등 블랭크와 크기 효과, 원소 함량(%C, %N)을 동시에 산출할 때 (권장).",
     qs_step1_slope_rules: "<strong>[Slope Method (선형성 기울기 방식)]</strong><br>• <strong>Auto-Fit</strong>: 시퀀스 내 모니터 표준물질(예: USGS40)의 크기별(0.2, 0.5, 1.0mg) 런들로부터 기울기를 자동 회귀 계산.<br>• <strong>Manual Input</strong>: 랩 밸리데이션으로 미리 확보한 공인 선형성 계수(‰/Vs)를 직접 고정 입력.",
     qs_step2_title: "3. 엑셀 데이터 복사 & 열 구조 (Section 02)",
     qs_step2_desc: "분석 소프트웨어(Isodat, IonVantage 등)의 결과 엑셀에서 필요한 열을 드래그 복사한 뒤, 시퀀스 표의 첫 번째 데이터 셀을 클릭하고 Ctrl + V를 누릅니다.",
-    qs_step2_col_std: "• <strong>기본 모드 (Area: Off) 열 구조:</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
-    qs_step2_col_area: "• <strong>면적 활성화 모드 (Area: On) 열 구조:</strong><br><code>Sample ID</code> | <code>Area (Vs)</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area (Vs)</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
-    qs_step2_naming: "<strong>[필수 ID 네이밍 룰]</strong><br>• <strong>블랭크 런</strong>: 시료명에 반드시 <code>BLANK</code>, <code>BLK</code>, 또는 <code>TIN</code>이 포함되어야 엔진이 캡슐 블랭크로 자동 감지합니다.<br>• <strong>미지 시료 반복 측정</strong>: 연속 반복 시료는 <code>SampleA_1</code>, <code>SampleA_2</code> 형태로 기재 시 'SampleA'로 자동 그룹화되어 평균(Mean ± 1σ) 요약표가 생성됩니다.",
+    qs_step2_col_std: "• <strong>기본 모드 (Area: Off · 5열):</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
+    qs_step2_col_area: "• <strong>면적·무게 활성화 (Area: On · 8열):</strong><br><code>Sample ID</code> | <code>Weight (mg)</code> | <code>Area C</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area N</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
+    qs_step2_naming: "<strong>[필수 ID 네이밍 룰]</strong><br>• <strong>블랭크 런</strong>: 시료명에 반드시 <code>BLANK</code>, <code>BLK</code>, 또는 <code>TIN</code>이 포함되어야 엔진이 캡슐 블랭크로 자동 감지합니다 (무게는 0으로 입력).<br>• <strong>미지 시료 반복 측정</strong>: 연속 반복 시료는 <code>SampleA_1</code>, <code>SampleA_2</code> 형태로 기재 시 'SampleA'로 자동 그룹화되어 평균(Mean ± 1σ, 평균 %C/%N, 평균 Atomic C/N) 요약표가 생성됩니다.",
     qs_step3_title: "4. 이상치 선별 및 검량 실행 (Section 02 & 03)",
     qs_step3_desc: "주입 불량, 리크, 피크 찌그러짐 등으로 튄 런은 행을 삭제하지 말고 <strong>Use(✓) 체크박스를 해제</strong>하세요. 시퀀스 런 순서(#)와 시간축 간격이 보존된 상태로 검량선·드리프트·시료 평균 계산에서만 제외됩니다.",
-    qs_step3_desc2: "<strong>Run Calibration & QC</strong>를 누르면 블랭크 차감 → 선형성 보정 → 시간 표류 보정 → WLS 회귀선 도출이 순차 진행되며, 하단에 종합 진단 배너가 표시됩니다. 이후 상단의 Export Excel Report를 통해 고해상도 그래프가 내장된 보고서를 다운로드하세요.",
-    qs_footer_tip: "* 팁: 'Load Demo'를 누르면 현재 선택된 분석 체계와 Area 옵션에 최적화된 표준 런 예시 데이터가 즉시 채워집니다."
+    qs_step3_desc2: "<strong>Run Calibration & QC</strong>를 누르면 블랭크 차감 → 선형성 보정 → 시간 표류 보정 → WLS 회귀선 및 원소 함량 정량이 순차 진행되며, 하단에 종합 진단 배너가 표시됩니다. 이후 상단의 Export Excel Report를 통해 고해상도 그래프가 내장된 보고서를 다운로드하세요.",
+    qs_footer_tip: "* 팁: 'Load Demo'를 누르면 현재 선택된 분석 체계와 Area 옵션에 최적화된 30+ 풀 시퀀스 예시 데이터가 즉시 채워집니다."
   },
   en: {
     tagline: "/ Open Geochemistry Tool",
@@ -120,7 +120,7 @@ const TRANSLATIONS = {
     nav_feedback_github: "Developer Issues (GitHub)",
     hero_badge: "Precision Data Reduction & QC Protocol",
     hero_title: "Stable Isotope Calibration",
-    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, multi-point WLS regression, outlier exclusion, and uncertainty propagation.",
+    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, sample weight (mg) based %C/%N & Atomic C/N quantification, multi-point WLS regression, and uncertainty propagation.",
     system_label: "Isotope System",
     sec1_title: "Reference & QC Standards",
     btn_add_anchor: "+ Add Anchor (3+ Multi-Point)",
@@ -140,7 +140,7 @@ const TRANSLATIONS = {
     btn_preset_load: "Load",
     btn_preset_delete: "Delete",
     btn_preset_save: "Save",
-    drift_guide_desc: "* Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity (Auto/Manual slope)</strong>, and <strong>Tin Capsule Blank subtraction</strong> (rows containing 'BLANK' or 'BLK').",
+    drift_guide_desc: "* Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity (Auto/Manual)</strong>, <strong>Capsule Blank subtraction ('BLANK'/'BLK')</strong>, and <strong>Sample Weight (mg) based %C/%N & Atomic C/N quantification</strong>.",
     sec2_title: "Measurement Sequence Data",
     sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste from Excel. Uncheck <strong>Use (✓)</strong> to exclude outlier runs while preserving sequence order (#).",
     btn_delete_rows: "Delete Row(s)",
@@ -155,7 +155,7 @@ const TRANSLATIONS = {
     btn_export_excel: "Export Excel Report (.xlsx)",
     tab_sequence: "Run-by-Run Sequence",
     tab_grouped: "Grouped Sample Summary",
-    result_empty: "Execute calibration above to view reduced isotopic ratios and propagated uncertainties.",
+    result_empty: "Execute calibration above to view reduced isotopic ratios, propagated uncertainties, and elemental concentrations (%).",
     grouped_empty: "Execute calibration above to generate grouped adjacent sample replicate summaries (Mean ± 1σ).",
     sec4_tag: "Methodology & Standard Principles",
     sec4_heading: "Statistical Principles & Analytical Guidelines",
@@ -175,8 +175,8 @@ const TRANSLATIONS = {
     acc_title: "[+] Detailed Mathematical Derivations & Formulas (Click to expand)",
     acc_a_title: "A. Weighted Least Squares Normal Equations",
     acc_a_desc: "Exact analytical solution minimizing the sum of weighted squared residuals $\\sum w_i (y_i - ax_i - b)^2$:",
-    acc_b_title: "B. EA-IRMS Blank Mass Balance & Size Linearity Correction",
-    acc_b_desc: "Mass-balance blank subtraction and peak-area linearity normalization prior to WLS scale calibration:",
+    acc_b_title: "B. EA-IRMS Blank Mass Balance, Size Linearity & Elemental Quantification (%C, %N)",
+    acc_b_desc: "Mass-balance blank subtraction and peak-area linearity normalization prior to WLS scale calibration, paired with response factor ($RF$) elemental mass quantification:",
     acc_c_title: "C. First-Order Gaussian Error Propagation (GUM 5.1.2)",
     acc_c_desc: "Partial differential expansion for the linear calibration function $y_{\\text{cal}} = a \\cdot x_{\\text{raw}} + b$:",
     privacy_title: "Zero-Server Client Computation (Total Privacy)",
@@ -190,7 +190,7 @@ const TRANSLATIONS = {
     ctx_clear_cells: "Clear Selected Cells",
     ctx_insert_row: "Insert 1 Blank Row Below",
     about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
-    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction (Auto/Manual), tin capsule blank subtraction, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
+    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction (Auto/Manual), tin capsule blank subtraction, weight-based %C/%N and Atomic C/N quantification, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
     about_protocols_title: "Core Analytical Protocols:",
     about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally.",
     qs_modal_title: "/ Comprehensive User Protocol & SOP",
@@ -198,22 +198,22 @@ const TRANSLATIONS = {
     qs_recipe_title: "1. 30-Second Quick Application Recipes",
     qs_recipe_desc: "Configure the top toolbar controls based on your sample matrix and preparation protocol:",
     qs_recipe_1: "• <strong>Carbonates / GasBench (CO₂ Dual):</strong> <code>CO mode</code> → <code>Area: Off</code> → <code>Drift: Linear or Bracketing</code>",
-    qs_recipe_2: "• <strong>EA-IRMS Bulk Organic (C/N Dual):</strong> <code>CN mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
-    qs_recipe_3: "• <strong>Acidified Marine Sediments (C only):</strong> <code>EA_C mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_2: "• <strong>EA-IRMS Bulk Organic (C/N + %Content):</strong> <code>CN mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
+    qs_recipe_3: "• <strong>Acidified Marine Sediments (%TOC only):</strong> <code>EA_C mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
     qs_recipe_4: "• <strong>Water Hydrogen / Oxygen:</strong> <code>WATER_O</code> or <code>WATER_H</code> → <code>Scale: VSMOW</code> → <code>Area: Off</code>",
     qs_step1_title: "2. Standards & Preprocessing Configuration (Section 01)",
-    qs_step1_desc: "Enter accepted reference values for Anchors (1, 2, 3+) and QC standards. Click '+ Add Anchor' if calibrating against 3 or more reference points.",
-    qs_step1_area_rules: "<strong>[Area / Blank Decision Criteria]</strong><br>• <strong>Off</strong>: Standard sequences where peak sizes are uniform (carbonates, water lines).<br>• <strong>Linearity</strong>: When sample sizes vary and ion source size effects need correction without blank interference.<br>• <strong>Blank Only</strong>: Subtraction of tin capsule background contamination is the primary concern.<br>• <strong>Blank + Linearity</strong>: Recommended for trace organic and sediment EA-IRMS workflows.",
+    qs_step1_desc: "Enter accepted reference values for Anchors (1, 2, 3+) and QC standards. When Area mode is enabled, also provide certified %C and %N content values for elemental quantification.",
+    qs_step1_area_rules: "<strong>[Area / Blank Decision Criteria]</strong><br>• <strong>Off</strong>: Standard sequences where peak sizes and weights are not tracked (carbonates, water lines).<br>• <strong>Linearity</strong>: When sample sizes vary and ion source size effects need correction without blank interference.<br>• <strong>Blank Only</strong>: Subtraction of tin capsule background contamination is the primary concern.<br>• <strong>Blank + Linearity</strong>: Recommended for trace organic and sediment EA-IRMS workflows to simultaneously compute %C, %N, and Atomic C/N.",
     qs_step1_slope_rules: "<strong>[Slope Method Options]</strong><br>• <strong>Auto-Fit</strong>: Regresses δ vs. Area slope automatically using size-series runs (0.2, 0.5, 1.0 mg) of the monitor standard.<br>• <strong>Manual Input</strong>: Directly enter a verified laboratory linearity factor (‰/Vs).",
     qs_step2_title: "3. Excel Data Pasting & Column Formats (Section 02)",
     qs_step2_desc: "Copy the relevant columns from your instrument spreadsheet software (e.g., Isodat), click the top-left target cell in Section 02, and press Ctrl + V.",
-    qs_step2_col_std: "• <strong>Standard Columns (Area: Off):</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
-    qs_step2_col_area: "• <strong>Peak Area Columns (Area: On):</strong><br><code>Sample ID</code> | <code>Area (Vs)</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area (Vs)</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
-    qs_step2_naming: "<strong>[Mandatory Naming Rules]</strong><br>• <strong>Blank Subtraction</strong>: Row ID must include <code>BLANK</code>, <code>BLK</code>, or <code>TIN</code> for automatic background detection.<br>• <strong>Replicate Grouping</strong>: Consecutive replicates like <code>SampleA_1</code>, <code>SampleA_2</code> are automatically aggregated into 'SampleA' in the Grouped Summary tab.",
+    qs_step2_col_std: "• <strong>Standard Columns (Area: Off · 5 cols):</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
+    qs_step2_col_area: "• <strong>Peak Area & Weight (Area: On · 8 cols):</strong><br><code>Sample ID</code> | <code>Weight (mg)</code> | <code>Area C</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area N</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
+    qs_step2_naming: "<strong>[Mandatory Naming Rules]</strong><br>• <strong>Blank Subtraction</strong>: Row ID must include <code>BLANK</code>, <code>BLK</code>, or <code>TIN</code> for automatic background detection (enter 0 for weight).<br>• <strong>Replicate Grouping</strong>: Consecutive replicates like <code>SampleA_1</code>, <code>SampleA_2</code> are automatically aggregated into 'SampleA' with mean %C, %N, and Atomic C/N.",
     qs_step3_title: "4. Outlier Handling & Calibration Pipeline (Section 02 & 03)",
     qs_step3_desc: "For incomplete combustion, leaks, or distorted peaks, uncheck 'Use (✓)' rather than deleting the row. This excludes the run from WLS and drift regressions while preserving sequence time-series (#) integrity.",
-    qs_step3_desc2: "Click Run Calibration & QC to sequentially execute Blank subtraction → Linearity normalization → Time drift correction → Multi-point WLS regression. Then export a publication-ready workbook via Export Excel Report.",
-    qs_footer_tip: "* Tip: Click 'Load Demo' anytime to populate realistic sample and standard sequences matching your active mode."
+    qs_step3_desc2: "Click Run Calibration & QC to sequentially execute Blank subtraction → Linearity normalization → Time drift correction → Multi-point WLS & Elemental quantification. Then export a publication-ready workbook via Export Excel Report.",
+    qs_footer_tip: "* Tip: Click 'Load Demo' anytime to populate 30+ realistic sample and standard runs matching your active mode."
   }
 };
 
@@ -221,20 +221,20 @@ const CHANGELOG_DATA = [
   {
     version: "v1.4.1",
     date: "2026-11",
-    badge: "Manual Linearity & Modular Architecture",
-    title_ko: "수동 선형성 계수(Manual Factor) 입력, 붉은색 수동 기울기 시각화 및 모듈형 아키텍처 개편",
-    title_en: "Manual Size-Linearity Factor Input, Diagnostic Visualizations & 4-Module Refactoring",
-    desc_ko: "모니터 표준물질의 자동 OLS 피팅뿐만 아니라 기기 점검으로 도출한 고정 선형성 계수(‰/Vs)를 직접 입력할 수 있는 Manual Input 모드를 추가하고, 전체 엔진을 math-core, plot-export, app-ui로 모듈 분할했습니다.",
-    desc_en: "Introduced Manual Linearity Factor inputs with dual-line diagnostic visualization alongside modular separation into math-core, plot-export, and app-ui scripts.",
+    badge: "Elemental %C/%N, Manual Linearity & Modular Engine",
+    title_ko: "시료 무게(mg) 기반 %C·%N 및 Atomic C/N 산출, 수동 선형성 계수 입력 및 모듈형 엔진 개편",
+    title_en: "Weight-Based %C/%N & Atomic C/N Quantification, Manual Slope & 4-Module Architecture",
+    desc_ko: "EA-IRMS 모드에서 계량 무게(Weight mg) 열을 활성화하여 %C, %N 원소 함량 및 원자비(Atomic C/N)를 자동 계산하고, 수동 선형성 계수(Manual Slope) 시각화 및 코어 엔진 3단 분할을 적용했습니다.",
+    desc_en: "Introduced sample weight (mg) based %C, %N, and Atomic C/N quantification, Manual Linearity Factor controls with dual-line visualizations, and modular architecture.",
     changes_ko: [
-      "<strong>Slope Method 선택 UI 탑재</strong>: <code>Auto-Fit (모니터 표준물질)</code> 및 <code>Manual Input (‰/Vs 고정 계수)</code> 전환 지원.",
-      "<strong>Figure 3·4 수동 기울기 라인 시각화</strong>: 수동 계수 설정 시 붉은색 파선(Manual Slope)과 실제 런 관측 회귀선(Observed Fit) 동시 표기.",
-      "<strong>코어 엔진 3단 모듈 분할</strong>: <code>math-core.js</code>, <code>plot-export.js</code>, <code>app-ui.js</code>로 분리하여 유지보수성 및 연산 안정성 극대화.",
+      "<strong>원소 정량화(%C, %N) & Atomic C/N 산출</strong>: <code>Weight (mg)</code> 열과 표준물질 공인 원소 함량을 연동해 시료별·그룹별 원소 농도 및 몰비 자동 계산.",
+      "<strong>Slope Method 선택 UI 탑재</strong>: <code>Auto-Fit (모니터 표준물질)</code> 및 <code>Manual Input (‰/Vs 고정 계수)</code> 전환 지원 및 Figure 3·4 붉은색 수동 기울기 라인 표기.",
+      "<strong>코어 엔진 3단 모듈 분할</strong>: <code>math-core.js</code>, <code>plot-export.js</code>, <code>app-ui.js</code>로 분리하여 연산 안정성 극대화.",
       "<strong>실무 종합 매뉴얼(User Protocol) 개편</strong>: 4개 실험 계통별 30초 레시피 및 열 배치 가이드 통합."
     ],
     changes_en: [
-      "<strong>Slope Method Toggle</strong>: Seamlessly switch between Auto-Fit and Manual Factor inputs.",
-      "<strong>Diagnostic Plot Overhaul</strong>: Displays red manual slope lines alongside observed regression benchmarks.",
+      "<strong>Elemental %C, %N & Atomic C/N Quantification</strong>: Computes weight percent concentrations and molar C/N ratios from standard response factors.",
+      "<strong>Slope Method Toggle</strong>: Switch between Auto-Fit and Manual Factor inputs with red dashed reference lines on diagnostic plots.",
       "<strong>3-Way Modular Engine Split</strong>: Decoupled into math-core, plot-export, and app-ui modules.",
       "<strong>Comprehensive SOP Manual</strong>: Integrated 30-second recipes and exact column mapping guides."
     ]
@@ -504,23 +504,23 @@ const PRESETS = {
     ]
   },
 
-  // 4. EA-IRMS 유기물 벌크 C & N (33개 풀 배치 시퀀스 - 블랭크, 크기별 런 포함)
+  // 4. EA-IRMS 유기물 벌크 C & N (wt1: %C, wt2: %N 공인함량 및 33개 Weight 포함 시퀀스)
   CN: {
     name: "EA Organic Bulk C & N (Dual)",
     elements: [
-      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
-      { key: "iso2", label: "δ¹⁵N", unit: "‰ Air" }
+      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB", element: "C", molarMass: 12.011 },
+      { key: "iso2", label: "δ¹⁵N", unit: "‰ Air", element: "N", molarMass: 14.007 }
     ],
     stds: [
-      { name: "USGS40", v1: -26.390, v2: -4.520 },
-      { name: "USGS41a", v1: 36.550, v2: 47.550 }
+      { name: "USGS40", v1: -26.390, v2: -4.520, wt1: 40.80, wt2: 9.52 },
+      { name: "USGS41a", v1: 36.550, v2: 47.550, wt1: 37.76, wt2: 8.84 }
     ],
     extraStds: [
-      { name: "USGS62", v1: -14.790, v2: 20.170 },
-      { name: "IAEA-600", v1: -27.771, v2: 1.000 }
+      { name: "USGS62", v1: -14.790, v2: 20.170, wt1: 39.50, wt2: 12.00 },
+      { name: "IAEA-600", v1: -27.771, v2: 1.000, wt1: 40.00, wt2: 9.00 }
     ],
     defaultDriftAnchorIdx: 0,
-    qcStd: { name: "USGS61", v1: -35.050, v2: -2.870 },
+    qcStd: { name: "USGS61", v1: -35.050, v2: -2.870, wt1: 38.00, wt2: 8.50 },
     demo: [
       ["USGS40_1", -25.850, 0.080, -4.100, 0.120],
       ["USGS41a_1", 37.150, 0.090, 48.050, 0.140],
@@ -556,58 +556,58 @@ const PRESETS = {
       ["Benthic-Fauna-G_2", -17.180, 0.080, 14.080, 0.125],
       ["USGS40_End", -25.940, 0.075, -4.200, 0.115]
     ],
-    // 33개 풀 배치 시퀀스 (Tin Blank, Size Series, Unknowns A~E, QC 1~4)
+    // 8열 구조: [ID, Weight(mg), Area C, Raw δ13C, SD1, Area N, Raw δ15N, SD2]
     demoArea: [
-      ["Tin-Blank_1", 0.35, -28.500, 0.250, 0.18, -1.200, 0.350],
-      ["Tin-Blank_2", 0.33, -28.300, 0.240, 0.16, -1.100, 0.320],
-      ["USGS40_Low_0.2mg", 12.50, -26.020, 0.080, 4.20, -4.250, 0.120],
-      ["USGS40_Mid_0.5mg", 28.40, -25.850, 0.070, 9.80, -4.100, 0.110],
-      ["USGS40_High_1.0mg", 54.20, -25.580, 0.075, 18.60, -3.860, 0.115],
-      ["USGS41a_1", 29.10, 37.150, 0.085, 10.10, 48.050, 0.130],
-      ["USGS61_QC1", 27.80, -34.520, 0.080, 9.50, -2.420, 0.120],
-      ["Plankton-A_1", 18.20, -21.460, 0.075, 6.40, 7.780, 0.110],
-      ["Plankton-A_2", 32.50, -21.310, 0.080, 11.20, 7.910, 0.115],
-      ["Plankton-A_3", 46.80, -21.160, 0.070, 16.10, 8.040, 0.105],
-      ["Fish-Muscle-B_1", 22.40, -18.650, 0.085, 7.90, 12.390, 0.125],
-      ["Fish-Muscle-B_2", 36.10, -18.520, 0.080, 12.60, 12.510, 0.120],
-      ["Fish-Muscle-B_3", 51.00, -18.380, 0.090, 17.80, 12.640, 0.130],
-      ["USGS40_Bracket1", 28.60, -25.840, 0.075, 9.90, -4.090, 0.110],
-      ["USGS41a_2", 28.80, 37.140, 0.085, 10.00, 48.040, 0.135],
-      ["USGS61_QC2", 16.50, -34.640, 0.085, 5.80, -2.530, 0.125],
-      ["Macroalgae-C_1", 24.30, -14.240, 0.090, 8.40, 5.560, 0.110],
-      ["Macroalgae-C_2", 38.00, -14.120, 0.085, 13.20, 5.670, 0.115],
-      ["Macroalgae-C_3", 52.50, -13.980, 0.095, 18.20, 5.790, 0.120],
-      ["Sediment-D_1", 16.50, -22.350, 0.085, 5.70, 6.180, 0.115],
-      ["Sediment-D_2", 31.00, -22.200, 0.080, 10.80, 6.300, 0.110],
-      ["Sediment-D_3", 45.20, -22.060, 0.090, 15.60, 6.420, 0.120],
-      ["USGS40_Bracket2", 28.70, -25.830, 0.075, 9.95, -4.085, 0.110],
-      ["USGS41a_3", 29.00, 37.150, 0.085, 10.15, 48.050, 0.130],
-      ["USGS61_QC3", 28.00, -34.510, 0.080, 9.60, -2.410, 0.120],
-      ["POM-Filter-E_1", 14.20, -24.650, 0.085, 4.90, 4.020, 0.120],
-      ["POM-Filter-E_2", 26.80, -24.520, 0.080, 9.30, 4.140, 0.115],
-      ["POM-Filter-E_3", 41.50, -24.380, 0.090, 14.40, 4.260, 0.125],
-      ["Soil-Humus-F_1", 25.10, -26.920, 0.080, 8.70, 8.890, 0.120],
-      ["Soil-Humus-F_2", 39.40, -26.780, 0.085, 13.60, 9.020, 0.125],
-      ["USGS40_End", 28.80, -25.820, 0.070, 10.00, -4.080, 0.110],
-      ["USGS41a_End", 29.20, 37.160, 0.080, 10.20, 48.060, 0.130],
-      ["USGS61_QC4", 17.00, -34.620, 0.085, 6.00, -2.510, 0.125]
+      ["Tin-Blank_1", 0.000, 0.35, -28.500, 0.250, 0.18, -1.200, 0.350],
+      ["Tin-Blank_2", 0.000, 0.33, -28.300, 0.240, 0.16, -1.100, 0.320],
+      ["USGS40_Low_0.2mg", 0.245, 12.50, -26.020, 0.080, 4.20, -4.250, 0.120],
+      ["USGS40_Mid_0.5mg", 0.550, 28.40, -25.850, 0.070, 9.80, -4.100, 0.110],
+      ["USGS40_High_1.0mg", 1.050, 54.20, -25.580, 0.075, 18.60, -3.860, 0.115],
+      ["USGS41a_1", 0.580, 29.10, 37.150, 0.085, 10.10, 48.050, 0.130],
+      ["USGS61_QC1", 0.520, 27.80, -34.520, 0.080, 9.50, -2.420, 0.120],
+      ["Plankton-A_1", 0.850, 18.20, -21.460, 0.075, 6.40, 7.780, 0.110],
+      ["Plankton-A_2", 1.520, 32.50, -21.310, 0.080, 11.20, 7.910, 0.115],
+      ["Plankton-A_3", 2.180, 46.80, -21.160, 0.070, 16.10, 8.040, 0.105],
+      ["Fish-Muscle-B_1", 0.650, 22.40, -18.650, 0.085, 7.90, 12.390, 0.125],
+      ["Fish-Muscle-B_2", 1.050, 36.10, -18.520, 0.080, 12.60, 12.510, 0.120],
+      ["Fish-Muscle-B_3", 1.480, 51.00, -18.380, 0.090, 17.80, 12.640, 0.130],
+      ["USGS40_Bracket1", 0.560, 28.60, -25.840, 0.075, 9.90, -4.090, 0.110],
+      ["USGS41a_2", 0.575, 28.80, 37.140, 0.085, 10.00, 48.040, 0.135],
+      ["USGS61_QC2", 0.320, 16.50, -34.640, 0.085, 5.80, -2.530, 0.125],
+      ["Macroalgae-C_1", 1.150, 24.30, -14.240, 0.090, 8.40, 5.560, 0.110],
+      ["Macroalgae-C_2", 1.800, 38.00, -14.120, 0.085, 13.20, 5.670, 0.115],
+      ["Macroalgae-C_3", 2.480, 52.50, -13.980, 0.095, 18.20, 5.790, 0.120],
+      ["Sediment-D_1", 4.500, 16.50, -22.350, 0.085, 5.70, 6.180, 0.115],
+      ["Sediment-D_2", 8.450, 31.00, -22.200, 0.080, 10.80, 6.300, 0.110],
+      ["Sediment-D_3", 12.300, 45.20, -22.060, 0.090, 15.60, 6.420, 0.120],
+      ["USGS40_Bracket2", 0.565, 28.70, -25.830, 0.075, 9.95, -4.085, 0.110],
+      ["USGS41a_3", 0.585, 29.00, 37.150, 0.085, 10.15, 48.050, 0.130],
+      ["USGS61_QC3", 0.530, 28.00, -34.510, 0.080, 9.60, -2.410, 0.120],
+      ["POM-Filter-E_1", 1.250, 14.20, -24.650, 0.085, 4.90, 4.020, 0.120],
+      ["POM-Filter-E_2", 2.350, 26.80, -24.520, 0.080, 9.30, 4.140, 0.115],
+      ["POM-Filter-E_3", 3.650, 41.50, -24.380, 0.090, 14.40, 4.260, 0.125],
+      ["Soil-Humus-F_1", 2.800, 25.10, -26.920, 0.080, 8.70, 8.890, 0.120],
+      ["Soil-Humus-F_2", 4.400, 39.40, -26.780, 0.085, 13.60, 9.020, 0.125],
+      ["USGS40_End", 0.570, 28.80, -25.820, 0.070, 10.00, -4.080, 0.110],
+      ["USGS41a_End", 0.590, 29.20, 37.160, 0.080, 10.20, 48.060, 0.130],
+      ["USGS61_QC4", 0.330, 17.00, -34.620, 0.085, 6.00, -2.510, 0.125]
     ]
   },
 
-  // 5. EA 산처리 해양 퇴적물 유기탄소 단독 (31개 시퀀스)
+  // 5. EA 산처리 해양 퇴적물 유기탄소 단독 (%TOC 산출 지원)
   EA_C: {
     name: "EA Organic Carbon only (Acidified Sediments)",
-    elements: [{ key: "iso1", label: "δ¹³C", unit: "‰ VPDB" }],
+    elements: [{ key: "iso1", label: "δ¹³C", unit: "‰ VPDB", element: "C", molarMass: 12.011 }],
     stds: [
-      { name: "USGS40", v1: -26.390 },
-      { name: "USGS41a", v1: 36.550 }
+      { name: "USGS40", v1: -26.390, wt1: 40.80 },
+      { name: "USGS41a", v1: 36.550, wt1: 37.76 }
     ],
     extraStds: [
-      { name: "IAEA-CH-7", v1: -32.151 },
-      { name: "USGS62", v1: -14.790 }
+      { name: "IAEA-CH-7", v1: -32.151, wt1: 85.70 },
+      { name: "USGS62", v1: -14.790, wt1: 39.50 }
     ],
     defaultDriftAnchorIdx: 0,
-    qcStd: { name: "IAEA-CH-6", v1: -10.450 },
+    qcStd: { name: "IAEA-CH-6", v1: -10.450, wt1: 42.10 },
     demo: [
       ["USGS40_1", -25.820, 0.075],
       ["USGS41a_1", 37.180, 0.085],
@@ -641,55 +641,56 @@ const PRESETS = {
       ["IAEA-CH-6_QC4", -9.940, 0.075],
       ["USGS40_Final", -25.910, 0.070]
     ],
+    // 5열 구조: [ID, Weight(mg), Area C, Raw δ13C, SD1]
     demoArea: [
-      ["Tin-Blank_1", 0.40, -28.600, 0.200],
-      ["Tin-Blank_2", 0.36, -28.400, 0.220],
-      ["USGS40_0.15mg", 10.20, -26.050, 0.080],
-      ["USGS40_0.50mg", 30.50, -25.820, 0.070],
-      ["USGS40_1.20mg", 62.00, -25.470, 0.075],
-      ["USGS41a_1", 31.00, 37.180, 0.085],
-      ["IAEA-CH-6_QC1", 29.80, -9.850, 0.080],
-      ["Core-Sed-01_1", 14.50, -22.620, 0.090],
-      ["Core-Sed-01_2", 31.20, -22.430, 0.085],
-      ["Core-Sed-01_3", 48.00, -22.240, 0.080],
-      ["Core-Sed-02_1", 12.00, -24.980, 0.075],
-      ["Core-Sed-02_2", 28.50, -24.780, 0.080],
-      ["Core-Sed-02_3", 44.00, -24.590, 0.070],
-      ["USGS40_MidCheck1", 30.80, -25.810, 0.070],
-      ["USGS41a_2", 30.50, 37.170, 0.080],
-      ["IAEA-CH-6_QC2", 15.40, -10.010, 0.075],
-      ["Core-Sed-03_1", 16.20, -21.320, 0.085],
-      ["Core-Sed-03_2", 33.40, -21.130, 0.080],
-      ["Core-Sed-03_3", 51.00, -20.930, 0.090],
-      ["Core-Sed-04_1", 15.00, -23.250, 0.080],
-      ["Core-Sed-04_2", 32.00, -23.060, 0.085],
-      ["Core-Sed-04_3", 49.50, -22.860, 0.075],
-      ["USGS40_MidCheck2", 31.00, -25.800, 0.070],
-      ["IAEA-CH-6_QC3", 30.00, -9.840, 0.080],
-      ["Mud-Flat-05_1", 18.50, -20.580, 0.085],
-      ["Mud-Flat-05_2", 35.00, -20.390, 0.080],
-      ["Mud-Flat-05_3", 53.00, -20.190, 0.090],
-      ["Deep-Basin-06_1", 13.50, -25.550, 0.080],
-      ["Deep-Basin-06_2", 29.00, -25.350, 0.085],
-      ["USGS41a_End", 31.50, 37.190, 0.080],
-      ["IAEA-CH-6_QC4", 16.00, -10.000, 0.075]
+      ["Tin-Blank_1", 0.000, 0.40, -28.600, 0.200],
+      ["Tin-Blank_2", 0.000, 0.36, -28.400, 0.220],
+      ["USGS40_0.15mg", 0.200, 10.20, -26.050, 0.080],
+      ["USGS40_0.50mg", 0.595, 30.50, -25.820, 0.070],
+      ["USGS40_1.20mg", 1.210, 62.00, -25.470, 0.075],
+      ["USGS41a_1", 0.650, 31.00, 37.180, 0.085],
+      ["IAEA-CH-6_QC1", 0.560, 29.80, -9.850, 0.080],
+      ["Core-Sed-01_1", 8.500, 14.50, -22.620, 0.090],
+      ["Core-Sed-01_2", 18.200, 31.20, -22.430, 0.085],
+      ["Core-Sed-01_3", 28.000, 48.00, -22.240, 0.080],
+      ["Core-Sed-02_1", 9.800, 12.00, -24.980, 0.075],
+      ["Core-Sed-02_2", 23.200, 28.50, -24.780, 0.080],
+      ["Core-Sed-02_3", 35.800, 44.00, -24.590, 0.070],
+      ["USGS40_MidCheck1", 0.600, 30.80, -25.810, 0.070],
+      ["USGS41a_2", 0.640, 30.50, 37.170, 0.080],
+      ["IAEA-CH-6_QC2", 0.290, 15.40, -10.010, 0.075],
+      ["Core-Sed-03_1", 7.200, 16.20, -21.320, 0.085],
+      ["Core-Sed-03_2", 14.800, 33.40, -21.130, 0.080],
+      ["Core-Sed-03_3", 22.600, 51.00, -20.930, 0.090],
+      ["Core-Sed-04_1", 10.500, 15.00, -23.250, 0.080],
+      ["Core-Sed-04_2", 22.400, 32.00, -23.060, 0.085],
+      ["Core-Sed-04_3", 34.600, 49.50, -22.860, 0.075],
+      ["USGS40_MidCheck2", 0.605, 31.00, -25.800, 0.070],
+      ["IAEA-CH-6_QC3", 0.565, 30.00, -9.840, 0.080],
+      ["Mud-Flat-05_1", 12.000, 18.50, -20.580, 0.085],
+      ["Mud-Flat-05_2", 22.800, 35.00, -20.390, 0.080],
+      ["Mud-Flat-05_3", 34.500, 53.00, -20.190, 0.090],
+      ["Deep-Basin-06_1", 15.000, 13.50, -25.550, 0.080],
+      ["Deep-Basin-06_2", 32.200, 29.00, -25.350, 0.085],
+      ["USGS41a_End", 0.660, 31.50, 37.190, 0.080],
+      ["IAEA-CH-6_QC4", 0.300, 16.00, -10.000, 0.075]
     ]
   },
 
-  // 6. EA 무처리 해양 퇴적물 총질소 단독 (31개 시퀀스)
+  // 6. EA 무처리 해양 퇴적물 총질소 단독 (%TN 산출 지원)
   EA_N: {
     name: "EA Total Nitrogen only (Untreated Sediments)",
-    elements: [{ key: "iso1", label: "δ¹⁵N", unit: "‰ Air" }],
+    elements: [{ key: "iso1", label: "δ¹⁵N", unit: "‰ Air", element: "N", molarMass: 14.007 }],
     stds: [
-      { name: "USGS40", v1: -4.520 },
-      { name: "USGS41a", v1: 47.550 }
+      { name: "USGS40", v1: -4.520, wt1: 9.52 },
+      { name: "USGS41a", v1: 47.550, wt1: 8.84 }
     ],
     extraStds: [
-      { name: "IAEA-N-2", v1: 20.300 },
-      { name: "USGS25", v1: -30.400 }
+      { name: "IAEA-N-2", v1: 20.300, wt1: 21.20 },
+      { name: "USGS25", v1: -30.400, wt1: 21.20 }
     ],
     defaultDriftAnchorIdx: 0,
-    qcStd: { name: "IAEA-N-1", v1: 0.400 },
+    qcStd: { name: "IAEA-N-1", v1: 0.400, wt1: 21.20 },
     demo: [
       ["USGS40_1", -4.080, 0.110],
       ["USGS41a_1", 48.100, 0.130],
@@ -723,38 +724,39 @@ const PRESETS = {
       ["IAEA-N-1_QC4", 0.840, 0.110],
       ["USGS40_Final", -4.160, 0.105]
     ],
+    // 5열 구조: [ID, Weight(mg), Area N, Raw δ15N, SD1]
     demoArea: [
-      ["Tin-Blank_1", 0.22, -1.500, 0.300],
-      ["USGS40_Small", 5.10, -4.240, 0.115],
-      ["USGS40_Mid", 12.40, -4.080, 0.105],
-      ["USGS40_Large", 24.80, -3.810, 0.110],
-      ["USGS41a_1", 12.80, 48.100, 0.130],
-      ["IAEA-N-1_QC1", 12.10, 0.920, 0.120],
-      ["Raw-Sed-01_1", 6.20, 5.260, 0.115],
-      ["Raw-Sed-01_2", 12.50, 5.400, 0.110],
-      ["Raw-Sed-01_3", 21.00, 5.580, 0.120],
-      ["Raw-Sed-02_1", 7.50, 7.020, 0.110],
-      ["Raw-Sed-02_2", 14.80, 7.150, 0.105],
-      ["Raw-Sed-02_3", 23.50, 7.310, 0.115],
-      ["USGS40_Check1", 12.50, -4.070, 0.105],
-      ["USGS41a_2", 12.50, 48.090, 0.125],
-      ["IAEA-N-1_QC2", 7.40, 0.810, 0.115],
-      ["Raw-Sed-03_1", 6.80, 4.710, 0.120],
-      ["Raw-Sed-03_2", 13.50, 4.850, 0.115],
-      ["Raw-Sed-03_3", 22.00, 5.010, 0.125],
-      ["Raw-Sed-04_1", 7.00, 6.070, 0.110],
-      ["Raw-Sed-04_2", 14.00, 6.200, 0.105],
-      ["Raw-Sed-04_3", 24.00, 6.380, 0.115],
-      ["USGS40_Check2", 12.60, -4.060, 0.100],
-      ["IAEA-N-1_QC3", 12.00, 0.910, 0.115],
-      ["Estuary-Mud-05_1", 8.20, 5.840, 0.115],
-      ["Estuary-Mud-05_2", 15.50, 5.950, 0.110],
-      ["Estuary-Mud-05_3", 25.00, 6.120, 0.120],
-      ["Abyssal-Clay-06_1", 6.50, 8.270, 0.120],
-      ["Abyssal-Clay-06_2", 13.00, 8.400, 0.115],
-      ["USGS41a_End", 12.60, 48.080, 0.125],
-      ["IAEA-N-1_QC4", 7.50, 0.820, 0.110],
-      ["USGS40_End", 12.50, -4.080, 0.105]
+      ["Tin-Blank_1", 0.000, 0.22, -1.500, 0.300],
+      ["USGS40_Small", 0.300, 5.10, -4.240, 0.115],
+      ["USGS40_Mid", 0.720, 12.40, -4.080, 0.105],
+      ["USGS40_Large", 1.450, 24.80, -3.810, 0.110],
+      ["USGS41a_1", 0.800, 12.80, 48.100, 0.130],
+      ["IAEA-N-1_QC1", 0.315, 12.10, 0.920, 0.120],
+      ["Raw-Sed-01_1", 18.000, 6.20, 5.260, 0.115],
+      ["Raw-Sed-01_2", 36.200, 12.50, 5.400, 0.110],
+      ["Raw-Sed-01_3", 61.000, 21.00, 5.580, 0.120],
+      ["Raw-Sed-02_1", 22.000, 7.50, 7.020, 0.110],
+      ["Raw-Sed-02_2", 43.500, 14.80, 7.150, 0.105],
+      ["Raw-Sed-02_3", 69.000, 23.50, 7.310, 0.115],
+      ["USGS40_Check1", 0.730, 12.50, -4.070, 0.105],
+      ["USGS41a_2", 0.785, 12.50, 48.090, 0.125],
+      ["IAEA-N-1_QC2", 0.195, 7.40, 0.810, 0.115],
+      ["Raw-Sed-03_1", 25.000, 6.80, 4.710, 0.120],
+      ["Raw-Sed-03_2", 49.500, 13.50, 4.850, 0.115],
+      ["Raw-Sed-03_3", 81.000, 22.00, 5.010, 0.125],
+      ["Raw-Sed-04_1", 20.500, 7.00, 6.070, 0.110],
+      ["Raw-Sed-04_2", 41.000, 14.00, 6.200, 0.105],
+      ["Raw-Sed-04_3", 70.000, 24.00, 6.380, 0.115],
+      ["USGS40_Check2", 0.735, 12.60, -4.060, 0.100],
+      ["IAEA-N-1_QC3", 0.312, 12.00, 0.910, 0.115],
+      ["Estuary-Mud-05_1", 15.000, 8.20, 5.840, 0.115],
+      ["Estuary-Mud-05_2", 28.500, 15.50, 5.950, 0.110],
+      ["Estuary-Mud-05_3", 46.000, 25.00, 6.120, 0.120],
+      ["Abyssal-Clay-06_1", 32.000, 6.50, 8.270, 0.120],
+      ["Abyssal-Clay-06_2", 64.000, 13.00, 8.400, 0.115],
+      ["USGS41a_End", 0.790, 12.60, 48.080, 0.125],
+      ["IAEA-N-1_QC4", 0.198, 7.50, 0.820, 0.110],
+      ["USGS40_End", 0.730, 12.50, -4.080, 0.105]
     ]
   },
 
@@ -762,19 +764,19 @@ const PRESETS = {
   CH: {
     name: "EA Organic Bulk C & H (Dual)",
     elements: [
-      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB" },
-      { key: "iso2", label: "δD", unit: "‰ VSMOW" }
+      { key: "iso1", label: "δ¹³C", unit: "‰ VPDB", element: "C", molarMass: 12.011 },
+      { key: "iso2", label: "δD", unit: "‰ VSMOW", element: "H", molarMass: 1.008 }
     ],
     stds: [
-      { name: "USGS40", v1: -26.390, v2: -9.200 },
-      { name: "USGS41a", v1: 36.550, v2: -4.300 }
+      { name: "USGS40", v1: -26.390, v2: -9.200, wt1: 40.80, wt2: 6.16 },
+      { name: "USGS41a", v1: 36.550, v2: -4.300, wt1: 37.76, wt2: 5.71 }
     ],
     extraStds: [
-      { name: "IAEA-CH-7", v1: -32.151, v2: -100.300 },
-      { name: "USGS62", v1: -14.790, v2: -156.100 }
+      { name: "IAEA-CH-7", v1: -32.151, v2: -100.300, wt1: 85.70, wt2: 14.30 },
+      { name: "USGS62", v1: -14.790, v2: -156.100, wt1: 39.50, wt2: 5.20 }
     ],
     defaultDriftAnchorIdx: 0,
-    qcStd: { name: "USGS61", v1: -35.050, v2: -7.500 },
+    qcStd: { name: "USGS61", v1: -35.050, v2: -7.500, wt1: 38.00, wt2: 5.50 },
     demo: [
       ["USGS40_1", -25.800, 0.080, -8.100, 1.200],
       ["USGS41a_1", 37.200, 0.090, -3.200, 1.400],
