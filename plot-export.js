@@ -1,4 +1,4 @@
-/* plot-export.js - IsoCalib v1.4.1 Interactive Plots & ExcelJS Publication Export Engine */
+/* plot-export.js - IsoCalib v1.4.1 Final Interactive Plots & ExcelJS Publication Export Engine */
 
 function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   const container = document.getElementById(elemId);
