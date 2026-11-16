@@ -1,4 +1,4 @@
-/* app-ui.js - IsoCalib v1.4.1 UI Interaction & Elemental Pipeline */
+/* app-ui.js - IsoCalib v1.4.1 Final UI Interaction, Multilingual Sync & Elemental Pipeline */
 
 let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentTab = 'sequence';
@@ -700,7 +700,7 @@ function updateLayoutForMode(forcePresetDefault = false) {
     excludedRows = Array(30).fill(false);
   }
   renderGrid();
-  resetOutputs();
+  if (!hasCalibratedOnce) resetOutputs();
 }
 
 function switchTab(target) {
@@ -750,6 +750,9 @@ document.getElementById('oxygen-scale-select').addEventListener('change', (e) =>
   if (hasCalibratedOnce) runCalibration();
 });
 
+// -------------------------------------------------------------
+// Multilingual Toggle (KO / EN)
+// -------------------------------------------------------------
 function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('isocalib_lang', lang);
@@ -771,6 +774,11 @@ function setLanguage(lang) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (dict[key]) el.innerHTML = dict[key];
+    });
+    // 상단 Isotope System optgroup 라벨 번역
+    document.querySelectorAll('[data-i18n-label]').forEach(el => {
+      const key = el.getAttribute('data-i18n-label');
+      if (dict[key]) el.setAttribute('label', dict[key]);
     });
   }
 
@@ -809,6 +817,7 @@ function setLanguage(lang) {
   saveCurrentModeStandards();
   updateLayoutForMode(false);
   switchTab(currentTab);
+  if (hasCalibratedOnce) runCalibration();
   if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise();
 }
 
@@ -1172,6 +1181,7 @@ document.getElementById('isotope-preset').addEventListener('change', (e) => {
   const sourceDemo = (isAreaActive() && p.demoArea) ? p.demoArea : p.demo;
   gridData = JSON.parse(JSON.stringify(sourceDemo));
   excludedRows = Array(gridData.length).fill(false);
+  hasCalibratedOnce = false;
   updateLayoutForMode(false);
 });
 
