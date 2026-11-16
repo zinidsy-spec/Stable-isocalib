@@ -1,4 +1,4 @@
-/* math-core.js - IsoCalib v1.4.1 Pure Geochemical & Elemental Reduction Engine */
+/* math-core.js - IsoCalib v1.4.1 Final Pure Geochemical & Elemental Reduction Engine */
 
 /**
  * 1. 단위 및 스케일 변환 유틸리티
