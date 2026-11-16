@@ -1,4 +1,4 @@
-/* app-ui.js - IsoCalib v1.4.2 Final UI Interaction, Raw SD Highlight & Elemental Pipeline */
+/* app-ui.js - IsoCalib v1.4.3 Final UI Interaction, Anchor Precision Alert & Elemental Pipeline */
 
 let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentTab = 'sequence';
@@ -820,7 +820,7 @@ function setLanguage(lang) {
   if (pList) {
     if (lang === 'ko') {
       pList.innerHTML = `
-        <li>원시 반복 정밀도(Raw 1σ SD) 임계치 초과 실시간 감지 및 경고 배지 시스템</li>
+        <li>원시 반복 정밀도(Raw 1σ SD) 임계치 초과 실시간 감지 및 앵커 표준물질 자동 제외 시스템</li>
         <li>EA-IRMS 피크 면적 선형성(Auto 및 Manual slope) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
         <li>시료 계량 무게(mg) 기반 %C, %N 원소 함량 및 Atomic C/N 비 자동 산출</li>
         <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
@@ -828,7 +828,7 @@ function setLanguage(lang) {
       `;
     } else {
       pList.innerHTML = `
-        <li>Real-time Raw 1σ SD internal repeatability flagging and warning badges</li>
+        <li>Real-time Raw 1σ SD precision flagging and noisy anchor standard auto-exclusion</li>
         <li>EA-IRMS Peak Area size-linearity normalization & mass-balance Tin Capsule Blank subtraction</li>
         <li>Sample weight (mg) based %C, %N elemental quantification and Atomic C/N ratios</li>
         <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
@@ -920,7 +920,6 @@ function renderGrid() {
       const val = row[cIdx];
       const td = document.createElement('td');
 
-      // Raw 1σ SD 임계치 초과 여부 확인 및 실시간 붉은색 강조
       const isSdCol = sdCols.includes(cIdx);
       const numVal = (val !== '' && val !== null && val !== undefined) ? parseFloat(val) : NaN;
       const isHighSd = isSdCol && !isNaN(numVal) && numVal > sdLimit;
@@ -1002,7 +1001,7 @@ function closeEditingCell() {
   const rawText = activeEditingCell.innerText.trim();
   gridData[r][c] = c === 0 ? rawText : (rawText === '' ? '' : (isNaN(Number(rawText)) ? rawText : Number(rawText)));
   activeEditingCell = null;
-  renderGrid(); // 편집 직후 Raw SD 색상 하이라이트 재평가
+  renderGrid();
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -1297,7 +1296,7 @@ function formatMswdWithStatus(mswd, isEn) {
 }
 
 // -------------------------------------------------------------
-// 5. Main Reduction Pipeline Execution
+// 5. Main Reduction Pipeline Execution (Anchor Precision Guard 포함)
 // -------------------------------------------------------------
 function runCalibration() {
   closeEditingCell();
@@ -1489,9 +1488,11 @@ function runCalibration() {
     return val;
   }
 
-  // Step D: Anchor Fitting (WLS)
+  // Step D: Anchor Fitting (WLS) & Noisy Anchor Detection
   const pts1 = { x: [], y: [], sd: [], names: [] };
   const pts2 = { x: [], y: [], sd: [], names: [] };
+  const noisyAnchorRuns = []; // 임계치 초과 앵커 런 수집 배열
+  let totalActiveAnchorRows = 0;
 
   gridData.forEach((row, rIdx) => {
     if (excludedRows[rIdx]) return;
@@ -1499,8 +1500,10 @@ function runCalibration() {
     if (!f.id || isBlankRowId(f.id)) return;
     const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
+    let matchedAnchor = false;
     refStds.forEach(std => {
       if (std.keyMatch && clean.includes(std.keyMatch)) {
+        matchedAnchor = true;
         if (!isNaN(f.raw1) && !isNaN(std.v1)) {
           const adj1 = getFullyPreprocessedRaw(rIdx, f.area1, f.raw1, 1);
           pts1.x.push(adj1); pts1.y.push(std.v1); pts1.sd.push(f.sd1); pts1.names.push(f.id);
@@ -1511,6 +1514,23 @@ function runCalibration() {
         }
       }
     });
+
+    if (matchedAnchor) {
+      totalActiveAnchorRows++;
+      const high1 = !isNaN(f.raw1) && f.sd1 > sdLimit;
+      const high2 = isDual && !isNaN(f.raw2) && f.sd2 > sdLimit;
+      if (high1 || high2) {
+        const details = [];
+        if (high1) details.push(`${p.elements[0].label} SD=${f.sd1.toFixed(3)}‰`);
+        if (high2) details.push(`${p.elements[1].label} SD=${f.sd2.toFixed(3)}‰`);
+        noisyAnchorRuns.push({
+          rIdx,
+          runNumber: rIdx + 1,
+          id: f.id,
+          detailText: details.join(', ')
+        });
+      }
+    }
   });
 
   if (pts1.x.length < 2) {
@@ -1620,7 +1640,6 @@ function runCalibration() {
     const isAnchor = refStds.some(s => s.keyMatch && clean.includes(s.keyMatch));
     const isQC = (qcStd.keyMatch && clean.includes(qcStd.keyMatch)) || (clean.includes('QC') && !isAnchor);
 
-    // Raw 1σ SD 임계치 초과 여부 체크
     const rawSd1Exceeds = !isBlk && !isNaN(f.raw1) && f.sd1 > sdLimit;
     const rawSd2Exceeds = !isBlk && isDual && !isNaN(f.raw2) && f.sd2 > sdLimit;
     const anyRawSdExceeds = rawSd1Exceeds || rawSd2Exceeds;
@@ -1694,7 +1713,6 @@ function runCalibration() {
       ? `${f.id} <span class="no-underline inline-block ml-1 px-1 py-0.2 bg-stone-200 text-stone-600 font-mono text-[9px] uppercase">Excluded</span>`
       : (isBlk ? `${f.id} <span class="inline-block ml-1 px-1 py-0.2 bg-sky-100 text-sky-800 font-mono text-[9px] uppercase">Blank</span>` : f.id);
 
-    // 1번 원소 ±1σ 셀 + 원시 SD 초과 경고 배지(▲)
     let sd1Html = '-';
     if (!isExcl && !isBlk && propSd1 !== null) {
       sd1Html = `<span>±${propSd1.toFixed(3)}</span>`;
@@ -1704,7 +1722,6 @@ function runCalibration() {
       }
     }
 
-    // 2번 원소 ±1σ 셀 + 원시 SD 초과 경고 배지(▲)
     let sd2Html = '-';
     if (isDual && !isExcl && !isBlk && propSd2 !== null) {
       sd2Html = `<span>±${propSd2.toFixed(3)}</span>`;
@@ -1736,7 +1753,7 @@ function runCalibration() {
     resBody.appendChild(tr);
   });
 
-  // Step F: Grouped Sample Summary (그룹 반복 편차 초과 시에도 경고 표기)
+  // Step F: Grouped Sample Summary
   groupedSummaryData = [];
   const groupedBody = document.getElementById('grouped-body');
   groupedBody.innerHTML = '';
@@ -1834,7 +1851,7 @@ function runCalibration() {
     });
   }
 
-  // Step G: Smart QC Validation Banner & Actionable Diagnostics
+  // Step G: Smart QC Validation Banner + Noisy Anchor Alert & Auto-Exclude Button
   const qcBanner = document.getElementById('qc-summary-banner');
   if (qcResults.cals1.length > 0 && !isNaN(qcStd.v1)) {
     const mean1 = qcResults.cals1.reduce((a, b) => a + b, 0) / qcResults.cals1.length;
@@ -1853,7 +1870,8 @@ function runCalibration() {
     }
 
     const highMswd = reg1.mswd > 2.5 || (isDual && reg2 && reg2.mswd > 2.5);
-    const isOverallPass = !failBias1 && !failSd1 && !failBias2 && !failSd2 && !highMswd;
+    const hasNoisyAnchors = noisyAnchorRuns.length > 0;
+    const isOverallPass = !failBias1 && !failSd1 && !failBias2 && !failSd2 && !highMswd && !hasNoisyAnchors;
 
     lastQcSummaryReport = { qcName: qcStd.name, count: qcResults.cals1.length, status: isOverallPass ? 'PASS' : 'WARNING', mean1, bias1, sdQc1, mean2, bias2, sdQc2 };
     qcBanner.className = isOverallPass ? 'bg-[#f8fdf9] border-2 border-emerald-400 p-4 rounded-none space-y-3 shadow-xs' : 'bg-[#fffcf5] border-2 border-amber-400 p-4 rounded-none space-y-3 shadow-xs';
@@ -1870,6 +1888,32 @@ function runCalibration() {
         </div>
         <span class="text-[11px] font-mono text-stone-500">${isEn ? 'Evaluated on' : '평가 대상:'} ${qcResults.cals1.length} ${isEn ? 'active runs of' : '회 유효 반복측정'} [${qcStd.name}]</span>
       </div>
+    `;
+
+    // 앵커 표준물질 자체 Raw SD 초과 시 전용 경고 알림 및 원클릭 자동 제외 버튼
+    if (hasNoisyAnchors) {
+      const anchorListStr = noisyAnchorRuns.map(a => `Run #${String(a.runNumber).padStart(2, '0')} [<strong>${a.id}</strong>] (${a.detailText})`).join(' · ');
+      qcHtml += `
+        <div class="bg-rose-50 border-l-4 border-rose-600 p-3 text-xs text-rose-950 font-sans flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-rose-900">
+              <span>🚨</span>
+              <span>${isEn ? `Anchor Standard Precision Alert: ${noisyAnchorRuns.length} Calibration Standard Run(s) Exceed ${sdLimit}‰` : `앵커 표준물질 정밀도 경고: 검량 표준 런 ${noisyAnchorRuns.length}건이 기준치(${sdLimit}‰) 초과`}</span>
+            </div>
+            <p class="text-[11px] text-rose-800 leading-relaxed">
+              ${isEn
+                ? `Unstable anchor standards distort WLS regression slope and all calibrated results: ${anchorListStr}`
+                : `검량선 기준이 되는 표준물질의 측정 편차가 커서 회귀선 기울기가 왜곡될 수 있습니다: ${anchorListStr}`}
+            </p>
+          </div>
+          <button id="btn-auto-exclude-noisy-anchors" type="button" class="shrink-0 px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white font-mono text-[11px] font-bold uppercase tracking-wider shadow-xs transition cursor-pointer">
+            ${isEn ? 'Auto-Exclude Noisy Anchors' : '불안정 앵커 자동 제외'}
+          </button>
+        </div>
+      `;
+    }
+
+    qcHtml += `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-0.5">
         <div class="space-y-1">
           <div class="flex justify-between text-stone-700 font-sans font-semibold">
@@ -1910,15 +1954,15 @@ function runCalibration() {
           </div>
           <p class="text-[11px] leading-relaxed text-amber-900">
             ${isEn
-              ? `One or more QC metrics exceed analytical tolerance. Verify accepted true values in Section 01, check size-linearity settings, or uncheck 'Use (✓)' on anomalous runs in Section 02.`
-              : `QC 표준물질의 정확도 편차(Bias) 또는 반복 정밀도가 허용 기준을 초과했습니다. 01 섹션의 공인값을 확인하거나, 02 섹션 표에서 면적 보정 모드 및 이상치 런의 체크박스(Use)를 점검해 보세요.`}
+              ? `One or more QC metrics or anchor standards exceed analytical tolerance. Verify accepted true values in Section 01, or uncheck 'Use (✓)' on anomalous runs in Section 02.`
+              : `QC 표준물질 편차 또는 앵커 표준물질 정밀도가 허용 기준을 초과했습니다. 01 섹션의 공인값을 확인하거나, 02 섹션 표에서 이상치 런의 체크박스(Use)를 해제해 보세요.`}
           </p>
         </div>
       `;
     } else {
       qcHtml += `
         <div class="bg-emerald-100/50 border-l-4 border-emerald-600 px-3 py-2 text-[11px] text-emerald-950 font-sans flex items-center justify-between">
-          <span><strong>✓ ${isEn ? 'Diagnostic Summary:' : '진단 요약:'}</strong> ${isEn ? 'Calibration linearity (MSWD), QC accuracy bias, and replicate reproducibility all satisfy international publication criteria.' : '검량선 적합도(MSWD), QC 정확도 편차 및 반복 정밀도가 모두 학술 보고 기준을 완벽히 충족합니다.'}</span>
+          <span><strong>✓ ${isEn ? 'Diagnostic Summary:' : '진단 요약:'}</strong> ${isEn ? 'Calibration linearity (MSWD), anchor precision, QC accuracy bias, and replicate reproducibility all satisfy international publication criteria.' : '검량선 적합도(MSWD), 앵커 정밀도, QC 정확도 편차 및 반복 정밀도가 모두 학술 보고 기준을 완벽히 충족합니다.'}</span>
         </div>
       `;
     }
@@ -1940,6 +1984,25 @@ function runCalibration() {
 
     qcBanner.innerHTML = qcHtml;
     qcBanner.classList.remove('hidden');
+
+    // 불안정 앵커 원클릭 자동 제외 버튼 핸들러 바인딩
+    const btnAutoExclude = document.getElementById('btn-auto-exclude-noisy-anchors');
+    if (btnAutoExclude) {
+      btnAutoExclude.addEventListener('click', () => {
+        const remainingCount = totalActiveAnchorRows - noisyAnchorRuns.length;
+        if (remainingCount < 2) {
+          alert(isEn
+            ? "Cannot auto-exclude: at least 2 active anchor standard runs must remain for WLS regression."
+            : "자동 제외 불가: WLS 검량선 계산을 위해 최소 2개 이상의 활성 앵커 표준물질 런이 남아있어야 합니다.");
+          return;
+        }
+        noisyAnchorRuns.forEach(item => {
+          excludedRows[item.rIdx] = true;
+        });
+        renderGrid();
+        runCalibration();
+      });
+    }
   } else {
     qcBanner.classList.add('hidden');
     lastQcSummaryReport = null;
