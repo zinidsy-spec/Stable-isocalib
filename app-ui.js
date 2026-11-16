@@ -1,4 +1,4 @@
-/* app-ui.js - IsoCalib v1.4.1 Final UI Interaction, Multilingual Sync & Elemental Pipeline */
+/* app-ui.js - IsoCalib v1.4.2 Final UI Interaction, Raw SD Highlight & Elemental Pipeline */
 
 let currentLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentTab = 'sequence';
@@ -26,12 +26,28 @@ function isAreaActive() {
   return areaMode !== 'off';
 }
 
+function getRawSdLimit() {
+  const el = document.getElementById('raw-sd-limit');
+  const val = el ? parseFloat(el.value) : 0.100;
+  return (!isNaN(val) && val > 0) ? val : 0.100;
+}
+
+function getSdColumnIndices() {
+  const isDual = PRESETS[currentMode].elements.length === 2;
+  if (isAreaActive()) {
+    // [ID, Weight, Area1, Raw1, SD1(4), Area2, Raw2, SD2(7)]
+    return isDual ? [4, 7] : [4];
+  }
+  // [ID, Raw1, SD1(2), Raw2, SD2(4)]
+  return isDual ? [2, 4] : [2];
+}
+
 function getNumDataCols() {
   const isDual = PRESETS[currentMode].elements.length === 2;
   if (isAreaActive()) {
-    return isDual ? 8 : 5; // [ID, Weight(mg), Area1, Raw1, SD1, (Area2, Raw2, SD2)]
+    return isDual ? 8 : 5;
   }
-  return isDual ? 5 : 3; // [ID, Raw1, SD1, (Raw2, SD2)]
+  return isDual ? 5 : 3;
 }
 
 function getElementUnit(elemIdx) {
@@ -142,6 +158,15 @@ window.addEventListener('keydown', (e) => {
     if (changelogModal) changelogModal.classList.add('hidden');
   }
 });
+
+// Raw SD Limit 실시간 변경 리스너
+const rawSdLimitInput = document.getElementById('raw-sd-limit');
+if (rawSdLimitInput) {
+  rawSdLimitInput.addEventListener('input', () => {
+    renderGrid();
+    if (hasCalibratedOnce) runCalibration();
+  });
+}
 
 // -------------------------------------------------------------
 // 2. Standards Configuration & Presets Storage
@@ -655,12 +680,12 @@ function updateLayoutForMode(forcePresetDefault = false) {
   if (areaOn) rHeadCols += `<th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-700 font-mono">Weight (mg)</th>`;
   rHeadCols += `
     <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[0].label} (${u1})</th>
-    <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
+    <th class="px-3 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ <span class="text-[9px] text-stone-400 font-normal">(Combined / Raw Flag)</span></th>
   `;
   if (isDual) {
     rHeadCols += `
       <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] bg-stone-100/70 font-bold text-stone-900">${isEn ? 'Calibrated' : '보정값'} ${p.elements[1].label} (${u2})</th>
-      <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ</th>
+      <th class="px-3.5 py-2.5 border-r border-[#d1cfc7] text-stone-600">± 1σ <span class="text-[9px] text-stone-400 font-normal">(Combined / Raw Flag)</span></th>
     `;
   }
   if (hasElemental) {
@@ -775,7 +800,6 @@ function setLanguage(lang) {
       const key = el.getAttribute('data-i18n');
       if (dict[key]) el.innerHTML = dict[key];
     });
-    // 상단 Isotope System optgroup 라벨 번역
     document.querySelectorAll('[data-i18n-label]').forEach(el => {
       const key = el.getAttribute('data-i18n-label');
       if (dict[key]) el.setAttribute('label', dict[key]);
@@ -796,18 +820,18 @@ function setLanguage(lang) {
   if (pList) {
     if (lang === 'ko') {
       pList.innerHTML = `
+        <li>원시 반복 정밀도(Raw 1σ SD) 임계치 초과 실시간 감지 및 경고 배지 시스템</li>
         <li>EA-IRMS 피크 면적 선형성(Auto 및 Manual slope) 회귀 및 주석 캡슐 블랭크(Blank) 질량 보존 차감</li>
         <li>시료 계량 무게(mg) 기반 %C, %N 원소 함량 및 Atomic C/N 비 자동 산출</li>
         <li>시퀀스 런 순서(#)를 유지하는 비파괴 이상치(Outlier) 개별 제외 토글 시스템</li>
-        <li>2점(Two-Point) 및 3점 이상 다중 앵커(Multi-Point) 가중 선형 회귀(WLS) 동적 확장</li>
         <li>ExcelJS 통합 엔진을 통한 엑셀 내 고해상도 검량선/진단 그림 자동 삽입</li>
       `;
     } else {
       pList.innerHTML = `
+        <li>Real-time Raw 1σ SD internal repeatability flagging and warning badges</li>
         <li>EA-IRMS Peak Area size-linearity normalization & mass-balance Tin Capsule Blank subtraction</li>
         <li>Sample weight (mg) based %C, %N elemental quantification and Atomic C/N ratios</li>
         <li>Sequence-preserving outlier exclusion checkbox ('Use ✓') with instant live recalibration</li>
-        <li>Dynamic 2-point and 3+ multi-point Weighted Least Squares (WLS) anchor calibration</li>
         <li>ExcelJS engine for embedding publication figures & diagnostics into Excel</li>
       `;
     }
@@ -841,12 +865,15 @@ function resetOutputs() {
 }
 
 // -------------------------------------------------------------
-// 4. Interactive Spreadsheet Grid Controller
+// 4. Interactive Spreadsheet Grid Controller (Raw SD 실시간 강조)
 // -------------------------------------------------------------
 function renderGrid() {
   const gridBody = document.getElementById('grid-body');
   gridBody.innerHTML = '';
   const numCols = getNumDataCols();
+  const sdCols = getSdColumnIndices();
+  const sdLimit = getRawSdLimit();
+  const isEn = currentLang === 'en';
 
   while (excludedRows.length < gridData.length) excludedRows.push(false);
 
@@ -892,7 +919,21 @@ function renderGrid() {
     for (let cIdx = 0; cIdx < numCols; cIdx++) {
       const val = row[cIdx];
       const td = document.createElement('td');
-      td.className = 'px-2.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data';
+
+      // Raw 1σ SD 임계치 초과 여부 확인 및 실시간 붉은색 강조
+      const isSdCol = sdCols.includes(cIdx);
+      const numVal = (val !== '' && val !== null && val !== undefined) ? parseFloat(val) : NaN;
+      const isHighSd = isSdCol && !isNaN(numVal) && numVal > sdLimit;
+
+      let cellClasses = 'px-2.5 py-1.5 border-r border-[#e5e3dc] grid-cell text-xs font-data';
+      if (isHighSd && !isExcl) {
+        cellClasses += ' bg-rose-50 text-rose-700 font-bold';
+        td.title = isEn
+          ? `Warning: Raw 1σ SD (${numVal.toFixed(3)}‰) exceeds limit (${sdLimit.toFixed(3)}‰)`
+          : `주의: 원시 1σ SD (${numVal.toFixed(3)}‰)가 허용 기준 (${sdLimit.toFixed(3)}‰)을 초과했습니다`;
+      }
+
+      td.className = cellClasses;
       td.dataset.r = rIdx;
       td.dataset.c = cIdx;
       td.innerText = val !== null && val !== undefined ? val : '';
@@ -961,6 +1002,7 @@ function closeEditingCell() {
   const rawText = activeEditingCell.innerText.trim();
   gridData[r][c] = c === 0 ? rawText : (rawText === '' ? '' : (isNaN(Number(rawText)) ? rawText : Number(rawText)));
   activeEditingCell = null;
+  renderGrid(); // 편집 직후 Raw SD 색상 하이라이트 재평가
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -1272,6 +1314,7 @@ function runCalibration() {
   const chosenDriftAnchorIdx = parseInt(document.getElementById('drift-anchor-select').value) || 0;
   const u1 = getElementUnit(0);
   const u2 = getElementUnit(1);
+  const sdLimit = getRawSdLimit();
 
   const refStds = [];
   for (let idx = 0; idx < currentAnchorCount; idx++) {
@@ -1560,12 +1603,13 @@ function runCalibration() {
     if (rfPts2.length > 0) rf2 = rfPts2.reduce((a, b) => a + b, 0) / rfPts2.length;
   }
 
-  // Step E: Compute Sequence Table
+  // Step E: Compute Sequence Table & Raw SD Warning Badges
   const resBody = document.getElementById('result-body');
   resBody.innerHTML = '';
   const qcResults = { cals1: [], cals2: [] };
   const computedRows = [];
   sequenceExportData = [];
+  let highRawSdRunCount = 0;
 
   gridData.forEach((row, rIdx) => {
     const f = extractRowFields(row, isDual, areaOn);
@@ -1575,6 +1619,12 @@ function runCalibration() {
     const clean = f.id.toUpperCase().replace(/[^A-Z0-9]/g, '');
     const isAnchor = refStds.some(s => s.keyMatch && clean.includes(s.keyMatch));
     const isQC = (qcStd.keyMatch && clean.includes(qcStd.keyMatch)) || (clean.includes('QC') && !isAnchor);
+
+    // Raw 1σ SD 임계치 초과 여부 체크
+    const rawSd1Exceeds = !isBlk && !isNaN(f.raw1) && f.sd1 > sdLimit;
+    const rawSd2Exceeds = !isBlk && isDual && !isNaN(f.raw2) && f.sd2 > sdLimit;
+    const anyRawSdExceeds = rawSd1Exceeds || rawSd2Exceeds;
+    if (!isExcl && anyRawSdExceeds) highRawSdRunCount++;
 
     let cal1 = null, propSd1 = null;
     if (!isBlk && !isNaN(f.raw1) && reg1.slope !== 0) {
@@ -1609,14 +1659,15 @@ function runCalibration() {
 
     computedRows.push({
       rIdx, id: f.id, weight: f.weight, clean, isAnchor, isQC, isBlk, isExcl,
-      raw1: f.raw1, sd1: f.sd1, cal1, propSd1,
-      raw2: f.raw2, sd2: f.sd2, cal2, propSd2,
+      raw1: f.raw1, sd1: f.sd1, cal1, propSd1, rawSd1Exceeds,
+      raw2: f.raw2, sd2: f.sd2, cal2, propSd2, rawSd2Exceeds,
       wt1, wt2, atomicCN
     });
 
     sequenceExportData.push({
       runNumber: rIdx + 1,
       status: isExcl ? 'EXCLUDED' : (isBlk ? 'BLANK' : 'INCLUDED'),
+      rawSdFlag: isBlk ? 'BLANK' : (anyRawSdExceeds ? `HIGH_SD (> ${sdLimit})` : 'OK'),
       id: f.id,
       weight: (areaOn && f.weight > 0) ? f.weight : null,
       area1: (areaOn && !isNaN(f.area1)) ? f.area1 : null,
@@ -1635,21 +1686,44 @@ function runCalibration() {
     });
 
     const tr = document.createElement('tr');
-    tr.className = isExcl ? 'bg-stone-100/80 text-stone-400 line-through' : (isAnchor || isBlk ? 'bg-[#fcfbf9] text-stone-500' : 'hover:bg-stone-50');
+    tr.className = isExcl
+      ? 'bg-stone-100/80 text-stone-400 line-through'
+      : (anyRawSdExceeds ? 'bg-rose-50/40 hover:bg-rose-50/70' : (isAnchor || isBlk ? 'bg-[#fcfbf9] text-stone-500' : 'hover:bg-stone-50'));
+
     const idBadge = isExcl
       ? `${f.id} <span class="no-underline inline-block ml-1 px-1 py-0.2 bg-stone-200 text-stone-600 font-mono text-[9px] uppercase">Excluded</span>`
       : (isBlk ? `${f.id} <span class="inline-block ml-1 px-1 py-0.2 bg-sky-100 text-sky-800 font-mono text-[9px] uppercase">Blank</span>` : f.id);
+
+    // 1번 원소 ±1σ 셀 + 원시 SD 초과 경고 배지(▲)
+    let sd1Html = '-';
+    if (!isExcl && !isBlk && propSd1 !== null) {
+      sd1Html = `<span>±${propSd1.toFixed(3)}</span>`;
+      if (rawSd1Exceeds) {
+        const tip1 = isEn ? `Raw 1σ SD (${f.sd1.toFixed(3)}‰) > ${sdLimit}‰ limit` : `원시 1σ SD (${f.sd1.toFixed(3)}‰)가 기준치(${sdLimit}‰) 초과`;
+        sd1Html += ` <span title="${tip1}" class="inline-flex items-center px-1.5 py-0.2 bg-rose-100 text-rose-800 border border-rose-300 font-mono text-[9px] font-bold ml-1 cursor-help">▲ Raw ${f.sd1.toFixed(3)}</span>`;
+      }
+    }
+
+    // 2번 원소 ±1σ 셀 + 원시 SD 초과 경고 배지(▲)
+    let sd2Html = '-';
+    if (isDual && !isExcl && !isBlk && propSd2 !== null) {
+      sd2Html = `<span>±${propSd2.toFixed(3)}</span>`;
+      if (rawSd2Exceeds) {
+        const tip2 = isEn ? `Raw 1σ SD (${f.sd2.toFixed(3)}‰) > ${sdLimit}‰ limit` : `원시 1σ SD (${f.sd2.toFixed(3)}‰)가 기준치(${sdLimit}‰) 초과`;
+        sd2Html += ` <span title="${tip2}" class="inline-flex items-center px-1.5 py-0.2 bg-rose-100 text-rose-800 border border-rose-300 font-mono text-[9px] font-bold ml-1 cursor-help">▲ Raw ${f.sd2.toFixed(3)}</span>`;
+      }
+    }
 
     let rowHtml = `<td class="px-4 py-2 border-r border-[#e5e3dc] font-semibold">${idBadge}</td>`;
     if (areaOn) rowHtml += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono text-stone-700">${f.weight > 0 ? f.weight.toFixed(3) : '-'}</td>`;
     rowHtml += `
       <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal1 !== null ? cal1.toFixed(3) : '-'}</td>
-      <td class="px-3 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd1 !== null ? '±' + propSd1.toFixed(3) : '-'}</td>
+      <td class="px-3 py-2 border-r border-[#e5e3dc] ${rawSd1Exceeds && !isExcl ? 'text-rose-800 font-semibold' : 'text-stone-600 font-medium'}">${sd1Html}</td>
     `;
     if (isDual) {
       rowHtml += `
         <td class="px-3.5 py-2 border-r border-[#e5e3dc] font-bold ${isExcl || isBlk ? 'text-stone-400' : 'text-stone-900 bg-stone-50/50'}">${!isExcl && !isBlk && cal2 !== null ? cal2.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-600 font-medium">${!isExcl && !isBlk && propSd2 !== null ? '±' + propSd2.toFixed(3) : '-'}</td>
+        <td class="px-3.5 py-2 border-r border-[#e5e3dc] ${rawSd2Exceeds && !isExcl ? 'text-rose-800 font-semibold' : 'text-stone-600 font-medium'}">${sd2Html}</td>
       `;
     }
     if (hasElemental) {
@@ -1662,7 +1736,7 @@ function runCalibration() {
     resBody.appendChild(tr);
   });
 
-  // Step F: Grouped Sample Summary
+  // Step F: Grouped Sample Summary (그룹 반복 편차 초과 시에도 경고 표기)
   groupedSummaryData = [];
   const groupedBody = document.getElementById('grouped-body');
   groupedBody.innerHTML = '';
@@ -1681,6 +1755,9 @@ function runCalibration() {
     const mean2 = (isDual && c2List.length > 0) ? (c2List.reduce((a, b) => a + b, 0) / c2List.length) : null;
     const sd2 = (isDual && c2List.length > 1) ? Math.sqrt(c2List.map(v => Math.pow(v - mean2, 2)).reduce((a, b) => a + b) / (c2List.length - 1)) : (isDual && c2List.length === 1 ? currentGroup.items[0].propSd2 : 0);
 
+    const hasNoisyMember1 = currentGroup.items.some(x => x.rawSd1Exceeds);
+    const hasNoisyMember2 = currentGroup.items.some(x => x.rawSd2Exceeds);
+
     const wt1List = currentGroup.items.map(x => x.wt1).filter(v => v !== null && !isNaN(v));
     const wt2List = currentGroup.items.map(x => x.wt2).filter(v => v !== null && !isNaN(v));
     const meanWt1 = wt1List.length > 0 ? (wt1List.reduce((a, b) => a + b, 0) / wt1List.length) : null;
@@ -1694,6 +1771,7 @@ function runCalibration() {
       sd1: sd1 !== null ? parseFloat(sd1.toFixed(3)) : null,
       mean2: mean2 !== null ? parseFloat(mean2.toFixed(3)) : null,
       sd2: sd2 !== null ? parseFloat(sd2.toFixed(3)) : null,
+      hasNoisyMember1, hasNoisyMember2,
       meanWt1: meanWt1 !== null ? parseFloat(meanWt1.toFixed(2)) : null,
       meanWt2: meanWt2 !== null ? parseFloat(meanWt2.toFixed(2)) : null,
       meanAtomicCN: meanAtomicCN !== null ? parseFloat(meanAtomicCN.toFixed(2)) : null
@@ -1717,6 +1795,20 @@ function runCalibration() {
     groupedSummaryData.forEach(g => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-stone-50';
+
+      const gSd1High = g.sd1 !== null && g.sd1 > sdLimit;
+      const gSd2High = isDual && g.sd2 !== null && g.sd2 > sdLimit;
+
+      let gSd1Html = g.sd1 !== null ? `±${g.sd1.toFixed(3)}` : '-';
+      if (gSd1High || g.hasNoisyMember1) {
+        gSd1Html += ` <span class="inline-flex items-center px-1 py-0.2 bg-amber-100 text-amber-900 border border-amber-300 font-mono text-[9px] font-bold ml-1" title="${isEn ? 'Replicate SD or raw member SD exceeded threshold' : '반복 시료 편차 또는 개별 원시 SD가 기준치를 초과함'}">▲</span>`;
+      }
+
+      let gSd2Html = g.sd2 !== null ? `±${g.sd2.toFixed(3)}` : '-';
+      if (gSd2High || g.hasNoisyMember2) {
+        gSd2Html += ` <span class="inline-flex items-center px-1 py-0.2 bg-amber-100 text-amber-900 border border-amber-300 font-mono text-[9px] font-bold ml-1" title="${isEn ? 'Replicate SD or raw member SD exceeded threshold' : '반복 시료 편차 또는 개별 원시 SD가 기준치를 초과함'}">▲</span>`;
+      }
+
       let gRow = `
         <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900">${g.baseId}</td>
         <td class="px-3 py-2 border-r border-[#e5e3dc] text-center font-mono font-semibold text-stone-600 bg-stone-50/40">${g.n}</td>
@@ -1724,12 +1816,12 @@ function runCalibration() {
       if (areaOn) gRow += `<td class="px-3 py-2 border-r border-[#e5e3dc] font-mono text-stone-700">${g.meanWeight !== null ? g.meanWeight.toFixed(3) : '-'}</td>`;
       gRow += `
         <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean1 !== null ? g.mean1.toFixed(3) : '-'}</td>
-        <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd1 !== null ? g.sd1.toFixed(3) : '-'}</td>
+        <td class="px-3.5 py-2 border-r border-[#e5e3dc] ${gSd1High || g.hasNoisyMember1 ? 'text-amber-800 font-semibold' : 'text-stone-700 font-medium'}">${gSd1Html}</td>
       `;
       if (isDual) {
         gRow += `
           <td class="px-4 py-2 border-r border-[#e5e3dc] font-bold text-stone-900 bg-emerald-50/30">${g.mean2 !== null ? g.mean2.toFixed(3) : '-'}</td>
-          <td class="px-3.5 py-2 border-r border-[#e5e3dc] text-stone-700 font-medium">±${g.sd2 !== null ? g.sd2.toFixed(3) : '-'}</td>
+          <td class="px-3.5 py-2 border-r border-[#e5e3dc] ${gSd2High || g.hasNoisyMember2 ? 'text-amber-800 font-semibold' : 'text-stone-700 font-medium'}">${gSd2Html}</td>
         `;
       }
       if (hasElemental) {
@@ -1772,7 +1864,10 @@ function runCalibration() {
 
     let qcHtml = `
       <div class="flex flex-wrap items-center justify-between border-b ${isOverallPass ? 'border-emerald-200' : 'border-amber-200'} pb-2.5 gap-2">
-        <div class="flex items-center flex-wrap gap-2.5">${statusBadgeHtml}</div>
+        <div class="flex items-center flex-wrap gap-2.5">
+          ${statusBadgeHtml}
+          ${highRawSdRunCount > 0 ? `<span class="px-2 py-0.5 bg-rose-100 text-rose-900 border border-rose-300 font-mono text-[10px] font-bold">▲ ${highRawSdRunCount} ${isEn ? `Run(s) > ${sdLimit}‰ Raw SD` : `개 런 원시 1σ SD (${sdLimit}‰) 초과`}</span>` : ''}
+        </div>
         <span class="text-[11px] font-mono text-stone-500">${isEn ? 'Evaluated on' : '평가 대상:'} ${qcResults.cals1.length} ${isEn ? 'active runs of' : '회 유효 반복측정'} [${qcStd.name}]</span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-data pt-0.5">
