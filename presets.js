@@ -1,4 +1,4 @@
-/* presets.js - IsoCalib v1.4.1 Final Extended Presets, Elemental %C/%N Standards & 30+ Batch Demos */
+/* presets.js - IsoCalib v1.4.2 Final Presets, Raw SD Precision Flags & 30+ Batch Demos */
 
 const TRANSLATIONS = {
   ko: {
@@ -13,7 +13,7 @@ const TRANSLATIONS = {
     nav_feedback_github: "개발자 버그 제보 (GitHub)",
     hero_badge: "정밀 데이터 리덕션 & 품질관리(QC) 프로토콜",
     hero_title: "안정동위원소 분석 보정 (Stable Isotope Calibration)",
-    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Auto/Manual) 및 캡슐 블랭크 차감, 시료 무게(mg) 기반 %C/%N 및 Atomic C/N 정량, 다중 앵커 WLS 회귀와 불확도 전파를 수행합니다.",
+    hero_desc: "원시 측정 데이터의 시퀀스 드리프트 보정, EA-IRMS 피크 면적 선형성(Auto/Manual) 및 캡슐 블랭크 차감, 시료 무게(mg) 기반 %C/%N 및 Atomic C/N 정량, 다중 앵커 WLS 회귀와 원시 SD 정밀도 경고를 수행합니다.",
     system_label: "분석 동위원소 체계 (Isotope System)",
     grp_carbonate: "탄산염 및 가스벤치 시스템 (Carbonate & GasBench)",
     sys_co: "1. 탄소 & 산소 (δ¹³C, δ¹⁸O - Dual)",
@@ -51,20 +51,21 @@ const TRANSLATIONS = {
     btn_preset_save: "Save",
     drift_guide_desc: "* <strong>2점 및 3점+ 다중 앵커 WLS 검량선</strong>, <strong>피크 면적 선형성(Auto/Manual)</strong>, <strong>캡슐 블랭크('BLANK'/'BLK') 자동 차감</strong> 및 <strong>시료 무게(mg) 기반 %C/%N, Atomic C/N 비 계산</strong>을 지원합니다.",
     sec2_title: "Measurement Sequence Data (런 시퀀스 데이터 입력)",
-    sec2_desc: "셀 클릭 후 <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd>로 엑셀 데이터를 붙여넣으세요. 특정 런이 튄 경우 <strong>Use(✓) 체크를 해제</strong>하면 런 순서(#)는 유지한 채 계산에서만 제외됩니다.",
+    sec2_desc: "셀 클릭 후 <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd>로 엑셀 데이터를 붙여넣으세요. <strong>원시 1σ SD가 임계치(기본 0.100‰)를 초과하면 붉은색으로 경고</strong>되며, <strong>Use(✓) 체크 해제</strong>로 런 순서(#)를 유지한 채 제외할 수 있습니다.",
+    raw_sd_limit_label: "원시 SD 경고 기준:",
     btn_delete_rows: "선택 행 삭제",
     btn_clear: "Clear All",
     btn_demo: "Load Demo",
     demo_guide_tag: "30+ 시연 데이터",
     btn_add_rows: "+ 30 Rows",
     btn_calc: "Run Calibration & QC",
-    grid_hint: "* 'Use' 체크 해제 시 시퀀스 번호(#) 왜곡 없이 해당 이상치(Outlier) 런만 검량·평균에서 제외됩니다",
+    grid_hint: "* 붉은색 셀은 원시 1σ SD 초과 런이며, 'Use' 체크 해제 시 시퀀스 번호(#) 왜곡 없이 제외됩니다",
     btn_export_svg: "Export Publication SVG",
     sec3_title: "Calibrated Results & Quality Control Report (최종 보정 결과 및 QC 보고서)",
     btn_export_excel: "엑셀 보고서 내보내기 (.xlsx)",
     tab_sequence: "개별 런 시퀀스 (Run-by-Run)",
     tab_grouped: "시료별 평균 보고서 (Grouped Sample Summary)",
-    result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값, 합성 불확도 및 원소 함량(%)이 여기에 표시됩니다.",
+    result_empty: "상단에서 검량을 실행하면 보정된 동위원소 값, 합성 불확도 및 원시 SD 초과 경고(▲)가 여기에 표시됩니다.",
     grouped_empty: "상단에서 검량을 실행하면 연속으로 반복 측정된 미지시료의 평균(Mean ± 1σ) 요약표가 여기에 생성됩니다.",
     sec4_tag: "Methodology & Standard Principles",
     sec4_heading: "통계적 회귀 원리 및 표준 분석 지침",
@@ -99,14 +100,14 @@ const TRANSLATIONS = {
     ctx_clear_cells: "선택 셀 내용 지우기",
     ctx_insert_row: "아래에 빈 행 1줄 삽입",
     about_p1: "<strong>IsoCalib</strong>은 안정동위원소 지화학 데이터 정산(Data Reduction)을 위해 설계된 경량 오픈소스 웹 도구로, 영구 무료·투명성·재현성을 지향합니다.",
-    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Auto/Manual) 보정, 주석 캡슐 블랭크 차감, 시료 무게(mg) 기반 %C/%N 원소 정량 및 Atomic C/N 비 계산, 3점 이상 다중 앵커 검량선, 이상치 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
+    about_p2: "탄산염 및 가스벤치뿐만 아니라 EA-IRMS 전용 피크 면적 선형성(Auto/Manual) 보정, 주석 캡슐 블랭크 차감, 시료 무게(mg) 기반 %C/%N 원소 정량 및 Atomic C/N 비 계산, 원시 1σ SD 초과 실시간 품질 경고 플래그, 3점 이상 다중 앵커 검량선, 이상치 개별 제외 토글, 물 및 황(S) 체계를 모두 지원합니다.",
     about_protocols_title: "주요 분석 프로토콜 (Core Analytical Protocols):",
     about_p3: "모든 연산은 <strong>사용자 브라우저 내부에서 100% 로컬 연산</strong>되며 외부 서버로 일체 전송되지 않습니다.",
     qs_modal_title: "/ 분석 실무 종합 매뉴얼 (User Protocol)",
     qs_modal_subtitle: "실험 전처리 계통별 최적 설정, 엑셀 열 매핑, 이상치 처리 및 QC 진단 가이드",
     qs_recipe_title: "1. 30초 실험 계통별 세팅 레시피 (Quick Presets)",
     qs_recipe_desc: "분석 중인 시료와 전처리 계통에 맞추어 상단 컨트롤을 아래와 같이 설정하세요:",
-    qs_recipe_1: "• <strong>탄산염/가스벤치 (CO₂/Dual):</strong> <code>CO 모드</code> → <code>Area: Off</code> → <code>Drift: Linear 또는 Anchor Bracketing</code>",
+    qs_recipe_1: "• <strong>탄산염/가스벤치 (CO₂/Dual):</strong> <code>CO 모드</code> → <code>Raw SD Limit: 0.100‰</code> → <code>Drift: Linear 또는 Anchor Bracketing</code>",
     qs_recipe_2: "• <strong>EA-IRMS 생체·퇴적물 유기물 (벌크 C/N + %함량):</strong> <code>CN 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
     qs_recipe_3: "• <strong>산처리 퇴적물 유기탄소 단독 (%TOC):</strong> <code>EA_C 모드</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
     qs_recipe_4: "• <strong>물/액체 안정동위원소:</strong> <code>WATER_O</code> 또는 <code>WATER_H</code> → <code>δ¹⁸O Scale: VSMOW</code> → <code>Area: Off</code>",
@@ -119,9 +120,9 @@ const TRANSLATIONS = {
     qs_step2_col_std: "• <strong>기본 모드 (Area: Off · 5열):</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
     qs_step2_col_area: "• <strong>면적·무게 활성화 (Area: On · 8열):</strong><br><code>Sample ID</code> | <code>Weight (mg)</code> | <code>Area C</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area N</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
     qs_step2_naming: "<strong>[필수 ID 네이밍 룰]</strong><br>• <strong>블랭크 런</strong>: 시료명에 반드시 <code>BLANK</code>, <code>BLK</code>, 또는 <code>TIN</code>이 포함되어야 엔진이 캡슐 블랭크로 자동 감지합니다 (무게는 0으로 입력).<br>• <strong>미지 시료 반복 측정</strong>: 연속 반복 시료는 <code>SampleA_1</code>, <code>SampleA_2</code> 형태로 기재 시 'SampleA'로 자동 그룹화되어 평균(Mean ± 1σ, 평균 %C/%N, 평균 Atomic C/N) 요약표가 생성됩니다.",
-    qs_step3_title: "4. 이상치 선별 및 검량 실행 (Section 02 & 03)",
-    qs_step3_desc: "주입 불량, 리크, 피크 찌그러짐 등으로 튄 런은 행을 삭제하지 말고 <strong>Use(✓) 체크박스를 해제</strong>하세요. 시퀀스 런 순서(#)와 시간축 간격이 보존된 상태로 검량선·드리프트·시료 평균 계산에서만 제외됩니다.",
-    qs_step3_desc2: "<strong>Run Calibration & QC</strong>를 누르면 블랭크 차감 → 선형성 보정 → 시간 표류 보정 → WLS 회귀선 및 원소 함량 정량이 순차 진행되며, 하단에 종합 진단 배너가 표시됩니다. 이후 상단의 Export Excel Report를 통해 고해상도 그래프가 내장된 보고서를 다운로드하세요.",
+    qs_step3_title: "4. 원시 SD 경고 판별 및 이상치 제외 (Section 02 & 03)",
+    qs_step3_desc: "탄산염 등 분석에서 기기 내적 반복 편차(Raw 1σ SD)가 설정한 임계치(기본 0.100‰)를 넘으면 입력 셀이 붉은색으로 강조되고 결과 표에 ▲ 경고 배지가 표시됩니다. 해당 런을 계산에서 제외하려면 행을 지우지 말고 <strong>Use(✓) 체크박스를 해제</strong>하세요.",
+    qs_step3_desc2: "<strong>Run Calibration & QC</strong>를 누르면 블랭크 차감 → 선형성 보정 → 시간 표류 보정 → WLS 회귀선 및 원소 함량 정량이 순차 진행됩니다.",
     qs_footer_tip: "* 팁: 'Load Demo'를 누르면 현재 선택된 분석 체계와 Area 옵션에 최적화된 30+ 풀 시퀀스 예시 데이터가 즉시 채워집니다."
   },
   en: {
@@ -136,7 +137,7 @@ const TRANSLATIONS = {
     nav_feedback_github: "Developer Issues (GitHub)",
     hero_badge: "Precision Data Reduction & QC Protocol",
     hero_title: "Stable Isotope Calibration",
-    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, sample weight (mg) based %C/%N & Atomic C/N quantification, multi-point WLS regression, and uncertainty propagation.",
+    hero_desc: "Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, sample weight (mg) based %C/%N & Atomic C/N quantification, multi-point WLS regression, and Raw SD precision flagging.",
     system_label: "Isotope System",
     grp_carbonate: "Carbonate & GasBench Systems",
     sys_co: "1. Carbon & Oxygen (δ¹³C, δ¹⁸O - Dual)",
@@ -174,20 +175,21 @@ const TRANSLATIONS = {
     btn_preset_save: "Save",
     drift_guide_desc: "* Supports <strong>2-point and multi-point (3+ anchors) WLS calibration</strong>, <strong>Peak Area Size Linearity (Auto/Manual)</strong>, <strong>Capsule Blank subtraction ('BLANK'/'BLK')</strong>, and <strong>Sample Weight (mg) based %C/%N & Atomic C/N quantification</strong>.",
     sec2_title: "Measurement Sequence Data",
-    sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste from Excel. Uncheck <strong>Use (✓)</strong> to exclude outlier runs while preserving sequence order (#).",
+    sec2_desc: "Select a cell and press <kbd class=\"px-1.5 py-0.5 bg-stone-200 border border-stone-300 rounded font-mono text-[10px] font-bold\">Ctrl + V</kbd> to paste from Excel. Cells where <strong>Raw 1σ SD exceeds the limit (default 0.100‰) highlight in red</strong>. Uncheck <strong>Use (✓)</strong> to exclude outliers.",
+    raw_sd_limit_label: "Raw SD Limit:",
     btn_delete_rows: "Delete Row(s)",
     btn_clear: "Clear All",
     btn_demo: "Load Demo",
     demo_guide_tag: "30+ Sample Runs",
     btn_add_rows: "+ 30 Rows",
     btn_calc: "Run Calibration & QC",
-    grid_hint: "* Unchecking 'Use' excludes outliers without shifting sequence run numbers (#)",
+    grid_hint: "* Red cells exceed the Raw 1σ SD limit; unchecking 'Use' excludes outliers without shifting run #",
     btn_export_svg: "Export Publication SVG",
     sec3_title: "Calibrated Results & Quality Control Report",
     btn_export_excel: "Export Excel Report (.xlsx)",
     tab_sequence: "Run-by-Run Sequence",
     tab_grouped: "Grouped Sample Summary",
-    result_empty: "Execute calibration above to view reduced isotopic ratios, propagated uncertainties, and elemental concentrations (%).",
+    result_empty: "Execute calibration above to view reduced isotopic ratios, propagated uncertainties, and Raw SD precision flags (▲).",
     grouped_empty: "Execute calibration above to generate grouped adjacent sample replicate summaries (Mean ± 1σ).",
     sec4_tag: "Methodology & Standard Principles",
     sec4_heading: "Statistical Principles & Analytical Guidelines",
@@ -222,14 +224,14 @@ const TRANSLATIONS = {
     ctx_clear_cells: "Clear Selected Cells",
     ctx_insert_row: "Insert 1 Blank Row Below",
     about_p1: "<strong>IsoCalib</strong> is an open-source web application for stable isotope geochemistry data reduction, designed to be free, transparent, and future-proof.",
-    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction (Auto/Manual), tin capsule blank subtraction, weight-based %C/%N and Atomic C/N quantification, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
+    about_p2: "It supports dual carbonate systems as well as EA-IRMS peak-area linearity correction (Auto/Manual), tin capsule blank subtraction, weight-based %C/%N and Atomic C/N quantification, Raw 1σ SD precision flagging, dynamic 3+ multi-point anchor calibration, non-destructive outlier exclusion, single-element water channels, and sulfur.",
     about_protocols_title: "Core Analytical Protocols:",
     about_p3: "All computations are executed 100% locally; no analytical data is ever transferred externally.",
     qs_modal_title: "/ Comprehensive User Protocol & SOP",
     qs_modal_subtitle: "Application presets, column mapping, outlier handling, and analytical QC guidelines",
     qs_recipe_title: "1. 30-Second Quick Application Recipes",
     qs_recipe_desc: "Configure the top toolbar controls based on your sample matrix and preparation protocol:",
-    qs_recipe_1: "• <strong>Carbonates / GasBench (CO₂ Dual):</strong> <code>CO mode</code> → <code>Area: Off</code> → <code>Drift: Linear or Bracketing</code>",
+    qs_recipe_1: "• <strong>Carbonates / GasBench (CO₂ Dual):</strong> <code>CO mode</code> → <code>Raw SD Limit: 0.100‰</code> → <code>Drift: Linear or Bracketing</code>",
     qs_recipe_2: "• <strong>EA-IRMS Bulk Organic (C/N + %Content):</strong> <code>CN mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
     qs_recipe_3: "• <strong>Acidified Marine Sediments (%TOC only):</strong> <code>EA_C mode</code> → <code>Area: Blank + Size Linearity</code> → <code>Slope: Auto-Fit</code>",
     qs_recipe_4: "• <strong>Water Hydrogen / Oxygen:</strong> <code>WATER_O</code> or <code>WATER_H</code> → <code>Scale: VSMOW</code> → <code>Area: Off</code>",
@@ -242,14 +244,33 @@ const TRANSLATIONS = {
     qs_step2_col_std: "• <strong>Standard Columns (Area: Off · 5 cols):</strong><br><code>Sample ID</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Raw δ¹⁸O</code> | <code>1σ SD</code>",
     qs_step2_col_area: "• <strong>Peak Area & Weight (Area: On · 8 cols):</strong><br><code>Sample ID</code> | <code>Weight (mg)</code> | <code>Area C</code> | <code>Raw δ¹³C</code> | <code>1σ SD</code> | <code>Area N</code> | <code>Raw δ¹⁵N</code> | <code>1σ SD</code>",
     qs_step2_naming: "<strong>[Mandatory Naming Rules]</strong><br>• <strong>Blank Subtraction</strong>: Row ID must include <code>BLANK</code>, <code>BLK</code>, or <code>TIN</code> for automatic background detection (enter 0 for weight).<br>• <strong>Replicate Grouping</strong>: Consecutive replicates like <code>SampleA_1</code>, <code>SampleA_2</code> are automatically aggregated into 'SampleA' with mean %C, %N, and Atomic C/N.",
-    qs_step3_title: "4. Outlier Handling & Calibration Pipeline (Section 02 & 03)",
-    qs_step3_desc: "For incomplete combustion, leaks, or distorted peaks, uncheck 'Use (✓)' rather than deleting the row. This excludes the run from WLS and drift regressions while preserving sequence time-series (#) integrity.",
-    qs_step3_desc2: "Click Run Calibration & QC to sequentially execute Blank subtraction → Linearity normalization → Time drift correction → Multi-point WLS & Elemental quantification. Then export a publication-ready workbook via Export Excel Report.",
+    qs_step3_title: "4. Raw SD Precision Flagging & Outliers (Section 02 & 03)",
+    qs_step3_desc: "When raw internal repeatability (Raw 1σ SD) exceeds your set threshold (default 0.100‰ for carbonates), the input cell highlights in red and a ▲ warning badge appears in the result table. Uncheck 'Use (✓)' to exclude noisy runs without shifting sequence indices (#).",
+    qs_step3_desc2: "Click Run Calibration & QC to sequentially execute Blank subtraction → Linearity normalization → Time drift correction → Multi-point WLS & Elemental quantification.",
     qs_footer_tip: "* Tip: Click 'Load Demo' anytime to populate 30+ realistic sample and standard runs matching your active mode."
   }
 };
 
 const CHANGELOG_DATA = [
+  {
+    version: "v1.4.2",
+    date: "2026-11",
+    badge: "Raw 1σ SD Precision Flagging",
+    title_ko: "기기 원시 반복 정밀도(Raw 1σ SD) 초과 실시간 셀 하이라이트 및 결과 경고 배지(▲) 탑재",
+    title_en: "Real-Time Raw 1σ SD Precision Limit Flagging & Result Warning Badges",
+    desc_ko: "검량선 불확도가 합성된 최종 ±1σ 외에, 기기 원시 측정 단계의 내부 정밀도(Raw 1σ SD)가 기준치(탄산염 기본 0.100‰)를 초과할 경우 입력 그리드와 결과 테이블, 엑셀 보고서에 즉각 경고 플래그를 표기합니다.",
+    desc_en: "Added configurable Raw 1σ SD precision limit (default 0.100‰ for carbonates) with instant red cell highlighting in the input grid and ▲ warning flags in result tables and Excel exports.",
+    changes_ko: [
+      "<strong>Raw SD Limit 임계치 조절 컨트롤 신설</strong>: Section 02 상단에서 분석 기준(기본 0.100‰)을 실시간으로 조정 가능.",
+      "<strong>입력 그리드 실시간 하이라이트</strong>: <code>1σ SD</code> 열 값이 기준치를 넘으면 셀 배경이 붉은색으로 강조되어 데이터 붙여넣기 즉시 이상 런 식별 가능.",
+      "<strong>결과 테이블 & 요약표 경고 배지(▲)</strong>: 합성 불확도와 별도로 원시 반복 정밀도 초과 여부를 배지 및 상세 툴팁으로 병기."
+    ],
+    changes_en: [
+      "<strong>Configurable Raw SD Limit Input</strong>: Adjust the raw internal precision threshold (default 0.100‰) directly above the sequence grid.",
+      "<strong>Live Input Grid Highlighting</strong>: Automatically highlights 1σ SD cells exceeding the threshold in red upon pasting or editing.",
+      "<strong>Result & Summary Warning Badges (▲)</strong>: Flags unstable raw runs alongside combined uncertainties in tables and Excel exports."
+    ]
+  },
   {
     version: "v1.4.1",
     date: "2026-11",
@@ -384,7 +405,7 @@ const CHANGELOG_DATA = [
 ];
 
 const PRESETS = {
-  // 1. 탄산염 / 가스벤치 (33개 풀 배치 시퀀스)
+  // 1. 탄산염 / 가스벤치 (33개 풀 배치 시퀀스 - Raw SD > 0.100‰ 테스트 런 포함)
   CO: {
     name: "Carbon & Oxygen (Carbonate / GasBench)",
     elements: [
@@ -409,7 +430,7 @@ const PRESETS = {
       ["Stalagmite-A_02", 26.805, 0.029, 11.795, 0.053],
       ["Stalagmite-A_03", 26.790, 0.030, 11.780, 0.055],
       ["Stalagmite-B_01", 24.085, 0.028, 15.290, 0.051],
-      ["Stalagmite-B_02", 24.075, 0.030, 15.275, 0.054],
+      ["Stalagmite-B_02", 24.075, 0.125, 15.275, 0.138],
       ["Stalagmite-B_03", 24.060, 0.027, 15.260, 0.050],
       ["NBS-18_2", 21.650, 0.033, -0.940, 0.058],
       ["IAEA-603_2", 29.230, 0.026, 19.890, 0.050],
@@ -423,7 +444,7 @@ const PRESETS = {
       ["NBS-18_3", 21.550, 0.031, -1.100, 0.056],
       ["IAEA-603_3", 29.130, 0.025, 19.730, 0.049],
       ["KDO_QC3", 25.260, 0.028, 7.190, 0.051],
-      ["Lake-Sed-E_01", 20.150, 0.035, 9.850, 0.062],
+      ["Lake-Sed-E_01", 20.150, 0.035, 9.850, 0.142],
       ["Lake-Sed-E_02", 20.138, 0.032, 9.835, 0.059],
       ["Lake-Sed-E_03", 20.125, 0.033, 9.820, 0.060],
       ["Cave-Drip-F_01", 27.420, 0.030, 14.150, 0.055],
@@ -438,7 +459,7 @@ const PRESETS = {
     ]
   },
 
-  // 2. 질산염 / 탈질균 (31개 시퀀스)
+  // 2. 질산염 / 탈질균
   NO: {
     name: "Nitrogen & Oxygen (Nitrate / Denitrifier)",
     elements: [
@@ -487,7 +508,7 @@ const PRESETS = {
     ]
   },
 
-  // 3. 물 수소 및 산소 듀얼 (31개 시퀀스)
+  // 3. 물 수소 및 산소 듀얼
   HO: {
     name: "Hydrogen & Oxygen (Water Dual)",
     elements: [
@@ -536,7 +557,7 @@ const PRESETS = {
     ]
   },
 
-  // 4. EA-IRMS 유기물 벌크 C & N (wt1: %C, wt2: %N 공인함량 및 33개 Weight 포함 시퀀스)
+  // 4. EA-IRMS 유기물 벌크 C & N
   CN: {
     name: "EA Organic Bulk C & N (Dual)",
     elements: [
@@ -588,7 +609,6 @@ const PRESETS = {
       ["Benthic-Fauna-G_2", -17.180, 0.080, 14.080, 0.125],
       ["USGS40_End", -25.940, 0.075, -4.200, 0.115]
     ],
-    // 8열 구조: [ID, Weight(mg), Area C, Raw δ13C, SD1, Area N, Raw δ15N, SD2]
     demoArea: [
       ["Tin-Blank_1", 0.000, 0.35, -28.500, 0.250, 0.18, -1.200, 0.350],
       ["Tin-Blank_2", 0.000, 0.33, -28.300, 0.240, 0.16, -1.100, 0.320],
@@ -626,7 +646,7 @@ const PRESETS = {
     ]
   },
 
-  // 5. EA 산처리 해양 퇴적물 유기탄소 단독 (%TOC 산출 지원)
+  // 5. EA 산처리 해양 퇴적물 유기탄소 단독
   EA_C: {
     name: "EA Organic Carbon only (Acidified Sediments)",
     elements: [{ key: "iso1", label: "δ¹³C", unit: "‰ VPDB", element: "C", molarMass: 12.011 }],
@@ -673,7 +693,6 @@ const PRESETS = {
       ["IAEA-CH-6_QC4", -9.940, 0.075],
       ["USGS40_Final", -25.910, 0.070]
     ],
-    // 5열 구조: [ID, Weight(mg), Area C, Raw δ13C, SD1]
     demoArea: [
       ["Tin-Blank_1", 0.000, 0.40, -28.600, 0.200],
       ["Tin-Blank_2", 0.000, 0.36, -28.400, 0.220],
@@ -709,7 +728,7 @@ const PRESETS = {
     ]
   },
 
-  // 6. EA 무처리 해양 퇴적물 총질소 단독 (%TN 산출 지원)
+  // 6. EA 무처리 해양 퇴적물 총질소 단독
   EA_N: {
     name: "EA Total Nitrogen only (Untreated Sediments)",
     elements: [{ key: "iso1", label: "δ¹⁵N", unit: "‰ Air", element: "N", molarMass: 14.007 }],
@@ -756,7 +775,6 @@ const PRESETS = {
       ["IAEA-N-1_QC4", 0.840, 0.110],
       ["USGS40_Final", -4.160, 0.105]
     ],
-    // 5열 구조: [ID, Weight(mg), Area N, Raw δ15N, SD1]
     demoArea: [
       ["Tin-Blank_1", 0.000, 0.22, -1.500, 0.300],
       ["USGS40_Small", 0.300, 5.10, -4.240, 0.115],
@@ -792,7 +810,7 @@ const PRESETS = {
     ]
   },
 
-  // 7. EA 유기물 C & H (31개 시퀀스)
+  // 7. EA 유기물 C & H
   CH: {
     name: "EA Organic Bulk C & H (Dual)",
     elements: [
@@ -844,7 +862,7 @@ const PRESETS = {
     ]
   },
 
-  // 8. 물 수소 단독 (31개 시퀀스)
+  // 8. 물 수소 단독
   WATER_H: {
     name: "Water Hydrogen (δD only)",
     elements: [{ key: "iso1", label: "δD", unit: "‰ VSMOW" }],
@@ -890,7 +908,7 @@ const PRESETS = {
     ]
   },
 
-  // 9. 물 산소 단독 (31개 시퀀스)
+  // 9. 물 산소 단독
   WATER_O: {
     name: "Water / Solid Oxygen (δ¹⁸O only)",
     elements: [{ key: "iso1", label: "δ¹⁸O", unit: "‰ VSMOW" }],
@@ -939,7 +957,7 @@ const PRESETS = {
     ]
   },
 
-  // 10. 황 동위원소 (31개 시퀀스)
+  // 10. 황 동위원소
   S: {
     name: "Sulfur Isotope (δ³⁴S)",
     elements: [{ key: "iso1", label: "δ³⁴S", unit: "‰ VCDT" }],
