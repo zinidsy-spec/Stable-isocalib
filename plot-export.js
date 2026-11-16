@@ -1,4 +1,4 @@
-/* plot-export.js - IsoCalib v1.4.1 Final Interactive Plots & ExcelJS Publication Export Engine */
+/* plot-export.js - IsoCalib v1.4.2 Final Interactive Plots & ExcelJS Publication Export Engine */
 
 function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   const container = document.getElementById(elemId);
@@ -237,7 +237,7 @@ if (btnExportExcel) {
       btnExportExcel.style.pointerEvents = 'none';
 
       const workbook = new ExcelJS.Workbook();
-      workbook.creator = 'IsoCalib v1.4.1 (Zenodo: 10.5281/zenodo.23239186)';
+      workbook.creator = 'IsoCalib v1.4.2 (Zenodo: 10.5281/zenodo.23239186)';
       workbook.created = new Date();
 
       // Sheet 1: Grouped Summary
@@ -261,21 +261,22 @@ if (btnExportExcel) {
       wsGrouped.columns = grpCols;
       groupedSummaryData.forEach(g => wsGrouped.addRow(g));
 
-      // Sheet 2: Sequence Runs
+      // Sheet 2: Sequence Runs (Raw_SD_Flag 포함)
       const wsSeq = workbook.addWorksheet('Sequence_Runs');
       const seqCols = [
         { header: 'Run_Order', key: 'runNumber', width: 12 },
         { header: 'Status', key: 'status', width: 14 },
+        { header: 'Raw_SD_Flag', key: 'rawSdFlag', width: 18 },
         { header: 'Sample_ID', key: 'id', width: 22 }
       ];
       if (hasWeight) seqCols.push({ header: 'Weight_mg', key: 'weight', width: 14 });
       seqCols.push({ header: `Area_${p.elements[0].label}`, key: 'area1', width: 14 });
       seqCols.push({ header: `Raw_${p.elements[0].label}`, key: 'raw1', width: 16 });
-      seqCols.push({ header: '1SD', key: 'sd1', width: 12 });
+      seqCols.push({ header: 'Raw_1SD', key: 'sd1', width: 12 });
       if (isDual) {
         seqCols.push({ header: `Area_${p.elements[1].label}`, key: 'area2', width: 14 });
         seqCols.push({ header: `Raw_${p.elements[1].label}`, key: 'raw2', width: 16 });
-        seqCols.push({ header: '1SD', key: 'sd2', width: 12 });
+        seqCols.push({ header: 'Raw_1SD', key: 'sd2', width: 12 });
       }
       seqCols.push({ header: `Calibrated_${p.elements[0].label} (${u1})`, key: 'cal1', width: 22 });
       seqCols.push({ header: 'Combined_1SD', key: 'propSd1', width: 16 });
@@ -294,7 +295,7 @@ if (btnExportExcel) {
       // Sheet 3: Figures & QC Diagnostics
       const wsFig = workbook.addWorksheet('Figures_and_QC');
       wsFig.columns = [{ width: 4 }, { width: 30 }, { width: 30 }, { width: 30 }];
-      wsFig.getCell('B2').value = `IsoCalib v1.4.1 Report (${currentMode} · AreaMode: ${areaMode})`;
+      wsFig.getCell('B2').value = `IsoCalib v1.4.2 Report (${currentMode} · AreaMode: ${areaMode})`;
       wsFig.getCell('B2').font = { size: 14, bold: true, color: { argb: 'FF111827' } };
       wsFig.getCell('B3').value = `Exported: ${new Date().toISOString()} | Permanent DOI: 10.5281/zenodo.23239186 | License: GNU GPL v3.0`;
       wsFig.getCell('B3').font = { size: 9, italic: true, color: { argb: 'FF6B7280' } };
@@ -331,7 +332,7 @@ if (btnExportExcel) {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `IsoCalib_v1.4.1_${currentMode}_Report.xlsx`;
+      a.download = `IsoCalib_v1.4.2_${currentMode}_Report.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
