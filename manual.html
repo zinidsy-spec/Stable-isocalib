@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>IsoCalib v1.4.3 | Comprehensive Standard Operating Procedure (SOP)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23111827'/><path d='M6 24 L10 24 L14 8 L18 24 L21 24 L23 15 L25 24 L26 24' fill='none' stroke='%2338bdf8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/><circle cx='14' cy='8' r='2' fill='%23fbfaf8'/><circle cx='23' cy='15' r='1.6' fill='%23fbfaf8'/></svg>">
+
+  <!-- Fonts & Tailwind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- MathJax -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+  <style>
+    html { scroll-behavior: smooth; }
+    .sop-section { scroll-margin-top: 5.5rem; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; }
+      .sop-container { max-width: 100% !important; padding: 0 !important; }
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between bg-[#fbfaf8] text-stone-800 selection:bg-stone-200">
+
+  <!-- Top Navigation -->
+  <header class="border-b border-[#e5e3dc] bg-[#fbfaf8]/95 backdrop-blur-md sticky top-0 z-40 no-print">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="font-brand text-xl font-bold tracking-wider text-stone-900 hover:text-stone-700 transition">ISOCALIB</a>
+        <span class="hidden sm:inline-block text-[11px] uppercase tracking-wider text-stone-500 font-mono font-bold">/ Laboratory SOP & User Manual</span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="window.print()" class="px-3 py-1.5 bg-white border border-[#c7c5bc] hover:border-stone-900 text-xs font-mono font-semibold text-stone-800 transition cursor-pointer flex items-center gap-1.5">
+          <span>🖨️</span>
+          <span class="lang-ko">인쇄 / PDF 저장</span>
+          <span class="lang-en hidden">Print / Save PDF</span>
+        </button>
+
+        <a href="index.html" class="px-3.5 py-1.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-mono font-bold uppercase tracking-wider transition">
+          <span class="lang-ko">← 분석기 돌아가기</span>
+          <span class="lang-en hidden">← Back to App</span>
+        </a>
+
+        <div class="inline-flex items-center border border-stone-300 p-0.5 bg-stone-100 font-mono text-[11px] font-bold">
+          <button id="btn-lang-ko" class="px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer">KO</button>
+          <button id="btn-lang-en" class="px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class="max-w-6xl mx-auto px-6 py-10 w-full flex-grow sop-container">
+    
+    <!-- Document Header -->
+    <div class="border-b-2 border-stone-900 pb-8 mb-10 space-y-3">
+      <div class="flex items-center space-x-2 font-mono text-xs">
+        <span class="px-2 py-0.5 bg-stone-900 text-white font-bold">SOP-ISOCALIB-1.4.3</span>
+        <span class="text-stone-500">Standard Operating Procedure · Zero-Server Geochemical Data Reduction</span>
+      </div>
+      <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight">
+        <span class="lang-ko">안정동위원소 정밀 데이터 리덕션 및 품질관리(QC) 실무 매뉴얼</span>
+        <span class="lang-en hidden">Standard Operating Procedure for Stable Isotope Data Reduction & QC</span>
+      </h1>
+      <p class="text-sm text-stone-600 font-light max-w-3xl leading-relaxed">
+        <span class="lang-ko">본 매뉴얼은 GasBench II, Kiel IV, EA-IRMS, CRDS 등 안정동위원소 질량분석기에서 생성된 원시 데이터를 IsoCalib 플랫폼에서 정산할 때 필요한 전처리 옵션 선택, 엑셀 열 매핑, 시료 ID 네이밍 규칙, 원시 정밀도 경고 판독 및 트러블슈팅 전 과정을 상세히 규정합니다.</span>
+        <span class="lang-en hidden">This manual defines the complete workflow for reducing raw stable isotope data from GasBench II, Kiel IV, EA-IRMS, and CRDS systems using IsoCalib—covering preprocessing recipes, Excel column mapping, Sample ID naming conventions, Raw SD precision alerts, and troubleshooting.</span>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      
+      <!-- Left Sticky Table of Contents -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-24 bg-white border border-[#c7c5bc] p-4 space-y-3 shadow-xs no-print">
+        <div class="font-mono text-[11px] font-bold uppercase tracking-wider text-stone-900 border-b border-stone-200 pb-2">
+          <span class="lang-ko">목차 (Table of Contents)</span>
+          <span class="lang-en hidden">Table of Contents</span>
+        </div>
+        <nav class="space-y-1.5 text-xs font-sans text-stone-600">
+          <a href="#sec-1" class="block py-1 hover:text-stone-900 hover:font-semibold transition">01. <span class="lang-ko">분석 계통별 마스터 레시피</span><span class="lang-en hidden">Master Setup Matrix</span></a>
+          <a href="#sec-2" class="block py-1 hover:text-stone-900 hover:font-semibold transition">02. <span class="lang-ko">표준물질 & 원소함량 설정</span><span class="lang-en hidden">Standards & %C/%N Setup</span></a>
+          <a href="#sec-3" class="block py-1 hover:text-stone-900 hover:font-semibold transition">03. <span class="lang-ko">전처리 4단계 연산 파이프라인</span><span class="lang-en hidden">4-Step Reduction Pipeline</span></a>
+          <a href="#sec-4" class="block py-1 hover:text-stone-900 hover:font-semibold transition">04. <span class="lang-ko">엑셀 복사 & 열 배치 규칙</span><span class="lang-en hidden">Excel Paste & Column Map</span></a>
+          <a href="#sec-5" class="block py-1 hover:text-stone-900 hover:font-semibold transition">05. <span class="lang-ko">시료 ID 네이밍 & 그룹화 원리</span><span class="lang-en hidden">Sample ID & Grouping Rules</span></a>
+          <a href="#sec-6" class="block py-1 hover:text-stone-900 hover:font-semibold transition">06. <span class="lang-ko">원시 SD 경고 & 앵커 보호 가드</span><span class="lang-en hidden">Raw SD Guard & Outliers</span></a>
+          <a href="#sec-7" class="block py-1 hover:text-stone-900 hover:font-semibold transition">07. <span class="lang-ko">MSWD & QC PASS 판별 기준</span><span class="lang-en hidden">MSWD & QC Criteria</span></a>
+          <a href="#sec-8" class="block py-1 hover:text-stone-900 hover:font-semibold transition">08. <span class="lang-ko">실전 트러블슈팅 FAQ</span><span class="lang-en hidden">Troubleshooting FAQ</span></a>
+        </nav>
+      </aside>
+
+      <!-- Right Detailed SOP Body -->
+      <main class="lg:col-span-9 space-y-12 text-xs sm:text-[13px] text-stone-700 leading-relaxed">
+
+        <!-- SECTION 1 -->
+        <section id="sec-1" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">01. 분석 장비·전처리 계통별 마스터 세팅 매트릭스</span>
+              <span class="lang-en hidden">01. Master Setup Matrix by Analytical Line</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">QUICK CONFIGURATION</span>
+          </div>
+          <p class="lang-ko">어떤 옵션을 켜고 꺼야 할지 헷갈릴 때는 아래 표에서 현재 수행 중인 실험 유형을 찾아 상단 툴바를 동일하게 맞추세요.</p>
+          <p class="lang-en hidden">Match the top toolbar controls to the exact row corresponding to your analytical line and sample matrix below.</p>
+
+          <div class="overflow-x-auto border border-stone-300">
+            <table class="w-full text-left font-mono text-[11px]">
+              <thead class="bg-[#f0ede6] text-stone-900 border-b border-stone-300">
+                <tr>
+                  <th class="p-2.5 border-r border-stone-300">Workflow / Instrument</th>
+                  <th class="p-2.5 border-r border-stone-300">Isotope System</th>
+                  <th class="p-2.5 border-r border-stone-300">Area / Blank</th>
+                  <th class="p-2.5 border-r border-stone-300">Slope Method</th>
+                  <th class="p-2.5 border-r border-stone-300">Drift</th>
+                  <th class="p-2.5">Raw SD Limit</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-stone-200 bg-white">
+                <tr>
+                  <td class="p-2.5 border-r border-stone-200 font-sans font-semibold text-stone-900">탄산염 / 석순 (Kiel IV, GasBench II)</td>
+                  <td class="p-2.5 border-r border-stone-200 text-sky-900 font-bold">1. Carbon & Oxygen (CO)</td>
+                  <td class="p-2.5 border-r border-stone-200">Off</td>
+                  <td class="p-2.5 border-r border-stone-200 text-stone-400">—</td>
+                  <td class="p-2.5 border-r border-stone-200">Linear / Bracketing</td>
+                  <td class="p-2.5 font-bold text-rose-800">0.100 ‰</td>
+                </tr>
+                <tr class="bg-[#fcfbf9]">
+                  <td class="p-2.5 border-r border-stone-200 font-sans font-semibold text-stone-900">유기물 벌크 C/N + 원소함량 (EA-IRMS)</td>
+                  <td class="p-2.5 border-r border-stone-200 text-emerald-900 font-bold">4. EA Organic Bulk C & N</td>
+                  <td class="p-2.5 border-r border-stone-200 font-bold">Blank + Linearity</td>
+                  <td class="p-2.5 border-r border-stone-200">Auto-Fit</td>
+                  <td class="p-2.5 border-r border-stone-200">None / Linear</td>
+                  <td class="p-2.5">0.150 ‰</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border-r border-stone-200 font-sans font-semibold text-stone-900">산처리 퇴적물 유기탄소 단독 (%TOC)</td>
+                  <td class="p-2.5 border-r border-stone-200 text-emerald-900 font-bold">5. EA Organic Carbon only</td>
+                  <td class="p-2.5 border-r border-stone-200 font-bold">Blank + Linearity</td>
+                  <td class="p-2.5 border-r border-stone-200">Auto-Fit</td>
+                  <td class="p-2.5 border-r border-stone-200">None</td>
+                  <td class="p-2.5">0.100 ‰</td>
+                </tr>
+                <tr class="bg-[#fcfbf9]">
+                  <td class="p-2.5 border-r border-stone-200 font-sans font-semibold text-stone-900">무처리 퇴적물 총질소 단독 (%TN)</td>
+                  <td class="p-2.5 border-r border-stone-200 text-emerald-900 font-bold">6. EA Total Nitrogen only</td>
+                  <td class="p-2.5 border-r border-stone-200 font-bold">Blank + Linearity</td>
+                  <td class="p-2.5 border-r border-stone-200">Auto-Fit</td>
+                  <td class="p-2.5 border-r border-stone-200">None</td>
+                  <td class="p-2.5">0.150 ‰</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border-r border-stone-200 font-sans font-semibold text-stone-900">물 / 강수 / 지하수 (CRDS, TC-EA)</td>
+                  <td class="p-2.5 border-r border-stone-200 text-indigo-900 font-bold">3. Hydrogen & Oxygen (HO)</td>
+                  <td class="p-2.5 border-r border-stone-200">Off</td>
+                  <td class="p-2.5 border-r border-stone-200 text-stone-400">—</td>
+                  <td class="p-2.5 border-r border-stone-200">Bracketing</td>
+                  <td class="p-2.5">1.500 ‰</td>
+                </tr>
+                <tr class="bg-[#fcfbf9]">
+                  <td class="p-2.5 border-r border-stone-200 font-sans font-semibold text-stone-900">황산염 / 황화광물 (EA-IRMS)</td>
+                  <td class="p-2.5 border-r border-stone-200 text-amber-900 font-bold">10. Sulfur Isotope (S)</td>
+                  <td class="p-2.5 border-r border-stone-200">Off / Linearity</td>
+                  <td class="p-2.5 border-r border-stone-200">Auto-Fit</td>
+                  <td class="p-2.5 border-r border-stone-200">Linear</td>
+                  <td class="p-2.5">0.200 ‰</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="sec-2" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">02. 표준물질(Anchor & QC) 구성 및 원소함량(%C, %N) 설정 규칙</span>
+              <span class="lang-en hidden">02. Reference Standards & Elemental %C/%N Setup</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">SECTION 01 UI</span>
+          </div>
+          
+          <div class="space-y-3 lang-ko">
+            <p><strong>① 2점 검량 vs 3점 이상 다중 앵커 (<code>+ Add Anchor</code>):</strong> 기본적으로 앵커 01(저값)과 앵커 02(고값)의 2점 앵커가 제공됩니다. 측정 범위가 넓거나 비선형성이 우려될 때는 상단의 <code>+ 앵커 추가</code> 버튼을 눌러 중간값 표준물질(예: NBS-19, IAEA-CO-8)을 추가하면 전체 표준물질에 대한 가중 선형 회귀(WLS)가 자동으로 확장됩니다.</p>
+            <p><strong>② 표준물질 이름 매칭 원리:</strong> 표준물질 카드 우측 상단 입력칸의 이름(예: <code>NBS-18</code>)은 시퀀스 표의 Sample ID와 <strong>대소문자 및 하이픈(-)·공백을 무시하고 부분 일치</strong>로 매칭됩니다. 즉, <code>NBS-18</code>으로 설정하면 시퀀스의 <code>NBS-18_1</code>, <code>nbs18-02</code>, <code>NBS18_End</code>가 모두 자동으로 인식됩니다.</p>
+            <p><strong>③ 표준물질 공인 원소 함량(<code>%C Content</code>, <code>%N Content</code>):</strong> <code>Area / Blank</code> 모드를 켜면 각 표준물질 카드 하단에 원소 함량 입력칸이 나타납니다. 표준물질의 질량과 피크 면적 비율로부터 기기의 <strong>응답 계수(Response Factor, $RF$ in Vs/mg)</strong>를 역산하여 미지 시료의 <code>%C</code>, <code>%N</code>, <code>Atomic C/N</code>을 계산합니다. 만약 표준물질 중 함량을 모르는 것이 있다면 해당 칸을 비워두면 입력된 표준물질들만 평균 내어 $RF$를 계산합니다.</p>
+            <p><strong>④ 커스텀 프리셋 저장 (<code>Reference Presets</code>):</strong> 실험실 자체 내부 표준물질(In-house Standard, 예: <code>KDO</code>, <code>YS-Carb</code>) 세트를 입력한 뒤 이름을 적고 <code>Save</code>를 누르면 브라우저에 영구 저장되어 다음 접속 시 <code>Load</code>만으로 즉시 불러올 수 있습니다.</p>
+          </div>
+
+          <div class="space-y-3 lang-en hidden">
+            <p><strong>① 2-Point vs. Multi-Point Anchoring (<code>+ Add Anchor</code>):</strong> Two anchor cards (low and high endpoints) are loaded by default. Click <code>+ Add Anchor</code> to insert intermediate reference materials (e.g., NBS-19, IAEA-CO-8); the York-Ludwig WLS solver dynamically scales to $N$ points.</p>
+            <p><strong>② Case- & Symbol-Insensitive Matching:</strong> Standard names entered in Section 01 (e.g., <code>NBS-18</code>) match any run ID containing those alphanumeric characters (e.g., <code>NBS-18_1</code>, <code>nbs18-02</code>).</p>
+            <p><strong>③ Certified Elemental Content (<code>%C</code>, <code>%N</code>):</strong> When Area mode is enabled, enter certified weight percentages for your standards. IsoCalib computes the instrument Response Factor ($RF$, Vs/mg) from standards with valid weights and certified percentages to quantify unknown sample <code>%C</code>, <code>%N</code>, and <code>Atomic C/N</code>.</p>
+            <p><strong>④ Custom Presets:</strong> Save your laboratory's in-house standard suites using the Preset Bar for one-click retrieval across sessions.</p>
+          </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="sec-3" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">03. 전처리 보정 옵션의 작동 순서와 선택 기준</span>
+              <span class="lang-en hidden">03. 4-Stage Sequential Preprocessing Pipeline</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">MATHEMATICAL ORDER</span>
+          </div>
+
+          <div class="bg-[#fbfaf8] border border-stone-300 p-4 font-mono text-xs text-stone-900 text-center">
+            <span class="lang-ko">[1단계] 캡슐 블랭크 차감 → [2단계] 피크 면적 선형성 정규화 → [3단계] 시퀀스 시간 표류 보정 → [4단계] 다중 앵커 WLS 스케일 교정</span>
+            <span class="lang-en hidden">[Stage 1] Blank Subtraction → [Stage 2] Area Linearity → [Stage 3] Time Drift → [Stage 4] Multi-Point WLS Scale Anchoring</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            <div class="border border-stone-200 p-4 space-y-2 bg-[#fcfbf9]">
+              <h3 class="font-mono font-bold text-stone-900 text-xs uppercase">A. Area / Blank 4가지 모드 비교</h3>
+              <ul class="list-disc list-inside space-y-1.5 text-xs text-stone-700 lang-ko">
+                <li><strong>Off:</strong> 피크 면적과 무게 열을 숨깁니다. 탄산염·물 분석의 표준 설정입니다.</li>
+                <li><strong>Size Linearity:</strong> 빈 캡슐 오염은 무시할 수준이나, 시료 무게 편차로 인해 피크 크기(Area)가 커질수록 $\delta$값이 한쪽으로 기우는 이온원 비선형성만 보정합니다.</li>
+                <li><strong>Blank Only:</strong> 극미량 시료에서 빈 주석 캡슐(<code>BLANK</code>)의 바탕값 기여분만 질량 보존 법칙으로 빼줍니다.</li>
+                <li><strong>Blank + Size Linearity:</strong> EA-IRMS 유기물·퇴적물 분석의 권장 모드입니다. 블랭크 차감 후 면적 선형성을 보정하고 <code>%C, %N</code> 함량까지 산출합니다.</li>
+              </ul>
+              <ul class="list-disc list-inside space-y-1.5 text-xs text-stone-700 lang-en hidden">
+                <li><strong>Off:</strong> Hides Weight and Area columns. Standard for carbonates and waters.</li>
+                <li><strong>Size Linearity:</strong> Corrects ion-source linearity effects across varying peak areas without blank subtraction.</li>
+                <li><strong>Blank Only:</strong> Applies mass-balance subtraction using average <code>BLANK</code>/<code>BLK</code> runs.</li>
+                <li><strong>Blank + Size Linearity:</strong> Recommended for EA-IRMS; sequentially applies blank subtraction, area normalization, and %C/%N quantification.</li>
+              </ul>
+            </div>
+
+            <div class="border border-stone-200 p-4 space-y-2 bg-[#fcfbf9]">
+              <h3 class="font-mono font-bold text-stone-900 text-xs uppercase">B. Slope Method & Drift 선택 기준</h3>
+              <ul class="list-disc list-inside space-y-1.5 text-xs text-stone-700 lang-ko">
+                <li><strong>Auto-Fit (Slope):</strong> 시퀀스 내에 <code>Monitor</code> 표준물질(예: USGS40)을 0.2mg, 0.5mg, 1.0mg처럼 무게를 다르게 여러 번 쟀을 때, 그 면적 대비 $\delta$ 기울기($k$)를 자동 회귀 산출합니다.</li>
+                <li><strong>Manual Input (Slope):</strong> 크기별 표준물질을 넣지 않았을 때, 실험실에서 미리 확보한 선형성 계수($k$, <code>‰/Vs</code>)를 직접 입력합니다. Figure 3·4에 빨간색 파선으로 기준 기울기가 표시됩니다.</li>
+                <li><strong>Linear vs Anchor Bracketing (Drift):</strong> 분석 내내 기기 값이 한 방향으로 서서히 밀리면 <code>Linear</code>를, 중간에 기기 상태가 출렁이면 <code>Anchor Bracketing</code>(구간별 선형 보간)을 선택합니다.</li>
+              </ul>
+              <ul class="list-disc list-inside space-y-1.5 text-xs text-stone-700 lang-en hidden">
+                <li><strong>Auto-Fit (Slope):</strong> Automatically regresses the $\delta$ vs. Area slope ($k$) from size-series runs of the selected Monitor standard.</li>
+                <li><strong>Manual Input (Slope):</strong> Enter a pre-validated laboratory linearity factor ($k$, <code>‰/Vs</code>); plotted as a red dashed line on Figures 3 & 4.</li>
+                <li><strong>Linear vs. Bracketing (Drift):</strong> Use <code>Linear</code> for monotonic baseline drift, or <code>Anchor Bracketing</code> for piecewise spline interpolation between bracketing standards.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section id="sec-4" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">04. 엑셀 데이터 복사 & 열 배치 완벽 가이드</span>
+              <span class="lang-en hidden">04. Excel Data Pasting & Column Mapping</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">SECTION 02 GRID</span>
+          </div>
+
+          <p class="lang-ko">엑셀 시트에서 아래 열 순서대로 데이터를 블록 지정하여 복사(<code>Ctrl + C</code>)한 뒤, 웹 페이지 표의 <strong>01번 행 <code>Sample / Std ID</code> 칸</strong>을 클릭하고 <code>Ctrl + V</code>를 누르세요. (행이 부족하면 자동으로 늘어납니다.)</p>
+          <p class="lang-en hidden">Select and copy (<code>Ctrl + C</code>) your spreadsheet columns in the exact order shown below, click the top-left <code>Sample / Std ID</code> cell in Row 01, and press <code>Ctrl + V</code>.</p>
+
+          <div class="space-y-3 font-mono text-xs">
+            <div class="p-3 bg-[#fbfaf8] border border-stone-300">
+              <div class="font-bold text-stone-900 mb-1">1) Area / Blank = Off (Dual Element: CO, NO, HO — 5 Columns)</div>
+              <div class="grid grid-cols-5 gap-1 text-center text-[11px]">
+                <div class="bg-stone-900 text-white py-1.5">1. Sample ID</div>
+                <div class="bg-white border border-stone-300 py-1.5">2. Raw δ₁</div>
+                <div class="bg-white border border-stone-300 py-1.5">3. 1σ SD₁</div>
+                <div class="bg-white border border-stone-300 py-1.5">4. Raw δ₂</div>
+                <div class="bg-white border border-stone-300 py-1.5">5. 1σ SD₂</div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-[#fbfaf8] border border-stone-300">
+              <div class="font-bold text-sky-950 mb-1">2) Area / Blank = On (Dual Element: CN, CH — 8 Columns)</div>
+              <div class="grid grid-cols-8 gap-1 text-center text-[10px]">
+                <div class="bg-stone-900 text-white py-1.5">1. ID</div>
+                <div class="bg-amber-100 border border-amber-300 text-amber-950 font-bold py-1.5">2. Weight(mg)</div>
+                <div class="bg-sky-100 border border-sky-300 text-sky-950 py-1.5">3. Area₁</div>
+                <div class="bg-white border border-stone-300 py-1.5">4. Raw δ₁</div>
+                <div class="bg-white border border-stone-300 py-1.5">5. 1σ SD₁</div>
+                <div class="bg-sky-100 border border-sky-300 text-sky-950 py-1.5">6. Area₂</div>
+                <div class="bg-white border border-stone-300 py-1.5">7. Raw δ₂</div>
+                <div class="bg-white border border-stone-300 py-1.5">8. 1σ SD₂</div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-[#fbfaf8] border border-stone-300">
+              <div class="font-bold text-emerald-950 mb-1">3) Area / Blank = On (Single Element: EA_C, EA_N — 5 Columns)</div>
+              <div class="grid grid-cols-5 gap-1 text-center text-[11px]">
+                <div class="bg-stone-900 text-white py-1.5">1. Sample ID</div>
+                <div class="bg-amber-100 border border-amber-300 text-amber-950 font-bold py-1.5">2. Weight(mg)</div>
+                <div class="bg-sky-100 border border-sky-300 text-sky-950 py-1.5">3. Area</div>
+                <div class="bg-white border border-stone-300 py-1.5">4. Raw δ</div>
+                <div class="bg-white border border-stone-300 py-1.5">5. 1σ SD</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section id="sec-5" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">05. 시료 ID 필수 네이밍 규칙 및 자동 그룹화 알고리즘</span>
+              <span class="lang-en hidden">05. Sample ID Naming & Auto-Grouping Rules</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">ID PARSER LOGIC</span>
+          </div>
+
+          <div class="space-y-3 lang-ko">
+            <p><strong>① 주석 캡슐 블랭크 인식 키워드:</strong> 빈 캡슐 바탕값 런은 시료명에 <code>BLANK</code>, <code>BLK</code>, 또는 <code>TIN</code>이 대소문자 무관하게 반드시 포함되어야 합니다 (예: <code>Tin-Blank_01</code>, <code>BLK1</code>). 블랭크 행은 검량선 피팅과 미지 시료 평균에서 자동 제외되며, 블랭크 차감 평균값 산출에만 사용됩니다.</p>
+            <p><strong>② 연속 반복 시료 자동 그룹화 (<code>Grouped Sample Summary</code>):</strong> 엔진은 시료명 끝의 구분자(<code>-</code>, <code>_</code>, <code>.</code>, <code>#</code>, 공백) 뒤에 붙은 <strong>1자리 숫자(<code>1~9</code>, <code>01~09</code>) 또는 알파벳 1글자(<code>a~z</code>)</strong>를 자동으로 떼어내어 기본 시료명(Base ID)을 추출합니다.</p>
+            <div class="bg-stone-100 p-3 font-mono text-xs space-y-1">
+              <div>• <code>Stalagmite-A_01</code>, <code>Stalagmite-A_02</code>, <code>Stalagmite-A_03</code> → <strong>Stalagmite-A (n = 3)</strong> 로 자동 통합</div>
+              <div>• <code>Core-01_a</code>, <code>Core-01_b</code> → <strong>Core-01 (n = 2)</strong> 로 자동 통합</div>
+              <div class="text-rose-800">* 주의: 같은 시료라도 중간에 표준물질(예: NBS-18)이나 다른 시료가 끼어 있으면 별개의 그룹으로 분리됩니다 (시퀀스 배치 순서 보존).</div>
+            </div>
+          </div>
+
+          <div class="space-y-3 lang-en hidden">
+            <p><strong>① Blank Detection Keywords:</strong> Blank runs must include <code>BLANK</code>, <code>BLK</code>, or <code>TIN</code> (case-insensitive) in their Sample ID (e.g., <code>Tin-Blank_1</code>, <code>BLK_02</code>) with weight set to <code>0</code>.</p>
+            <p><strong>② Adjacent Replicate Grouping:</strong> Trailing replicate suffixes (<code>_1</code>, <code>-02</code>, <code>.a</code>) are automatically stripped to aggregate consecutive unknown replicates into a single group mean ($\text{Mean} \pm 1\sigma$).</p>
+            <div class="bg-stone-100 p-3 font-mono text-xs space-y-1">
+              <div>• <code>Stalagmite-A_01</code>, <code>Stalagmite-A_02</code>, <code>Stalagmite-A_03</code> → Grouped as <strong>Stalagmite-A (n = 3)</strong></div>
+              <div class="text-rose-800">* Note: Replicates separated by standards or other samples are intentionally kept as distinct sequence blocks.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section id="sec-6" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">06. 원시 1σ SD 정밀도 경고 & 앵커 보호 가드 운용법</span>
+              <span class="lang-en hidden">06. Raw 1σ SD Precision Guard & Outlier Exclusion</span>
+            </h2>
+            <span class="font-mono text-[10px] text-rose-700 font-bold">QUALITY GUARD</span>
+          </div>
+
+          <div class="space-y-3 lang-ko">
+            <p><strong>① 원시 반복 정밀도 경고 (<code>Raw SD Limit</code>):</strong> 탄산염($\delta^{13}\text{C}, \delta^{18}\text{O}$) 분석에서는 기기 내부 펄스 반복 편차(Raw 1σ SD)가 <strong><code>0.100‰</code>을 초과하면 반응 불완전이나 리크가 발생한 불량 데이터</strong>로 간주합니다. 데이터를 붙여넣는 즉시 임계치를 넘은 <code>1σ SD</code> 셀은 <strong>붉은색 배경으로 강조</strong>되며, 결과 표의 합성 불확도(<code>± 1σ</code>) 옆에 <strong><code>▲ Raw 0.125</code></strong> 배지가 함께 표기됩니다.</p>
+            <p><strong>② 앵커 표준물질 정밀도 경고 및 원클릭 자동 제외:</strong> 검량선 회귀의 기준이 되는 앵커 표준물질(예: NBS-18, IAEA-603) 자체의 Raw 1σ SD가 기준치를 초과하면, 검량선 기울기 전체가 왜곡됩니다. 이때 결과 배너 최상단에 긴급 경고창이 뜨며, 우측의 <strong><code>[불안정 앵커 자동 제외]</code></strong> 버튼을 누르면 해당 표준물질 런만 체크 해제되고 WLS 회귀선이 즉시 재계산됩니다.</p>
+            <p><strong>③ 절대 행 삭제 대신 <code>Use (✓)</code> 체크 해제 사용:</strong> 이상치를 제거할 때 <code>Delete Row</code>로 행을 지워버리면 시퀀스 런 번호(<code>#</code>)와 시간 간격이 당겨져 시간 표류(Drift) 보정이 왜곡됩니다. 반드시 좌측의 <strong><code>Use (✓)</code> 체크박스를 해제</strong>하여 시간축 위치는 보존한 채 계산에서만 제외하세요.</p>
+          </div>
+
+          <div class="space-y-3 lang-en hidden">
+            <p><strong>① Raw Repeatability Flagging (<code>Raw SD Limit</code>):</strong> For carbonates, internal pulse repeatability (Raw 1σ SD) exceeding <strong><code>0.100‰</code></strong> indicates incomplete acid digestion or vial leakage. Exceeding cells highlight in red immediately upon pasting, and result rows display a <strong><code>▲ Raw 0.125</code></strong> warning badge next to the combined uncertainty.</p>
+            <p><strong>② Anchor Standard Precision Alert:</strong> If an active anchor standard exceeds the Raw SD Limit, a critical alert banner appears with a one-click <strong><code>Auto-Exclude Noisy Anchors</code></strong> button to protect the WLS slope (enforcing a minimum of 2 remaining active anchor runs).</p>
+            <p><strong>③ Non-Destructive Outlier Toggle (<code>Use ✓</code>):</strong> Always uncheck <code>Use (✓)</code> rather than deleting rows so sequence run indices (<code>#</code>) and time-drift intervals remain intact.</p>
+          </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section id="sec-7" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">07. 통계 지표(MSWD) 해독 및 QC PASS 판정 기준</span>
+              <span class="lang-en hidden">07. Interpreting MSWD & QC Pass/Warning Criteria</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">STATISTICAL QC</span>
+          </div>
+
+          <div class="space-y-3 lang-ko">
+            <p><strong>• MSWD (Mean Square of Weighted Deviates, 축약 카이제곱):</strong> 다중 앵커 표준물질의 산포가 각 런의 측정 오차($1\sigma$) 범위 내에서 직선에 얼마나 잘 들어맞는지 나타냅니다. <strong><code>1.0</code>에 가까울수록 이상적(Optimal)</strong>이며, <strong><code>2.5</code>를 초과하면 <code>High Scatter</code> 경고</strong>가 표시됩니다. 이는 기기 드리프트 보정이 누락되었거나 표준물질 중 하나가 오염되었음을 의미합니다.</p>
+            <p><strong>• 원소별 QC 허용 오차 기준 (정확도 Bias 및 반복 정밀도 1σ):</strong></p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-center text-xs pt-1">
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ¹³C</strong><br>± 0.08 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ¹⁸O</strong><br>± 0.12 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ¹⁵N</strong><br>± 0.15 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ³⁴S</strong><br>± 0.20 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δD (²H)</strong><br>± 1.50 ‰</div>
+            </div>
+          </div>
+
+          <div class="space-y-3 lang-en hidden">
+            <p><strong>• MSWD (Reduced $\chi^2$):</strong> Values near <strong><code>1.0</code></strong> indicate optimal agreement between anchor residuals and analytical uncertainties. Values <strong><code>&gt; 2.5</code></strong> trigger a <code>High Scatter</code> flag, signaling unmodeled drift, size effects, or a compromised standard run.</p>
+            <p><strong>• Element-Specific QC Tolerances (Accuracy Bias & Replicate 1σ SD):</strong></p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-center text-xs pt-1">
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ¹³C</strong><br>± 0.08 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ¹⁸O</strong><br>± 0.12 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ¹⁵N</strong><br>± 0.15 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δ³⁴S</strong><br>± 0.20 ‰</div>
+              <div class="bg-[#fbfaf8] border border-stone-300 p-2"><strong>δD (²H)</strong><br>± 1.50 ‰</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section id="sec-8" class="sop-section bg-white border border-[#d1cfc7] p-6 space-y-4 shadow-xs">
+          <div class="border-b border-stone-200 pb-2 flex items-baseline justify-between">
+            <h2 class="font-serif-title text-xl font-semibold text-stone-900">
+              <span class="lang-ko">08. 실전 트러블슈팅 FAQ (자주 겪는 오류 해결)</span>
+              <span class="lang-en hidden">08. Practical Troubleshooting FAQ</span>
+            </h2>
+            <span class="font-mono text-[10px] text-stone-400">DIAGNOSTICS</span>
+          </div>
+
+          <div class="space-y-4 divide-y divide-stone-200">
+            <div class="pt-2 space-y-1">
+              <h4 class="font-bold text-stone-900">Q1. "At least 2 active anchor standard runs are required" 경고창이 뜨면서 계산이 안 됩니다.</h4>
+              <p class="text-stone-600 lang-ko"><strong>원인 및 해결:</strong> Section 01에 입력한 표준물질 이름(예: <code>NBS-18</code>)과 시퀀스 표의 Sample ID 철자가 일치하지 않거나, 표준물질 런의 <code>Use (✓)</code> 체크가 모두 해제되어 활성화된 앵커가 2개 미만인 상태입니다. Section 01의 표준물질 이름을 시퀀스 표의 이름과 일치시키세요.</p>
+              <p class="text-stone-600 lang-en hidden"><strong>Solution:</strong> Ensure the standard names in Section 01 match the alphanumeric strings in your sequence Sample IDs and at least 2 anchor runs have <code>Use (✓)</code> checked.</p>
+            </div>
+
+            <div class="pt-3 space-y-1">
+              <h4 class="font-bold text-stone-900">Q2. EA-IRMS 모드에서 <code>%C</code>, <code>%N</code>, <code>Atomic C/N</code> 칸이 모두 <code>-</code> 로만 나옵니다.</h4>
+              <p class="text-stone-600 lang-ko"><strong>원인 및 해결:</strong> 다음 3가지 중 하나가 빠진 경우입니다. ① 상단 <code>Area / Blank</code>가 <code>Off</code>로 되어 있음 → <code>Blank + Size Linearity</code>로 변경하세요. ② 입력 표의 <code>Weight (mg)</code> 열에 시료 무게가 입력되지 않았음. ③ Section 01 표준물질 카드 하단의 <code>%C Content</code>, <code>%N Content</code> 칸이 비어 있음.</p>
+              <p class="text-stone-600 lang-en hidden"><strong>Solution:</strong> Verify that (1) <code>Area / Blank</code> is enabled, (2) <code>Weight (mg)</code> values are populated in the sequence grid, and (3) certified <code>%C</code>/<code>%N</code> values are entered in Section 01 standard cards.</p>
+            </div>
+
+            <div class="pt-3 space-y-1">
+              <h4 class="font-bold text-stone-900">Q3. <code>Grouped Sample Summary</code> 탭에서 같은 시료 3개가 하나로 안 묶이고 따로 나옵니다.</h4>
+              <p class="text-stone-600 lang-ko"><strong>원인 및 해결:</strong> 시료명 뒤에 두 자리 이상 숫자(예: <code>Sample_10</code>)가 붙었거나 구분자 없이 붙어 있으면(예: <code>Sample1</code>) 별도 시료로 인식합니다. 반복 측정 시료는 <code>Sample_01</code>, <code>Sample_02</code>, <code>Sample_03</code> 또는 <code>Sample-a</code>, <code>Sample-b</code> 형태로 표기해 주세요.</p>
+              <p class="text-stone-600 lang-en hidden"><strong>Solution:</strong> Use single-digit or single-letter replicate suffixes preceded by a delimiter (e.g., <code>Sample_01</code>, <code>Sample_02</code>, or <code>Sample-a</code>).</p>
+            </div>
+
+            <div class="pt-3 space-y-1">
+              <h4 class="font-bold text-stone-900">Q4. 탄산염 분석인데 <code>δ¹⁸O</code> 값이 VPDB가 아니라 VSMOW로 나옵니다.</h4>
+              <p class="text-stone-600 lang-ko"><strong>원인 및 해결:</strong> Section 01 우측 툴바의 <code>δ¹⁸O Scale</code> 드롭다운이 <code>VSMOW</code>로 선택되어 있는지 확인하고 <code>VPDB</code>로 변경하면 표준물질 참값과 결과값이 즉시 VPDB 스케일로 환산됩니다.</p>
+              <p class="text-stone-600 lang-en hidden"><strong>Solution:</strong> Switch the <code>δ¹⁸O Scale</code> selector in Section 01 between <code>VPDB</code> and <code>VSMOW</code>; reference values convert automatically.</p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#e5e3dc] py-8 text-xs text-stone-500 font-serif-title mt-12">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="font-sans font-medium text-stone-700">IsoCalib v1.4.3 — Standard Operating Procedure (DOI: 10.5281/zenodo.23239186)</p>
+      <a href="index.html" class="font-mono text-xs font-bold text-stone-900 underline no-print">Return to IsoCalib Platform →</a>
+    </div>
+  </footer>
+
+  <script>
+    let sopLang = localStorage.getItem('isocalib_lang') || (navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en');
+    function applySopLang(lang) {
+      sopLang = lang;
+      localStorage.setItem('isocalib_lang', lang);
+      document.querySelectorAll('.lang-ko').forEach(el => el.classList.toggle('hidden', lang !== 'ko'));
+      document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('hidden', lang !== 'en'));
+      const btnKo = document.getElementById('btn-lang-ko');
+      const btnEn = document.getElementById('btn-lang-en');
+      if (lang === 'ko') {
+        btnKo.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+      } else {
+        btnEn.className = 'px-2 py-0.5 bg-stone-900 text-white transition cursor-pointer';
+        btnKo.className = 'px-2 py-0.5 text-stone-600 hover:text-stone-900 transition cursor-pointer';
+      }
+      if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise();
+    }
+    document.getElementById('btn-lang-ko').addEventListener('click', () => applySopLang('ko'));
+    document.getElementById('btn-lang-en').addEventListener('click', () => applySopLang('en'));
+    window.addEventListener('DOMContentLoaded', () => applySopLang(sopLang));
+  </script>
+</body>
+</html>
