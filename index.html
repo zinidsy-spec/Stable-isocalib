@@ -53,9 +53,9 @@
       <div class="flex items-center space-x-5 whitespace-nowrap">
         <nav class="flex items-center space-x-4 sm:space-x-5 text-xs text-stone-600 font-sans">
           
-         <a href="manual.html" target="_blank" rel="noopener noreferrer" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1" data-i18n="nav_quickstart">
-  Quick Start
-</a>
+          <a href="manual.html" target="_blank" rel="noopener noreferrer" class="hover:text-stone-900 transition font-semibold text-stone-800 cursor-pointer flex items-center gap-1" data-i18n="nav_quickstart">
+            Quick Start
+          </a>
           
           <span class="text-stone-300">·</span>
 
@@ -83,7 +83,7 @@
                 </button>
                 <button id="btn-open-changelog" class="w-full text-left px-3.5 py-1.5 hover:bg-stone-50 transition cursor-pointer flex justify-between items-center" data-i18n="nav_changelog">
                   <span>Changelog</span>
-                  <span class="font-mono text-[10px] text-stone-400">v1.4.2</span>
+                  <span class="font-mono text-[10px] text-stone-400">v1.4.3</span>
                 </button>
               </div>
               <div class="py-1">
@@ -133,13 +133,13 @@
       <div class="max-w-2xl space-y-2">
         <div class="flex items-center space-x-2">
           <p class="text-xs font-bold uppercase tracking-widest text-stone-500 font-mono" data-i18n="hero_badge">Precision Data Reduction & QC Protocol</p>
-          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.4.2</span>
+          <span class="px-1.5 py-0.5 bg-stone-200 text-stone-800 rounded font-mono text-[10px] font-bold">v1.4.3</span>
         </div>
         <h1 class="font-serif-title text-3xl sm:text-4xl font-normal text-stone-900 leading-tight" data-i18n="hero_title">
           Stable Isotope Calibration
         </h1>
         <p class="text-sm text-stone-600 leading-relaxed font-light" data-i18n="hero_desc">
-          Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, sample weight (mg) based %C/%N & Atomic C/N quantification, multi-point WLS regression, and uncertainty propagation.
+          Performs sequence drift correction, EA-IRMS peak area linearity (Auto/Manual) & blank subtraction, sample weight (mg) based %C/%N & Atomic C/N quantification, multi-point WLS regression, and Raw SD precision flagging.
         </p>
       </div>
 
@@ -573,8 +573,8 @@
       <div id="citation" class="space-y-3 pt-2">
         <div class="flex items-baseline justify-between border-b border-stone-200 pb-2">
           <h4 class="font-mono font-bold text-stone-900 uppercase tracking-wider text-xs" data-i18n="cite_title">Citation & Permanent Archive</h4>
-          <a href="https://doi.org/10.5281/zenodo.23239186" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 text-xs font-mono text-emerald-800 hover:text-emerald-950 font-semibold underline underline-offset-2">
-            <span>DOI: 10.5281/zenodo.23239186</span>
+          <a href="https://doi.org/10.5281/zenodo.24296623" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 text-xs font-mono text-emerald-800 hover:text-emerald-950 font-semibold underline underline-offset-2">
+            <span>DOI: 10.5281/zenodo.24296623</span>
           </a>
         </div>
         <p class="text-xs text-stone-600 font-light leading-relaxed" data-i18n="cite_desc">
@@ -582,7 +582,7 @@
         </p>
         
         <div class="bg-white border border-[#d1cfc7] p-4 font-mono text-[11px] text-stone-800 select-all leading-relaxed space-y-2 shadow-xs">
-          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.4.2). Zenodo. https://doi.org/10.5281/zenodo.23239186</p>
+          <p>Yang, Y.-S. (2026). <em>IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Sequence Drift Correction, and Uncertainty Propagation</em> (v1.4.3). Zenodo. https://doi.org/10.5281/zenodo.24296623</p>
           <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-500 font-sans">
             <span>Licensed under GNU General Public License v3.0 (GPL-3.0)</span>
             <span class="font-mono text-stone-400">Click text to select all</span>
@@ -594,82 +594,13 @@
 
   </main>
 
-  <!-- Quick Start SOP Modal -->
-  <div id="quickstart-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white border border-[#c7c5bc] max-w-3xl w-full max-h-[88vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
-      <div class="flex justify-between items-start border-b border-stone-200 pb-4">
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="font-brand text-xl font-bold text-stone-900">ISOCALIB</span>
-            <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold" data-i18n="qs_modal_title">/ User Protocol</span>
-          </div>
-          <p class="text-xs text-stone-500 pt-1" data-i18n="qs_modal_subtitle">Standard Operating Procedure for Precision Isotope Reduction</p>
-        </div>
-        <button id="btn-close-quickstart" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
-      </div>
-
-      <div class="space-y-5 text-xs text-stone-700 leading-relaxed font-light">
-        <div class="bg-[#fcfbf9] border border-stone-300 p-4 space-y-2.5">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_recipe_title">1. Quick Presets</span>
-            <span class="font-mono text-[10px] text-stone-400">30s Setup</span>
-          </div>
-          <p class="text-[11px] text-stone-600" data-i18n="qs_recipe_desc"></p>
-          <div class="space-y-1.5 font-sans text-[11px] text-stone-800 bg-white p-3 border border-stone-200">
-            <div data-i18n="qs_recipe_1"></div>
-            <div data-i18n="qs_recipe_2"></div>
-            <div data-i18n="qs_recipe_3"></div>
-            <div data-i18n="qs_recipe_4"></div>
-          </div>
-        </div>
-
-        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step1_title">2. Standards & Preprocessing</span>
-            <span class="font-mono text-[10px] text-stone-400">01 SETUP</span>
-          </div>
-          <p data-i18n="qs_step1_desc"></p>
-          <div class="text-[11px] font-sans text-stone-700 bg-white p-2.5 border border-stone-200 space-y-1" data-i18n="qs_step1_area_rules"></div>
-          <div class="text-[11px] font-sans text-stone-700 bg-white p-2.5 border border-stone-200 space-y-1" data-i18n="qs_step1_slope_rules"></div>
-        </div>
-
-        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step2_title">3. Data Pasting & Columns</span>
-            <span class="font-mono text-[10px] text-stone-400">02 INPUT</span>
-          </div>
-          <p data-i18n="qs_step2_desc"></p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] font-mono">
-            <div class="bg-white p-2.5 border border-stone-200" data-i18n="qs_step2_col_std"></div>
-            <div class="bg-white p-2.5 border border-stone-200" data-i18n="qs_step2_col_area"></div>
-          </div>
-          <div class="text-[11px] font-sans text-stone-700 bg-white p-2.5 border border-stone-200" data-i18n="qs_step2_naming"></div>
-        </div>
-
-        <div class="bg-[#fbfaf8] border border-stone-200 p-4 space-y-2">
-          <div class="flex items-center justify-between border-b border-stone-200 pb-1">
-            <span class="font-mono font-bold text-stone-900 text-xs uppercase tracking-wider" data-i18n="qs_step3_title">4. Outliers & Execution</span>
-            <span class="font-mono text-[10px] text-stone-400">03 REDUCE</span>
-          </div>
-          <p data-i18n="qs_step3_desc"></p>
-          <p data-i18n="qs_step3_desc2"></p>
-        </div>
-      </div>
-
-      <div class="border-t border-stone-200 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[11px] font-mono text-stone-500">
-        <span data-i18n="qs_footer_tip">* Tip: Click 'Load Demo' to test an active sequence immediately.</span>
-        <button id="btn-quickstart-close-bottom" class="px-4 py-1.5 bg-stone-900 text-white font-semibold hover:bg-stone-800 transition cursor-pointer">Close</button>
-      </div>
-    </div>
-  </div>
-
   <!-- About IsoCalib Modal -->
   <div id="about-modal" class="hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white border border-[#c7c5bc] max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
       <div class="flex justify-between items-start border-b border-stone-200 pb-4">
         <div>
           <span class="font-brand text-xl font-bold tracking-wider text-stone-900">ISOCALIB</span>
-          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.4.2 (Release 2026) · DOI: 10.5281/zenodo.23239186</span>
+          <span class="font-mono text-xs font-bold text-stone-500 block pt-0.5">Version 1.4.3 (Release 2026) · DOI: 10.5281/zenodo.24296623</span>
         </div>
         <button id="btn-close-about" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
       </div>
@@ -746,7 +677,7 @@
         <p class="font-sans font-medium text-stone-700">IsoCalib Project — Environmental & Isotope Geochemistry Research Group</p>
         <p class="font-mono text-[11px] text-stone-500">
           Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer" class="underline hover:text-stone-900">GNU GPL v3.0</a> · 
-          DOI: <a href="https://doi.org/10.5281/zenodo.23239186" target="_blank" rel="noopener noreferrer" class="underline hover:text-stone-900 font-semibold text-emerald-800">10.5281/zenodo.23239186</a>
+          DOI: <a href="https://doi.org/10.5281/zenodo.24296623" target="_blank" rel="noopener noreferrer" class="underline hover:text-stone-900 font-semibold text-emerald-800">10.5281/zenodo.24296623</a>
         </p>
       </div>
       <p class="font-mono text-[11px] text-stone-400">Engineered for Academic Open Science</p>
