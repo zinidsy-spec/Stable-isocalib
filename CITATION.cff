@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: "IsoCalib: A Zero-Server Web Platform for Stable Isotope Calibration, Drift Correction, Elemental Quantification, and Uncertainty Propagation"
+message: "If you use this software in your research, please cite it using the metadata from this file."
+type: software
+authors:
+  - family-names: "Yang"
+    given-names: "Yun-Seok"
+    affiliation: "IBS Center for Climate Physics, Pusan National University"
+version: 1.4.3
+date-released: 2026-11-17
+doi: 10.5281/zenodo.24296623
+url: "https://zinidsy-spec.github.io/Stable-isocalib/"
+repository-code: "https://github.com/zinidsy-spec/Stable-isocalib"
+license: GPL-3.0
+keywords:
+  - stable isotopes
+  - geochemistry
+  - IRMS
+  - EA-IRMS
+  - data reduction
+  - uncertainty propagation
+  - paleoclimate
