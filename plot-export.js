@@ -1,4 +1,4 @@
-/* plot-export.js - IsoCalib v1.4.2 Final Interactive Plots & ExcelJS Publication Export Engine */
+/* plot-export.js - IsoCalib v1.4.3 Final Interactive Plots & ExcelJS Publication Export Engine */
 
 function drawPlot(elemId, title, pts, reg, xTitle, yTitle) {
   const container = document.getElementById(elemId);
@@ -237,7 +237,7 @@ if (btnExportExcel) {
       btnExportExcel.style.pointerEvents = 'none';
 
       const workbook = new ExcelJS.Workbook();
-      workbook.creator = 'IsoCalib v1.4.2 (Zenodo: 10.5281/zenodo.23239186)';
+      workbook.creator = 'IsoCalib v1.4.3 (Zenodo: 10.5281/zenodo.24296623)';
       workbook.created = new Date();
 
       // Sheet 1: Grouped Summary
@@ -295,9 +295,9 @@ if (btnExportExcel) {
       // Sheet 3: Figures & QC Diagnostics
       const wsFig = workbook.addWorksheet('Figures_and_QC');
       wsFig.columns = [{ width: 4 }, { width: 30 }, { width: 30 }, { width: 30 }];
-      wsFig.getCell('B2').value = `IsoCalib v1.4.2 Report (${currentMode} · AreaMode: ${areaMode})`;
+      wsFig.getCell('B2').value = `IsoCalib v1.4.3 Report (${currentMode} · AreaMode: ${areaMode})`;
       wsFig.getCell('B2').font = { size: 14, bold: true, color: { argb: 'FF111827' } };
-      wsFig.getCell('B3').value = `Exported: ${new Date().toISOString()} | Permanent DOI: 10.5281/zenodo.23239186 | License: GNU GPL v3.0`;
+      wsFig.getCell('B3').value = `Exported: ${new Date().toISOString()} | Permanent DOI: 10.5281/zenodo.24296623 | License: GNU GPL v3.0`;
       wsFig.getCell('B3').font = { size: 9, italic: true, color: { argb: 'FF6B7280' } };
 
       let curRow = 5;
@@ -332,7 +332,7 @@ if (btnExportExcel) {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `IsoCalib_v1.4.2_${currentMode}_Report.xlsx`;
+      a.download = `IsoCalib_v1.4.3_${currentMode}_Report.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
