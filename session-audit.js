@@ -1,4 +1,4 @@
-/* session-audit.js - IsoCalib v1.5.0-alpha Session Snapshot (.isocalib) & Outlier Audit Trail */
+/* session-audit.js - IsoCalib v1.5.0 Session Snapshot (.isocalib) & Outlier Audit Trail (Unified Editorial Style) */
 
 (function () {
   window.sequenceAuditNotes = {};
@@ -9,7 +9,6 @@
     const tr = document.querySelectorAll('#grid-body tr')[rowIdx];
     if (!tr) return isEn ? 'Manual exclusion' : '수동 제외';
 
-    // Raw SD 임계치 초과 셀 감지 (배경색 클래스 또는 실제 수치 비교)
     const limit = parseFloat(document.getElementById('raw-sd-limit')?.value) || 0.100;
     const tds = tr.querySelectorAll('td');
     let exceeded = false;
@@ -28,7 +27,7 @@
     return isEn ? 'Excluded: Analytical outlier' : '제외: 분석 이상치 판정';
   }
 
-  // 1. UI 툴바에 Save / Load .isocalib 버튼 및 Audit Note 메뉴 주입
+  // 1. 기존 툴바 버튼들과 동일한 에디토리얼 스타일(bg-white border-[#c7c5bc])로 통합
   function injectSessionControls() {
     const btnCalc = document.getElementById('btn-calc');
     if (!btnCalc || document.getElementById('btn-save-session')) return;
@@ -43,18 +42,20 @@
     fileInput.className = 'hidden';
     document.body.appendChild(fileInput);
 
+    // Save Session 버튼 (무채색 화이트 + Crisp Stone 테두리 통일)
     const btnSave = document.createElement('button');
     btnSave.id = 'btn-save-session';
     btnSave.type = 'button';
-    btnSave.className = 'px-3 py-2 text-xs font-mono font-semibold text-emerald-950 bg-emerald-50/70 border border-emerald-300 hover:border-emerald-700 transition shadow-xs cursor-pointer flex items-center gap-1';
-    btnSave.innerHTML = `<span>💾</span><span>${isEn ? 'Save .isocalib' : '세션 저장'}</span>`;
-    btnSave.title = isEn ? 'Save full calibration setup, data, and audit notes as .isocalib file' : '현재 검량 설정, 시퀀스 데이터, 이상치 사유를 .isocalib 파일로 저장';
+    btnSave.className = 'px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-xs cursor-pointer';
+    btnSave.textContent = isEn ? 'Save Session' : '세션 저장';
+    btnSave.title = isEn ? 'Save calibration setup, sequence data, and audit notes (.isocalib)' : '현재 검량 설정, 시퀀스 데이터, 이상치 사유를 .isocalib 파일로 저장';
 
+    // Load Session 버튼
     const btnLoad = document.createElement('button');
     btnLoad.id = 'btn-load-session';
     btnLoad.type = 'button';
-    btnLoad.className = 'px-3 py-2 text-xs font-mono font-semibold text-sky-950 bg-sky-50/70 border border-sky-300 hover:border-sky-700 transition shadow-xs cursor-pointer flex items-center gap-1';
-    btnLoad.innerHTML = `<span>📂</span><span>${isEn ? 'Load .isocalib' : '세션 불러오기'}</span>`;
+    btnLoad.className = 'px-3.5 py-2 text-xs font-semibold text-stone-800 bg-white border border-[#c7c5bc] hover:border-stone-900 transition shadow-xs cursor-pointer';
+    btnLoad.textContent = isEn ? 'Load Session' : '세션 불러오기';
     btnLoad.title = isEn ? 'Restore a saved .isocalib project snapshot' : '저장된 .isocalib 프로젝트 파일 불러오기';
 
     toolbar.insertBefore(btnLoad, btnCalc);
@@ -67,7 +68,7 @@
       const btnAudit = document.createElement('button');
       btnAudit.id = 'ctx-edit-audit';
       btnAudit.type = 'button';
-      btnAudit.className = 'w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-sky-900 font-medium';
+      btnAudit.className = 'w-full text-left px-3.5 py-1.5 hover:bg-stone-100 flex justify-between items-center text-stone-700 font-medium';
       btnAudit.innerHTML = `<span>${isEn ? 'Edit Outlier Audit Note' : '이상치 사유 메모 편집'}</span><span class="font-mono text-[10px] text-stone-400">Note</span>`;
       ctxToggle.insertAdjacentElement('afterend', btnAudit);
 
@@ -82,7 +83,6 @@
     fileInput.addEventListener('change', handleSessionFileSelect);
   }
 
-  // 셀에서 배지 텍스트를 제외한 순수 텍스트만 추출
   function getCleanCellText(td) {
     const clone = td.cloneNode(true);
     clone.querySelectorAll('.audit-note-badge').forEach(b => b.remove());
@@ -90,7 +90,6 @@
     return inp ? inp.value : clone.innerText.trim();
   }
 
-  // 2. 현재 시퀀스 그리드 행 데이터 추출
   function captureGridRows() {
     const rows = [];
     document.querySelectorAll('#grid-body tr').forEach((tr, idx) => {
@@ -115,7 +114,6 @@
     return rows;
   }
 
-  // 3. 표준물질 카드 상태 추출
   function captureStandardsState() {
     const anchors = [];
     const qc = {};
@@ -131,13 +129,12 @@
     return { anchors, qc };
   }
 
-  // 4. .isocalib JSON 다운로드
   function exportIsocalibSession() {
     const modeEl = document.getElementById('isotope-preset');
     const mode = modeEl ? modeEl.value : 'CO';
     const payload = {
       format: 'IsoCalib-Session',
-      schemaVersion: '1.5.0-alpha',
+      schemaVersion: '1.5.0',
       exportedAt: new Date().toISOString(),
       doi: '10.5281/zenodo.24296623',
       config: {
@@ -167,7 +164,6 @@
     document.body.removeChild(a);
   }
 
-  // 5. .isocalib JSON 파일 복원
   function handleSessionFileSelect(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -293,13 +289,11 @@
     reader.readAsText(file);
   }
 
-  // 6. 행 클릭 추적 & Use 체크박스 해제 시 자동 감사 메모 기록
   function bindAuditListeners() {
     const gridBody = document.getElementById('grid-body');
     if (!gridBody || gridBody.dataset.auditBound) return;
     gridBody.dataset.auditBound = 'true';
 
-    // 클릭/우클릭한 행 인덱스 기억
     gridBody.addEventListener('mousedown', (e) => {
       const tr = e.target.closest('tr');
       if (tr) {
@@ -326,7 +320,6 @@
     });
   }
 
-  // 특정 행(rowIdx)에 대한 사유 입력 프롬프트 실행
   function promptAuditNoteForRow(targetIdx) {
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
     const gridBody = document.getElementById('grid-body');
@@ -370,25 +363,24 @@
     }
   }
 
-  // 배지 렌더링 (ID 셀 텍스트가 오염되지 않도록 순수 텍스트 복원 후 1개만 부착)
+  // 모노크롬 에디토리얼 스타일 배지 ([Note])
   function renderAuditBadges() {
     const trs = document.querySelectorAll('#grid-body tr');
     trs.forEach((tr, idx) => {
       const idCell = tr.querySelectorAll('td')[2];
       if (!idCell) return;
 
-      // 기존 배지 전부 제거 및 잔여 텍스트 정리
       idCell.querySelectorAll('.audit-note-badge').forEach(b => b.remove());
-      if (idCell.innerText.includes('📝 Note')) {
-        idCell.innerText = idCell.innerText.replace(/📝\s*Note/g, '').trim();
+      if (idCell.innerText.includes('[Note]') || idCell.innerText.includes('📝 Note')) {
+        idCell.innerText = idCell.innerText.replace(/\[Note\]|📝\s*Note/g, '').trim();
       }
 
       const note = window.sequenceAuditNotes[idx];
       if (note) {
         const badge = document.createElement('span');
-        badge.className = 'audit-note-badge ml-1.5 px-1.5 py-0.2 bg-amber-100 border border-amber-300 text-amber-900 font-mono text-[9px] rounded cursor-pointer inline-block select-none';
+        badge.className = 'audit-note-badge ml-1.5 px-1.5 py-0.2 bg-stone-100 border border-stone-300 text-stone-700 hover:border-stone-900 font-mono text-[9px] cursor-pointer inline-block select-none transition';
         badge.contentEditable = 'false';
-        badge.textContent = '📝 Note';
+        badge.textContent = '[Note]';
         badge.title = note;
         badge.addEventListener('mousedown', (ev) => {
           ev.stopPropagation();
