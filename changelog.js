@@ -155,3 +155,45 @@ window.CHANGELOG_DATA = [
     ]
   }
 ];
+
+function renderFullChangelogModal() {
+  const container = document.getElementById('changelog-content');
+  if (!container || !Array.isArray(window.CHANGELOG_DATA)) return;
+
+  const isEn = (typeof currentLang !== 'undefined' && currentLang === 'en') || localStorage.getItem('isocalib_lang') === 'en';
+
+  container.innerHTML = window.CHANGELOG_DATA.map((item, idx) => {
+    const isLatest = idx === 0;
+    const title = isEn ? item.title_en : item.title_ko;
+    const desc = isEn ? item.desc_en : item.desc_ko;
+    const changes = isEn ? item.changes_en : item.changes_ko;
+
+    return `
+      <div class="relative pl-5 border-l-2 ${isLatest ? 'border-stone-900' : 'border-stone-300'} space-y-2">
+        <span class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full ${isLatest ? 'bg-stone-900' : 'bg-stone-400'}"></span>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-sm text-stone-900">${item.version}</span>
+            <span class="px-2 py-0.5 text-[10px] font-mono font-semibold border ${isLatest ? 'bg-stone-900 text-white border-stone-900' : 'bg-stone-100 text-stone-700 border-stone-300'}">${item.badge}</span>
+          </div>
+          <span class="font-mono text-[11px] text-stone-400">${item.date}</span>
+        </div>
+        <h4 class="font-serif-title text-base font-medium text-stone-900">${title}</h4>
+        <p class="text-xs text-stone-600 leading-relaxed">${desc}</p>
+        <ul class="list-disc list-inside space-y-1 text-xs text-stone-700 pt-1">
+          ${changes.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }).join('');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderFullChangelogModal();
+  const btnOpen = document.getElementById('btn-open-changelog');
+  if (btnOpen) {
+    btnOpen.addEventListener('click', () => {
+      setTimeout(renderFullChangelogModal, 0);
+    });
+  }
+});
