@@ -291,7 +291,10 @@ if (btnExportExcel) {
         if (currentMode === 'CN') seqCols.push({ header: 'Atomic_CN', key: 'atomicCN', width: 14 });
       }
       wsSeq.columns = seqCols;
-      sequenceExportData.forEach(r => wsSeq.addRow(r));
+      sequenceExportData.forEach(r => {
+        const note = (window.sequenceAuditNotes && window.sequenceAuditNotes[r.runNumber - 1]) || '';
+        wsSeq.addRow({ ...r, auditNote: note });
+      });
 
       // Sheet 3: Figures & QC Diagnostics
       const wsFig = workbook.addWorksheet('Figures_and_QC');
