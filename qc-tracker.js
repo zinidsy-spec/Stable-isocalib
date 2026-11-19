@@ -21,7 +21,7 @@
     }
   }
 
-  // 1. 기존 상단 내비게이션과 100% 동일한 타이포그래피로 메뉴 통합
+  // 1. 상단 내비게이션에 메뉴 추가 및 대시보드 모달 생성
   function injectQcTrackerUI() {
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
 
@@ -43,21 +43,19 @@
       btnNav.addEventListener('click', openQcTrackerModal);
     }
 
-    // 기존 About / Changelog 모달과 동일한 스타일의 대시보드 모달 생성
     if (!document.getElementById('qc-tracker-modal')) {
       const modal = document.createElement('div');
       modal.id = 'qc-tracker-modal';
       modal.className = 'hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4';
       modal.innerHTML = `
         <div class="bg-white border border-[#c7c5bc] max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
-          <!-- Header -->
           <div class="flex flex-wrap justify-between items-start border-b border-stone-200 pb-4 gap-4">
             <div>
               <div class="flex items-center space-x-2">
                 <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
                 <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold">/ Long-Term QC Control Chart (Shewhart)</span>
               </div>
-              <p class="text-xs text-stone-500 pt-1" id="qc-modal-subtitle">
+              <p class="text-xs text-stone-500 pt-1">
                 장기 내부 표준물질(KDO, B2151, USGS45 등) 누적 정밀도 및 ±2σ 경고 / ±3σ 조치 한계 모니터링
               </p>
             </div>
@@ -73,7 +71,6 @@
             </div>
           </div>
 
-          <!-- Filter & Instrument Bar -->
           <div class="bg-[#fbfaf8] border border-[#c7c5bc] p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
             <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center space-x-1.5">
@@ -95,10 +92,8 @@
             </div>
           </div>
 
-          <!-- Summary Stats Cards -->
           <div id="qc-stats-cards" class="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-xs"></div>
 
-          <!-- Shewhart Control Charts -->
           <div class="space-y-4">
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2">
               <div class="flex justify-between items-center px-1">
@@ -119,7 +114,6 @@
             </div>
           </div>
 
-          <!-- Cumulative Log Table -->
           <div class="space-y-2">
             <div class="font-mono text-xs font-bold uppercase tracking-wider text-stone-800">Cumulative QC Run History Log</div>
             <div class="border border-[#c7c5bc] bg-white overflow-x-auto max-h-[260px]">
@@ -176,67 +170,120 @@
     }
   }
 
-  // 2. Section 03 QC 배너 하단에 동일한 에디토리얼 버튼 추가
+  // 2. Section 03 QC 배너가 보일 때마다 하단에 누적 기록 버튼 강제 주입
+  function ensureQcBannerActionBar() {
+    const banner = document.getElementById('qc-summary-banner');
+    if (!banner || banner.classList.contains('hidden')) return;
+    if (document.getElementById('qc-log-action-bar')) return;
+
+    const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
+    const bar = document.createElement('div');
+    bar.id = 'qc-log-action-bar';
+    bar.className = 'pt-2.5 mt-2 border-t border-stone-300/70 flex flex-wrap items-center justify-between gap-2 text-xs font-mono';
+    bar.innerHTML = `
+      <div class="flex items-center space-x-2">
+        <label for="qc-instrument-tag" class="font-bold text-stone-800">${isEn ? 'Instrument:' : '장비/라인:'}</label>
+        <select id="qc-instrument-tag" class="bg-white border border-[#c7c5bc] px-2 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer">
+          <option value="MAT253-Kiel">MAT253 + Kiel IV</option>
+          <option value="MAT253-GasBench">MAT253 + GasBench II</option>
+          <option value="DeltaQ-EA">Delta Q + EA-IRMS</option>
+          <option value="CRDS-Water">CRDS (L2130-i / L2140-i)</option>
+          <option value="Lab-IRMS">General IRMS</option>
+        </select>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="btn-log-current-qc" type="button" class="px-3 py-1 bg-stone-900 hover:bg-stone-800 text-white font-semibold transition cursor-pointer">
+          ${isEn ? '+ Log QC Run' : '+ 장기 QC DB에 기록'}
+        </button>
+        <button id="btn-view-qc-chart-inline" type="button" class="px-3 py-1 bg-white border border-[#c7c5bc] hover:border-stone-900 text-stone-800 font-semibold transition cursor-pointer">
+          ${isEn ? 'Open Control Chart' : '장기 QC 관리도'}
+        </button>
+      </div>
+    `;
+    banner.appendChild(bar);
+
+    const instSelect = document.getElementById('qc-instrument-tag');
+    const sysVal = document.getElementById('isotope-preset')?.value || 'CO';
+    if (sysVal === 'CO') instSelect.value = 'MAT253-Kiel';
+    else if (['CN', 'EA_C', 'EA_N', 'CH', 'S'].includes(sysVal)) instSelect.value = 'DeltaQ-EA';
+    else if (['HO', 'WATER_H', 'WATER_O'].includes(sysVal)) instSelect.value = 'CRDS-Water';
+
+    document.getElementById('btn-log-current-qc').addEventListener('click', recordCurrentQcRun);
+    document.getElementById('btn-view-qc-chart-inline').addEventListener('click', openQcTrackerModal);
+  }
+
   function observeQcBanner() {
     const banner = document.getElementById('qc-summary-banner');
     if (!banner) return;
 
-    const injectButton = () => {
-      if (banner.classList.contains('hidden')) return;
-      if (!window.lastQcSummaryReport) return;
-      if (document.getElementById('qc-log-action-bar')) return;
+    const observer = new MutationObserver(() => ensureQcBannerActionBar());
+    observer.observe(banner, { attributes: true, childList: true, subtree: true });
 
-      const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
-      const bar = document.createElement('div');
-      bar.id = 'qc-log-action-bar';
-      bar.className = 'pt-2.5 mt-2 border-t border-stone-300/70 flex flex-wrap items-center justify-between gap-2 text-xs font-mono';
-      bar.innerHTML = `
-        <div class="flex items-center space-x-2">
-          <label for="qc-instrument-tag" class="font-bold text-stone-800">${isEn ? 'Instrument:' : '장비/라인:'}</label>
-          <select id="qc-instrument-tag" class="bg-white border border-[#c7c5bc] px-2 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer">
-            <option value="MAT253-Kiel">MAT253 + Kiel IV</option>
-            <option value="MAT253-GasBench">MAT253 + GasBench II</option>
-            <option value="DeltaQ-EA">Delta Q + EA-IRMS</option>
-            <option value="CRDS-Water">CRDS (L2130-i / L2140-i)</option>
-            <option value="Lab-IRMS">General IRMS</option>
-          </select>
-        </div>
-        <div class="flex items-center space-x-2">
-          <button id="btn-log-current-qc" type="button" class="px-3 py-1 bg-stone-900 hover:bg-stone-800 text-white font-semibold transition cursor-pointer">
-            ${isEn ? '+ Log QC Run' : '+ 장기 QC DB에 기록'}
-          </button>
-          <button id="btn-view-qc-chart-inline" type="button" class="px-3 py-1 bg-white border border-[#c7c5bc] hover:border-stone-900 text-stone-800 font-semibold transition cursor-pointer">
-            ${isEn ? 'Open Control Chart' : '장기 QC 관리도'}
-          </button>
-        </div>
-      `;
-      banner.appendChild(bar);
+    // 실행 버튼 클릭 직후에도 보장
+    const btnCalc = document.getElementById('btn-calc');
+    if (btnCalc) {
+      btnCalc.addEventListener('click', () => setTimeout(ensureQcBannerActionBar, 60));
+    }
+    ensureQcBannerActionBar();
+  }
 
-      const instSelect = document.getElementById('qc-instrument-tag');
-      if (typeof currentMode !== 'undefined') {
-        if (currentMode === 'CO') instSelect.value = 'MAT253-Kiel';
-        else if (['CN', 'EA_C', 'EA_N', 'CH', 'S'].includes(currentMode)) instSelect.value = 'DeltaQ-EA';
-        else if (['HO', 'WATER_H', 'WATER_O'].includes(currentMode)) instSelect.value = 'CRDS-Water';
-      }
+  // 3. 전역 객체 또는 배너 DOM 텍스트에서 현재 QC 결과를 추출하여 저장
+  function extractCurrentQcData() {
+    // 1순위: 전역 변수 직접 참조
+    if (typeof lastQcSummaryReport !== 'undefined' && lastQcSummaryReport) {
+      return lastQcSummaryReport;
+    }
+    if (window.lastQcSummaryReport) {
+      return window.lastQcSummaryReport;
+    }
 
-      document.getElementById('btn-log-current-qc').addEventListener('click', recordCurrentQcRun);
-      document.getElementById('btn-view-qc-chart-inline').addEventListener('click', openQcTrackerModal);
+    // 2순위: 화면에 렌더링된 QC 배너 텍스트에서 직접 파싱
+    const banner = document.getElementById('qc-summary-banner');
+    if (!banner || banner.classList.contains('hidden')) return null;
+
+    const text = banner.innerText;
+    const countMatch = text.match(/(\d+)\s*(?:회|active)/i);
+    const nameMatch = text.match(/\[([A-Za-z0-9._-]+)\]/);
+    const means = [...text.matchAll(/(?:평균 보정값|Mean Calibrated):\s*([+-]?\d+\.\d+)/g)].map(m => parseFloat(m[1]));
+    const biases = [...text.matchAll(/(?:정확도 편차|Bias):\s*([+-]?\d+\.\d+)/g)].map(m => parseFloat(m[1]));
+    const sds = [...text.matchAll(/(?:반복 정밀도|Rep 1σ):\s*±?\s*(\d+\.\d+)/g)].map(m => parseFloat(m[1]));
+
+    if (means.length === 0) return null;
+
+    // QC 카드에서 표준물질 이름 및 공인값 읽기
+    const cards = document.querySelectorAll('#std-input-container > div');
+    const qcCard = cards[cards.length - 1];
+    const qcInputs = qcCard ? qcCard.querySelectorAll('input') : [];
+    const qcStdName = qcInputs[0]?.value?.trim() || (nameMatch ? nameMatch[1] : 'QC-Std');
+    const true1 = parseFloat(qcInputs[1]?.value);
+    const true2 = parseFloat(qcInputs[2]?.value);
+
+    return {
+      qcName: qcStdName,
+      count: countMatch ? parseInt(countMatch[1], 10) : 1,
+      status: text.includes('PASS') ? 'PASS' : 'WARN',
+      true1: !isNaN(true1) ? true1 : (means[0] - (biases[0] || 0)),
+      mean1: means[0],
+      bias1: biases[0] || 0,
+      sdQc1: sds[0] || 0,
+      true2: means.length > 1 ? (!isNaN(true2) ? true2 : (means[1] - (biases[1] || 0))) : null,
+      mean2: means.length > 1 ? means[1] : null,
+      bias2: biases.length > 1 ? biases[1] : null,
+      sdQc2: sds.length > 1 ? sds[1] : null
     };
-
-    const observer = new MutationObserver(() => injectButton());
-    observer.observe(banner, { attributes: true, childList: true, attributeFilter: ['class'] });
   }
 
   function recordCurrentQcRun() {
-    const rep = window.lastQcSummaryReport;
+    const rep = extractCurrentQcData();
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
     if (!rep) {
-      alert(isEn ? 'No active QC summary available to log.' : '기록할 유효한 QC 결과가 없습니다.');
+      alert(isEn ? 'No active QC summary available to log. Please run calibration first.' : '기록할 유효한 QC 결과가 없습니다. 먼저 검량을 실행해 주세요.');
       return;
     }
 
     const inst = document.getElementById('qc-instrument-tag')?.value || 'Lab-IRMS';
-    const preset = typeof PRESETS !== 'undefined' ? PRESETS[currentMode] : null;
+    const sysVal = document.getElementById('isotope-preset')?.value || 'CO';
+    const preset = typeof PRESETS !== 'undefined' ? PRESETS[sysVal] : null;
     const label1 = preset?.elements?.[0]?.label || 'δ₁';
     const label2 = preset?.elements?.[1]?.label || 'δ₂';
     const unit1 = typeof getElementUnit === 'function' ? getElementUnit(0) : '‰';
@@ -248,7 +295,7 @@
       timestamp: new Date().toISOString(),
       dateStr: new Date().toISOString().slice(0, 16).replace('T', ' '),
       instrument: inst,
-      system: typeof currentMode !== 'undefined' ? currentMode : 'CO',
+      system: sysVal,
       qcName: rep.qcName,
       count: rep.count,
       status: rep.status,
