@@ -267,6 +267,7 @@ if (btnExportExcel) {
         { header: 'Run_Order', key: 'runNumber', width: 12 },
         { header: 'Status', key: 'status', width: 14 },
         { header: 'Raw_SD_Flag', key: 'rawSdFlag', width: 18 },
+        { header: 'Audit_Note', key: 'auditNote', width: 28 }, // ← 이 줄 추가
         { header: 'Sample_ID', key: 'id', width: 22 }
       ];
       if (hasWeight) seqCols.push({ header: 'Weight_mg', key: 'weight', width: 14 });
