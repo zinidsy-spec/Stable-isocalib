@@ -1,4 +1,4 @@
-/* qc-tracker.js - IsoCalib v1.5.0-beta Long-Term Laboratory QC Control Chart & Instrument Tracker */
+/* qc-tracker.js - IsoCalib v1.5.0 Long-Term Laboratory QC Control Chart & Instrument Tracker (Unified Editorial Style) */
 
 (function () {
   const QC_STORAGE_KEY = 'isocalib_longterm_qc_logs_v1';
@@ -21,11 +21,10 @@
     }
   }
 
-  // 1. 상단 내비게이션에 'QC Chart' 버튼 및 전용 대시보드 모달 주입
+  // 1. 기존 상단 내비게이션과 100% 동일한 타이포그래피로 메뉴 통합
   function injectQcTrackerUI() {
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
 
-    // 상단 More 드롭다운 또는 nav에 버튼 추가
     const moreContainer = document.getElementById('more-menu-container');
     if (moreContainer && !document.getElementById('btn-open-qc-tracker')) {
       const sep = document.createElement('span');
@@ -35,8 +34,8 @@
       const btnNav = document.createElement('button');
       btnNav.id = 'btn-open-qc-tracker';
       btnNav.type = 'button';
-      btnNav.className = 'hover:text-stone-900 transition text-emerald-900 font-semibold cursor-pointer flex items-center gap-1';
-      btnNav.innerHTML = `<span>📈</span><span>${isEn ? 'QC Control Chart' : '장기 QC 관리도'}</span>`;
+      btnNav.className = 'hover:text-stone-900 transition text-stone-600 hover:font-medium cursor-pointer';
+      btnNav.textContent = isEn ? 'QC Control Chart' : '장기 QC 관리도';
 
       moreContainer.parentNode.insertBefore(sep, moreContainer);
       moreContainer.parentNode.insertBefore(btnNav, moreContainer);
@@ -44,11 +43,11 @@
       btnNav.addEventListener('click', openQcTrackerModal);
     }
 
-    // 전용 대시보드 모달 DOM 생성
+    // 기존 About / Changelog 모달과 동일한 스타일의 대시보드 모달 생성
     if (!document.getElementById('qc-tracker-modal')) {
       const modal = document.createElement('div');
       modal.id = 'qc-tracker-modal';
-      modal.className = 'hidden fixed inset-0 bg-stone-900/45 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+      modal.className = 'hidden fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4';
       modal.innerHTML = `
         <div class="bg-white border border-[#c7c5bc] max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6">
           <!-- Header -->
@@ -56,21 +55,21 @@
             <div>
               <div class="flex items-center space-x-2">
                 <span class="font-brand text-lg font-bold text-stone-900">ISOCALIB</span>
-                <span class="text-xs uppercase tracking-widest text-emerald-800 font-mono font-bold">/ Long-Term QC Control Chart (Shewhart)</span>
+                <span class="text-xs uppercase tracking-widest text-stone-500 font-mono font-bold">/ Long-Term QC Control Chart (Shewhart)</span>
               </div>
               <p class="text-xs text-stone-500 pt-1" id="qc-modal-subtitle">
                 장기 내부 표준물질(KDO, B2151, USGS45 등) 누적 정밀도 및 ±2σ 경고 / ±3σ 조치 한계 모니터링
               </p>
             </div>
             <div class="flex items-center space-x-2">
-              <button id="btn-qc-export-json" type="button" class="px-2.5 py-1.5 bg-[#fbfaf8] border border-[#c7c5bc] hover:border-stone-900 text-xs font-mono font-semibold text-stone-800 cursor-pointer">
-                💾 Backup JSON
+              <button id="btn-qc-export-json" type="button" class="px-3 py-1.5 bg-white border border-[#c7c5bc] hover:border-stone-900 text-xs font-mono font-semibold text-stone-800 transition cursor-pointer">
+                Backup JSON
               </button>
-              <button id="btn-qc-import-json" type="button" class="px-2.5 py-1.5 bg-[#fbfaf8] border border-[#c7c5bc] hover:border-stone-900 text-xs font-mono font-semibold text-stone-800 cursor-pointer">
-                📂 Restore JSON
+              <button id="btn-qc-import-json" type="button" class="px-3 py-1.5 bg-white border border-[#c7c5bc] hover:border-stone-900 text-xs font-mono font-semibold text-stone-800 transition cursor-pointer">
+                Restore JSON
               </button>
               <input type="file" id="qc-json-file-input" accept=".json" class="hidden">
-              <button id="btn-close-qc-tracker" type="button" class="text-stone-400 hover:text-stone-800 font-mono text-2xl px-2 leading-none cursor-pointer">&times;</button>
+              <button id="btn-close-qc-tracker" type="button" class="text-stone-400 hover:text-stone-800 font-mono text-xl p-1 leading-none cursor-pointer">&times;</button>
             </div>
           </div>
 
@@ -79,18 +78,18 @@
             <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center space-x-1.5">
                 <label for="qc-filter-std" class="font-bold text-stone-800">QC Standard:</label>
-                <select id="qc-filter-std" class="bg-white border border-stone-300 px-2.5 py-1 text-xs text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"></select>
+                <select id="qc-filter-std" class="bg-white border border-stone-300 px-2.5 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"></select>
               </div>
               <div class="flex items-center space-x-1.5">
                 <label for="qc-filter-inst" class="font-bold text-stone-800">Instrument / Line:</label>
-                <select id="qc-filter-inst" class="bg-white border border-stone-300 px-2.5 py-1 text-xs text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"></select>
+                <select id="qc-filter-inst" class="bg-white border border-stone-300 px-2.5 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"></select>
               </div>
             </div>
-            <div class="flex items-center space-x-2">
-              <button id="btn-qc-load-sample-history" type="button" class="px-2.5 py-1 bg-white border border-stone-300 hover:border-stone-900 text-[11px] text-stone-700 cursor-pointer">
-                + Load Demo QC History
+            <div class="flex items-center space-x-2.5">
+              <button id="btn-qc-load-sample-history" type="button" class="px-2.5 py-1 bg-white border border-[#c7c5bc] hover:border-stone-900 text-[11px] font-semibold text-stone-800 transition cursor-pointer">
+                + Load Demo History
               </button>
-              <button id="btn-qc-clear-all" type="button" class="px-2.5 py-1 text-rose-700 hover:text-rose-900 underline text-[11px] cursor-pointer">
+              <button id="btn-qc-clear-all" type="button" class="px-2 py-1 text-rose-700 hover:text-rose-900 underline underline-offset-2 text-[11px] cursor-pointer">
                 Clear Logs
               </button>
             </div>
@@ -99,24 +98,24 @@
           <!-- Summary Stats Cards -->
           <div id="qc-stats-cards" class="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-xs"></div>
 
-          <!-- Shewhart Control Charts (Element 1 & Element 2) -->
+          <!-- Shewhart Control Charts -->
           <div class="space-y-4">
             <div class="border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2">
               <div class="flex justify-between items-center px-1">
-                <span class="font-mono text-[10px] uppercase font-bold text-stone-500">Control Chart 01 · Primary Isotope</span>
-                <button id="btn-export-qc-svg-1" type="button" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline cursor-pointer">Export SVG</button>
+                <span class="font-mono text-[10px] uppercase font-bold text-stone-400">Control Chart 01 · Primary Isotope</span>
+                <button id="btn-export-qc-svg-1" type="button" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer">Export Publication SVG</button>
               </div>
-              <div id="qc-control-plot-1" class="w-full h-[320px] flex items-center justify-center text-xs text-stone-400 italic">
-                No logged QC records yet. Run calibration and click "Log QC Run" in Section 03.
+              <div id="qc-control-plot-1" class="w-full h-[320px] flex items-center justify-center text-xs text-stone-400 font-serif-title italic">
+                No logged QC records yet. Run calibration and log QC results in Section 03.
               </div>
             </div>
 
             <div id="qc-control-plot-2-box" class="hidden border border-[#d1cfc7] bg-white p-3 shadow-xs space-y-2">
               <div class="flex justify-between items-center px-1">
-                <span class="font-mono text-[10px] uppercase font-bold text-stone-500">Control Chart 02 · Secondary Isotope</span>
-                <button id="btn-export-qc-svg-2" type="button" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline cursor-pointer">Export SVG</button>
+                <span class="font-mono text-[10px] uppercase font-bold text-stone-400">Control Chart 02 · Secondary Isotope</span>
+                <button id="btn-export-qc-svg-2" type="button" class="text-[11px] font-mono text-stone-600 hover:text-stone-900 underline underline-offset-2 cursor-pointer">Export Publication SVG</button>
               </div>
-              <div id="qc-control-plot-2" class="w-full h-[320px] flex items-center justify-center text-xs text-stone-400 italic"></div>
+              <div id="qc-control-plot-2" class="w-full h-[320px] flex items-center justify-center text-xs text-stone-400 font-serif-title italic"></div>
             </div>
           </div>
 
@@ -125,7 +124,7 @@
             <div class="font-mono text-xs font-bold uppercase tracking-wider text-stone-800">Cumulative QC Run History Log</div>
             <div class="border border-[#c7c5bc] bg-white overflow-x-auto max-h-[260px]">
               <table class="w-full text-left text-xs font-data text-stone-900">
-                <thead class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-[11px] font-bold uppercase text-stone-800">
+                <thead class="bg-[#f0ede6] sticky top-0 border-b border-[#d1cfc7] font-sans text-[11px] font-bold uppercase tracking-wider text-stone-800">
                   <tr>
                     <th class="p-2">Date / Time</th>
                     <th class="p-2">Instrument</th>
@@ -141,7 +140,7 @@
                     <th class="p-2 text-center">Del</th>
                   </tr>
                 </thead>
-                <tbody id="qc-history-tbody" class="divide-y divide-stone-200"></tbody>
+                <tbody id="qc-history-tbody" class="divide-y divide-[#e5e3dc]"></tbody>
               </table>
             </div>
           </div>
@@ -149,7 +148,6 @@
       `;
       document.body.appendChild(modal);
 
-      // 모달 이벤트 바인딩
       document.getElementById('btn-close-qc-tracker').addEventListener('click', () => modal.classList.add('hidden'));
       modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
 
@@ -161,7 +159,7 @@
       document.getElementById('qc-json-file-input').addEventListener('change', importQcJson);
 
       document.getElementById('btn-qc-clear-all').addEventListener('click', () => {
-        if (confirm('누적된 모든 장기 QC 이력을 삭제하시겠습니까? (삭제 전 JSON 백업을 권장합니다)')) {
+        if (confirm('누적된 모든 장기 QC 이력을 삭제하시겠습니까? (삭제 전 Backup JSON을 권장합니다)')) {
           saveQcLogs([]);
           renderQcDashboard();
         }
@@ -178,7 +176,7 @@
     }
   }
 
-  // 2. Section 03 QC 배너에 [장기 QC DB에 기록] 버튼 자동 주입 (MutationObserver)
+  // 2. Section 03 QC 배너 하단에 동일한 에디토리얼 버튼 추가
   function observeQcBanner() {
     const banner = document.getElementById('qc-summary-banner');
     if (!banner) return;
@@ -195,7 +193,7 @@
       bar.innerHTML = `
         <div class="flex items-center space-x-2">
           <label for="qc-instrument-tag" class="font-bold text-stone-800">${isEn ? 'Instrument:' : '장비/라인:'}</label>
-          <select id="qc-instrument-tag" class="bg-white border border-stone-300 px-2 py-1 text-xs text-stone-900 focus:outline-none">
+          <select id="qc-instrument-tag" class="bg-white border border-[#c7c5bc] px-2 py-1 text-xs font-sans text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer">
             <option value="MAT253-Kiel">MAT253 + Kiel IV</option>
             <option value="MAT253-GasBench">MAT253 + GasBench II</option>
             <option value="DeltaQ-EA">Delta Q + EA-IRMS</option>
@@ -204,18 +202,16 @@
           </select>
         </div>
         <div class="flex items-center space-x-2">
-          <button id="btn-log-current-qc" type="button" class="px-3 py-1 bg-stone-900 hover:bg-stone-800 text-white font-semibold transition cursor-pointer flex items-center gap-1">
-            <span>➕</span>
-            <span>${isEn ? 'Log QC Run to Control Chart' : '장기 QC 관리도에 누적 기록'}</span>
+          <button id="btn-log-current-qc" type="button" class="px-3 py-1 bg-stone-900 hover:bg-stone-800 text-white font-semibold transition cursor-pointer">
+            ${isEn ? '+ Log QC Run' : '+ 장기 QC DB에 기록'}
           </button>
-          <button id="btn-view-qc-chart-inline" type="button" class="px-3 py-1 bg-white border border-stone-400 hover:border-stone-900 text-stone-900 font-semibold transition cursor-pointer">
-            <span>📈 ${isEn ? 'Open Control Chart' : '관리도 보기'}</span>
+          <button id="btn-view-qc-chart-inline" type="button" class="px-3 py-1 bg-white border border-[#c7c5bc] hover:border-stone-900 text-stone-800 font-semibold transition cursor-pointer">
+            ${isEn ? 'Open Control Chart' : '장기 QC 관리도'}
           </button>
         </div>
       `;
       banner.appendChild(bar);
 
-      // 현재 프리셋에 맞춰 기본 장비 자동 선택
       const instSelect = document.getElementById('qc-instrument-tag');
       if (typeof currentMode !== 'undefined') {
         if (currentMode === 'CO') instSelect.value = 'MAT253-Kiel';
@@ -231,7 +227,6 @@
     observer.observe(banner, { attributes: true, childList: true, attributeFilter: ['class'] });
   }
 
-  // 3. 현재 계산된 QC 결과를 로컬 누적 DB에 저장
   function recordCurrentQcRun() {
     const rep = window.lastQcSummaryReport;
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
@@ -276,17 +271,16 @@
 
     const btn = document.getElementById('btn-log-current-qc');
     if (btn) {
-      const orig = btn.innerHTML;
-      btn.innerHTML = `<span>✓</span><span>${isEn ? 'Logged!' : '기록 완료!'}</span>`;
+      const orig = btn.textContent;
+      btn.textContent = isEn ? 'Logged ✓' : '기록 완료 ✓';
       btn.classList.replace('bg-stone-900', 'bg-emerald-800');
       setTimeout(() => {
-        btn.innerHTML = orig;
+        btn.textContent = orig;
         btn.classList.replace('bg-emerald-800', 'bg-stone-900');
       }, 1500);
     }
   }
 
-  // 4. 관리도 모달 열기 및 필터 초기화
   function openQcTrackerModal() {
     const modal = document.getElementById('qc-tracker-modal');
     if (!modal) return;
@@ -315,7 +309,6 @@
     renderQcDashboard();
   }
 
-  // 5. Shewhart 제어 관리도(±2σ 경고, ±3σ 조치 한계) 및 통계 렌더링
   function renderQcDashboard() {
     const logs = loadQcLogs();
     const selectedStd = document.getElementById('qc-filter-std').value;
@@ -334,8 +327,8 @@
 
     if (filtered.length === 0) {
       statsContainer.innerHTML = '';
-      tbody.innerHTML = `<tr><td colspan="12" class="p-6 text-center text-stone-400 italic">누적된 QC 기록이 없습니다. 상단 'Load Demo QC History'로 예시 추이를 보거나 검량 후 '장기 QC 관리도에 누적 기록'을 눌러주세요.</td></tr>`;
-      plot1.innerHTML = `<span class="text-xs text-stone-400 italic">No QC records to plot.</span>`;
+      tbody.innerHTML = `<tr><td colspan="12" class="p-6 text-center text-stone-400 font-serif-title italic">누적된 QC 기록이 없습니다. 상단 '+ Load Demo History'로 예시 추이를 보거나 검량 후 '+ 장기 QC DB에 기록'을 눌러주세요.</td></tr>`;
+      plot1.innerHTML = `<span class="text-xs text-stone-400 font-serif-title italic">No QC records to plot.</span>`;
       plot2Box.classList.add('hidden');
       return;
     }
@@ -363,33 +356,31 @@
       unit2 = valid2[0].unit2 || '‰';
     }
 
-    // 요약 카드 렌더링
     statsContainer.innerHTML = `
-      <div class="bg-white border border-stone-300 p-3">
+      <div class="bg-[#fbfaf8] border border-[#d1cfc7] p-3">
         <div class="text-[10px] text-stone-500 uppercase">Total QC Sequences</div>
-        <div class="text-lg font-bold text-stone-900 mt-0.5">${filtered.length} runs</div>
+        <div class="text-base font-bold text-stone-900 mt-0.5">${filtered.length} runs</div>
         <div class="text-[10px] text-stone-500 mt-0.5">${selectedStd} (${selectedInst})</div>
       </div>
-      <div class="bg-white border border-stone-300 p-3">
+      <div class="bg-[#fbfaf8] border border-[#d1cfc7] p-3">
         <div class="text-[10px] text-stone-500 uppercase">Long-Term ${label1}</div>
-        <div class="text-base font-bold text-stone-900 mt-0.5">${st1.mean.toFixed(3)} ± ${st1.sd.toFixed(3)}</div>
+        <div class="text-sm font-bold text-stone-900 mt-0.5">${st1.mean.toFixed(3)} ± ${st1.sd.toFixed(3)}</div>
         <div class="text-[10px] text-emerald-800 mt-0.5">Certified: ${true1.toFixed(3)} ${unit1}</div>
       </div>
       ${hasDual && st2 ? `
-      <div class="bg-white border border-stone-300 p-3">
+      <div class="bg-[#fbfaf8] border border-[#d1cfc7] p-3">
         <div class="text-[10px] text-stone-500 uppercase">Long-Term ${label2}</div>
-        <div class="text-base font-bold text-stone-900 mt-0.5">${st2.mean.toFixed(3)} ± ${st2.sd.toFixed(3)}</div>
+        <div class="text-sm font-bold text-stone-900 mt-0.5">${st2.mean.toFixed(3)} ± ${st2.sd.toFixed(3)}</div>
         <div class="text-[10px] text-emerald-800 mt-0.5">Certified: ${true2.toFixed(3)} ${unit2}</div>
       </div>
       ` : ''}
-      <div class="bg-white border border-stone-300 p-3">
+      <div class="bg-[#fbfaf8] border border-[#d1cfc7] p-3">
         <div class="text-[10px] text-stone-500 uppercase">Control Limits (Shewhart)</div>
         <div class="text-xs font-bold text-amber-700 mt-1">Warning: ±2σ (${(st1.sd * 2).toFixed(3)}‰)</div>
         <div class="text-xs font-bold text-rose-700 mt-0.5">Action: ±3σ (${(st1.sd * 3).toFixed(3)}‰)</div>
       </div>
     `;
 
-    // Shewhart 제어 관리도 그리기 함수
     const drawShewhart = (elemId, dates, values, insts, stats, certifiedVal, isoLabel, unitStr) => {
       const el = document.getElementById(elemId);
       el.innerHTML = '';
@@ -448,14 +439,14 @@
       ];
 
       const layout = {
-        title: { text: `Shewhart Control Chart: ${selectedStd} — ${isoLabel} (${unitStr})`, font: { family: 'Newsreader, serif', size: 15, color: '#111827' }, x: 0.03 },
+        title: { text: `Shewhart Control Chart: ${selectedStd} — ${isoLabel} (${unitStr})`, font: { family: 'Newsreader, Georgia, serif', size: 15, color: '#111827' }, x: 0.03 },
         paper_bgcolor: '#ffffff',
         plot_bgcolor: '#ffffff',
         margin: { l: 55, r: 25, t: 40, b: 50 },
-        xaxis: { showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc', tickfont: { family: 'IBM Plex Mono, monospace', size: 10 } },
-        yaxis: { title: { text: `${isoLabel} (${unitStr})`, font: { size: 11 } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc', tickfont: { family: 'IBM Plex Mono, monospace', size: 10 } },
+        xaxis: { showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc', tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' } },
+        yaxis: { title: { text: `${isoLabel} (${unitStr})`, font: { family: 'Inter, sans-serif', size: 11, color: '#374151' } }, showgrid: true, gridcolor: '#f0ede6', linecolor: '#c7c5bc', tickfont: { family: 'IBM Plex Mono, monospace', size: 10, color: '#4b5563' } },
         showlegend: true,
-        legend: { orientation: 'h', y: -0.25, x: 0.02, font: { size: 10 } }
+        legend: { orientation: 'h', y: -0.25, x: 0.02, font: { family: 'Inter, sans-serif', size: 10, color: '#374151' } }
       };
 
       Plotly.newPlot(elemId, traces, layout, { responsive: true, displayModeBar: false });
@@ -489,11 +480,10 @@
       plot2Box.classList.add('hidden');
     }
 
-    // 하단 이력 테이블 렌더링
     tbody.innerHTML = filtered.slice().reverse().map(row => `
       <tr class="hover:bg-stone-50">
         <td class="p-2 font-mono text-[11px]">${row.dateStr}</td>
-        <td class="p-2 font-mono text-[11px] font-semibold text-sky-900">${row.instrument}</td>
+        <td class="p-2 font-mono text-[11px] font-semibold text-stone-800">${row.instrument}</td>
         <td class="p-2 font-bold">${row.qcName}</td>
         <td class="p-2 font-mono text-[11px]">${row.system}</td>
         <td class="p-2 text-right font-mono">${row.count}</td>
@@ -504,7 +494,7 @@
         <td class="p-2 text-right font-mono">${row.bias2 !== null ? (row.bias2 >= 0 ? '+' : '') + row.bias2.toFixed(3) : '-'}</td>
         <td class="p-2 text-right font-mono">${row.sd2 !== null ? '±' + row.sd2.toFixed(3) : '-'}</td>
         <td class="p-2 text-center">
-          <button type="button" data-del-id="${row.id}" class="text-rose-600 hover:text-rose-900 font-mono text-xs cursor-pointer">✕</button>
+          <button type="button" data-del-id="${row.id}" class="text-rose-700 hover:text-rose-900 font-mono text-xs cursor-pointer">✕</button>
         </td>
       </tr>
     `).join('');
@@ -519,7 +509,6 @@
     });
   }
 
-  // 6. JSON 백업 / 복원 / 데모 시계열 이력 생성
   function exportQcJson() {
     const logs = loadQcLogs();
     const blob = new Blob([JSON.stringify({ format: 'IsoCalib-QC-History', exportedAt: new Date().toISOString(), records: logs }, null, 2)], { type: 'application/json' });
