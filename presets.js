@@ -1,64 +1,5 @@
-/* presets.js - IsoCalib v1.4.3 Isotope System Presets, Certified %C/%N, QC Criteria & i18n Dictionary */
-
-const CHANGELOG_DATA = [
-  {
-    version: "v1.4.3",
-    date: "2026-11",
-    badge: "Anchor Guard & Standalone SOP",
-    title_ko: "앵커 표준물질 정밀도 경고·원클릭 자동 제외 및 독립형 한/영 실무 SOP 매뉴얼(manual.html) 구축",
-    title_en: "Anchor Standard Precision Guard, One-Click Auto-Exclude & Standalone Bilingual SOP Manual",
-    desc_ko: "검량선 기울기를 왜곡할 수 있는 불안정 앵커 표준물질을 사전 차단하는 긴급 경고·원클릭 자동 제외 기능과 인쇄 가능한 독립형 표준 운영 절차서(manual.html)를 탑재하고 Zenodo 영구 아카이브(DOI: 10.5281/zenodo.24296623)를 동기화했습니다.",
-    desc_en: "Added an Anchor Standard Precision Alert with one-click Auto-Exclude protection to safeguard WLS regression slopes, alongside a printable bilingual SOP manual (manual.html) archived under Zenodo DOI 10.5281/zenodo.24296623.",
-    changes_ko: [
-      "<strong>앵커 표준물질 정밀도 경고 및 원클릭 자동 제외</strong>: 활성화된 앵커 표준물질(NBS-18, IAEA-603 등)의 Raw 1σ SD가 임계치를 초과할 경우 QC 배너 최상단에 긴급 경고를 표출하고, 버튼 클릭 한 번으로 해당 앵커만 안전하게 제외(최소 2개 활성 앵커 보호 가드 내장)하여 WLS 회귀선을 즉시 재산출.",
-      "<strong>독립형 한/영 실무 SOP 매뉴얼 (<code>manual.html</code>) 신설</strong>: 상단 <code>Quick Start</code> 메뉴에서 새 탭으로 열리는 8대 섹션 상세 매뉴얼, 6대 분석 계통별 마스터 세팅 매트릭스, 트러블슈팅 FAQ 및 인쇄/PDF 저장 기능 탑재.",
-      "<strong>학술 인용 메타데이터(<code>CITATION.cff</code>) 및 Zenodo DOI 갱신</strong>: GitHub 저장소 인용 카드 활성화 및 Zenodo 영구 버전 아카이브(<code>10.5281/zenodo.24296623</code>) 동기화 완료."
-    ],
-    changes_en: [
-      "<strong>Anchor Standard Precision Alert & One-Click Auto-Exclude</strong>: Detects noisy calibration anchor runs exceeding the Raw SD limit and provides a one-click Auto-Exclude button (with a minimum 2-anchor safety guard) to recalculate WLS slopes immediately.",
-      "<strong>Standalone Bilingual SOP Manual (<code>manual.html</code>)</strong>: Replaced the compact modal with a dedicated, printable Korean/English Standard Operating Procedure featuring a 6-workflow setup matrix, column mapping diagrams, and troubleshooting FAQ.",
-      "<strong>Academic Citation Metadata & Zenodo Archive Sync</strong>: Added <code>CITATION.cff</code> for native GitHub citation export and synchronized version archiving under Zenodo DOI <code>10.5281/zenodo.24296623</code>."
-    ]
-  },
-  {
-    version: "v1.4.2",
-    date: "2026-11",
-    badge: "Raw SD Guard & %C/%N",
-    title_ko: "원시 반복 정밀도(Raw 1σ SD) 실시간 경고 및 시료 무게 기반 %C/%N 원소 정량화 엔진 도입",
-    title_en: "Real-Time Raw 1σ SD Precision Flagging & Sample Weight-Based %C/%N Elemental Quantification",
-    desc_ko: "탄산염 및 유기물 분석 시 기기 내부 반복 정밀도(Raw 1σ SD) 임계치 초과 런을 즉시 식별하는 하이라이트 가드와 시료 계량 무게(mg) 기반 %C, %N, Atomic C/N 산출 파이프라인을 통합했습니다.",
-    desc_en: "Integrated real-time cell highlighting and warning badges for runs exceeding internal repeatability (Raw 1σ SD) thresholds, alongside sample weight (mg) based %C, %N, and Atomic C/N quantification.",
-    changes_ko: [
-      "<strong>원시 1σ SD 임계치 초과 실시간 하이라이트 (<code>Raw SD Limit</code>)</strong>: 설정된 허용 기준(탄산염 기본 <code>0.100‰</code>)을 초과하는 입력 셀을 즉시 붉은색으로 강조하고, 결과 테이블(<code>▲ Raw SD</code>) 및 엑셀 보고서(<code>Raw_SD_Flag</code>)에 경고 플래그 자동 기록.",
-      "<strong>EA-IRMS 원소 함량(%C, %N) 및 Atomic C/N 자동 산출</strong>: 시료 계량 무게(mg)와 표준물질 공인 함량으로부터 응답 계수(Response Factor, Vs/mg)를 역산하여 시료별 및 그룹별 원소 함량 자동 계산.",
-      "<strong>수동 선형성 기울기(Manual Slope) 및 3점 이상 다중 앵커 확장</strong>: 크기 시리즈 표준물질이 없는 시퀀스를 위한 고정 선형성 계수(<code>‰/Vs</code>) 입력 및 <code>+ Add Anchor</code> 다중 점 WLS 회귀 지원."
-    ],
-    changes_en: [
-      "<strong>Real-Time Raw 1σ SD Threshold Guard</strong>: Highlights input cells exceeding the user-defined repeatability threshold (default <code>0.100‰</code>) in red and appends <code>▲ Raw SD</code> badges to result tables and Excel exports.",
-      "<strong>Weight-Based %C, %N & Atomic C/N Quantification</strong>: Computes instrument Response Factors (Vs/mg) from certified standards to derive elemental weight percentages and molar C/N ratios.",
-      "<strong>Manual Linearity Slope & Multi-Point Anchoring</strong>: Added manual linearity slope input (<code>‰/Vs</code>) and dynamic 3+ anchor WLS regression support."
-    ]
-  },
-  {
-    version: "v1.3.0",
-    date: "2026-10",
-    badge: "ExcelJS & Embedded Plots",
-    title_ko: "ExcelJS 엔진 전환 및 보고서 내 고해상도 검량선·진단 그래프 자동 삽입",
-    title_en: "ExcelJS Engine Integration & Embedded Publication Figures in Excel Reports",
-    desc_ko: "기존 SheetJS를 ExcelJS로 전면 교체하여 내보낸 .xlsx 파일의 세 번째 시트에 고해상도 검량선 및 드리프트/선형성 진단 그림(PNG)이 자동 삽입되도록 고도화했습니다.",
-    desc_en: "Replaced SheetJS with ExcelJS to support native raster image embedding (.addImage) directly inside browser memory for publication-ready Excel workbooks.",
-    changes_ko: [
-      "<strong>Figures_and_QC 시트 신설</strong>: 엑셀 보고서 내에 검량선(Figure 1 & 2), 드리프트/선형성 진단 그래프(Figure 3 & 4) 및 QC 편차 요약 리포트 자동 삽입.",
-      "<strong>시퀀스 보존형 이상치 제외 토글 (<code>Use ✓</code>)</strong>: 행 삭제 없이 개별 런의 체크박스만 해제하여 시간축 간격을 유지한 채 실시간 재계산.",
-      "<strong>브라우저 언어 자동 감지 (KO/EN)</strong>: 접속 환경에 따른 한국어/영어 인터페이스 자동 전환 및 수식(MathJax) 렌더링 지원."
-    ],
-    changes_en: [
-      "<strong>Dedicated 'Figures_and_QC' Worksheet</strong>: Embeds high-resolution Plotly calibration and diagnostic curves alongside quantitative QC bias metrics inside exported <code>.xlsx</code> files.",
-      "<strong>Sequence-Preserving Outlier Toggle</strong>: Uncheck <code>Use (✓)</code> to exclude anomalous runs without shifting sequence run indices (#).",
-      "<strong>Smart Locale Auto-Detection</strong>: Automatically adapts UI language (KO/EN) with full MathJax equation typesetting."
-    ]
-  }
-];
+/* presets.js - IsoCalib v1.5.0 Isotope System Presets, Certified %C/%N, QC Criteria & i18n Dictionary */
+/* 참고: 버전 업데이트 이력(CHANGELOG_DATA)은 이제 독립 파일인 changelog.js에서 영구 관리됩니다. */
 
 const ELEMENT_QC_THRESHOLDS = {
   "δ¹³C": { bias: 0.08, sd: 0.08 },
@@ -391,7 +332,7 @@ const TRANSLATIONS = {
     nav_methodology: "Methodology",
     nav_more: "More",
     nav_about: "<span>About IsoCalib</span><span class='font-mono text-[10px] text-stone-400'>About</span>",
-    nav_changelog: "<span>Changelog</span><span class='font-mono text-[10px] text-stone-400'>v1.4.3</span>",
+    nav_changelog: "<span>Changelog</span><span class='font-mono text-[10px] text-stone-400'>v1.5.0</span>",
     nav_citation: "<span>Citation & DOI</span><span class='font-mono text-[10px] text-stone-400'>Cite</span>",
     nav_feedback_form: "<span class='flex items-center gap-1'><span>💬</span> Quick Feedback (No Login)</span><span class='font-mono text-[10px] text-emerald-700 bg-emerald-100 px-1 py-0.2'>No Login</span>",
     nav_feedback_github: "<span>GitHub Issues</span><span class='font-mono text-[10px] text-stone-400'>GitHub</span>",
@@ -494,7 +435,7 @@ const TRANSLATIONS = {
     nav_methodology: "통계 방법론",
     nav_more: "더보기",
     nav_about: "<span>IsoCalib 소개</span><span class='font-mono text-[10px] text-stone-400'>About</span>",
-    nav_changelog: "<span>업데이트 이력</span><span class='font-mono text-[10px] text-stone-400'>v1.4.3</span>",
+    nav_changelog: "<span>업데이트 이력</span><span class='font-mono text-[10px] text-stone-400'>v1.5.0</span>",
     nav_citation: "<span>학술 인용 & DOI</span><span class='font-mono text-[10px] text-stone-400'>Cite</span>",
     nav_feedback_form: "<span class='flex items-center gap-1'><span>💬</span> 빠른 의견 보내기 (로그인 불필요)</span><span class='font-mono text-[10px] text-emerald-700 bg-emerald-100 px-1 py-0.2'>No Login</span>",
     nav_feedback_github: "<span>GitHub 이슈 등록</span><span class='font-mono text-[10px] text-stone-400'>GitHub</span>",
