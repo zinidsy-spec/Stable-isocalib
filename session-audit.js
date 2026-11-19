@@ -1,18 +1,29 @@
 /* session-audit.js - IsoCalib v1.5.0-alpha Session Snapshot (.isocalib) & Outlier Audit Trail */
 
 (function () {
-  // 행 번호(0-based index)별 감사 추적 메모 저장소
   window.sequenceAuditNotes = {};
+  let lastInteractedRowIdx = -1;
 
   function getAuditDefaultReason(rowIdx) {
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
     const tr = document.querySelectorAll('#grid-body tr')[rowIdx];
     if (!tr) return isEn ? 'Manual exclusion' : '수동 제외';
 
-    // Raw SD 임계치 초과 여부 자동 감지
-    const hasHighSd = tr.querySelector('.bg-rose-100, .text-rose-900');
-    if (hasHighSd) {
-      return isEn ? 'Excluded: Raw 1σ SD exceeded limit' : '제외: 원시 1σ SD 허용 기준 초과';
+    // Raw SD 임계치 초과 셀 감지 (배경색 클래스 또는 실제 수치 비교)
+    const limit = parseFloat(document.getElementById('raw-sd-limit')?.value) || 0.100;
+    const tds = tr.querySelectorAll('td');
+    let exceeded = false;
+    tds.forEach((td, idx) => {
+      if (idx >= 3) {
+        const val = parseFloat(td.innerText.trim());
+        if (!isNaN(val) && val > 0 && val < 1 && val > limit) {
+          exceeded = true;
+        }
+      }
+    });
+
+    if (exceeded || tr.querySelector('.bg-rose-100, .bg-rose-50')) {
+      return isEn ? `Excluded: Raw 1σ SD exceeded ${limit.toFixed(3)}‰` : `제외: 원시 1σ SD 허용 기준(${limit.toFixed(3)}‰) 초과`;
     }
     return isEn ? 'Excluded: Analytical outlier' : '제외: 분석 이상치 판정';
   }
@@ -25,7 +36,6 @@
     const toolbar = btnCalc.parentElement;
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
 
-    // 숨겨진 파일 입력기
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.id = 'session-file-input';
@@ -33,7 +43,6 @@
     fileInput.className = 'hidden';
     document.body.appendChild(fileInput);
 
-    // Save Session 버튼
     const btnSave = document.createElement('button');
     btnSave.id = 'btn-save-session';
     btnSave.type = 'button';
@@ -41,7 +50,6 @@
     btnSave.innerHTML = `<span>💾</span><span>${isEn ? 'Save .isocalib' : '세션 저장'}</span>`;
     btnSave.title = isEn ? 'Save full calibration setup, data, and audit notes as .isocalib file' : '현재 검량 설정, 시퀀스 데이터, 이상치 사유를 .isocalib 파일로 저장';
 
-    // Load Session 버튼
     const btnLoad = document.createElement('button');
     btnLoad.id = 'btn-load-session';
     btnLoad.type = 'button';
@@ -65,13 +73,21 @@
 
       btnAudit.addEventListener('click', () => {
         ctxMenu.classList.add('hidden');
-        promptAuditNoteForSelectedRow();
+        promptAuditNoteForRow(lastInteractedRowIdx);
       });
     }
 
     btnSave.addEventListener('click', exportIsocalibSession);
     btnLoad.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', handleSessionFileSelect);
+  }
+
+  // 셀에서 배지 텍스트를 제외한 순수 텍스트만 추출
+  function getCleanCellText(td) {
+    const clone = td.cloneNode(true);
+    clone.querySelectorAll('.audit-note-badge').forEach(b => b.remove());
+    const inp = clone.querySelector('input');
+    return inp ? inp.value : clone.innerText.trim();
   }
 
   // 2. 현재 시퀀스 그리드 행 데이터 추출
@@ -82,10 +98,8 @@
       const use = chk ? chk.checked : true;
       const cells = [];
       tr.querySelectorAll('td').forEach((td, cIdx) => {
-        // 0번(Run #), 1번(Use 체크박스) 제외하고 데이터 셀만 추출
         if (cIdx >= 2) {
-          const inp = td.querySelector('input');
-          cells.push(inp ? inp.value : td.innerText.trim());
+          cells.push(getCleanCellText(td));
         }
       });
       const hasData = cells.some(v => v !== '');
@@ -167,7 +181,6 @@
           throw new Error(isEn ? 'Invalid .isocalib session file.' : '올바른 .isocalib 세션 파일이 아닙니다.');
         }
 
-        // 설정 컨트롤 복원
         const setVal = (id, val) => {
           const el = document.getElementById(id);
           if (el && val !== undefined) {
@@ -178,7 +191,6 @@
 
         setVal('isotope-preset', data.config.isotopeSystem);
 
-        // 앵커 개수가 3개 이상이면 부족한 만큼 추가
         const targetAnchors = data.standards?.anchors?.length || 2;
         const btnAddAnchor = document.getElementById('btn-add-anchor');
         while (document.querySelectorAll('#std-input-container > div').length - 1 < targetAnchors && btnAddAnchor) {
@@ -193,7 +205,6 @@
         setVal('drift-mode', data.config.driftMode);
         setVal('raw-sd-limit', data.config.rawSdLimit);
 
-        // 표준물질 입력값 복원
         const cards = Array.from(document.querySelectorAll('#std-input-container > div'));
         if (data.standards?.anchors) {
           data.standards.anchors.forEach((anc, i) => {
@@ -221,7 +232,6 @@
 
         setVal('drift-anchor-select', data.config.driftAnchor);
 
-        // 행 개수 확보
         const rowsData = data.sequenceRows || [];
         const maxRowIdx = rowsData.reduce((m, r) => Math.max(m, r.rowIndex), 0);
         const btnAddRow = document.getElementById('btn-add-row');
@@ -229,7 +239,6 @@
           btnAddRow.click();
         }
 
-        // 기존 테이블 초기화 후 복원
         window.sequenceAuditNotes = {};
         const trs = document.querySelectorAll('#grid-body tr');
         trs.forEach(tr => {
@@ -237,6 +246,7 @@
           if (chk) chk.checked = true;
           tr.querySelectorAll('td').forEach((td, cIdx) => {
             if (cIdx >= 2) {
+              td.querySelectorAll('.audit-note-badge').forEach(b => b.remove());
               const inp = td.querySelector('input');
               if (inp) inp.value = '';
               else td.innerText = '';
@@ -271,7 +281,6 @@
 
         renderAuditBadges();
 
-        // 자동 검량 실행
         const btnCalc = document.getElementById('btn-calc');
         if (btnCalc) btnCalc.click();
 
@@ -284,17 +293,27 @@
     reader.readAsText(file);
   }
 
-  // 6. Use 체크박스 해제 시 자동 감사 메모 기록 및 배지 렌더링
+  // 6. 행 클릭 추적 & Use 체크박스 해제 시 자동 감사 메모 기록
   function bindAuditListeners() {
     const gridBody = document.getElementById('grid-body');
     if (!gridBody || gridBody.dataset.auditBound) return;
     gridBody.dataset.auditBound = 'true';
+
+    // 클릭/우클릭한 행 인덱스 기억
+    gridBody.addEventListener('mousedown', (e) => {
+      const tr = e.target.closest('tr');
+      if (tr) {
+        lastInteractedRowIdx = Array.from(gridBody.children).indexOf(tr);
+      }
+    });
 
     gridBody.addEventListener('change', (e) => {
       if (e.target && e.target.type === 'checkbox') {
         const tr = e.target.closest('tr');
         if (!tr) return;
         const rowIdx = Array.from(gridBody.children).indexOf(tr);
+        lastInteractedRowIdx = rowIdx;
+
         if (!e.target.checked) {
           if (!window.sequenceAuditNotes[rowIdx]) {
             window.sequenceAuditNotes[rowIdx] = getAuditDefaultReason(rowIdx);
@@ -307,27 +326,39 @@
     });
   }
 
-  function promptAuditNoteForSelectedRow() {
+  // 특정 행(rowIdx)에 대한 사유 입력 프롬프트 실행
+  function promptAuditNoteForRow(targetIdx) {
     const isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
-    const selectedTr = document.querySelector('#grid-body tr.bg-sky-50, #grid-body tr.selected-row') || document.activeElement?.closest('tr');
     const gridBody = document.getElementById('grid-body');
-    if (!selectedTr || !gridBody) {
+    if (!gridBody) return;
+
+    let rowIdx = (typeof targetIdx === 'number' && targetIdx >= 0) ? targetIdx : lastInteractedRowIdx;
+    if (rowIdx < 0) {
+      const selectedTr = document.querySelector('#grid-body tr.bg-sky-50, #grid-body tr.selected-row');
+      if (selectedTr) rowIdx = Array.from(gridBody.children).indexOf(selectedTr);
+    }
+
+    if (rowIdx < 0) {
       alert(isEn ? 'Select a row in the table first.' : '먼저 표에서 사유를 기록할 행을 클릭해 주세요.');
       return;
     }
-    const rowIdx = Array.from(gridBody.children).indexOf(selectedTr);
-    if (rowIdx < 0) return;
+
+    const tr = gridBody.children[rowIdx];
+    if (!tr) return;
 
     const currentNote = window.sequenceAuditNotes[rowIdx] || getAuditDefaultReason(rowIdx);
     const input = prompt(
-      isEn ? `Audit Note for Run #${String(rowIdx + 1).padStart(2, '0')} (Outlier Exclusion Reason):` : `Run #${String(rowIdx + 1).padStart(2, '0')} 이상치 제외 사유 메모:`,
+      isEn
+        ? `Audit Note for Run #${String(rowIdx + 1).padStart(2, '0')} (Outlier Exclusion Reason):`
+        : `Run #${String(rowIdx + 1).padStart(2, '0')} 이상치 제외 사유 메모:`,
       currentNote
     );
+
     if (input !== null) {
       const trimmed = input.trim();
       if (trimmed) {
         window.sequenceAuditNotes[rowIdx] = trimmed;
-        const chk = selectedTr.querySelector('input[type="checkbox"]');
+        const chk = tr.querySelector('input[type="checkbox"]');
         if (chk && chk.checked) {
           chk.checked = false;
           chk.dispatchEvent(new Event('change', { bubbles: true }));
@@ -339,30 +370,37 @@
     }
   }
 
+  // 배지 렌더링 (ID 셀 텍스트가 오염되지 않도록 순수 텍스트 복원 후 1개만 부착)
   function renderAuditBadges() {
     const trs = document.querySelectorAll('#grid-body tr');
     trs.forEach((tr, idx) => {
       const idCell = tr.querySelectorAll('td')[2];
       if (!idCell) return;
-      const existing = idCell.querySelector('.audit-note-badge');
-      if (existing) existing.remove();
+
+      // 기존 배지 전부 제거 및 잔여 텍스트 정리
+      idCell.querySelectorAll('.audit-note-badge').forEach(b => b.remove());
+      if (idCell.innerText.includes('📝 Note')) {
+        idCell.innerText = idCell.innerText.replace(/📝\s*Note/g, '').trim();
+      }
 
       const note = window.sequenceAuditNotes[idx];
       if (note) {
         const badge = document.createElement('span');
-        badge.className = 'audit-note-badge ml-1.5 px-1.5 py-0.2 bg-amber-100 border border-amber-300 text-amber-900 font-mono text-[9px] rounded cursor-pointer';
+        badge.className = 'audit-note-badge ml-1.5 px-1.5 py-0.2 bg-amber-100 border border-amber-300 text-amber-900 font-mono text-[9px] rounded cursor-pointer inline-block select-none';
+        badge.contentEditable = 'false';
         badge.textContent = '📝 Note';
         badge.title = note;
-        badge.addEventListener('click', (ev) => {
+        badge.addEventListener('mousedown', (ev) => {
           ev.stopPropagation();
-          promptAuditNoteForSelectedRow();
+          ev.preventDefault();
+          lastInteractedRowIdx = idx;
+          promptAuditNoteForRow(idx);
         });
         idCell.appendChild(badge);
       }
     });
   }
 
-  // 초기화 실행
   window.addEventListener('DOMContentLoaded', () => {
     injectSessionControls();
     bindAuditListeners();
