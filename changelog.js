@@ -1,24 +1,24 @@
-/* changelog.js - IsoCalib Dedicated Permanent Version History (v1.0.0 ~ v1.5.0-alpha) */
+/* changelog.js - IsoCalib Dedicated Permanent Version History (v1.0.0 ~ v1.5.0) */
 /* 주의: 새 버전 추가 시 배열 최상단에만 새 객체를 추가하고, 기존 하위 버전 기록은 절대 삭제하지 마세요. */
 
 window.CHANGELOG_DATA = [
   {
-    version: "v1.5.0-alpha",
+    version: "v1.5.0",
     date: "2026-11",
-    badge: "Session Snapshot & Audit Trail",
-    title_ko: ".isocalib 프로젝트 세션 저장/복원 및 이상치 제외 감사 추적(Audit Trail) 엔진",
-    title_en: ".isocalib Session Snapshot Save/Restore & Outlier Exclusion Audit Trail",
-    desc_ko: "검량 설정, 표준물질 구성, 시퀀스 입력 데이터, 이상치 제외 체크 상태와 사유 메모를 단일 .isocalib 파일로 영구 보존·재현하고 엑셀 보고서에 감사 추적 열을 연동했습니다.",
-    desc_en: "Added single-file .isocalib session serialization to preserve and reproduce calibration setups, sequence data, outlier flags, and audit notes across sessions and Excel exports.",
+    badge: "Session Audit, Water Hydrology & QC Tracker",
+    title_ko: ".isocalib 세션 감사 추적, 물 동위원소 수문학(d-excess·LMWL) 진단 및 장기 QC Shewhart 관리도 구축",
+    title_en: ".isocalib Session Audit Trail, Water Hydrology (d-excess & LMWL) Diagnostics & Long-Term QC Control Chart",
+    desc_ko: "실험실 데이터 무결성과 장기 품질관리를 위해 프로젝트 스냅샷(.isocalib) 저장·복원, 이상치 제외 감사 메모, 물 동위원소 d-excess 및 GMWL/LMWL 회귀 플롯, 그리고 장비별 장기 QC Shewhart 제어 관리도 대시보드를 통합했습니다.",
+    desc_en: "Integrated single-file .isocalib session serialization with outlier audit trails, automated water isotope d-excess and GMWL/LMWL regression diagnostics, and a longitudinal Shewhart QC control chart dashboard.",
     changes_ko: [
-      "<strong><code>.isocalib</code> 세션 저장 및 불러오기 (<code>session-audit.js</code>)</strong>: 분석 체계, 앵커 표준물질, 전처리 파라미터, 시퀀스 전체 행, 이상치 체크 상태를 단일 JSON 파일로 저장·복원하여 동료 연구원 간 100% 동일한 검량 결과 재현 가능.",
-      "<strong>이상치 제외 감사 추적 (Audit Trail)</strong>: <code>Use (✓)</code> 해제 시 Raw SD 초과 여부를 자동 판독해 사유 메모 배지(<code>📝 Note</code>)를 부여하고, 배지 클릭 또는 우클릭 메뉴를 통해 상세 사유 편집 지원.",
-      "<strong>독립형 업데이트 이력 모듈(<code>changelog.js</code>) 분리</strong>: 버전 업데이트 시 과거 이력이 누락되지 않도록 전체 개발 히스토리를 전용 파일로 영구 분리."
+      "<strong><code>.isocalib</code> 세션 스냅샷 및 이상치 감사 추적 (<code>session-audit.js</code>)</strong>: 분석 체계, 앵커 표준물질, 전처리 파라미터, 시퀀스 전체 행, 이상치 제외 상태와 사유 메모(<code>[Note]</code>)를 단일 파일로 영구 보존·재현하며 엑셀 <code>Audit_Note</code> 열에 자동 연동.",
+      "<strong>물 동위원소(<code>HO</code>) 수문학 진단 모듈 (<code>water-hydrology.js</code>)</strong>: Deuterium excess($d = \\delta\\text{D} - 8\\cdot\\delta^{18}\\text{O}$) 및 GUM 합성 불확도를 자동 산출하고, 미지 시료군의 지역 순환수선(LMWL)과 GMWL($\\delta\\text{D} = 8\\delta^{18}\\text{O} + 10$)을 비교하는 Figure 5 그래프 탑재.",
+      "<strong>장기 QC Shewhart 제어 관리도 대시보드 (<code>qc-tracker.js</code>)</strong>: 장비/라인별(<code>MAT253-Kiel</code>, <code>MAT253-GasBench</code>, <code>DeltaQ-EA</code>, <code>CRDS-Water</code> 등) 내부 QC 표준물질 누적 이력을 로컬 DB에 기록하고 ±2σ 경고·±3σ 조치 한계 관리도 및 JSON 백업/복원 제공."
     ],
     changes_en: [
-      "<strong><code>.isocalib</code> Session Save & Restore (<code>session-audit.js</code>)</strong>: Serializes instrument presets, anchor standards, preprocessing parameters, sequence rows, and outlier states into a portable JSON snapshot.",
-      "<strong>Outlier Exclusion Audit Trail</strong>: Automatically attaches editable reason badges (<code>📝 Note</code>) when runs are unchecked, with full export to the <code>Audit_Note</code> column in Excel reports.",
-      "<strong>Dedicated Changelog Module (<code>changelog.js</code>)</strong>: Isolated complete version history into a standalone file to prevent accidental truncation during future updates."
+      "<strong><code>.isocalib</code> Session Snapshots & Outlier Audit Trail (<code>session-audit.js</code>)</strong>: Serializes instrument setups, sequence rows, outlier checkboxes, and exclusion reasons (<code>[Note]</code>) into portable project files with Excel <code>Audit_Note</code> export.",
+      "<strong>Water Isotope Hydrology Diagnostics (<code>water-hydrology.js</code>)</strong>: Automatically computes Deuterium excess ($d = \\delta\\text{D} - 8\\cdot\\delta^{18}\\text{O}$) with GUM uncertainty propagation and plots sample LMWL regressions against GMWL (Figure 5).",
+      "<strong>Long-Term QC Shewhart Control Chart (<code>qc-tracker.js</code>)</strong>: Tracks longitudinal in-house QC standard runs across instruments with ±2σ warning and ±3σ action limits plus JSON backup/restore."
     ]
   },
   {
